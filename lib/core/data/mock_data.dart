@@ -1,0 +1,227 @@
+import '../models/property_model.dart';
+
+// بيانات تجريبية للعقارات
+class MockData {
+  static final List<Property> properties = [
+    Property(
+      id: '1',
+      title: 'شقة فاخرة في دبي مارينا',
+      description:
+          'شقة رائعة مع إطلالة على البحر والمرسى. تتميز بتصميم عصري وتشطيبات عالية الجودة. قريبة من المرافق والخدمات.',
+      type: PropertyType.apartment,
+      listingType: ListingType.sale,
+      price: 2500000,
+      area: 150,
+      bedrooms: 3,
+      bathrooms: 2,
+      location: 'دبي مارينا',
+      city: 'دبي',
+      images: [
+        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800',
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+        'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800',
+      ],
+      features: ['مسبح', 'صالة رياضية', 'موقف سيارات', 'أمن 24/7'],
+      isFeatured: true,
+      agentName: 'أحمد محمد',
+      agentPhone: '+971501234567',
+      agentEmail: 'ahmed@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      views: 245,
+    ),
+    Property(
+      id: '2',
+      title: 'فيلا عصرية في البرشاء',
+      description:
+          'فيلا واسعة مع حديقة كبيرة ومسبح خاص. تصميم معماري فريد ومواد بناء فاخرة.',
+      type: PropertyType.villa,
+      listingType: ListingType.sale,
+      price: 4800000,
+      area: 420,
+      bedrooms: 5,
+      bathrooms: 4,
+      location: 'البرشاء',
+      city: 'دبي',
+      images: [
+        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800',
+      ],
+      features: ['مسبح خاص', 'حديقة', 'غرفة خادمة', 'مطبخ خارجي'],
+      isFeatured: true,
+      agentName: 'فاطمة علي',
+      agentPhone: '+971507654321',
+      agentEmail: 'fatima@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      views: 189,
+    ),
+    Property(
+      id: '3',
+      title: 'شقة للإيجار في ديرة',
+      description:
+          'شقة مريحة في موقع متميز بالقرب من محطة المترو والمراكز التجارية.',
+      type: PropertyType.apartment,
+      listingType: ListingType.rent,
+      price: 75000,
+      area: 95,
+      bedrooms: 2,
+      bathrooms: 2,
+      location: 'ديرة',
+      city: 'دبي',
+      images: [
+        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
+        'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800',
+      ],
+      features: ['مفروشة', 'بلكونة', 'موقف سيارة'],
+      isFeatured: false,
+      agentName: 'خالد حسن',
+      agentPhone: '+971509876543',
+      agentEmail: 'khaled@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 10)),
+      views: 78,
+    ),
+    Property(
+      id: '4',
+      title: 'مكتب في برج خليفة',
+      description:
+          'مساحة مكتبية متميزة في واحد من أشهر أبراج أبوظبي. إطلالة رائعة على المدينة.',
+      type: PropertyType.office,
+      listingType: ListingType.rent,
+      price: 120000,
+      area: 180,
+      bedrooms: 0,
+      bathrooms: 2,
+      location: 'شارع الشيخ زايد',
+      city: 'أبوظبي',
+      images: [
+        'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800',
+        'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800',
+      ],
+      features: ['مفروش بالكامل', 'استقبال', 'قاعة اجتماعات'],
+      isFeatured: false,
+      agentName: 'مريم أحمد',
+      agentPhone: '+971502345678',
+      agentEmail: 'mariam@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 15)),
+      views: 124,
+    ),
+    Property(
+      id: '5',
+      title: 'فيلا في عجمان',
+      description:
+          'فيلا عائلية في منطقة هادئة وآمنة. قريبة من المدارس والمرافق.',
+      type: PropertyType.villa,
+      listingType: ListingType.rent,
+      price: 95000,
+      area: 280,
+      bedrooms: 4,
+      bathrooms: 3,
+      location: 'الروضة',
+      city: 'عجمان',
+      images: [
+        'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800',
+        'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800',
+      ],
+      features: ['حديقة', 'موقف 2 سيارة', 'غرفة غسيل'],
+      isFeatured: false,
+      agentName: 'يوسف عمر',
+      agentPhone: '+971506789012',
+      agentEmail: 'youssef@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 7)),
+      views: 92,
+    ),
+    Property(
+      id: '6',
+      title: 'بنتهاوس في جميرا',
+      description: 'بنتهاوس فاخر في مجمع سكني متكامل مع جميع الخدمات.',
+      type: PropertyType.apartment,
+      listingType: ListingType.sale,
+      price: 3200000,
+      area: 210,
+      bedrooms: 3,
+      bathrooms: 3,
+      location: 'جميرا بيتش ريزيدنس',
+      city: 'دبي',
+      images: [
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
+        'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800',
+      ],
+      features: ['مسبح مشترك', 'نادي صحي', 'ملعب أطفال', 'قريب من الشاطئ'],
+      isFeatured: true,
+      agentName: 'نورة سعيد',
+      agentPhone: '+971503456789',
+      agentEmail: 'noura@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 3)),
+      views: 312,
+    ),
+    Property(
+      id: '7',
+      title: 'شقة استوديو في العين',
+      description: 'شقة استوديو مثالية للعزاب أو الموظفين.',
+      type: PropertyType.apartment,
+      listingType: ListingType.rent,
+      price: 42000,
+      area: 55,
+      bedrooms: 1,
+      bathrooms: 1,
+      location: 'الجيمي',
+      city: 'العين',
+      images: [
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
+      ],
+      features: ['مفروشة', 'موقف سيارة'],
+      isFeatured: false,
+      agentName: 'عبدالله خالد',
+      agentPhone: '+971504567890',
+      agentEmail: 'abdullah@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 20)),
+      views: 56,
+    ),
+    Property(
+      id: '8',
+      title: 'أرض للبيع في رأس الخيمة',
+      description: 'قطعة أرض متميزة في موقع استراتيجي. مثالية للاستثمار.',
+      type: PropertyType.land,
+      listingType: ListingType.sale,
+      price: 1800000,
+      area: 850,
+      bedrooms: 0,
+      bathrooms: 0,
+      location: 'الرمس',
+      city: 'رأس الخيمة',
+      images: [
+        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
+      ],
+      features: ['موقع متميز', 'قريب من الطريق الرئيسي'],
+      isFeatured: false,
+      agentName: 'سالم راشد',
+      agentPhone: '+971505678901',
+      agentEmail: 'salem@bayut.com',
+      createdAt: DateTime.now().subtract(const Duration(days: 12)),
+      views: 67,
+    ),
+  ];
+
+  // عقارات مميزة فقط
+  static List<Property> get featuredProperties =>
+      properties.where((p) => p.isFeatured).toList();
+
+  // عقارات للبيع
+  static List<Property> get propertiesForSale =>
+      properties.where((p) => p.listingType == ListingType.sale).toList();
+
+  // عقارات للإيجار
+  static List<Property> get propertiesForRent =>
+      properties.where((p) => p.listingType == ListingType.rent).toList();
+
+  // مدن مشهورة
+  static final List<String> popularCities = [
+    'دبي',
+    'أبوظبي',
+    'الشارقة',
+    'عجمان',
+    'رأس الخيمة',
+    'الفجيرة',
+    'أم القيوين',
+  ];
+}
