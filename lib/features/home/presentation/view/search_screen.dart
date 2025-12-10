@@ -6,7 +6,7 @@ import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/core/widgets/filter_widget.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/core/widgets/search_bar_widget.dart';
-import 'package:test_graduation/featuers/home/view/details_view.dart';
+import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 
 // شاشة البحث
 class SearchScreen extends StatefulWidget {

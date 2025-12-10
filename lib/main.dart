@@ -94,7 +94,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // ⬅️ مهم جداً
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/featuers/home/view/home_view.dart';
+
+import 'package:test_graduation/features/root/presentation/views/root_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -172,7 +173,7 @@ class BayutApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      home: const HomeScreen(),
+      home: const RootView(),
     );
   }
 }

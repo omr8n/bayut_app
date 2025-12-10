@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:test_graduation/core/models/property_model.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
-import 'package:test_graduation/featuers/home/view/details_view.dart';
+import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 
 // شاشة قائمة العقارات
 class PropertiesListScreen extends StatelessWidget {

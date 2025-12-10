@@ -68,7 +68,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -190,7 +190,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -238,7 +238,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -339,7 +339,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                       shape: BoxShape.circle,
                       color: _currentImageIndex == index
                           ? Colors.white
-                          : Colors.white.withOpacity(0.4),
+                          : Colors.white.withValues(alpha: 0.4),
                     ),
                   ),
                 ),
@@ -381,7 +381,10 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+            ),
           ],
         ),
         child: Icon(icon, color: color ?? AppColors.textPrimary),
@@ -400,7 +403,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, -2),
             ),
