@@ -4,7 +4,7 @@ import 'package:test_graduation/features/home/presentation/view/widgets/featuerd
 import 'package:test_graduation/features/home/presentation/view/widgets/home_header.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/list_type_buttons.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/recent_properties_section.dart';
-import 'search_screen.dart';
+import '../../../search/presentation/veiw/search_screen.dart';
 
 // الصفحة الرئيسية
 class HomeScreen extends StatefulWidget {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
     super.key,
-
     required this.controller,
     required this.textAlign,
     this.labelText,
@@ -15,10 +14,12 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.textInputAction,
     this.onEditingComplete,
+    this.onFieldSubmitted,
     this.maxLines = 1,
     this.focusNode,
+    this.suffixText,
   });
-  final TextInputAction? textInputAction;
+
   final TextEditingController controller;
   final TextAlign textAlign;
   final String? labelText;
@@ -28,9 +29,13 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final Widget? suffixIcon;
-  final int? maxLines;
+  final TextInputAction? textInputAction;
   final void Function()? onEditingComplete;
+  final void Function(String)? onFieldSubmitted;
+  final int? maxLines;
   final FocusNode? focusNode;
+  final String? suffixText;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -39,13 +44,15 @@ class CustomTextFormField extends StatelessWidget {
       textAlign: textAlign,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      onEditingComplete: onEditingComplete,
       focusNode: focusNode,
       textInputAction: textInputAction,
+      onEditingComplete: onEditingComplete,
+      onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
+        suffixText: suffixText,
         labelText: labelText,
         hintText: hintText,
-        prefixIcon: Icon(prefixIcon),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
         suffixIcon: suffixIcon,
       ),
       validator: validator,
