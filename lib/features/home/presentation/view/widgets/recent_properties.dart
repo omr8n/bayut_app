@@ -8,7 +8,15 @@ class RecentProperties extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recent = MockData.properties.take(5).toList();
+    // تصفية القائمة لعرض العقارات غير المميزة فقط
+    final recent = MockData.properties
+        .where((p) => !p.isFeatured) // استثناء العقارات المميزة من الظهور هنا
+        .take(5)
+        .toList();
+
+    if (recent.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -26,43 +34,9 @@ class RecentProperties extends StatelessWidget {
                 ),
               );
             },
-            onFavorite: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('تمت الإضافة للمفضلة')),
-              );
-            },
           );
         }),
       ),
     );
   }
 }
-
-// Widget _buildRecentProperties() {
-//   final recent = MockData.properties.take(5).toList();
-
-  // return SliverPadding(
-  //   padding: const EdgeInsets.symmetric(horizontal: 16),
-  //   sliver: SliverList(
-  //     delegate: SliverChildBuilderDelegate((context, index) {
-  //       final property = recent[index];
-  //       return PropertyCard(
-  //         property: property,
-  //         onTap: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => PropertyDetailsScreen(property: property),
-  //             ),
-  //           );
-  //         },
-  //         onFavorite: () {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             const SnackBar(content: Text('تمت الإضافة للمفضلة')),
-  //           );
-  //         },
-  //       );
-  //     }, childCount: recent.length),
-  //   ),
-  // );
-// }

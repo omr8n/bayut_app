@@ -21,11 +21,11 @@ class PropertyCard extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: AppColors.textSecondary),
-        const SizedBox(width: 4),
+        Icon(icon, size: 14, color: AppColors.textSecondary),
+        const SizedBox(width: 2),
         Text(
           value,
-          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -47,7 +47,7 @@ class PropertyCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(12),
@@ -62,13 +62,13 @@ class PropertyCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // صورة العقار مع Badge الحالة
+            // صورة العقار
             Stack(
               children: [
-                SizedBox(
-                  height: 160,
-                  width: double.infinity,
+                AspectRatio(
+                  aspectRatio: 16 / 9,
                   child: property.images.isNotEmpty
                       ? Image.network(
                           property.images.first,
@@ -78,93 +78,93 @@ class PropertyCard extends StatelessWidget {
                       : _errorImage(),
                 ),
                 Positioned(
-                  top: 10,
-                  right: 10,
+                  top: 8,
+                  right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: property.listingType == ListingType.sale
                           ? AppColors.forSale
                           : AppColors.forRent,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       property.listingType.arabicName,
-                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
+                if (property.isFeatured)
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFD700),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.stars, color: Colors.white, size: 16),
+                    ),
+                  ),
               ],
             ),
 
             // المحتوى
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // السعر والعملة
                   Text(
                     '${numberFormat.format(property.price)} ${property.currency}',
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
-                  
-                  // العنوان
+                  const SizedBox(height: 2),
                   Text(
                     property.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  
-                  const SizedBox(height: 6),
-
-                  // الموقع (المحافظة والمدينة)
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
-                      const SizedBox(width: 4),
+                      const Icon(Icons.location_on, size: 12, color: AppColors.textSecondary),
+                      const SizedBox(width: 2),
                       Expanded(
                         child: Text(
                           '${property.governorate} - ${property.city}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   const Divider(height: 1),
-                  const SizedBox(height: 12),
-
-                  // تفاصيل سريعة
-                  Row(
+                  const SizedBox(height: 8),
+                  // تفاصيل سريعة - استخدام Wrap بدلاً من Row لمنع الـ Overflow
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
-                      if (property.bedrooms != null && property.bedrooms! > 0) ...[
+                      if (property.bedrooms != null && property.bedrooms! > 0)
                         _buildDetail(Icons.bed_outlined, '${property.bedrooms}'),
-                        const SizedBox(width: 12),
-                      ],
-                      if (property.bathrooms != null && property.bathrooms! > 0) ...[
+                      if (property.bathrooms != null && property.bathrooms! > 0)
                         _buildDetail(Icons.bathroom_outlined, '${property.bathrooms}'),
-                        const SizedBox(width: 12),
-                      ],
                       _buildDetail(Icons.square_foot_outlined, '${property.area.toInt()} م²'),
-                      const Spacer(),
-                      Text(
-                        property.type.arabicName,
-                        style: const TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.bold),
-                      ),
                     ],
                   ),
                 ],

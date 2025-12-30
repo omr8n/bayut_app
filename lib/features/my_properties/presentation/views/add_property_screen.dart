@@ -68,6 +68,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   ListingType _selectedListingType = ListingType.sale;
   bool _hasInstallment = false;
   bool _isLicensed = false;
+  bool _isFeatured = false; // تم تفعيل هذا الخيار في الموديل
   
   String _selectedFinishType = 'سوبر ديلوكس';
   String _selectedOwnershipType = 'طابو أخضر';
@@ -97,7 +98,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   final List<String> _poolSizes = ['صغير', 'متوسط', 'كبير', 'أولمبي'];
   final List<String> _warehouseFloorTypes = ['بيتون', 'بلاط', 'إيبوكسي', 'أسفلت', 'تراب'];
 
-  // المرافق
   final Map<String, Map<String, dynamic>> _commonFacilities = {
     'مصعد': {'value': false, 'icon': Icons.elevator_outlined},
     'موقف سيارة': {'value': false, 'icon': Icons.local_parking_outlined},
@@ -471,6 +471,18 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                 onChanged: (val) => setState(() => _isLicensed = val!),
               ),
             ),
+            // إضافة خيار تمييز العقار هنا
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              decoration: BoxDecoration(border: Border.all(color: Colors.amber.shade200), borderRadius: BorderRadius.circular(8), color: Colors.amber.withOpacity(0.05)),
+              child: SwitchListTile(
+                title: const Text('تمييز العقار (إعلان ممول)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.amber)),
+                subtitle: const Text('سيظهر في قسم العقارات المميزة بالصفحة الرئيسية', style: TextStyle(fontSize: 11)),
+                value: _isFeatured,
+                secondary: const Icon(Icons.stars, color: Colors.amber),
+                onChanged: (val) => setState(() => _isFeatured = val),
+              ),
+            ),
           ],
         ),
       ),
@@ -508,7 +520,16 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   Widget _buildLocationCard() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(padding: const EdgeInsets.all(16), child: Column(children: [_buildDropdownField('المحافظة', Icons.map_outlined, _selectedGovernorate, _governorates, (val) => setState(() => _selectedGovernorate = val!)), const SizedBox(height: 16), CustomTextFormField(controller: _locationController, textAlign: TextAlign.right, labelText: 'المدينة أو المنطقة', hintText: 'مثال: المزة', prefixIcon: Icons.business_outlined)]))
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildDropdownField('المحافظة', Icons.map_outlined, _selectedGovernorate, _governorates, (val) => setState(() => _selectedGovernorate = val!)),
+            const SizedBox(height: 16),
+            CustomTextFormField(controller: _locationController, textAlign: TextAlign.right, labelText: 'المدينة أو المنطقة', hintText: 'مثال: المزة', prefixIcon: Icons.business_outlined),
+          ],
+        ),
+      ),
     );
   }
 
@@ -520,9 +541,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('رقم الهاتف', style: TextStyle(color: Colors.grey, fontSize: 12)),
             CustomTextFormField(
-              controller: _phoneController, textAlign: TextAlign.right, hintText: '0935922621', prefixText: '+963 ', keyboardType: TextInputType.phone,
+              controller: _phoneController, textAlign: TextAlign.right, labelText: 'رقم الهاتف للاتصال', hintText: '09xxxxxxxx', prefixIcon: Icons.phone_callback_outlined, prefixText: '+963 ', keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value == null || value.isEmpty) return 'يرجى إدخال رقم الهاتف';
                 if (!RegExp(r'^[3-9]\d{7}$').hasMatch(value)) return 'يرجى إدخال رقم سوري صحيح';
