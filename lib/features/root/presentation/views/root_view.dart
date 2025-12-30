@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:test_graduation/features/home/presentation/view/home_view.dart';
 import 'package:test_graduation/features/auth/presentation/views/login_view.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/my_properties_view.dart';
+import 'package:test_graduation/features/profile/presentation/views/profile_view.dart';
 import 'package:test_graduation/features/search/presentation/veiw/search_screen.dart';
 import 'package:test_graduation/features/root/presentation/views/widgets/custom_bottom_navigation_bar.dart';
 
@@ -21,7 +22,8 @@ class _RootViewState extends State<RootView> {
     HomeScreen(),
     SearchScreen(),
     MyPropertiesScreen(),
-    LoginView(),
+    // LoginView(),
+    ProfileView(),
   ];
 
   @override

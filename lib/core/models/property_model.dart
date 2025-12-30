@@ -1,26 +1,66 @@
 import 'package:equatable/equatable.dart';
 
-// نموذج العقار
 class Property extends Equatable {
   final String id;
   final String title;
   final String description;
-  final PropertyType type; // شقة، فيلا، إلخ
-  final ListingType listingType; // بيع أو إيجار
+  final PropertyType type;
+  final ListingType listingType;
   final double price;
-  final double area; // بالمتر المربع
-  final int bedrooms;
-  final int bathrooms;
-  final String location;
-  final String city;
-  final List<String> images;
-  final List<String> features; // المميزات (مسبح، حديقة، إلخ)
-  final bool isFeatured; // عقار مميز
-  final String agentName;
-  final String agentPhone;
-  final String agentEmail;
+  final String currency;
+  final double area;
   final DateTime createdAt;
-  final int views; // عدد المشاهدات
+  final int views;
+  final bool isFeatured;
+  final List<String> images;
+  final List<String> facilities;
+  final String governorate;
+  final String city;
+  final String location;
+  final String phone;
+  final String whatsapp;
+
+  // بيانات البائع الجديدة
+  final String sellerName;
+  final String? sellerImage;
+  final String sellerJoinDate;
+  final double sellerRating;
+
+  // الحقول الاختيارية الأخرى
+  final int? buildingAge;
+  final String? finishType;
+  final String? ownershipType;
+  final String? direction;
+  final bool isLicensed;
+  final bool hasInstallment;
+  final double? downPayment;
+  final double? monthlyInstallment;
+  final int? installmentDuration;
+  final String? installmentNotes;
+  final int? totalRooms;
+  final int? bedrooms;
+  final int? bathrooms;
+  final int? floorNumber;
+  final int? totalFloors;
+  final String? heatingType;
+  final String? landType;
+  final int? frontagesCount;
+  final double? streetWidth;
+  final String? farmType;
+  final String? irrigationType;
+  final String? crops;
+  final double? frontageWidth;
+  final String? shopLocation;
+  final String? commercialActivity;
+  final String? poolType;
+  final String? poolSize;
+  final int? examinationRooms;
+  final String? medicalEquipment;
+  final double? warehouseHeight;
+  final String? warehouseFloorType;
+  final int? hallCapacity;
+  final String? workshopType;
+  final double? workshopHeight;
 
   const Property({
     required this.id,
@@ -29,176 +69,208 @@ class Property extends Equatable {
     required this.type,
     required this.listingType,
     required this.price,
+    required this.currency,
     required this.area,
-    required this.bedrooms,
-    required this.bathrooms,
-    required this.location,
-    required this.city,
-    required this.images,
-    required this.features,
-    this.isFeatured = false,
-    required this.agentName,
-    required this.agentPhone,
-    required this.agentEmail,
     required this.createdAt,
     this.views = 0,
+    this.isFeatured = false,
+    required this.images,
+    required this.facilities,
+    required this.governorate,
+    required this.city,
+    required this.location,
+    required this.phone,
+    required this.whatsapp,
+    required this.sellerName,
+    this.sellerImage,
+    this.sellerJoinDate = 'عضو منذ سنة',
+    this.sellerRating = 4.5,
+    this.buildingAge,
+    this.finishType,
+    this.ownershipType,
+    this.direction,
+    this.isLicensed = false,
+    this.hasInstallment = false,
+    this.downPayment,
+    this.monthlyInstallment,
+    this.installmentDuration,
+    this.installmentNotes,
+    this.totalRooms,
+    this.bedrooms,
+    this.bathrooms,
+    this.floorNumber,
+    this.totalFloors,
+    this.heatingType,
+    this.landType,
+    this.frontagesCount,
+    this.streetWidth,
+    this.farmType,
+    this.irrigationType,
+    this.crops,
+    this.frontageWidth,
+    this.shopLocation,
+    this.commercialActivity,
+    this.poolType,
+    this.poolSize,
+    this.examinationRooms,
+    this.medicalEquipment,
+    this.warehouseHeight,
+    this.warehouseFloorType,
+    this.hallCapacity,
+    this.workshopType,
+    this.workshopHeight,
   });
 
-  // من JSON (للتكامل مع Firebase لاحقاً)
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
       id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
-      type: PropertyType.values.firstWhere(
-        (e) => e.toString() == 'PropertyType.${json['type']}',
-      ),
-      listingType: ListingType.values.firstWhere(
-        (e) => e.toString() == 'ListingType.${json['listingType']}',
-      ),
+      type: PropertyType.values.firstWhere((e) => e.name == json['type']),
+      listingType: ListingType.values.firstWhere((e) => e.name == json['listingType']),
       price: (json['price'] as num).toDouble(),
+      currency: json['currency'] as String,
       area: (json['area'] as num).toDouble(),
-      bedrooms: json['bedrooms'] as int,
-      bathrooms: json['bathrooms'] as int,
-      location: json['location'] as String,
-      city: json['city'] as String,
-      images: List<String>.from(json['images'] as List),
-      features: List<String>.from(json['features'] as List),
-      isFeatured: json['isFeatured'] as bool? ?? false,
-      agentName: json['agentName'] as String,
-      agentPhone: json['agentPhone'] as String,
-      agentEmail: json['agentEmail'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       views: json['views'] as int? ?? 0,
+      isFeatured: json['isFeatured'] as bool? ?? false,
+      images: List<String>.from(json['images'] as List),
+      facilities: List<String>.from(json['facilities'] as List),
+      governorate: json['governorate'] as String,
+      city: json['city'] as String,
+      location: json['location'] as String,
+      phone: json['phone'] as String,
+      whatsapp: json['whatsapp'] as String,
+      sellerName: json['sellerName'] as String? ?? 'Mohammad',
+      sellerImage: json['sellerImage'] as String?,
+      sellerJoinDate: json['sellerJoinDate'] as String? ?? 'عضو منذ سنة',
+      sellerRating: (json['sellerRating'] as num? ?? 4.5).toDouble(),
+      buildingAge: json['buildingAge'] as int?,
+      finishType: json['finishType'] as String?,
+      ownershipType: json['ownershipType'] as String?,
+      direction: json['direction'] as String?,
+      isLicensed: json['isLicensed'] as bool? ?? false,
+      hasInstallment: json['hasInstallment'] as bool? ?? false,
+      downPayment: (json['downPayment'] as num?)?.toDouble(),
+      monthlyInstallment: (json['monthlyInstallment'] as num?)?.toDouble(),
+      installmentDuration: json['installmentDuration'] as int?,
+      installmentNotes: json['installmentNotes'] as String?,
+      totalRooms: json['totalRooms'] as int?,
+      bedrooms: json['bedrooms'] as int?,
+      bathrooms: json['bathrooms'] as int?,
+      floorNumber: json['floorNumber'] as int?,
+      totalFloors: json['totalFloors'] as int?,
+      heatingType: json['heatingType'] as String?,
+      landType: json['landType'] as String?,
+      frontagesCount: json['frontagesCount'] as int?,
+      streetWidth: (json['streetWidth'] as num?)?.toDouble(),
+      farmType: json['farmType'] as String?,
+      irrigationType: json['irrigationType'] as String?,
+      crops: json['crops'] as String?,
+      frontageWidth: (json['frontageWidth'] as num?)?.toDouble(),
+      shopLocation: json['shopLocation'] as String?,
+      commercialActivity: json['commercialActivity'] as String?,
+      poolType: json['poolType'] as String?,
+      poolSize: json['poolSize'] as String?,
+      examinationRooms: json['examinationRooms'] as int?,
+      medicalEquipment: json['medicalEquipment'] as String?,
+      warehouseHeight: (json['warehouseHeight'] as num?)?.toDouble(),
+      warehouseFloorType: json['warehouseFloorType'] as String?,
+      hallCapacity: json['hallCapacity'] as int?,
+      workshopType: json['workshopType'] as String?,
+      workshopHeight: (json['workshopHeight'] as num?)?.toDouble(),
     );
   }
 
-  // إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,
       'description': description,
-      'type': type.toString().split('.').last,
-      'listingType': listingType.toString().split('.').last,
+      'type': type.name,
+      'listingType': listingType.name,
       'price': price,
+      'currency': currency,
       'area': area,
-      'bedrooms': bedrooms,
-      'bathrooms': bathrooms,
-      'location': location,
-      'city': city,
-      'images': images,
-      'features': features,
-      'isFeatured': isFeatured,
-      'agentName': agentName,
-      'agentPhone': agentPhone,
-      'agentEmail': agentEmail,
       'createdAt': createdAt.toIso8601String(),
       'views': views,
+      'isFeatured': isFeatured,
+      'images': images,
+      'facilities': facilities,
+      'governorate': governorate,
+      'city': city,
+      'location': location,
+      'phone': phone,
+      'whatsapp': whatsapp,
+      'sellerName': sellerName,
+      'sellerImage': sellerImage,
+      'sellerJoinDate': sellerJoinDate,
+      'sellerRating': sellerRating,
+      'buildingAge': buildingAge,
+      'finishType': finishType,
+      'ownershipType': ownershipType,
+      'direction': direction,
+      'isLicensed': isLicensed,
+      'hasInstallment': hasInstallment,
+      'downPayment': downPayment,
+      'monthlyInstallment': monthlyInstallment,
+      'installmentDuration': installmentDuration,
+      'installmentNotes': installmentNotes,
+      'totalRooms': totalRooms,
+      'bedrooms': bedrooms,
+      'bathrooms': bathrooms,
+      'floorNumber': floorNumber,
+      'totalFloors': totalFloors,
+      'heatingType': heatingType,
+      'landType': landType,
+      'frontagesCount': frontagesCount,
+      'streetWidth': streetWidth,
+      'farmType': farmType,
+      'irrigationType': irrigationType,
+      'crops': crops,
+      'frontageWidth': frontageWidth,
+      'shopLocation': shopLocation,
+      'commercialActivity': commercialActivity,
+      'poolType': poolType,
+      'poolSize': poolSize,
+      'examinationRooms': examinationRooms,
+      'medicalEquipment': medicalEquipment,
+      'warehouseHeight': warehouseHeight,
+      'warehouseFloorType': warehouseFloorType,
+      'hallCapacity': hallCapacity,
+      'workshopType': workshopType,
+      'workshopHeight': workshopHeight,
     };
   }
 
-  // نسخ مع تعديلات
-  Property copyWith({
-    String? id,
-    String? title,
-    String? description,
-    PropertyType? type,
-    ListingType? listingType,
-    double? price,
-    double? area,
-    int? bedrooms,
-    int? bathrooms,
-    String? location,
-    String? city,
-    List<String>? images,
-    List<String>? features,
-    bool? isFeatured,
-    String? agentName,
-    String? agentPhone,
-    String? agentEmail,
-    DateTime? createdAt,
-    int? views,
-  }) {
-    return Property(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      type: type ?? this.type,
-      listingType: listingType ?? this.listingType,
-      price: price ?? this.price,
-      area: area ?? this.area,
-      bedrooms: bedrooms ?? this.bedrooms,
-      bathrooms: bathrooms ?? this.bathrooms,
-      location: location ?? this.location,
-      city: city ?? this.city,
-      images: images ?? this.images,
-      features: features ?? this.features,
-      isFeatured: isFeatured ?? this.isFeatured,
-      agentName: agentName ?? this.agentName,
-      agentPhone: agentPhone ?? this.agentPhone,
-      agentEmail: agentEmail ?? this.agentEmail,
-      createdAt: createdAt ?? this.createdAt,
-      views: views ?? this.views,
-    );
-  }
-
   @override
-  List<Object?> get props => [
-    id,
-    title,
-    description,
-    type,
-    listingType,
-    price,
-    area,
-    bedrooms,
-    bathrooms,
-    location,
-    city,
-    images,
-    features,
-    isFeatured,
-    agentName,
-    agentPhone,
-    agentEmail,
-    createdAt,
-    views,
-  ];
+  List<Object?> get props => [id, title, type, listingType, price, area, city, phone];
 }
 
-// أنواع العقارات
 enum PropertyType {
-  apartment, // شقة
-  villa, // فيلا
-  office, // مكتب
-  land, // أرض
-  shop, // محل تجاري
-  warehouse, // مستودع
+  buildings, housesAndApartments, underConstruction, villas, shops,
+  mallShops, lands, farms, pools, clinics, warehouses, halls, offices, workshops
 }
 
-// نوع الإعلان
-enum ListingType {
-  sale, // للبيع
-  rent, // للإيجار
-}
+enum ListingType { sale, rent }
 
-// Extension للحصول على النص العربي
 extension PropertyTypeExtension on PropertyType {
   String get arabicName {
     switch (this) {
-      case PropertyType.apartment:
-        return 'شقة';
-      case PropertyType.villa:
-        return 'فيلا';
-      case PropertyType.office:
-        return 'مكتب';
-      case PropertyType.land:
-        return 'أرض';
-      case PropertyType.shop:
-        return 'محل تجاري';
-      case PropertyType.warehouse:
-        return 'مستودع';
+      case PropertyType.buildings: return 'مباني';
+      case PropertyType.housesAndApartments: return 'المنازل والشقق';
+      case PropertyType.underConstruction: return 'منازل وشقق قيد الإنشاء';
+      case PropertyType.villas: return 'الفيلات';
+      case PropertyType.shops: return 'محلات';
+      case PropertyType.mallShops: return 'محلات في مراكز تجارية';
+      case PropertyType.lands: return 'أراضي';
+      case PropertyType.farms: return 'مزارع';
+      case PropertyType.pools: return 'مسابح';
+      case PropertyType.clinics: return 'عيادات';
+      case PropertyType.warehouses: return 'مستودعات';
+      case PropertyType.halls: return 'صالات';
+      case PropertyType.offices: return 'مكاتب';
+      case PropertyType.workshops: return 'ورش';
     }
   }
 }
@@ -206,10 +278,8 @@ extension PropertyTypeExtension on PropertyType {
 extension ListingTypeExtension on ListingType {
   String get arabicName {
     switch (this) {
-      case ListingType.sale:
-        return 'للبيع';
-      case ListingType.rent:
-        return 'للإيجار';
+      case ListingType.sale: return 'للبيع';
+      case ListingType.rent: return 'للإيجار';
     }
   }
 }
