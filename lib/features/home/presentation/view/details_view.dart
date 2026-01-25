@@ -58,10 +58,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: _isFavorite ? Colors.red : Colors.black),
             onPressed: () => setState(() => _isFavorite = !_isFavorite),
           ),
-          IconButton(
-            icon: const Icon(Icons.outlined_flag, color: Colors.redAccent),
-            onPressed: _showReportDialog,
-          ),
+          IconButton(icon: const Icon(Icons.outlined_flag, color: Colors.redAccent), onPressed: _showReportDialog),
         ],
       ),
       body: Stack(
@@ -154,7 +151,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   Widget _buildTypeBadge() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
       child: Text(widget.property.type.arabicName, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary)),
     );
   }
@@ -192,7 +189,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     final p = widget.property;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.03), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.blue.withValues(alpha: 0.1))),
+      decoration: BoxDecoration(color: Colors.blue.withOpacity(0.03), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.blue.withOpacity(0.1))),
       child: Column(
         children: [
           if (p.floorNumber != null) _buildInfoListTile(Icons.layers, 'رقم الطابق', '${p.floorNumber}'),
@@ -239,7 +236,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               ],
             ),
             const SizedBox(width: 12),
-            CircleAvatar(radius: 25, backgroundColor: AppColors.primary.withValues(alpha: 0.1), child: Text(widget.property.sellerName[0], style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary))),
+            CircleAvatar(radius: 25, backgroundColor: AppColors.primary.withOpacity(0.1), child: Text(widget.property.sellerName[0], style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary))),
           ],
         ),
       ),
@@ -250,7 +247,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     final p = widget.property;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.green.withValues(alpha: 0.2))),
+      decoration: BoxDecoration(color: Colors.green.withOpacity(0.05), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.green.withOpacity(0.2))),
       child: Column(
         children: [
           _buildInfoListTile(Icons.payments, 'الدفعة الأولى', '${format.format(p.downPayment ?? 0)} ${p.currency}'),
@@ -295,10 +292,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   }
 
   Widget _buildImageGallery() {
-    return SliverToBoxAdapter(
-      child: SizedBox(
-        height: 300,
-        child: Stack(
+    return SliverAppBar(
+      expandedHeight: 300,
+      pinned: false,
+      backgroundColor: Colors.transparent,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
           children: [
             PageView.builder(
               itemCount: widget.property.images.length,
@@ -310,6 +309,25 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildTopButtons() {
+    return Positioned(
+      top: 50,
+      left: 16,
+      right: 16,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildIconButton(Icons.arrow_back, () => Navigator.pop(context)),
+          _buildIconButton(_isFavorite ? Icons.favorite : Icons.favorite_border, () => setState(() => _isFavorite = !_isFavorite), color: _isFavorite ? Colors.red : null),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, VoidCallback onTap, {Color? color}) {
+    return GestureDetector(onTap: onTap, child: Container(padding: const EdgeInsets.all(12), decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)]), child: Icon(icon, color: color ?? AppColors.textPrimary)));
   }
 
   Widget _buildContactButtons() {
@@ -382,7 +400,7 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
                   onTap: () => setState(() => _selectedReason = index),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(color: isSelected ? Colors.redAccent.withValues(alpha: 0.1) : Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: isSelected ? Colors.redAccent : Colors.grey.shade300)),
+                    decoration: BoxDecoration(color: isSelected ? Colors.redAccent.withOpacity(0.1) : Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: isSelected ? Colors.redAccent : Colors.grey.shade300)),
                     child: Text(_reasons[index], style: TextStyle(color: isSelected ? Colors.redAccent : Colors.black87, fontSize: 13)),
                   ),
                 );
