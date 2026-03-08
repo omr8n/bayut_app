@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
+
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 import 'package:test_graduation/core/widgets/type_chip.dart';

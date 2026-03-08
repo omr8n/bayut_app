@@ -1,9 +1,10 @@
-import '../models/property_model.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 // بيانات تجريبية للعقارات متوافقة مع المودل الجديد
 class MockData {
-  static final List<Property> properties = [
-    Property(
+  static final List<PropertyEntity> properties = [
+    PropertyEntity(
       id: '1',
       title: 'شقة فاخرة في دمشق',
       description: 'شقة رائعة مع إطلالة مميزة وتشطيبات عالية الجودة.',
@@ -36,8 +37,9 @@ class MockData {
       floorNumber: 3,
       totalFloors: 5,
       heatingType: 'شوفاج',
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '2',
       title: 'مزرعة واسعة في ريف دمشق',
       description: 'مزرعة هادئة مع أشجار مثمرة وبئر ماء وكهرباء.',
@@ -63,8 +65,9 @@ class MockData {
       farmType: 'نباتية',
       irrigationType: 'تنقيط',
       crops: 'زيتون، مشمش',
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '3',
       title: 'محل تجاري في قلب السوق',
       description: 'محل مجهز بالكامل بموقع استراتيجي في حلب.',
@@ -90,8 +93,9 @@ class MockData {
       frontageWidth: 4.5,
       shopLocation: 'شارع رئيسي',
       commercialActivity: 'تجاري عام',
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '4',
       title: 'فيلا فخمة في اللاذقية',
       description: 'فيلا رائعة مع مسبح خاص وإطلالة بحرية ساحرة.',
@@ -117,8 +121,9 @@ class MockData {
       totalRooms: 6,
       bathrooms: 4,
       totalFloors: 2,
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '5',
       title: 'مكتب تجاري مجهز في حمص',
       description: 'مكتب واسع في منطقة تجارية حيوية، مناسب لشركة.',
@@ -143,8 +148,9 @@ class MockData {
       isLicensed: true,
       totalRooms: 3,
       floorNumber: 2,
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '6',
       title: 'أرض سياحية في طرطوس',
       description: 'أرض مميزة بموقع رائع قريبة من البحر، تصلح لمشروع سياحي.',
@@ -170,8 +176,9 @@ class MockData {
       landType: 'سياحية',
       frontagesCount: 2,
       streetWidth: 12,
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '7',
       title: 'عيادة طبية في حماة',
       description: 'عيادة جاهزة للاستخدام في مركز طبي معروف.',
@@ -197,8 +204,9 @@ class MockData {
       examinationRooms: 2,
       medicalEquipment: 'كرسي أسنان متطور، أجهزة فحص عامة',
       floorNumber: 1,
+      media: [],
     ),
-    Property(
+    PropertyEntity(
       id: '8',
       title: 'مستودع ضخم في ريف حلب',
       description: 'مستودع بمواصفات صناعية، ارتفاع عالي وسهولة وصول للشاحنات.',
@@ -223,26 +231,27 @@ class MockData {
       isLicensed: true,
       warehouseHeight: 9,
       warehouseFloorType: 'بيتون مسلح',
+      media: [],
     ),
   ];
 
-  static List<Property> get featuredProperties =>
+  static List<PropertyEntity> get featuredProperties =>
       properties.where((p) => p.isFeatured).toList();
 
-  static List<Property> get propertiesForSale =>
+  static List<PropertyEntity> get propertiesForSale =>
       properties.where((p) => p.listingType == ListingType.sale).toList();
 
-  static List<Property> get propertiesForRent =>
+  static List<PropertyEntity> get propertiesForRent =>
       properties.where((p) => p.listingType == ListingType.rent).toList();
 
-  static final List<String> popularCities = [
-    'دمشق',
-    'حلب',
-    'حمص',
-    'حماة',
-    'اللاذقية',
-    'طرطوس',
-    'درعا',
-    'السويداء',
-  ];
+  // static final List<String> popularCities = [
+  //   'دمشق',
+  //   'حلب',
+  //   'حمص',
+  //   'حماة',
+  //   'اللاذقية',
+  //   'طرطوس',
+  //   'درعا',
+  //   'السويداء',
+  // ];
 }

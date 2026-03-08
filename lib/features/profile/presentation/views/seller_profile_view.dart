@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/models/property_model.dart';
-
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'seller_properties_view.dart';
 
 class SellerProfileView extends StatefulWidget {
-  final Property property;
+  final PropertyEntity property; // استخدام الاسم الجديد والمنظم
 
   const SellerProfileView({super.key, required this.property});
 
@@ -91,8 +90,14 @@ class _SellerProfileViewState extends State<SellerProfileView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          SellerPropertiesView(sellerInfo: widget.property),
+                      builder: (context) => SellerPropertiesView(
+                        properties: [
+                          widget.property,
+                        ], // تمرير القائمة بشكل صحيح
+                        sellerName: widget
+                            .property
+                            .sellerName, // تمرير اسم البائع المطلوب
+                      ),
                     ),
                   );
                 },
@@ -100,8 +105,8 @@ class _SellerProfileViewState extends State<SellerProfileView> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE3F2FD),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFE3F2FD),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -140,9 +145,9 @@ class _SellerProfileViewState extends State<SellerProfileView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          '0.0',
-                          style: TextStyle(
+                        Text(
+                          widget.property.sellerRating.toStringAsFixed(1),
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -151,9 +156,11 @@ class _SellerProfileViewState extends State<SellerProfileView> {
                         Row(
                           children: List.generate(
                             5,
-                            (index) => const Icon(
-                              Icons.star_border,
-                              color: Colors.grey,
+                            (index) => Icon(
+                              index < widget.property.sellerRating.floor()
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.amber,
                               size: 20,
                             ),
                           ),
@@ -161,7 +168,7 @@ class _SellerProfileViewState extends State<SellerProfileView> {
                       ],
                     ),
                     const Text(
-                      '0 تقييمات',
+                      'تقييم البائع',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
@@ -170,14 +177,19 @@ class _SellerProfileViewState extends State<SellerProfileView> {
               CircleAvatar(
                 radius: 45,
                 backgroundColor: const Color(0xFFE3F2FD),
-                child: Text(
-                  widget.property.sellerName[0],
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
+                backgroundImage: widget.property.sellerImage != null
+                    ? NetworkImage(widget.property.sellerImage!)
+                    : null,
+                child: widget.property.sellerImage == null
+                    ? Text(
+                        widget.property.sellerName[0],
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      )
+                    : null,
               ),
             ],
           ),
@@ -236,6 +248,12 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
   int _selectedType = 0;
   int _rating = 0;
   final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

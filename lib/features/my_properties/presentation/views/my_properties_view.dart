@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:intl/intl.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/add_property_screen.dart';
 
 class MyPropertiesScreen extends StatefulWidget {
@@ -16,8 +17,8 @@ class MyPropertiesScreen extends StatefulWidget {
 class _MyPropertiesScreenState extends State<MyPropertiesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<Property> _activeProperties = [];
-  final List<Property> _reservedProperties = []; 
+  List<PropertyEntity> _activeProperties = [];
+  final List<PropertyEntity> _reservedProperties = [];
 
   @override
   void initState() {
@@ -72,7 +73,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
     );
   }
 
-  Widget _buildPropertiesList(List<Property> properties) {
+  Widget _buildPropertiesList(List<PropertyEntity> properties) {
     if (properties.isEmpty) {
       return const Center(
         child: Text(
@@ -89,7 +90,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
     );
   }
 
-  Widget _buildPropertyManageCard(Property property) {
+  Widget _buildPropertyManageCard(PropertyEntity property) {
     final numberFormat = NumberFormat('#,###');
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -98,7 +99,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -118,7 +119,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       width: 100,
                       height: 100,
                       color: Colors.grey.shade200,
@@ -191,10 +192,30 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildCardAction(Icons.edit_outlined, 'تعديل', Colors.blue, () {}),
-                _buildCardAction(Icons.sell_outlined, 'محجوز', Colors.orange, () {}),
-                _buildCardAction(Icons.delete_outline, 'حذف', Colors.red, () {}),
-                _buildCardAction(Icons.star_outline, 'مميز', Colors.amber, () {}),
+                _buildCardAction(
+                  Icons.edit_outlined,
+                  'تعديل',
+                  Colors.blue,
+                  () {},
+                ),
+                _buildCardAction(
+                  Icons.sell_outlined,
+                  'محجوز',
+                  Colors.orange,
+                  () {},
+                ),
+                _buildCardAction(
+                  Icons.delete_outline,
+                  'حذف',
+                  Colors.red,
+                  () {},
+                ),
+                _buildCardAction(
+                  Icons.star_outline,
+                  'مميز',
+                  Colors.amber,
+                  () {},
+                ),
               ],
             ),
           ),

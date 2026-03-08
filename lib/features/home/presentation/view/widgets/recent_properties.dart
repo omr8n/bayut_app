@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 class RecentProperties extends StatelessWidget {
   const RecentProperties({super.key});
@@ -10,7 +11,9 @@ class RecentProperties extends StatelessWidget {
   Widget build(BuildContext context) {
     // تصفية القائمة لعرض العقارات غير المميزة فقط
     final recent = MockData.properties
-        .where((p) => !p.isFeatured) // استثناء العقارات المميزة من الظهور هنا
+        .where(
+          (PropertyEntity p) => !p.isFeatured,
+        ) // استثناء العقارات المميزة من الظهور هنا
         .take(5)
         .toList();
 

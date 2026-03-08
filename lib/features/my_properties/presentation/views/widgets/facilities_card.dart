@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
+
 import 'package:test_graduation/core/utils/colors.dart';
 
 class FacilitiesCard extends StatelessWidget {
@@ -37,6 +38,8 @@ class FacilitiesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, Map<String, dynamic>> facilities;
+
+    // تحديد قائمة المرافق بناءً على نوع العقار (نفس منطق الكود الأصلي)
     if (selectedPropertyType == PropertyType.villas) {
       facilities = villaFacilities;
     } else if (selectedPropertyType == PropertyType.shops ||
@@ -73,7 +76,9 @@ class FacilitiesCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.blue.withOpacity(0.05) : Colors.white,
+                color: isSelected
+                    ? Colors.blue.withValues(alpha: 0.05)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: isSelected ? AppColors.primary : Colors.grey.shade300,
@@ -88,7 +93,9 @@ class FacilitiesCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isSelected ? AppColors.primary : Colors.white,
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : Colors.grey.shade400,
+                        color: isSelected
+                            ? AppColors.primary
+                            : Colors.grey.shade400,
                       ),
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -101,14 +108,18 @@ class FacilitiesCard extends StatelessWidget {
                     key,
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: isSelected ? AppColors.primary : Colors.black87,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Icon(
                     facilities[key]!['icon'] as IconData,
-                    color: isSelected ? AppColors.primary : Colors.grey.shade600,
+                    color: isSelected
+                        ? AppColors.primary
+                        : Colors.grey.shade600,
                     size: 24,
                   ),
                 ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
+
 import 'package:test_graduation/core/widgets/type_chip.dart';
 import '../widgets/filter_section_title.dart';
 import '../widgets/filter_buttons.dart';
@@ -302,8 +303,9 @@ class _FilterFormState extends State<FilterForm> {
             ),
             onChanged: (v) {
               double val = double.tryParse(v) ?? 0;
-              if (val <= double.parse(max.text))
+              if (val <= double.parse(max.text)) {
                 onManualChange(val, double.parse(max.text));
+              }
             },
           ),
         ),
@@ -323,8 +325,9 @@ class _FilterFormState extends State<FilterForm> {
             ),
             onChanged: (v) {
               double val = double.tryParse(v) ?? maxLimit;
-              if (val >= double.parse(min.text))
+              if (val >= double.parse(min.text)) {
                 onManualChange(double.parse(min.text), val);
+              }
             },
           ),
         ),
@@ -380,7 +383,7 @@ class _FilterFormState extends State<FilterForm> {
     Function(String?) onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

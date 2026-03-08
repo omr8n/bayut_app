@@ -1,141 +1,95 @@
-import 'package:equatable/equatable.dart';
+// // هذا الملف أصبح الآن جسراً لربط الملفات القديمة بالهيكلية الجديدة (Clean Architecture)
+// export '../../features/my_properties/domain/entities/property_entity.dart';
+// export '../enums/property_enums.dart';
+// export 'property_model_impl.dart';
 
-class Property extends Equatable {
-  final String id;
-  final String title;
-  final String description;
-  final PropertyType type;
-  final ListingType listingType;
-  final double price;
-  final String currency;
-  final double area;
-  final DateTime createdAt;
-  final int views;
-  final bool isFeatured;
-  final List<String> images;
-  final List<String> facilities;
-  final String governorate;
-  final String city;
-  final String location;
-  final String phone;
-  final String whatsapp;
+// // تعريف اسم مستعار لضمان عدم حدوث أخطاء في الملفات التي تستخدم اسم Property
+// import '../../features/my_properties/domain/entities/property_entity.dart';
+// typedef Property = PropertyEntity;
+import '../../features/my_properties/domain/entities/property_entity.dart';
+import '../enums/property_enums.dart';
 
-  // بيانات البائع الجديدة
-  final String sellerName;
-  final String? sellerImage;
-  final String sellerJoinDate;
-  final double sellerRating;
-
-  // الحقول الاختيارية الأخرى
-  final int? buildingAge;
-  final String? finishType;
-  final String? ownershipType;
-  final String? direction;
-  final bool isLicensed;
-  final bool hasInstallment;
-  final double? downPayment;
-  final double? monthlyInstallment;
-  final int? installmentDuration;
-  final String? installmentNotes;
-  final int? totalRooms;
-  final int? bedrooms;
-  final int? bathrooms;
-  final int? floorNumber;
-  final int? totalFloors;
-  final String? heatingType;
-  final String? landType;
-  final int? frontagesCount;
-  final double? streetWidth;
-  final String? farmType;
-  final String? irrigationType;
-  final String? crops;
-  final double? frontageWidth;
-  final String? shopLocation;
-  final String? commercialActivity;
-  final String? poolType;
-  final String? poolSize;
-  final int? examinationRooms;
-  final String? medicalEquipment;
-  final double? warehouseHeight;
-  final String? warehouseFloorType;
-  final int? hallCapacity;
-  final String? workshopType;
-  final double? workshopHeight;
-
-  const Property({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.type,
-    required this.listingType,
-    required this.price,
-    required this.currency,
-    required this.area,
-    required this.createdAt,
-    this.views = 0,
-    this.isFeatured = false,
-    required this.images,
-    required this.facilities,
-    required this.governorate,
-    required this.city,
-    required this.location,
-    required this.phone,
-    required this.whatsapp,
-    required this.sellerName,
-    this.sellerImage,
-    this.sellerJoinDate = 'عضو منذ سنة',
-    this.sellerRating = 4.5,
-    this.buildingAge,
-    this.finishType,
-    this.ownershipType,
-    this.direction,
-    this.isLicensed = false,
-    this.hasInstallment = false,
-    this.downPayment,
-    this.monthlyInstallment,
-    this.installmentDuration,
-    this.installmentNotes,
-    this.totalRooms,
-    this.bedrooms,
-    this.bathrooms,
-    this.floorNumber,
-    this.totalFloors,
-    this.heatingType,
-    this.landType,
-    this.frontagesCount,
-    this.streetWidth,
-    this.farmType,
-    this.irrigationType,
-    this.crops,
-    this.frontageWidth,
-    this.shopLocation,
-    this.commercialActivity,
-    this.poolType,
-    this.poolSize,
-    this.examinationRooms,
-    this.medicalEquipment,
-    this.warehouseHeight,
-    this.warehouseFloorType,
-    this.hallCapacity,
-    this.workshopType,
-    this.workshopHeight,
+class PropertyModel extends PropertyEntity {
+  const PropertyModel({
+    required super.id,
+    required super.title,
+    required super.description,
+    required super.type,
+    required super.listingType,
+    required super.price,
+    required super.currency,
+    required super.area,
+    required super.createdAt,
+    super.views,
+    super.isFeatured,
+    required super.images,
+    required super.media,
+    required super.facilities,
+    required super.governorate,
+    required super.city,
+    required super.location,
+    required super.phone,
+    required super.whatsapp,
+    required super.sellerName,
+    super.sellerImage,
+    super.sellerJoinDate,
+    super.sellerRating,
+    super.buildingAge,
+    super.finishType,
+    super.ownershipType,
+    super.direction,
+    super.isLicensed,
+    super.hasInstallment,
+    super.downPayment,
+    super.monthlyInstallment,
+    super.installmentDuration,
+    super.installmentNotes,
+    super.totalRooms,
+    super.bedrooms,
+    super.bathrooms,
+    super.floorNumber,
+    super.totalFloors,
+    super.heatingType,
+    super.landType,
+    super.frontagesCount,
+    super.streetWidth,
+    super.farmType,
+    super.irrigationType,
+    super.crops,
+    super.frontageWidth,
+    super.shopLocation,
+    super.commercialActivity,
+    super.poolType,
+    super.poolSize,
+    super.examinationRooms,
+    super.medicalEquipment,
+    super.warehouseHeight,
+    super.warehouseFloorType,
+    super.hallCapacity,
+    super.workshopType,
+    super.workshopHeight,
   });
 
-  factory Property.fromJson(Map<String, dynamic> json) {
-    return Property(
+  factory PropertyModel.fromJson(Map<String, dynamic> json) {
+    return PropertyModel(
       id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
       type: PropertyType.values.firstWhere((e) => e.name == json['type']),
-      listingType: ListingType.values.firstWhere((e) => e.name == json['listingType']),
+      listingType: ListingType.values.firstWhere(
+        (e) => e.name == json['listingType'],
+      ),
       price: (json['price'] as num).toDouble(),
       currency: json['currency'] as String,
       area: (json['area'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       views: json['views'] as int? ?? 0,
       isFeatured: json['isFeatured'] as bool? ?? false,
-      images: List<String>.from(json['images'] as List),
-      facilities: List<String>.from(json['facilities'] as List),
+      images: List<String>.from(json['images'] as List? ?? []),
+      media: List<String>.from(
+        json['media'] as List? ?? json['images'] as List? ?? [],
+      ),
+      facilities: List<String>.from(json['facilities'] as List? ?? []),
       governorate: json['governorate'] as String,
       city: json['city'] as String,
       location: json['location'] as String,
@@ -181,7 +135,67 @@ class Property extends Equatable {
       workshopHeight: (json['workshopHeight'] as num?)?.toDouble(),
     );
   }
-
+  factory PropertyModel.fromEntity(PropertyEntity entity) {
+    return PropertyModel(
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      type: entity.type,
+      listingType: entity.listingType,
+      price: entity.price,
+      currency: entity.currency,
+      area: entity.area,
+      createdAt: entity.createdAt,
+      views: entity.views,
+      isFeatured: entity.isFeatured,
+      images: entity.images,
+      media: entity.media,
+      facilities: entity.facilities,
+      governorate: entity.governorate,
+      city: entity.city,
+      location: entity.location,
+      phone: entity.phone,
+      whatsapp: entity.whatsapp,
+      sellerName: entity.sellerName,
+      sellerImage: entity.sellerImage,
+      sellerJoinDate: entity.sellerJoinDate,
+      sellerRating: entity.sellerRating,
+      buildingAge: entity.buildingAge,
+      finishType: entity.finishType,
+      ownershipType: entity.ownershipType,
+      direction: entity.direction,
+      isLicensed: entity.isLicensed,
+      hasInstallment: entity.hasInstallment,
+      downPayment: entity.downPayment,
+      monthlyInstallment: entity.monthlyInstallment,
+      installmentDuration: entity.installmentDuration,
+      installmentNotes: entity.installmentNotes,
+      totalRooms: entity.totalRooms,
+      bedrooms: entity.bedrooms,
+      bathrooms: entity.bathrooms,
+      floorNumber: entity.floorNumber,
+      totalFloors: entity.totalFloors,
+      heatingType: entity.heatingType,
+      landType: entity.landType,
+      frontagesCount: entity.frontagesCount,
+      streetWidth: entity.streetWidth,
+      farmType: entity.farmType,
+      irrigationType: entity.irrigationType,
+      crops: entity.crops,
+      frontageWidth: entity.frontageWidth,
+      shopLocation: entity.shopLocation,
+      commercialActivity: entity.commercialActivity,
+      poolType: entity.poolType,
+      poolSize: entity.poolSize,
+      examinationRooms: entity.examinationRooms,
+      medicalEquipment: entity.medicalEquipment,
+      warehouseHeight: entity.warehouseHeight,
+      warehouseFloorType: entity.warehouseFloorType,
+      hallCapacity: entity.hallCapacity,
+      workshopType: entity.workshopType,
+      workshopHeight: entity.workshopHeight,
+    );
+  }
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -196,6 +210,7 @@ class Property extends Equatable {
       'views': views,
       'isFeatured': isFeatured,
       'images': images,
+      'media': media,
       'facilities': facilities,
       'governorate': governorate,
       'city': city,
@@ -241,45 +256,5 @@ class Property extends Equatable {
       'workshopType': workshopType,
       'workshopHeight': workshopHeight,
     };
-  }
-
-  @override
-  List<Object?> get props => [id, title, type, listingType, price, area, city, phone];
-}
-
-enum PropertyType {
-  buildings, housesAndApartments, underConstruction, villas, shops,
-  mallShops, lands, farms, pools, clinics, warehouses, halls, offices, workshops
-}
-
-enum ListingType { sale, rent }
-
-extension PropertyTypeExtension on PropertyType {
-  String get arabicName {
-    switch (this) {
-      case PropertyType.buildings: return 'مباني';
-      case PropertyType.housesAndApartments: return 'المنازل والشقق';
-      case PropertyType.underConstruction: return 'منازل وشقق قيد الإنشاء';
-      case PropertyType.villas: return 'الفيلات';
-      case PropertyType.shops: return 'محلات';
-      case PropertyType.mallShops: return 'محلات في مراكز تجارية';
-      case PropertyType.lands: return 'أراضي';
-      case PropertyType.farms: return 'مزارع';
-      case PropertyType.pools: return 'مسابح';
-      case PropertyType.clinics: return 'عيادات';
-      case PropertyType.warehouses: return 'مستودعات';
-      case PropertyType.halls: return 'صالات';
-      case PropertyType.offices: return 'مكاتب';
-      case PropertyType.workshops: return 'ورش';
-    }
-  }
-}
-
-extension ListingTypeExtension on ListingType {
-  String get arabicName {
-    switch (this) {
-      case ListingType.sale: return 'للبيع';
-      case ListingType.rent: return 'للإيجار';
-    }
   }
 }

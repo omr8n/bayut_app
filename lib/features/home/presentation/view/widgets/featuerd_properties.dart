@@ -30,11 +30,11 @@ class FeaturedProperties extends StatelessWidget {
                   ),
                 );
               },
-              onFavorite: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('تمت الإضافة للمفضلة')),
-                );
-              },
+              // onFavorite: () {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(content: Text('تمت الإضافة للمفضلة')),
+              //   );
+              // },
             ),
           );
         },

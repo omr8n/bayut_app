@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
+
 import 'filter_form.dart';
 
 class FilterBottomSheet extends StatelessWidget {

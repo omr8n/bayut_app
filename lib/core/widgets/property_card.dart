@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/property_model.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
+
 import '../utils/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -15,7 +17,7 @@ class PropertyCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onFavorite;
   final VoidCallback? onTap;
-  final Property property;
+  final PropertyEntity property;
 
   Widget _buildDetail(IconData icon, String value) {
     return Row(
@@ -73,7 +75,7 @@ class PropertyCard extends StatelessWidget {
                       ? Image.network(
                           property.images.first,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _errorImage(),
+                          errorBuilder: (_, _, _) => _errorImage(),
                         )
                       : _errorImage(),
                 ),
@@ -81,7 +83,10 @@ class PropertyCard extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: property.listingType == ListingType.sale
                           ? AppColors.forSale
@@ -90,7 +95,11 @@ class PropertyCard extends StatelessWidget {
                     ),
                     child: Text(
                       property.listingType.arabicName,
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -104,7 +113,11 @@ class PropertyCard extends StatelessWidget {
                         color: Color(0xFFFFD700),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.stars, color: Colors.white, size: 16),
+                      child: const Icon(
+                        Icons.stars,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
                   ),
               ],
@@ -140,14 +153,21 @@ class PropertyCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 12, color: AppColors.textSecondary),
+                      const Icon(
+                        Icons.location_on,
+                        size: 12,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 2),
                       Expanded(
                         child: Text(
                           '${property.governorate} - ${property.city}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                     ],
@@ -161,10 +181,19 @@ class PropertyCard extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       if (property.bedrooms != null && property.bedrooms! > 0)
-                        _buildDetail(Icons.bed_outlined, '${property.bedrooms}'),
+                        _buildDetail(
+                          Icons.bed_outlined,
+                          '${property.bedrooms}',
+                        ),
                       if (property.bathrooms != null && property.bathrooms! > 0)
-                        _buildDetail(Icons.bathroom_outlined, '${property.bathrooms}'),
-                      _buildDetail(Icons.square_foot_outlined, '${property.area.toInt()} م²'),
+                        _buildDetail(
+                          Icons.bathroom_outlined,
+                          '${property.bathrooms}',
+                        ),
+                      _buildDetail(
+                        Icons.square_foot_outlined,
+                        '${property.area.toInt()} م²',
+                      ),
                     ],
                   ),
                 ],

@@ -121,7 +121,7 @@ class BasicInfoCard extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.amber.shade200),
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.amber.withOpacity(0.05),
+                color: Colors.amber.withValues(alpha: 0.05),
               ),
               child: SwitchListTile(
                 title: const Text(
@@ -155,7 +155,7 @@ class BasicInfoCard extends StatelessWidget {
     Function(String?) onChanged,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,

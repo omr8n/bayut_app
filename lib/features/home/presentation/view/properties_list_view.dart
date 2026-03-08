@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 // شاشة قائمة العقارات
 class PropertiesListScreen extends StatelessWidget {
   final String title;
-  final List<Property> properties;
+  final List<PropertyEntity> properties;
 
   const PropertiesListScreen({
     super.key,
@@ -37,11 +38,11 @@ class PropertiesListScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  onFavorite: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تمت الإضافة للمفضلة')),
-                    );
-                  },
+                  // onFavorite: () {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(content: Text('تمت الإضافة للمفضلة')),
+                  //   );
+                  // },
                 );
               },
             ),

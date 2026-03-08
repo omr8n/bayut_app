@@ -11,7 +11,7 @@ class RecentPropertiesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // تصفية العقارات لعرض غير المميزة فقط في هذا القسم
-    final regularProperties = MockData.properties.where((p) => !p.isFeatured).toList();
+    // final regularProperties = MockData.properties.where((p) => !p.isFeatured).toList();
 
     return SliverList(
       delegate: SliverChildListDelegate([
@@ -23,16 +23,17 @@ class RecentPropertiesSection extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => PropertiesListScreen(
                   title: AppStrings.recentProperties,
-                  properties: MockData.properties, // هنا نعرض الكل عند الضغط على عرض الكل
+                  properties: MockData
+                      .properties, // هنا نعرض الكل عند الضغط على عرض الكل
                 ),
               ),
             );
           },
         ),
-        
+
         // عرض العقارات العادية فقط
         // ملاحظة: سنمرر القائمة المفلترة للودجت RecentProperties
-        const RecentProperties(), 
+        const RecentProperties(),
       ]),
     );
   }

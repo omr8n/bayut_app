@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/widgets/search_bar_widget.dart';
-import 'package:test_graduation/core/models/property_model.dart';
+
 import 'package:test_graduation/features/search/presentation/veiw/widgets/filter_bottom_sheet.dart';
 
 class SearchHeader extends StatelessWidget {
