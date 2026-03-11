@@ -1,13 +1,11 @@
+import 'dart:math';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:test_graduation/core/repos/media_repo/media_repo.dart';
-
-import 'package:test_graduation/features/my_properties/domain/repos/add_property_repo.dart';
 import 'package:uuid/uuid.dart';
-
+import '../../../../core/repos/media_repo/media_repo.dart';
 import '../../domain/entities/add_property_params.dart';
 import '../../domain/entities/property_entity.dart';
-
+import '../../domain/repos/add_property_repo.dart';
 import 'add_property_state.dart';
 
 class AddPropertyCubit extends Cubit<AddPropertyState> {
@@ -17,125 +15,141 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
   AddPropertyCubit({required this.mediaRepo, required this.addPropertiesRepo})
     : super(AddPropertyInitial());
 
-  /// وظيفة لإضافة عقار جديد
+  final Map<int, bool> _activeUploads = {};
+
   Future<void> submitProperty(AddPropertyParams params) async {
-    if (params.mediaFiles.isEmpty) {
-      emit(
-        const AddPropertyFailure("يرجى إضافة صور أو فيديوهات للعقار أولاً."),
-      );
-      return;
-    }
+    final int notificationId = Random().nextInt(100000);
+    _activeUploads[notificationId] = true;
 
-    emit(const AddPropertyLoading(message: "جاري البدء في رفع الوسائط..."));
+    emit(AddPropertyLoading(message: "بدأت عملية الرفع لـ ${params.title}..."));
 
-    // 1. رفع الوسائط الجديدة
-    final uploadResult = await _uploadMediaFiles(params.mediaFiles);
-    if (uploadResult.error != null) {
-      emit(AddPropertyFailure(uploadResult.error!));
-      return;
-    }
-
-    // 2. حفظ البيانات في Firestore
-    emit(const AddPropertyLoading(message: "جاري حفظ بيانات العقار..."));
-
-    final finalProperty = _mapParamsToEntity(
-      params: params,
-      mediaUrls: uploadResult.urls,
-      id: const Uuid().v4(),
-      createdAt: DateTime.now(),
+    _showProgressNotification(
+      notificationId,
+      params.title,
+      0,
+      params.mediaFiles.length,
     );
-
-    final result = await addPropertiesRepo.addProperty(finalProperty);
-
-    result.fold(
-      (failure) => emit(AddPropertyFailure(failure.message)),
-      (_) => emit(AddPropertySuccess()),
-    );
+    _processPropertyUpload(notificationId, params);
   }
 
-  /// وظيفة لتعديل عقار موجود
   Future<void> editProperty({
     required AddPropertyParams params,
     required PropertyEntity originalProperty,
   }) async {
-    emit(const AddPropertyLoading(message: "جاري تحديث بيانات العقار..."));
+    final int notificationId = Random().nextInt(100000);
+    _activeUploads[notificationId] = true;
 
-    List<String> finalMediaUrls = List.from(originalProperty.media);
+    emit(AddPropertyLoading(message: "جاري تحديث عقار ${params.title}..."));
 
-    // 1. رفع الوسائط الجديدة إذا وجدت
-    if (params.mediaFiles.isNotEmpty) {
-      emit(const AddPropertyLoading(message: "جاري رفع الوسائط الجديدة..."));
-      final uploadResult = await _uploadMediaFiles(params.mediaFiles);
+    _showProgressNotification(
+      notificationId,
+      params.title,
+      0,
+      params.mediaFiles.length,
+    );
+    _processPropertyUpload(
+      notificationId,
+      params,
+      existingId: originalProperty.id,
+    );
+  }
 
-      if (uploadResult.error != null) {
-        emit(AddPropertyFailure(uploadResult.error!));
-        return;
+  Future<void> _processPropertyUpload(
+    int id,
+    AddPropertyParams params, {
+    String? existingId,
+  }) async {
+    List<String> uploadedUrls = [];
+    bool hasError = false;
+    String errorMsg = "";
+
+    try {
+      for (int i = 0; i < params.mediaFiles.length; i++) {
+        _showProgressNotification(
+          id,
+          params.title,
+          i + 1,
+          params.mediaFiles.length,
+        );
+        final result = await mediaRepo.uploadMedia(params.mediaFiles[i]);
+
+        result.fold((failure) {
+          hasError = true;
+          errorMsg = failure.message;
+        }, (url) => uploadedUrls.add(url));
+        if (hasError) break;
       }
-      finalMediaUrls.addAll(uploadResult.urls);
+
+      if (hasError) {
+        _showErrorNotification(id, params.title, errorMsg);
+      } else {
+        final finalProperty = _mapParamsToEntity(
+          params,
+          uploadedUrls,
+          id: existingId,
+        );
+        final result = await addPropertiesRepo.addProperty(finalProperty);
+
+        result.fold(
+          (failure) =>
+              _showErrorNotification(id, params.title, failure.message),
+          (_) => _showSuccessNotification(id, params.title),
+        );
+      }
+    } catch (e) {
+      _showErrorNotification(id, params.title, "حدث خطأ غير متوقع");
+    } finally {
+      _activeUploads.remove(id);
     }
+  }
 
-    // 2. تحديث البيانات في Firestore
-    emit(const AddPropertyLoading(message: "جاري حفظ التعديلات..."));
-
-    final updatedProperty = _mapParamsToEntity(
-      params: params,
-      mediaUrls: finalMediaUrls,
-      id: originalProperty.id,
-      createdAt: originalProperty.createdAt,
-      views: originalProperty.views,
-    );
-
-    final result = await addPropertiesRepo.addProperty(updatedProperty);
-
-    result.fold(
-      (failure) => emit(AddPropertyFailure(failure.message)),
-      (_) => emit(AddPropertySuccess()),
+  void _showProgressNotification(int id, String title, int current, int total) {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'upload_channel',
+        title: 'جاري رفع عقار: $title',
+        body: 'رفع الملف $current من $total...',
+        category: NotificationCategory.Progress,
+        notificationLayout: NotificationLayout.ProgressBar,
+        // 🔥 التصحيح: يجب أن تكون القيمة double وليس int
+        progress: total > 0 ? (current / total) * 100 : 0,
+        locked: true,
+      ),
     );
   }
 
-  // --- مساعدات (Helpers) لمنع تكرار الكود ولضمان النظافة ---
-
-  /// وظيفة داخلية لرفع قائمة من الملفات
-  Future<({List<String> urls, String? error})> _uploadMediaFiles(
-    List<XFile> mediaFiles,
-  ) async {
-    List<String> urls = [];
-    String? errorMsg;
-
-    for (int i = 0; i < mediaFiles.length; i++) {
-      emit(
-        AddPropertyLoading(
-          message: "جاري رفع الملف (${i + 1} من ${mediaFiles.length})...",
-        ),
-      );
-
-      final result = await mediaRepo.uploadMedia(mediaFiles[i]);
-
-      result.fold(
-        (failure) => errorMsg = failure.message,
-        (url) => urls.add(url),
-      );
-
-      if (errorMsg != null) break;
-    }
-
-    if (errorMsg != null) {
-      return (urls: <String>[], error: errorMsg);
-    }
-
-    return (urls: urls, error: null);
+  void _showSuccessNotification(int id, String title) {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'upload_channel',
+        title: 'تم الرفع بنجاح! ✅',
+        body: 'تمت العملية لـ ($title) بنجاح.',
+        notificationLayout: NotificationLayout.Default,
+      ),
+    );
   }
 
-  /// تحويل الـ Params إلى Entity نهائي
-  PropertyEntity _mapParamsToEntity({
-    required AddPropertyParams params,
-    required List<String> mediaUrls,
-    required String id,
-    required DateTime createdAt,
-    int views = 0,
+  void _showErrorNotification(int id, String title, String error) {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'upload_channel',
+        title: 'فشل الرفع! ❌',
+        body: 'خطأ في ($title): $error',
+        notificationLayout: NotificationLayout.Default,
+      ),
+    );
+  }
+
+  PropertyEntity _mapParamsToEntity(
+    AddPropertyParams params,
+    List<String> urls, {
+    String? id,
   }) {
     return PropertyEntity(
-      id: id,
+      id: id ?? const Uuid().v4(),
       title: params.title,
       description: params.description,
       type: params.type,
@@ -143,11 +157,9 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
       price: params.price,
       currency: params.currency,
       area: params.area,
-      createdAt: createdAt,
-      views: views,
-      isFeatured: params.isFeatured,
-      media: mediaUrls,
-      images: mediaUrls,
+      createdAt: DateTime.now(),
+      media: urls,
+      images: urls,
       facilities: params.facilities,
       governorate: params.governorate,
       city: params.city,
@@ -192,9 +204,5 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
       workshopType: params.workshopType,
       workshopHeight: params.workshopHeight,
     );
-  }
-
-  void reset() {
-    emit(AddPropertyInitial());
   }
 }

@@ -1,22 +1,43 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
+import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'firebase_options.dart';
 import 'package:test_graduation/features/root/presentation/views/root_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // تهيئة Firebase
+  // تهيئة الستارة (Notifications Channel)
+  AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'upload_channel',
+      channelName: 'عمليات الرفع',
+      channelDescription: 'إشعارات تقدم رفع العقارات',
+      defaultColor: AppColors.primary,
+      ledColor: Colors.white,
+      importance: NotificationImportance.High,
+      channelShowBadge: false,
+      onlyAlertOnce: true,
+      locked: true,
+    ),
+  ]);
+
+  // طلب إذن عرض الإشعارات من المستخدم
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // تهيئة حقن التبعيات (GetIt) لربط الـ Repos والـ Services والـ Cubits
   setupServiceLocator();
-
-  // تثبيت وضع الشاشة للأعلى فقط
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(const BayutApp());
@@ -27,73 +48,38 @@ class BayutApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'بيوت',
-      debugShowCheckedModeBanner: false,
-
-      // دعم اللغة العربية والاتجاه من اليمين لليسار (RTL)
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AddPropertyCubit>(
+          create: (context) => getIt.get<AddPropertyCubit>(),
+        ),
+        BlocProvider<PropertyCubit>(
+          create: (context) => getIt.get<PropertyCubit>()..fetchProperties(),
+        ),
       ],
-      supportedLocales: const [
-        Locale('ar', 'AE'), // العربية
-        Locale('en', 'US'), // الإنجليزية
-      ],
-      locale: const Locale('ar', 'AE'),
-
-      theme: ThemeData(
-        primaryColor: AppColors.primary,
-        scaffoldBackgroundColor: AppColors.background,
-        fontFamily: 'Dubai',
-
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-        ),
-
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(color: AppColors.textPrimary),
-          titleTextStyle: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+      child: MaterialApp(
+        title: 'بيوت',
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('ar', 'AE'), Locale('en', 'US')],
+        locale: const Locale('ar', 'AE'),
+        theme: ThemeData(
+          primaryColor: AppColors.primary,
+          scaffoldBackgroundColor: AppColors.background,
+          fontFamily: 'Dubai',
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.primary,
+            primary: AppColors.primary,
+            secondary: AppColors.secondary,
           ),
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          useMaterial3: true,
         ),
-
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 2,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.error),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        ),
-
-        useMaterial3: true,
+        home: const RootView(),
       ),
-
-      home: const RootView(),
     );
   }
 }

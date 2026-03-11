@@ -1,6 +1,9 @@
 import 'package:get_it/get_it.dart';
+import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/repos/media_repo/media_repo.dart';
 import 'package:test_graduation/core/repos/media_repo/media_repo_impl.dart';
+import 'package:test_graduation/core/repos/products_repo/products_repo.dart';
+import 'package:test_graduation/core/repos/products_repo/products_repo_impl.dart';
 import 'package:test_graduation/core/services/cloudinary_storage_service.dart';
 import 'package:test_graduation/core/services/data_service.dart';
 import 'package:test_graduation/core/services/firestore_service.dart';
@@ -17,18 +20,18 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<DatabaseService>(() => FireStoreService());
 
   // Repositories
-  getIt.registerLazySingleton<MediaRepo>(
-    () => MediaRepoImpl(getIt<StorageService>()),
-  );
-  getIt.registerLazySingleton<AddPropertyRepo>(
-    () => AddPropertyRepoImpl(getIt<DatabaseService>()),
-  );
+  getIt.registerLazySingleton<MediaRepo>(() => MediaRepoImpl(getIt<StorageService>()));
+  getIt.registerLazySingleton<AddPropertyRepo>(() => AddPropertyRepoImpl(getIt<DatabaseService>()));
+  getIt.registerLazySingleton<ProductsRepo>(() => ProductsRepoImpl(getIt<DatabaseService>()));
 
   // Cubits
-  getIt.registerFactory(
+  getIt.registerLazySingleton<AddPropertyCubit>(
     () => AddPropertyCubit(
       mediaRepo: getIt<MediaRepo>(),
       addPropertiesRepo: getIt<AddPropertyRepo>(),
     ),
+  );
+  getIt.registerFactory<PropertyCubit>(
+    () => PropertyCubit(getIt<ProductsRepo>()),
   );
 }

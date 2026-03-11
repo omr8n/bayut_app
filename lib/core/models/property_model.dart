@@ -196,6 +196,7 @@ class PropertyModel extends PropertyEntity {
       workshopHeight: entity.workshopHeight,
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -256,5 +257,67 @@ class PropertyModel extends PropertyEntity {
       'workshopType': workshopType,
       'workshopHeight': workshopHeight,
     };
+  }
+
+  PropertyEntity toEntity() {
+    return PropertyEntity(
+      id: id,
+      title: title,
+      description: description,
+      type: type,
+      listingType: listingType,
+      price: price,
+      currency: currency,
+      area: area,
+      createdAt: createdAt,
+      views: views,
+      isFeatured: isFeatured,
+      images: images,
+      media: media,
+      facilities: facilities,
+      governorate: governorate,
+      city: city,
+      location: location,
+      phone: phone,
+      whatsapp: whatsapp,
+      sellerName: sellerName,
+      sellerImage: sellerImage,
+      sellerJoinDate: sellerJoinDate,
+      sellerRating: sellerRating,
+      buildingAge: buildingAge,
+      finishType: finishType,
+      ownershipType: ownershipType,
+      direction: direction,
+      isLicensed: isLicensed,
+      hasInstallment: hasInstallment,
+      downPayment: downPayment,
+      monthlyInstallment: monthlyInstallment,
+      installmentDuration: installmentDuration,
+      installmentNotes: installmentNotes,
+      totalRooms: totalRooms,
+      bedrooms: bedrooms,
+      bathrooms: bathrooms,
+      floorNumber: floorNumber,
+      totalFloors: totalFloors,
+      heatingType: heatingType,
+      landType: landType,
+      frontagesCount: frontagesCount,
+      streetWidth: streetWidth,
+      farmType: farmType,
+      irrigationType: irrigationType,
+      crops: crops,
+      frontageWidth: frontageWidth,
+      shopLocation: shopLocation,
+      commercialActivity: commercialActivity,
+      poolType: poolType,
+      poolSize: poolSize,
+      examinationRooms: examinationRooms,
+      medicalEquipment: medicalEquipment,
+      warehouseHeight: warehouseHeight,
+      warehouseFloorType: warehouseFloorType,
+      hallCapacity: hallCapacity,
+      workshopType: workshopType,
+      workshopHeight: workshopHeight,
+    );
   }
 }

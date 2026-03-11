@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-
 import '../utils/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -25,9 +24,12 @@ class PropertyCard extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: AppColors.textSecondary),
         const SizedBox(width: 2),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+          ),
         ),
       ],
     );
@@ -49,13 +51,13 @@ class PropertyCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: Colors.black.withOpacity(0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -63,137 +65,103 @@ class PropertyCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
+          mainAxisSize: MainAxisSize.min, 
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // صورة العقار
-            Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: property.images.isNotEmpty
-                      ? Image.network(
-                          property.images.first,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _errorImage(),
-                        )
-                      : _errorImage(),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: property.listingType == ListingType.sale
-                          ? AppColors.forSale
-                          : AppColors.forRent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      property.listingType.arabicName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Stack(
+                children: [
+                  SizedBox.expand(
+                    child: property.images.isNotEmpty
+                        ? Image.network(
+                            property.images.first,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => _errorImage(),
+                          )
+                        : _errorImage(),
                   ),
-                ),
-                if (property.isFeatured)
                   Positioned(
                     top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFFD700),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.stars,
-                        color: Colors.white,
-                        size: 16,
+                    right: 8,
+                    child: FittedBox(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: property.listingType == ListingType.sale
+                              ? AppColors.forSale
+                              : AppColors.forRent,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          property.listingType.arabicName,
+                          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),
-              ],
+                  if (property.isFeatured)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(color: Color(0xFFFFD700), shape: BoxShape.circle),
+                        child: const Icon(Icons.stars, color: Colors.white, size: 16),
+                      ),
+                    ),
+                ],
+              ),
             ),
 
-            // المحتوى
+            // --- المحتوى مع ترشيق المسافات ---
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8), // 🔥 تقليل المسافات العمودية
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${numberFormat.format(property.price)} ${property.currency}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '${numberFormat.format(property.price)} ${property.currency}',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1), // 🔥 ترشيق
                   Text(
                     property.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2), // 🔥 ترشيق
                   Row(
                     children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 12,
-                        color: AppColors.textSecondary,
-                      ),
+                      const Icon(Icons.location_on, size: 12, color: AppColors.textSecondary),
                       const SizedBox(width: 2),
                       Expanded(
                         child: Text(
                           '${property.governorate} - ${property.city}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
+                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6), // 🔥 ترشيق
                   const Divider(height: 1),
-                  const SizedBox(height: 8),
-                  // تفاصيل سريعة - استخدام Wrap بدلاً من Row لمنع الـ Overflow
+                  const SizedBox(height: 6), // 🔥 ترشيق
                   Wrap(
-                    spacing: 8,
+                    spacing: 12,
                     runSpacing: 4,
                     children: [
                       if (property.bedrooms != null && property.bedrooms! > 0)
-                        _buildDetail(
-                          Icons.bed_outlined,
-                          '${property.bedrooms}',
-                        ),
+                        _buildDetail(Icons.bed_outlined, '${property.bedrooms}'),
                       if (property.bathrooms != null && property.bathrooms! > 0)
-                        _buildDetail(
-                          Icons.bathroom_outlined,
-                          '${property.bathrooms}',
-                        ),
-                      _buildDetail(
-                        Icons.square_foot_outlined,
-                        '${property.area.toInt()} م²',
-                      ),
+                        _buildDetail(Icons.bathroom_outlined, '${property.bathrooms}'),
+                      _buildDetail(Icons.square_foot_outlined, '${property.area.toInt()} م²'),
                     ],
                   ),
                 ],

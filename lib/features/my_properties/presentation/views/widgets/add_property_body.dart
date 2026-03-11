@@ -68,7 +68,6 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   final TextEditingController _workshopHeightController =
       TextEditingController();
 
-  // FocusNodes
   final FocusNode _priceNode = FocusNode();
   final FocusNode _ageNode = FocusNode();
   final FocusNode _areaNode = FocusNode();
@@ -363,6 +362,14 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     } else {
       cubit.submitProperty(params);
     }
+
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('بدأت عملية الرفع في الخلفية، تابع الستارة.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override

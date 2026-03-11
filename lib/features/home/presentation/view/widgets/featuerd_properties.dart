@@ -1,25 +1,30 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/data/mock_data.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 class FeaturedProperties extends StatelessWidget {
-  const FeaturedProperties({super.key});
+  const FeaturedProperties({super.key, required this.properties});
+  final List<PropertyEntity> properties;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        scrollDirection: Axis.horizontal,
-        itemCount: MockData.featuredProperties.length,
-        itemBuilder: (context, index) {
-          final property = MockData.featuredProperties[index];
-          return Container(
-            width: 280,
-            margin: const EdgeInsets.only(right: 12),
-            child: PropertyCard(
+    if (properties.isEmpty) return const SizedBox.shrink();
+
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 320, // 🔥 زيادة الارتفاع لضمان عدم حدوث Overflow في الكروت
+        enlargeCenterPage: true,
+        disableCenter: true,
+        viewportFraction: .8,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 5),
+      ),
+      items: properties.map((property) {
+        return Builder(
+          builder: (BuildContext context) {
+            return PropertyCard(
               property: property,
               onTap: () {
                 Navigator.push(
@@ -30,15 +35,10 @@ class FeaturedProperties extends StatelessWidget {
                   ),
                 );
               },
-              // onFavorite: () {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     const SnackBar(content: Text('تمت الإضافة للمفضلة')),
-              //   );
-              // },
-            ),
-          );
-        },
-      ),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 }
