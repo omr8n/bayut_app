@@ -17,26 +17,24 @@ class RecentProperties extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final property = properties[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: PropertyCard(
-                property: property,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PropertyDetailsScreen(property: property),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-          childCount: properties.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final property = properties[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: PropertyCard(
+              property: property,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PropertyDetailsScreen(property: property),
+                  ),
+                );
+              },
+            ),
+          );
+        }, childCount: properties.length),
       ),
     );
   }

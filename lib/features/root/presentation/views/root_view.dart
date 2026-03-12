@@ -37,6 +37,7 @@ class _RootViewState extends State<RootView> {
       children: [
         Scaffold(
           body: PageView(
+            physics: const NeverScrollableScrollPhysics(),
             controller: controller,
             onPageChanged: (index) {
               setState(() => currentView = index);
@@ -49,8 +50,8 @@ class _RootViewState extends State<RootView> {
               setState(() => currentView = index);
               controller.animateToPage(
                 currentView,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.easeInOutCubic,
               );
             },
           ),

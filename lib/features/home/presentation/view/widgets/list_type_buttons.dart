@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/data/mock_data.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/features/home/presentation/view/properties_list_view.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/item_type_button.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 class ListTypeButtons extends StatelessWidget {
-  const ListTypeButtons({super.key});
+  // 🔥 استقبال البيانات الجاهزة من الـ BlocBuilder
+  const ListTypeButtons({
+    super.key,
+    required this.saleProperties,
+    required this.rentProperties,
+  });
+
+  final List<PropertyEntity> saleProperties;
+  final List<PropertyEntity> rentProperties;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +34,7 @@ class ListTypeButtons extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => PropertiesListScreen(
                         title: AppStrings.forSale,
-                        properties: MockData.propertiesForSale,
+                        properties: saleProperties, // 🔥 تمرير البيانات الحقيقية
                       ),
                     ),
                   );
@@ -45,7 +53,7 @@ class ListTypeButtons extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => PropertiesListScreen(
                         title: AppStrings.forRent,
-                        properties: MockData.propertiesForRent,
+                        properties: rentProperties, // 🔥 تمرير البيانات الحقيقية
                       ),
                     ),
                   );

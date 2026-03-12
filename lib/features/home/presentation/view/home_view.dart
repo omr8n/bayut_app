@@ -6,6 +6,7 @@ import 'package:test_graduation/core/widgets/search_bar_widget.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/featuerd_properties_section.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/home_header.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/list_type_buttons.dart';
+import 'package:test_graduation/features/home/presentation/view/widgets/list_type_buttons_bloc_builder.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/recent_properties_section.dart';
 import '../../../search/presentation/veiw/search_screen.dart';
 
@@ -50,7 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onFilterTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const SearchScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const SearchScreen(),
+                          ),
                         );
                       },
                     ),
@@ -58,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              const ListTypeButtons(),
+              const ListTypeButtonsBlocBuilder(),
 
               // عقارات مميزة (featured)
               const FeatuerdPropertiesSection(),

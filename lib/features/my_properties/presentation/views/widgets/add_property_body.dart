@@ -363,7 +363,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
       cubit.submitProperty(params);
     }
 
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('بدأت عملية الرفع في الخلفية، تابع الستارة.'),
