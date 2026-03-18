@@ -37,7 +37,7 @@ class _ImageSectionState extends State<ImageSection> {
           height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            reverse: true, // لتتناسب مع اللغة العربية
+            // reverse: true, // لتتناسب مع اللغة العربية
             itemCount: widget.mediaFiles.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {

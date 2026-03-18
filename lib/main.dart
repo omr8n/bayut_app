@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
+import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'firebase_options.dart';
-import 'package:test_graduation/features/root/presentation/views/root_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,9 +57,10 @@ class BayutApp extends StatelessWidget {
           create: (context) => getIt.get<PropertyCubit>()..fetchProperties(),
         ),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'بيوت',
         debugShowCheckedModeBanner: false,
+        routerConfig: RouterGenerationConfig.goRouter,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
@@ -78,7 +79,6 @@ class BayutApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const RootView(),
       ),
     );
   }

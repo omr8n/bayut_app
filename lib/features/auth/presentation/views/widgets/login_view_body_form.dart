@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/core/widgets/custom_login_register.dart';
@@ -152,14 +154,15 @@ class _LoginViewBodyFormState extends State<LoginViewBodyForm> {
   }
 
   void _login() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم تسجيل الدخول بنجاح!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
-      Navigator.pop(context);
-    }
+    GoRouter.of(context).pushReplacement(AppRoutes.mainScreen);
+    // if (_formKey.currentState!.validate()) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('تم تسجيل الدخول بنجاح!'),
+    //       backgroundColor: AppColors.success,
+    //     ),
+    //   );
+    //   Navigator.pop(context);
+    // }
   }
 }

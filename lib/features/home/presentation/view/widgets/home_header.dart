@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/features/auth/presentation/views/login_view.dart';
-// import 'package:test_graduation/featuers/home/presentation/view/login_screen.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -11,63 +9,73 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // 🔥 تصميم شعار Bayut الاحترافي (برمجياً)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00AD98), // لون بيوت الأخضر المميز
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.home_work_rounded,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     Text(
-                      'مرحباً بك في',
+                      'BAYUT',
                       style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textSecondary,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                        color: Color(0xFF00AD98),
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Text(
-                      AppStrings.appName,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                      'UAE Real Estate',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey,
+                        letterSpacing: 1,
                       ),
                     ),
                   ],
                 ),
-                // أيقونة الملف الشخصي
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginView(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              AppStrings.findYourDream,
-              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+
+            // أيقونة الملف الشخصي
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginView()),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: const Icon(
+                  Icons.person_outline_rounded,
+                  color: Colors.black87,
+                  size: 26,
+                ),
+              ),
             ),
           ],
         ),

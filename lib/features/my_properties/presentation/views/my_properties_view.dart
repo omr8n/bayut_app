@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
-
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/add_property_screen.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/empty_bag_properties.dart';
 
 class MyPropertiesScreen extends StatefulWidget {
   const MyPropertiesScreen({super.key});
@@ -19,6 +19,10 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
   late TabController _tabController;
   List<PropertyEntity> _activeProperties = [];
   final List<PropertyEntity> _reservedProperties = [];
+
+  // 🔥 هذا المتغير هو المتحكم (حالياً يدوي لكي تجرب)
+  // غيره إلى false لترى صفحة الـ Empty Bag
+  final bool _isLoggedIn = true;
 
   @override
   void initState() {
@@ -35,11 +39,22 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
 
   @override
   Widget build(BuildContext context) {
+    // 🔥 إذا كان غير مسجل، نعرض الـ Empty Bag فوراً
+    if (!_isLoggedIn) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: EmptyBagProperties(),
+      );
+    }
+
+    // إذا كان مسجل، نعرض الصفحة الأصلية
     return Scaffold(
       backgroundColor: const Color(0xFFF3F5F9),
       appBar: AppBar(
         title: const Text('عقاراتي'),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
@@ -99,7 +114,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -119,7 +134,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen>
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(
+                    errorBuilder: (_, __, ___) => Container(
                       width: 100,
                       height: 100,
                       color: Colors.grey.shade200,
