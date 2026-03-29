@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
+import 'package:test_graduation/core/data/mock_data.dart';
 import 'featuerd_properties.dart';
 
 class FeaturedPropertiesBlocBuilder extends StatelessWidget {
@@ -12,23 +14,29 @@ class FeaturedPropertiesBlocBuilder extends StatelessWidget {
       builder: (context, state) {
         if (state is PropertySuccess) {
           if (state.featuredProperties.isEmpty) {
-            return const SizedBox.shrink(); // لا تظهر شيئاً إذا كانت القائمة فارغة
+            return const SliverToBoxAdapter(child: SizedBox.shrink());
           }
-          // 🔥 عرض السلايدر الأفقي بالبيانات المجلوبة من الكيوبيت
-          return FeaturedProperties(properties: state.featuredProperties);
-        } else if (state is PropertyLoading) {
-          // إظهار شكل تحميل أنيق يتناسب مع حجم السلايدر
-          return const SizedBox(
-            height: 300,
-            child: Center(child: CircularProgressIndicator()),
+          return SliverToBoxAdapter(
+            child: FeaturedProperties(properties: state.featuredProperties),
           );
         } else if (state is PropertyFailure) {
-          return SizedBox(
-            height: 300,
-            child: Center(child: Text(state.errMessage)),
+          return SliverToBoxAdapter(
+            child: SizedBox(
+              height: 300,
+              child: Center(child: Text(state.errMessage)),
+            ),
+          );
+        } else {
+          // 🔥 التصحيح: استخدام Skeletonizer (العادي) لأن الأب هو SliverToBoxAdapter (يتوقع Box)
+          return SliverToBoxAdapter(
+            child: Skeletonizer(
+              enabled: true,
+              child: FeaturedProperties(
+                properties: MockData.properties.take(2).toList(),
+              ),
+            ),
           );
         }
-        return const SizedBox.shrink();
       },
     );
   }

@@ -25,20 +25,16 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      // التعديل الجوهري: نطلب الـ Cubit الجاهز من الـ Service Locator
-      create: (context) => getIt.get<AddPropertyCubit>(),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF3F5F9),
-        appBar: AppBar(
-          title: Text(isEdit ? 'تعديل العقار' : 'إضافة عقار جديد'),
-          centerTitle: true,
-        ),
-        body: AddPropertyViewBodyBlocBuilder(
-          child: AddPropertyBody(
-            isEdit: isEdit,
-            propertyEntity: widget.propertyEntity,
-          ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF3F5F9),
+      appBar: AppBar(
+        title: Text(isEdit ? 'تعديل العقار' : 'إضافة عقار جديد'),
+        centerTitle: true,
+      ),
+      body: AddPropertyViewBodyBlocBuilder(
+        child: AddPropertyBody(
+          isEdit: isEdit,
+          propertyEntity: widget.propertyEntity,
         ),
       ),
     );

@@ -44,7 +44,8 @@ dependencies:
   video_player:
   chewie:
   carousel_slider:
-
+  flutter_secure_storage:
+  flutter_screenutil: ^5.9.3
 dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/features/search/presentation/veiw/widgets/search_header.dart';
@@ -30,7 +31,6 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  // 🔥 وظيفة مركزية لتحديث الفلاتر في الكيوبيت
   void _triggerFilter(BuildContext context) {
     context.read<PropertyCubit>().applyFilters(
       query: _searchController.text,
@@ -72,44 +72,54 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ],
         ),
-        body: CustomScrollView(
-          slivers: [
-            // 1. قسم رأس البحث والفلاتر
-            SliverToBoxAdapter(
-              child: Builder(
-                builder: (context) => SearchHeader(
-                  controller: _searchController,
-                  onChanged: (_) => _triggerFilter(context),
-                  onApply: ({
-                    PropertyType? propertyType, ListingType? listingType,
-                    minPrice, maxPrice, minArea, maxArea, governorate,
-                    finishType, ownershipType, direction, heatingType, landType, farmType, irrigationType, poolType, minRooms, minBedrooms, minBathrooms, floorNumber, isLicensed, hasInstallment,
-                  }) {
-                    setState(() {
-                      _selectedPropertyType = propertyType;
-                      _selectedListingType = listingType;
-                      _minPrice = minPrice;
-                      _maxPrice = maxPrice;
-                      _minArea = minArea;
-                      _maxArea = maxArea;
-                      _governorate = governorate;
-                    });
-                    _triggerFilter(context);
-                  },
-                  selectedPropertyType: _selectedPropertyType,
-                  selectedListingType: _selectedListingType,
-                  minPrice: _minPrice, maxPrice: _maxPrice,
-                  minArea: _minArea, maxArea: _maxArea,
-                  governorate: _governorate,
-                ),
+        body: Builder(
+          builder: (context) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                // 🔥 إعادة جلب البيانات
+                await context.read<PropertyCubit>().fetchProperties();
+                _triggerFilter(context);
+                await Future.delayed(const Duration(milliseconds: 800));
+              },
+              color: AppColors.primary,
+              backgroundColor: Colors.white,
+              // 🎯 الحل الجذري: إجبار السكرول على العمل دائماً حتى مع الـ Skeleton
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(), 
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SearchHeader(
+                      controller: _searchController,
+                      onChanged: (_) => _triggerFilter(context),
+                      onApply: ({
+                        PropertyType? propertyType, ListingType? listingType,
+                        minPrice, maxPrice, minArea, maxArea, governorate,
+                        finishType, ownershipType, direction, heatingType, landType, farmType, irrigationType, poolType, minRooms, minBedrooms, minBathrooms, floorNumber, isLicensed, hasInstallment,
+                      }) {
+                        setState(() {
+                          _selectedPropertyType = propertyType;
+                          _selectedListingType = listingType;
+                          _minPrice = minPrice;
+                          _maxPrice = maxPrice;
+                          _minArea = minArea;
+                          _maxArea = maxArea;
+                          _governorate = governorate;
+                        });
+                        _triggerFilter(context);
+                      },
+                      selectedPropertyType: _selectedPropertyType,
+                      selectedListingType: _selectedListingType,
+                      minPrice: _minPrice, maxPrice: _maxPrice,
+                      minArea: _minArea, maxArea: _maxArea,
+                      governorate: _governorate,
+                    ),
+                  ),
+                  const SearchScreenBlocBuilder(),
+                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                ],
               ),
-            ),
-
-            // 2. قسم النتائج (المنفصل تماماً والاحترافي)
-            const SearchScreenBlocBuilder(),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          ],
+            );
+          }
         ),
       ),
     );

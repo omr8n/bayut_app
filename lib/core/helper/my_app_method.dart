@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/utils/app_images.dart';
+import 'package:test_graduation/features/profile/presentation/views/widgets/add_rating_dialog.dart';
 
 // import '../widgets/subtitle_text.dart';
 // import '../widgets/title_text.dart';
 
 class MyAppMethods {
+  static void showAddRatingDialog(
+    BuildContext context, {
+    required String sellerId,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AddRatingDialog(sellerId: sellerId),
+    );
+  }
+
   static Future<void> showErrorORWarningDialog({
     required BuildContext context,
     required String subtitle,

@@ -29,6 +29,10 @@ class Prefs {
     return _instance.setInt(key, value);
   }
 
+  static Object remove(String key) {
+    return _instance.remove(key);
+  }
+
   static Object getint(String key) {
     return _instance.getInt(key) ?? "";
   }

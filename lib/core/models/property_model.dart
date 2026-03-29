@@ -1,11 +1,3 @@
-// // هذا الملف أصبح الآن جسراً لربط الملفات القديمة بالهيكلية الجديدة (Clean Architecture)
-// export '../../features/my_properties/domain/entities/property_entity.dart';
-// export '../enums/property_enums.dart';
-// export 'property_model_impl.dart';
-
-// // تعريف اسم مستعار لضمان عدم حدوث أخطاء في الملفات التي تستخدم اسم Property
-// import '../../features/my_properties/domain/entities/property_entity.dart';
-// typedef Property = PropertyEntity;
 import '../../features/my_properties/domain/entities/property_entity.dart';
 import '../enums/property_enums.dart';
 
@@ -22,6 +14,7 @@ class PropertyModel extends PropertyEntity {
     required super.createdAt,
     super.views,
     super.isFeatured,
+    super.isReserved, // 🔥
     required super.images,
     required super.media,
     required super.facilities,
@@ -30,6 +23,7 @@ class PropertyModel extends PropertyEntity {
     required super.location,
     required super.phone,
     required super.whatsapp,
+    required super.sellerId, 
     required super.sellerName,
     super.sellerImage,
     super.sellerJoinDate,
@@ -72,30 +66,28 @@ class PropertyModel extends PropertyEntity {
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
     return PropertyModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      type: PropertyType.values.firstWhere((e) => e.name == json['type']),
-      listingType: ListingType.values.firstWhere(
-        (e) => e.name == json['listingType'],
-      ),
-      price: (json['price'] as num).toDouble(),
-      currency: json['currency'] as String,
-      area: (json['area'] as num).toDouble(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      type: PropertyType.values.firstWhere((e) => e.name == json['type'], orElse: () => PropertyType.housesAndApartments),
+      listingType: ListingType.values.firstWhere((e) => e.name == json['listingType'], orElse: () => ListingType.sale),
+      price: (json['price'] as num? ?? 0).toDouble(),
+      currency: json['currency'] as String? ?? 'usd',
+      area: (json['area'] as num? ?? 0).toDouble(),
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : DateTime.now(),
       views: json['views'] as int? ?? 0,
       isFeatured: json['isFeatured'] as bool? ?? false,
+      isReserved: json['isReserved'] as bool? ?? false, // 🔥
       images: List<String>.from(json['images'] as List? ?? []),
-      media: List<String>.from(
-        json['media'] as List? ?? json['images'] as List? ?? [],
-      ),
+      media: List<String>.from(json['media'] as List? ?? json['images'] as List? ?? []),
       facilities: List<String>.from(json['facilities'] as List? ?? []),
-      governorate: json['governorate'] as String,
-      city: json['city'] as String,
-      location: json['location'] as String,
-      phone: json['phone'] as String,
-      whatsapp: json['whatsapp'] as String,
-      sellerName: json['sellerName'] as String? ?? 'Mohammad',
+      governorate: json['governorate'] as String? ?? '',
+      city: json['city'] as String? ?? '',
+      location: json['location'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
+      whatsapp: json['whatsapp'] as String? ?? '',
+      sellerId: json['sellerId'] as String? ?? 'unknown',
+      sellerName: json['sellerName'] as String? ?? 'مستخدم',
       sellerImage: json['sellerImage'] as String?,
       sellerJoinDate: json['sellerJoinDate'] as String? ?? 'عضو منذ سنة',
       sellerRating: (json['sellerRating'] as num? ?? 4.5).toDouble(),
@@ -135,67 +127,6 @@ class PropertyModel extends PropertyEntity {
       workshopHeight: (json['workshopHeight'] as num?)?.toDouble(),
     );
   }
-  factory PropertyModel.fromEntity(PropertyEntity entity) {
-    return PropertyModel(
-      id: entity.id,
-      title: entity.title,
-      description: entity.description,
-      type: entity.type,
-      listingType: entity.listingType,
-      price: entity.price,
-      currency: entity.currency,
-      area: entity.area,
-      createdAt: entity.createdAt,
-      views: entity.views,
-      isFeatured: entity.isFeatured,
-      images: entity.images,
-      media: entity.media,
-      facilities: entity.facilities,
-      governorate: entity.governorate,
-      city: entity.city,
-      location: entity.location,
-      phone: entity.phone,
-      whatsapp: entity.whatsapp,
-      sellerName: entity.sellerName,
-      sellerImage: entity.sellerImage,
-      sellerJoinDate: entity.sellerJoinDate,
-      sellerRating: entity.sellerRating,
-      buildingAge: entity.buildingAge,
-      finishType: entity.finishType,
-      ownershipType: entity.ownershipType,
-      direction: entity.direction,
-      isLicensed: entity.isLicensed,
-      hasInstallment: entity.hasInstallment,
-      downPayment: entity.downPayment,
-      monthlyInstallment: entity.monthlyInstallment,
-      installmentDuration: entity.installmentDuration,
-      installmentNotes: entity.installmentNotes,
-      totalRooms: entity.totalRooms,
-      bedrooms: entity.bedrooms,
-      bathrooms: entity.bathrooms,
-      floorNumber: entity.floorNumber,
-      totalFloors: entity.totalFloors,
-      heatingType: entity.heatingType,
-      landType: entity.landType,
-      frontagesCount: entity.frontagesCount,
-      streetWidth: entity.streetWidth,
-      farmType: entity.farmType,
-      irrigationType: entity.irrigationType,
-      crops: entity.crops,
-      frontageWidth: entity.frontageWidth,
-      shopLocation: entity.shopLocation,
-      commercialActivity: entity.commercialActivity,
-      poolType: entity.poolType,
-      poolSize: entity.poolSize,
-      examinationRooms: entity.examinationRooms,
-      medicalEquipment: entity.medicalEquipment,
-      warehouseHeight: entity.warehouseHeight,
-      warehouseFloorType: entity.warehouseFloorType,
-      hallCapacity: entity.hallCapacity,
-      workshopType: entity.workshopType,
-      workshopHeight: entity.workshopHeight,
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -210,6 +141,7 @@ class PropertyModel extends PropertyEntity {
       'createdAt': createdAt.toIso8601String(),
       'views': views,
       'isFeatured': isFeatured,
+      'isReserved': isReserved, // 🔥
       'images': images,
       'media': media,
       'facilities': facilities,
@@ -218,6 +150,7 @@ class PropertyModel extends PropertyEntity {
       'location': location,
       'phone': phone,
       'whatsapp': whatsapp,
+      'sellerId': sellerId,
       'sellerName': sellerName,
       'sellerImage': sellerImage,
       'sellerJoinDate': sellerJoinDate,
@@ -259,6 +192,70 @@ class PropertyModel extends PropertyEntity {
     };
   }
 
+  factory PropertyModel.fromEntity(PropertyEntity entity) {
+    return PropertyModel(
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      type: entity.type,
+      listingType: entity.listingType,
+      price: entity.price,
+      currency: entity.currency,
+      area: entity.area,
+      createdAt: entity.createdAt,
+      views: entity.views,
+      isFeatured: entity.isFeatured,
+      isReserved: entity.isReserved, // 🔥
+      images: entity.images,
+      media: entity.media,
+      facilities: entity.facilities,
+      governorate: entity.governorate,
+      city: entity.city,
+      location: entity.location,
+      phone: entity.phone,
+      whatsapp: entity.whatsapp,
+      sellerId: entity.sellerId,
+      sellerName: entity.sellerName,
+      sellerImage: entity.sellerImage,
+      sellerJoinDate: entity.sellerJoinDate,
+      sellerRating: entity.sellerRating,
+      buildingAge: entity.buildingAge,
+      finishType: entity.finishType,
+      ownershipType: entity.ownershipType,
+      direction: entity.direction,
+      isLicensed: entity.isLicensed,
+      hasInstallment: entity.hasInstallment,
+      downPayment: entity.downPayment,
+      monthlyInstallment: entity.monthlyInstallment,
+      installmentDuration: entity.installmentDuration,
+      installmentNotes: entity.installmentNotes,
+      totalRooms: entity.totalRooms,
+      bedrooms: entity.bedrooms,
+      bathrooms: entity.bathrooms,
+      floorNumber: entity.floorNumber,
+      totalFloors: entity.totalFloors,
+      heatingType: entity.heatingType,
+      landType: entity.landType,
+      frontagesCount: entity.frontagesCount,
+      streetWidth: entity.streetWidth,
+      farmType: entity.farmType,
+      irrigationType: entity.irrigationType,
+      crops: entity.crops,
+      frontageWidth: entity.frontageWidth,
+      shopLocation: entity.shopLocation,
+      commercialActivity: entity.commercialActivity,
+      poolType: entity.poolType,
+      poolSize: entity.poolSize,
+      examinationRooms: entity.examinationRooms,
+      medicalEquipment: entity.medicalEquipment,
+      warehouseHeight: entity.warehouseHeight,
+      warehouseFloorType: entity.warehouseFloorType,
+      hallCapacity: entity.hallCapacity,
+      workshopType: entity.workshopType,
+      workshopHeight: entity.workshopHeight,
+    );
+  }
+
   PropertyEntity toEntity() {
     return PropertyEntity(
       id: id,
@@ -272,6 +269,7 @@ class PropertyModel extends PropertyEntity {
       createdAt: createdAt,
       views: views,
       isFeatured: isFeatured,
+      isReserved: isReserved, // 🔥
       images: images,
       media: media,
       facilities: facilities,
@@ -280,6 +278,7 @@ class PropertyModel extends PropertyEntity {
       location: location,
       phone: phone,
       whatsapp: whatsapp,
+      sellerId: sellerId,
       sellerName: sellerName,
       sellerImage: sellerImage,
       sellerJoinDate: sellerJoinDate,

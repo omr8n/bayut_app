@@ -1,34 +1,51 @@
 import 'package:flutter/material.dart';
-
-import 'package:test_graduation/core/widgets/property_card.dart';
-import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/utils/colors.dart';
+import 'package:test_graduation/core/utils/service_locator.dart';
+import 'package:test_graduation/features/profile/presentation/manager/seller_properties_cubit/seller_properties_cubit.dart';
+import 'package:test_graduation/features/profile/presentation/views/widgets/seller_properties_view_bloc_builder.dart';
 
 class SellerPropertiesView extends StatelessWidget {
   const SellerPropertiesView({
     super.key,
-    required this.properties,
+    required this.sellerId,
     required this.sellerName,
   });
 
-  final List<PropertyEntity> properties;
+  final String sellerId;
   final String sellerName;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('عقارات $sellerName'), centerTitle: true),
-      body: properties.isEmpty
-          ? const Center(child: Text('لا يوجد عقارات معروضة حالياً'))
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: properties.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: PropertyCard(property: properties[index]),
-                );
-              },
+    return BlocProvider(
+      create: (context) => getIt.get<SellerPropertiesCubit>()..fetchSellerProperties(sellerId),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFF3F5F9),
+            appBar: AppBar(
+              title: Text('عقارات $sellerName'),
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
             ),
+            // 🔥 إضافة السحب للتحديث في بروفايل المعلن
+            body: RefreshIndicator(
+              onRefresh: () async {
+                context.read<SellerPropertiesCubit>().fetchSellerProperties(sellerId);
+                await Future.delayed(const Duration(seconds: 1));
+              },
+              color: AppColors.primary,
+              backgroundColor: Colors.white,
+              child: const SellerPropertiesViewBlocBuilder(),
+            ),
+          );
+        }
+      ),
     );
   }
 }

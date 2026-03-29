@@ -16,8 +16,6 @@ class AddPropertyParams {
   final String whatsapp;
   final List<XFile> mediaFiles;
   final List<String> facilities;
-
-  // الحقول الاختيارية
   final int? buildingAge;
   final String? finishType;
   final String? ownershipType;
@@ -28,11 +26,15 @@ class AddPropertyParams {
   final double? monthlyInstallment;
   final int? installmentDuration;
   final String? installmentNotes;
+  
+  // 🔥 الحقول التي كانت تسبب الخطأ
   final int? totalRooms;
   final int? bedrooms;
   final int? bathrooms;
+  
   final int? floorNumber;
   final int? totalFloors;
+  final bool isFeatured;
   final String? heatingType;
   final String? landType;
   final int? frontagesCount;
@@ -52,7 +54,6 @@ class AddPropertyParams {
   final int? hallCapacity;
   final String? workshopType;
   final double? workshopHeight;
-  final bool isFeatured;
 
   AddPropertyParams({
     required this.title,
@@ -84,6 +85,7 @@ class AddPropertyParams {
     this.bathrooms,
     this.floorNumber,
     this.totalFloors,
+    this.isFeatured = false,
     this.heatingType,
     this.landType,
     this.frontagesCount,
@@ -103,6 +105,5 @@ class AddPropertyParams {
     this.hallCapacity,
     this.workshopType,
     this.workshopHeight,
-    this.isFeatured = false,
   });
 }

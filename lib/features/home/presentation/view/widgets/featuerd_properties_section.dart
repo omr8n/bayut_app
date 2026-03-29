@@ -27,7 +27,8 @@ class FeatuerdPropertiesSection extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => PropertiesListScreen(
                           title: AppStrings.featuredProperties,
-                          properties: state.featuredProperties, // 🔥 بيانات حقيقية من Firebase
+                          properties: state
+                              .featuredProperties, // 🔥 بيانات حقيقية من Firebase
                         ),
                       ),
                     );
@@ -35,9 +36,7 @@ class FeatuerdPropertiesSection extends StatelessWidget {
                 },
               ),
             ),
-            const SliverToBoxAdapter(
-              child: FeaturedPropertiesBlocBuilder(),
-            ),
+            FeaturedPropertiesBlocBuilder(),
           ],
         );
       },

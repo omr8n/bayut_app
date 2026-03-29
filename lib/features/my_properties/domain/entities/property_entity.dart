@@ -13,8 +13,9 @@ class PropertyEntity extends Equatable {
   final DateTime createdAt;
   final int views;
   final bool isFeatured;
-  final List<String> images; // للحفاظ على التوافق القديم
-  final List<String> media; // للصور والفيديوهات الجديدة
+  final bool isReserved; // 🔥 الحقل الجديد
+  final List<String> images;
+  final List<String> media;
   final List<String> facilities;
   final String governorate;
   final String city;
@@ -23,6 +24,7 @@ class PropertyEntity extends Equatable {
   final String whatsapp;
 
   // بيانات البائع
+  final String sellerId;
   final String sellerName;
   final String? sellerImage;
   final String sellerJoinDate;
@@ -76,6 +78,7 @@ class PropertyEntity extends Equatable {
     required this.createdAt,
     this.views = 0,
     this.isFeatured = false,
+    this.isReserved = false, // القيمة الافتراضية
     required this.images,
     required this.media,
     required this.facilities,
@@ -84,6 +87,7 @@ class PropertyEntity extends Equatable {
     required this.location,
     required this.phone,
     required this.whatsapp,
+    required this.sellerId,
     required this.sellerName,
     this.sellerImage,
     this.sellerJoinDate = 'عضو منذ سنة',
@@ -123,6 +127,7 @@ class PropertyEntity extends Equatable {
     this.workshopType,
     this.workshopHeight,
   });
+
   PropertyEntity copyWith({
     String? id,
     String? title,
@@ -135,6 +140,7 @@ class PropertyEntity extends Equatable {
     DateTime? createdAt,
     int? views,
     bool? isFeatured,
+    bool? isReserved, // 🔥
     List<String>? images,
     List<String>? media,
     List<String>? facilities,
@@ -143,6 +149,7 @@ class PropertyEntity extends Equatable {
     String? location,
     String? phone,
     String? whatsapp,
+    String? sellerId,
     String? sellerName,
     String? sellerImage,
     String? sellerJoinDate,
@@ -194,6 +201,7 @@ class PropertyEntity extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       views: views ?? this.views,
       isFeatured: isFeatured ?? this.isFeatured,
+      isReserved: isReserved ?? this.isReserved, // 🔥
       images: images ?? this.images,
       media: media ?? this.media,
       facilities: facilities ?? this.facilities,
@@ -202,6 +210,7 @@ class PropertyEntity extends Equatable {
       location: location ?? this.location,
       phone: phone ?? this.phone,
       whatsapp: whatsapp ?? this.whatsapp,
+      sellerId: sellerId ?? this.sellerId,
       sellerName: sellerName ?? this.sellerName,
       sellerImage: sellerImage ?? this.sellerImage,
       sellerJoinDate: sellerJoinDate ?? this.sellerJoinDate,
@@ -244,16 +253,5 @@ class PropertyEntity extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-    id,
-    title,
-    type,
-    listingType,
-    price,
-    area,
-    city,
-    phone,
-    media,
-    images,
-  ];
+  List<Object?> get props => [id, title, type, listingType, sellerId, isFeatured, isReserved];
 }

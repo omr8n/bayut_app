@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/constants/app_constants.dart'; // 🔥 استيراد الثوابت
 import 'package:test_graduation/core/enums/property_enums.dart';
-
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 import 'package:test_graduation/core/widgets/type_chip.dart';
@@ -65,8 +65,7 @@ class MainInfoCard extends StatelessWidget {
                     labelText: 'السعر',
                     prefixIcon: Icons.attach_money,
                     keyboardType: TextInputType.number,
-                    suffixText:
-                        priceNode.hasFocus || priceController.text.isNotEmpty
+                    suffixText: priceNode.hasFocus || priceController.text.isNotEmpty
                         ? selectedCurrency
                         : null,
                   ),
@@ -98,22 +97,17 @@ class MainInfoCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            const Text(
-              'نوع العقار',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            const Text('نوع العقار', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: PropertyType.values
-                  .map(
-                    (type) => TypeChip(
-                      label: type.arabicName,
-                      isSelected: selectedPropertyType == type,
-                      onTap: () => onPropertyTypeChanged(type),
-                    ),
-                  )
+                  .map((type) => TypeChip(
+                        label: type.arabicName,
+                        isSelected: selectedPropertyType == type,
+                        onTap: () => onPropertyTypeChanged(type),
+                      ))
                   .toList(),
             ),
           ],
@@ -133,11 +127,12 @@ class MainInfoCard extends StatelessWidget {
         children: [
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: selectedCurrency,
-              items: [r'$', 'ل.س', 'AED']
-                  .map(
-                    (curr) => DropdownMenuItem(value: curr, child: Text(curr)),
-                  )
+              // 🔥 التأكد من أن القيمة الحالية موجودة فعلياً في القائمة الممررة
+              value: AppConstants.currencies.contains(selectedCurrency) 
+                  ? selectedCurrency 
+                  : AppConstants.currencies.first,
+              items: AppConstants.currencies // 🔥 استخدام القائمة الموحدة من AppConstants
+                  .map((curr) => DropdownMenuItem(value: curr, child: Text(curr)))
                   .toList(),
               onChanged: onCurrencyChanged,
             ),

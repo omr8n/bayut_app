@@ -4,14 +4,18 @@ import 'package:image_picker/image_picker.dart';
 
 class ImageSection extends StatefulWidget {
   final List<XFile> mediaFiles;
-  final VoidCallback onAddMedia; // كبسة واحدة للصور والفيديو
+  final List<String>? existingMedia; // 🔥 الروابط القديمة من السيرفر
+  final VoidCallback onAddMedia;
   final Function(int) onRemoveMedia;
+  final Function(int)? onRemoveExistingMedia; // 🔥 دالة لحذف الصور القديمة
 
   const ImageSection({
     super.key,
     required this.mediaFiles,
+    this.existingMedia,
     required this.onAddMedia,
     required this.onRemoveMedia,
+    this.onRemoveExistingMedia,
   });
 
   @override
@@ -21,6 +25,8 @@ class ImageSection extends StatefulWidget {
 class _ImageSectionState extends State<ImageSection> {
   @override
   Widget build(BuildContext context) {
+    final int existingCount = widget.existingMedia?.length ?? 0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,7 +35,7 @@ class _ImageSectionState extends State<ImageSection> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const Text(
-          'يمكنك اختيار الصور والفيديوهات معاً',
+          'يمكنك اختيار الصور الجديدة مع الحفاظ على القديمة',
           style: TextStyle(color: Colors.grey, fontSize: 13),
         ),
         const SizedBox(height: 12),
@@ -37,18 +43,23 @@ class _ImageSectionState extends State<ImageSection> {
           height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            // reverse: true, // لتتناسب مع اللغة العربية
-            itemCount: widget.mediaFiles.length + 1,
+            // عدد العناصر = زر الإضافة + الصور القديمة + الصور الجديدة
+            itemCount: existingCount + widget.mediaFiles.length + 1,
             itemBuilder: (context, index) {
-              if (index == 0) {
-                return _buildAddButton();
+              if (index == 0) return _buildAddButton();
+
+              // عرض الصور القديمة (من السيرفر)
+              if (index <= existingCount) {
+                final imageUrl = widget.existingMedia![index - 1];
+                return _buildNetworkThumbnail(imageUrl, index - 1);
               }
-              final file = widget.mediaFiles[index - 1];
-              bool isVideo =
-                  file.path.toLowerCase().endsWith('.mp4') ||
-                  file.path.toLowerCase().endsWith('.mov') ||
-                  file.path.toLowerCase().endsWith('.avi');
-              return _buildMediaThumbnail(file, isVideo, index - 1);
+
+              // عرض الصور الجديدة (من الهاتف)
+              final fileIndex = index - existingCount - 1;
+              final file = widget.mediaFiles[fileIndex];
+              bool isVideo = file.path.toLowerCase().endsWith('.mp4') ||
+                  file.path.toLowerCase().endsWith('.mov');
+              return _buildMediaThumbnail(file, isVideo, fileIndex);
             },
           ),
         ),
@@ -60,33 +71,49 @@ class _ImageSectionState extends State<ImageSection> {
     return GestureDetector(
       onTap: widget.onAddMedia,
       child: Container(
-        width: 100,
-        height: 100,
+        width: 100, height: 100,
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey.shade300,
-            style: BorderStyle.solid,
-            width: 1.5,
-          ),
+          border: Border.all(color: Colors.grey.shade300, width: 1.5),
         ),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.add_photo_alternate_outlined,
-              color: Colors.blue,
-              size: 32,
-            ),
+            Icon(Icons.add_photo_alternate_outlined, color: Colors.blue, size: 32),
             SizedBox(height: 4),
-            Text(
-              'إضافة وسائط',
-              style: TextStyle(color: Colors.grey, fontSize: 11),
-            ),
+            Text('إضافة وسائط', style: TextStyle(color: Colors.grey, fontSize: 11)),
           ],
         ),
+      ),
+    );
+  }
+
+  // 🔥 ويدجت لعرض الصور القادمة من السيرفر
+  Widget _buildNetworkThumbnail(String url, int index) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: 100, height: 100,
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(url, width: 100, height: 100, fit: BoxFit.cover,
+              errorBuilder: (_,__,___) => Container(color: Colors.grey.shade200, child: const Icon(Icons.broken_image)),
+            ),
+          ),
+          Positioned(
+            top: 4, right: 4,
+            child: GestureDetector(
+              onTap: () => widget.onRemoveExistingMedia?.call(index),
+              child: const CircleAvatar(
+                radius: 10, backgroundColor: Colors.red,
+                child: Icon(Icons.close, color: Colors.white, size: 12),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -94,46 +121,22 @@ class _ImageSectionState extends State<ImageSection> {
   Widget _buildMediaThumbnail(XFile file, bool isVideo, int index) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: 100,
-      height: 100,
+      width: 100, height: 100,
       child: Stack(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: isVideo
-                ? Container(
-                    color: Colors.black87,
-                    child: const Center(
-                      child: Icon(
-                        Icons.movie_outlined,
-                        color: Colors.white30,
-                        size: 40,
-                      ),
-                    ),
-                  )
-                : Image.file(
-                    File(file.path),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
+                ? Container(color: Colors.black87, child: const Icon(Icons.movie_outlined, color: Colors.white30, size: 40))
+                : Image.file(File(file.path), width: 100, height: 100, fit: BoxFit.cover),
           ),
-          if (isVideo)
-            const Center(
-              child: Icon(
-                Icons.play_circle_fill,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
+          if (isVideo) const Center(child: Icon(Icons.play_circle_fill, color: Colors.white, size: 35)),
           Positioned(
-            top: 4,
-            right: 4,
+            top: 4, right: 4,
             child: GestureDetector(
               onTap: () => widget.onRemoveMedia(index),
               child: const CircleAvatar(
-                radius: 10,
-                backgroundColor: Colors.red,
+                radius: 10, backgroundColor: Colors.red,
                 child: Icon(Icons.close, color: Colors.white, size: 12),
               ),
             ),

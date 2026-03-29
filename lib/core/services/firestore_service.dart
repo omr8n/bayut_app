@@ -10,27 +10,20 @@ class FireStoreService implements DatabaseService {
     required String path,
     required Map<String, dynamic> data,
     String? documentId,
-    bool forFirestore = false,
+    bool forFirestore = true, // 🔥 جعلناها true افتراضياً لرفع العقارات
   }) async {
-    final preparedData = forFirestore ? data : _cleanData(data);
-
-    if (documentId != null) {
-      await firestore.collection(path).doc(documentId).set(preparedData);
-      return documentId;
-    } else {
-      final docRef = await firestore.collection(path).add(preparedData);
-      return docRef.id;
+    try {
+      if (documentId != null) {
+        await firestore.collection(path).doc(documentId).set(data);
+        return documentId;
+      } else {
+        final docRef = await firestore.collection(path).add(data);
+        return docRef.id;
+      }
+    } catch (e) {
+      log("🔥 Firestore Error in addData: $e");
+      rethrow;
     }
-  }
-
-  Map<String, dynamic> _cleanData(Map<String, dynamic> data) {
-    // return data.map((key, value) {
-    //   if (value is Timestamp) {
-    //     return MapEntry(key, value.toDate().toIso8601String());
-    //   }
-    //   return MapEntry(key, value);
-    // });
-    return data;
   }
 
   @override
@@ -114,16 +107,7 @@ class FireStoreService implements DatabaseService {
     if (documentId.isEmpty) {
       throw ArgumentError('Document ID is required for update');
     }
-
-    final preparedData = _cleanData(data);
-    final docRef = firestore.collection(path).doc(documentId);
-
-    final exists = await docRef.get();
-    if (!exists.exists) {
-      throw Exception('Document with ID $documentId does not exist');
-    }
-
-    await docRef.update(preparedData);
+    await firestore.collection(path).doc(documentId).update(data);
     log('Document with ID $documentId updated successfully');
   }
 
@@ -133,11 +117,7 @@ class FireStoreService implements DatabaseService {
     required String documentId,
     required Map<String, dynamic> data,
   }) async {
-    final preparedData = _cleanData(data);
-    await firestore
-        .collection(collectionPath)
-        .doc(documentId)
-        .set(preparedData);
+    await firestore.collection(collectionPath).doc(documentId).set(data);
     log('Document with ID $documentId set successfully in $collectionPath');
   }
 
@@ -149,15 +129,7 @@ class FireStoreService implements DatabaseService {
     if (documentId.isEmpty) {
       throw ArgumentError('Document ID is required for delete');
     }
-
-    final docRef = firestore.collection(path).doc(documentId);
-
-    final snapshot = await docRef.get();
-    if (!snapshot.exists) {
-      throw Exception('Document with ID $documentId does not exist in $path');
-    }
-
-    await docRef.delete();
+    await firestore.collection(path).doc(documentId).delete();
     log('Document with ID $documentId deleted successfully from $path');
   }
 }

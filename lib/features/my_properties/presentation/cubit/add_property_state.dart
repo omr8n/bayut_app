@@ -19,6 +19,9 @@ class AddPropertyLoading extends AddPropertyState {
 
 class AddPropertySuccess extends AddPropertyState {}
 
+// 🔥 حالة جديدة لنجاح التعديل
+class UpdatePropertySuccess extends AddPropertyState {}
+
 class AddPropertyFailure extends AddPropertyState {
   final String errMessage;
   const AddPropertyFailure(this.errMessage);

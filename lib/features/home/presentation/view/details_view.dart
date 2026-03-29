@@ -1,7 +1,9 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -407,12 +409,17 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
   Widget _buildSellerSection() {
     return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SellerProfileView(property: widget.property),
-        ),
-      ),
+      onTap: () {
+        GoRouter.of(
+          context,
+        ).push(AppRoutes.sellerProfileView, extra: widget.property);
+      },
+      // onTap: () => Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => SellerProfileView(property: widget.property),
+      //   ),
+      // ),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

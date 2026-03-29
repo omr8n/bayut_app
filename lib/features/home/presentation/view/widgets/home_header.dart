@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/features/auth/presentation/views/login_view.dart';
+
+import 'package:test_graduation/features/auth/presentation/views/sigin_view.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -60,7 +60,7 @@ class HomeHeader extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginView()),
+                  MaterialPageRoute(builder: (context) => const SiginView()),
                 );
               },
               child: Container(

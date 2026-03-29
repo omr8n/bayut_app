@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
-import 'package:test_graduation/core/widgets/custom_login_register.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
-import 'package:test_graduation/features/auth/presentation/views/register_view.dart';
-import 'package:test_graduation/features/auth/presentation/views/widgets/auth_button.dart';
+import 'package:test_graduation/features/auth/presentation/cubits/signin_cubit/signin_cubit.dart'; // 🔥
 import 'package:test_graduation/features/auth/presentation/views/widgets/forget_password.dart';
 import 'package:test_graduation/features/auth/presentation/views/widgets/or_divider.dart';
+import 'package:test_graduation/features/auth/presentation/views/widgets/auth_button.dart';
+import 'package:test_graduation/core/widgets/custom_login_register.dart';
+import 'package:test_graduation/features/auth/presentation/views/register_view.dart';
 
 class LoginViewBodyForm extends StatefulWidget {
   const LoginViewBodyForm({super.key});
@@ -19,13 +21,10 @@ class LoginViewBodyForm extends StatefulWidget {
 
 class _LoginViewBodyFormState extends State<LoginViewBodyForm> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-
   bool _obscurePassword = true;
 
   @override
@@ -39,130 +38,115 @@ class _LoginViewBodyFormState extends State<LoginViewBodyForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // البريد الإلكتروني
-          CustomTextFormField(
-            controller: _emailController,
-            focusNode: _emailFocusNode,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            onEditingComplete: () =>
-                FocusScope.of(context).requestFocus(_passwordFocusNode),
-            textAlign: TextAlign.right,
-            labelText: AppStrings.email,
-            hintText: 'example@email.com',
-            prefixIcon: Icons.email_outlined,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'يرجى إدخال البريد الإلكتروني';
-              }
-              if (!value.contains('@')) {
-                return 'بريد إلكتروني غير صحيح';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20),
-
-          // كلمة المرور
-          CustomTextFormField(
-            controller: _passwordController,
-            focusNode: _passwordFocusNode,
-            obscureText: _obscurePassword,
-            textAlign: TextAlign.right,
-            textInputAction: TextInputAction.done,
-            onEditingComplete: _login,
-            labelText: AppStrings.password,
-            hintText: '••••••••',
-            prefixIcon: Icons.lock_outline,
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+    // 🔥 نستخدم BlocListener لمراقبة النتيجة الحقيقية من السيرفر
+    return BlocListener<SigninCubit, SigninState>(
+      listener: (context, state) {
+        if (state is SigninSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم تسجيل الدخول بنجاح!'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+          GoRouter.of(context).pushReplacement(AppRoutes.mainScreen);
+        } else if (state is SigninFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+      },
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CustomTextFormField(
+              textAlign: TextAlign.right,
+              controller: _emailController,
+              focusNode: _emailFocusNode,
+              keyboardType: TextInputType.emailAddress,
+              labelText: AppStrings.email,
+              hintText: 'example@email.com',
+              prefixIcon: Icons.email_outlined,
+              validator: (value) => (value == null || !value.contains('@'))
+                  ? 'بريد إلكتروني غير صحيح'
+                  : null,
+            ),
+            const SizedBox(height: 20),
+            CustomTextFormField(
+              textAlign: TextAlign.right,
+              controller: _passwordController,
+              focusNode: _passwordFocusNode,
+              obscureText: _obscurePassword,
+              labelText: AppStrings.password,
+              hintText: '••••••••',
+              prefixIcon: Icons.lock_outline,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
               ),
-              onPressed: () {
-                setState(() => _obscurePassword = !_obscurePassword);
+              validator: (value) => (value == null || value.length < 6)
+                  ? 'كلمة المرور ضعيفة'
+                  : null,
+            ),
+            const SizedBox(height: 12),
+            const FogetPassword(),
+            const SizedBox(height: 24),
+
+            // 🔥 زر تسجيل الدخول مع حالة التحميل
+            BlocBuilder<SigninCubit, SigninState>(
+              builder: (context, state) {
+                return ElevatedButton(
+                  onPressed: state is SigninLoading ? null : _login,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: state is SigninLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          AppStrings.login,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                );
               },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'يرجى إدخال كلمة المرور';
-              }
-              if (value.length < 6) {
-                return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 12),
 
-          FogetPassword(),
-          const SizedBox(height: 24),
-
-          // زر تسجيل الدخول
-          ElevatedButton(
-            onPressed: _login,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+            const SizedBox(height: 24),
+            const OrDivider(),
+            const SizedBox(height: 24),
+            AuthButton(
+              onPressed: () {},
+              text: 'تسجيل بواسطة Google',
+              icon: Icons.g_mobiledata,
             ),
-            child: const Text(
-              AppStrings.login,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          OrDivider(),
-          const SizedBox(height: 24),
-
-          AuthButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('سيتم إضافة Firebase Auth لاحقاً'),
-                ),
-              );
-            },
-            text: 'تسجيل بواسطة Google',
-            icon: Icons.g_mobiledata,
-          ),
-          const SizedBox(height: 32),
-
-          CustomLoginRegister(
-            title: AppStrings.dontHaveAccount,
-            titleButton: AppStrings.register,
-            onPressed: () {
-              Navigator.push(
+            const SizedBox(height: 32),
+            CustomLoginRegister(
+              title: AppStrings.dontHaveAccount,
+              titleButton: AppStrings.register,
+              onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const RegisterView()),
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   void _login() {
-    GoRouter.of(context).pushReplacement(AppRoutes.mainScreen);
-    // if (_formKey.currentState!.validate()) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('تم تسجيل الدخول بنجاح!'),
-    //       backgroundColor: AppColors.success,
-    //     ),
-    //   );
-    //   Navigator.pop(context);
-    // }
+    if (_formKey.currentState!.validate()) {
+      // 🔥 الآن نرسل البيانات فعلياً للـ Cubit ليفحصها في Firebase
+      context.read<SigninCubit>().signin(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+    }
   }
 }

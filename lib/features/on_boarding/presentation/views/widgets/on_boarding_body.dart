@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:test_graduation/core/routing/app_routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/on_boarding/data/models/on_boarding_model.dart';
+import 'package:test_graduation/features/on_boarding/presentation/manager/on_boarding_cubit.dart';
 import 'package:test_graduation/features/on_boarding/presentation/views/widgets/page_view_item.dart';
 
 class OnBoardingBody extends StatefulWidget {
@@ -20,7 +20,7 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
     OnBoardingModel(
       image: 'assets/images/address_map.png',
       title: 'ابحث عن منزلك المثالي',
-      description: 'اكتشف آلاف العقارات المتاحة للبيع والإيجار في أفضل المواقع في الإمارات.',
+      description: 'اكتشف آلاف العقارات المتاحة للبيع والإيجار في أفضل المواقع في سوريا.',
     ),
     OnBoardingModel(
       image: 'assets/images/rounded_map.png',
@@ -30,7 +30,7 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
     OnBoardingModel(
       image: 'assets/images/successful.png',
       title: 'تواصل مباشر وسريع',
-      description: 'تواصل مع الوكلاء العقاريين مباشرة عبر الاتصال أو الواتساب بضغطة زر واحدة.',
+      description: 'تواصل مع المعلنين مباشرة عبر الاتصال أو الواتساب بضغطة زر واحدة.',
     ),
   ];
 
@@ -73,7 +73,7 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Dots Indicator
+                  // Dots Indicator using your Primary color
                   Row(
                     children: List.generate(
                       onBoardingData.length,
@@ -89,11 +89,11 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                       ),
                     ),
                   ),
-                  // Action Button
+                  // Action Button using your Primary color
                   currentIndex == onBoardingData.length - 1
                       ? ElevatedButton(
                           onPressed: () {
-                            GoRouter.of(context).pushReplacement(AppRoutes.loginScreen);
+                            context.read<OnBoardingCubit>().nextStep();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
@@ -120,13 +120,6 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                             decoration: const BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 5),
-                                ),
-                              ],
                             ),
                             child: const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.white),
                           ),
@@ -136,25 +129,6 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
             ),
           ],
         ),
-        // Skip Button
-        if (currentIndex != onBoardingData.length - 1)
-          Positioned(
-            top: 50,
-            left: 20,
-            child: TextButton(
-              onPressed: () {
-                GoRouter.of(context).pushReplacement(AppRoutes.loginScreen);
-              },
-              child: const Text(
-                'تخطي',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }

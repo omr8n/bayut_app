@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -14,7 +15,7 @@ class FeaturedProperties extends StatelessWidget {
 
     return CarouselSlider(
       options: CarouselOptions(
-        height: 320, // 🔥 زيادة الارتفاع لضمان عدم حدوث Overflow في الكروت
+        height: 320.h, // 🔥 زيادة الارتفاع لضمان عدم حدوث Overflow في الكروت
         enlargeCenterPage: true,
         disableCenter: true,
         viewportFraction: .8,
@@ -22,9 +23,7 @@ class FeaturedProperties extends StatelessWidget {
         autoPlayInterval: const Duration(seconds: 5),
       ),
       items: properties.map((property) {
-        return Builder(
-          builder: (BuildContext context) {
-            return PropertyCard(
+        return  PropertyCard(
               property: property,
               onTap: () {
                 Navigator.push(
@@ -36,8 +35,7 @@ class FeaturedProperties extends StatelessWidget {
                 );
               },
             );
-          },
-        );
+          
       }).toList(),
     );
   }

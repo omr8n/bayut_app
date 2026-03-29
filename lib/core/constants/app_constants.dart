@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppConstants {
+  static String lang = "ar";
+  static String token = "token";
   static const String productImageUrl =
       "https://m.media-amazon.com/images/I/61dV53UuRVS.__AC_SX300_SY300_QL70_FMwebp_.jpg";
 
@@ -12,7 +14,10 @@ class AppConstants {
     const Color(0xffFDE598),
     const Color(0xffB7DFF5),
   ];
-  // Facilities Maps (Same as before)
+
+  // 🔥 إضافة قائمة العملات لضمان عمل الاختيار
+  static const List<String> currencies = ['usd', 'ل.س', 'try'];
+
   static const Map<String, Map<String, dynamic>> commonFacilities = {
     'مصعد': {'value': false, 'icon': Icons.elevator_outlined},
     'موقف سيارة': {'value': false, 'icon': Icons.local_parking_outlined},
@@ -213,7 +218,7 @@ class AppConstants {
   static String selectedDirection = 'قبلي';
   static String selectedHeatingType = 'شوفاج';
   static String selectedGovernorate = 'دمشق';
-  static String selectedCurrency = r'$';
+  static String selectedCurrency = 'usd'; // تم تعديل القيمة الافتراضية لتناسب القائمة
   static String selectedShopLocation = 'شارع رئيسي';
   static String selectedLandType = 'سكنية';
   static String selectedFarmType = 'نباتية';
@@ -222,5 +227,6 @@ class AppConstants {
   static String selectedPoolSize = 'متوسط';
   static String selectedWarehouseFloorType = 'بيتون';
 
-  // وظيفة موحدة لاختيار الصور والفيديوها
+  static const kIsOnBoardingViewSeen = 'isOnBoardingViewSeen';
+  static const kUserData = 'userData';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
@@ -7,7 +8,7 @@ import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/add_property_params.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
-import 'package:test_graduation/features/my_properties/presentation/views/widgets/action_buttons.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/add_action_buttons.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/basic_info_card.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/contact_card.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/dynamic_specs_section.dart';
@@ -31,9 +32,9 @@ class AddPropertyBody extends StatefulWidget {
 class _AddPropertyBodyState extends State<AddPropertyBody> {
   final _formKey = GlobalKey<FormState>();
   final List<XFile> _mediaFiles = [];
+  List<String> _existingMedia = [];
   final ImagePicker _picker = ImagePicker();
 
-  // Controllers
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   late TextEditingController _priceController;
@@ -43,30 +44,24 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   late TextEditingController _monthlyInstallmentController;
   late TextEditingController _installmentDurationController;
   late TextEditingController _installmentNotesController;
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _whatsappController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _roomsController = TextEditingController();
-  final TextEditingController _bathroomsController = TextEditingController();
-  final TextEditingController _floorNumberController = TextEditingController();
-  final TextEditingController _totalFloorsController = TextEditingController();
-  final TextEditingController _frontageWidthController =
-      TextEditingController();
-  final TextEditingController _commercialActivityController =
-      TextEditingController();
-  final TextEditingController _frontagesController = TextEditingController();
-  final TextEditingController _streetWidthController = TextEditingController();
-  final TextEditingController _cropsController = TextEditingController();
-  final TextEditingController _examinationRoomsController =
-      TextEditingController();
-  final TextEditingController _medicalEquipmentController =
-      TextEditingController();
-  final TextEditingController _warehouseHeightController =
-      TextEditingController();
-  final TextEditingController _hallCapacityController = TextEditingController();
-  final TextEditingController _workshopTypeController = TextEditingController();
-  final TextEditingController _workshopHeightController =
-      TextEditingController();
+  late TextEditingController _phoneController;
+  late TextEditingController _whatsappController;
+  late TextEditingController _locationController;
+  late TextEditingController _roomsController;
+  late TextEditingController _bathroomsController;
+  late TextEditingController _floorNumberController;
+  late TextEditingController _totalFloorsController;
+  late TextEditingController _frontageWidthController;
+  late TextEditingController _commercialActivityController;
+  late TextEditingController _frontagesController;
+  late TextEditingController _streetWidthController;
+  late TextEditingController _cropsController;
+  late TextEditingController _examinationRoomsController;
+  late TextEditingController _medicalEquipmentController;
+  late TextEditingController _warehouseHeightController;
+  late TextEditingController _hallCapacityController;
+  late TextEditingController _workshopTypeController;
+  late TextEditingController _workshopHeightController;
 
   final FocusNode _priceNode = FocusNode();
   final FocusNode _ageNode = FocusNode();
@@ -78,12 +73,12 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   final FocusNode _hallCapacityNode = FocusNode();
   final FocusNode _workshopHeightNode = FocusNode();
 
-  // State Variables
   late PropertyType _selectedPropertyType;
   late ListingType _selectedListingType;
   late bool _hasInstallment;
   late bool _isLicensed;
   late bool _isFeatured;
+  late bool _isReserved; // 🔥 إضافة الحالة
   late String _selectedFinishType;
   late String _selectedOwnershipType;
   late String _selectedDirection;
@@ -115,6 +110,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     super.initState();
     final p = widget.propertyEntity;
 
+    _existingMedia = List<String>.from(p?.media ?? []);
+
     _titleController = TextEditingController(text: p?.title ?? '');
     _descriptionController = TextEditingController(text: p?.description ?? '');
     _priceController = TextEditingController(text: p?.price.toString() ?? '');
@@ -134,29 +131,77 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     _installmentNotesController = TextEditingController(
       text: p?.installmentNotes ?? '',
     );
+    _phoneController = TextEditingController(text: p?.phone ?? '');
+    _whatsappController = TextEditingController(text: p?.whatsapp ?? '');
+    _locationController = TextEditingController(text: p?.city ?? '');
+
+    _roomsController = TextEditingController(
+      text: p?.totalRooms?.toString() ?? '',
+    );
+    _bathroomsController = TextEditingController(
+      text: p?.bathrooms?.toString() ?? '',
+    );
+    _floorNumberController = TextEditingController(
+      text: p?.floorNumber?.toString() ?? '',
+    );
+    _totalFloorsController = TextEditingController(
+      text: p?.totalFloors?.toString() ?? '',
+    );
+    _frontageWidthController = TextEditingController(
+      text: p?.frontageWidth?.toString() ?? '',
+    );
+    _commercialActivityController = TextEditingController(
+      text: p?.commercialActivity ?? '',
+    );
+    _frontagesController = TextEditingController(
+      text: p?.frontagesCount?.toString() ?? '',
+    );
+    _streetWidthController = TextEditingController(
+      text: p?.streetWidth?.toString() ?? '',
+    );
+    _cropsController = TextEditingController(text: p?.crops ?? '');
+    _examinationRoomsController = TextEditingController(
+      text: p?.examinationRooms?.toString() ?? '',
+    );
+    _medicalEquipmentController = TextEditingController(
+      text: p?.medicalEquipment ?? '',
+    );
+    _warehouseHeightController = TextEditingController(
+      text: p?.warehouseHeight?.toString() ?? '',
+    );
+    _hallCapacityController = TextEditingController(
+      text: p?.hallCapacity?.toString() ?? '',
+    );
+    _workshopTypeController = TextEditingController(
+      text: p?.workshopType ?? '',
+    );
+    _workshopHeightController = TextEditingController(
+      text: p?.workshopHeight?.toString() ?? '',
+    );
 
     _selectedPropertyType = p?.type ?? PropertyType.housesAndApartments;
     _selectedListingType = p?.listingType ?? ListingType.sale;
     _hasInstallment = p?.hasInstallment ?? false;
     _isLicensed = p?.isLicensed ?? false;
-    _isFeatured = p?.isFeatured ?? false;
-    _selectedFinishType = p?.finishType ?? AppConstants.selectedFinishType;
+    _isFeatured = p?.isFeatured ?? false; // 🔥 تأكيد استعادة حالة التميز
+    _isReserved = p?.isReserved ?? false; // 🔥 تأكيد استعادة حالة الحجز
+    _selectedFinishType = p?.finishType ?? AppConstants.finishTypes.first;
     _selectedOwnershipType =
-        p?.ownershipType ?? AppConstants.selectedOwnershipType;
-    _selectedDirection = p?.direction ?? AppConstants.selectedDirection;
-    _selectedHeatingType = p?.heatingType ?? AppConstants.selectedHeatingType;
-    _selectedGovernorate = p?.governorate ?? AppConstants.selectedGovernorate;
-    _selectedCurrency = p?.currency ?? AppConstants.selectedCurrency;
+        p?.ownershipType ?? AppConstants.ownershipTypes.first;
+    _selectedDirection = p?.direction ?? AppConstants.directions.first;
+    _selectedHeatingType = p?.heatingType ?? AppConstants.heatingTypes.first;
+    _selectedGovernorate = p?.governorate ?? AppConstants.governorates.first;
+    _selectedCurrency = p?.currency ?? AppConstants.currencies.first;
     _selectedShopLocation =
-        p?.shopLocation ?? AppConstants.selectedShopLocation;
-    _selectedLandType = p?.landType ?? AppConstants.selectedLandType;
-    _selectedFarmType = p?.farmType ?? AppConstants.selectedFarmType;
+        p?.shopLocation ?? AppConstants.shopLocationTypes.first;
+    _selectedLandType = p?.landType ?? AppConstants.landType.first;
+    _selectedFarmType = p?.farmType ?? AppConstants.farmTypes.first;
     _selectedIrrigationType =
-        p?.irrigationType ?? AppConstants.selectedIrrigationType;
-    _selectedPoolType = p?.poolType ?? AppConstants.selectedPoolType;
-    _selectedPoolSize = p?.poolSize ?? AppConstants.selectedPoolSize;
+        p?.irrigationType ?? AppConstants.irrigationTypes.first;
+    _selectedPoolType = p?.poolType ?? AppConstants.poolTypes.first;
+    _selectedPoolSize = p?.poolSize ?? AppConstants.poolSizes.first;
     _selectedWarehouseFloorType =
-        p?.warehouseFloorType ?? AppConstants.selectedWarehouseFloorType;
+        p?.warehouseFloorType ?? AppConstants.warehouseFloorTypes.first;
 
     _currentCommonFacilities = _copyMap(AppConstants.commonFacilities);
     _currentVillaFacilities = _copyMap(AppConstants.villaFacilities);
@@ -214,6 +259,24 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     _monthlyInstallmentController.dispose();
     _installmentDurationController.dispose();
     _installmentNotesController.dispose();
+    _phoneController.dispose();
+    _whatsappController.dispose();
+    _locationController.dispose();
+    _roomsController.dispose();
+    _bathroomsController.dispose();
+    _floorNumberController.dispose();
+    _totalFloorsController.dispose();
+    _frontageWidthController.dispose();
+    _commercialActivityController.dispose();
+    _frontagesController.dispose();
+    _streetWidthController.dispose();
+    _cropsController.dispose();
+    _examinationRoomsController.dispose();
+    _medicalEquipmentController.dispose();
+    _warehouseHeightController.dispose();
+    _hallCapacityController.dispose();
+    _workshopTypeController.dispose();
+    _workshopHeightController.dispose();
     _areaNode.dispose();
     _ageNode.dispose();
     _priceNode.dispose();
@@ -232,6 +295,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   }
 
   void _removeMedia(int index) => setState(() => _mediaFiles.removeAt(index));
+  void _removeExistingMedia(int index) =>
+      setState(() => _existingMedia.removeAt(index));
 
   void _onFacilityToggle(String key) {
     setState(() {
@@ -266,18 +331,6 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
 
   void _uploadOrEditProperty() {
     if (!_formKey.currentState!.validate()) return;
-
-    if (_mediaFiles.isEmpty &&
-        (widget.propertyEntity == null ||
-            widget.propertyEntity!.media.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى إضافة صور أو فيديوهات للعقار أولاً'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
 
     List<String> allSelectedFacilities = [];
     void collect(Map<String, Map<String, dynamic>> m) {
@@ -331,7 +384,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
       bathrooms: int.tryParse(_bathroomsController.text.trim()),
       floorNumber: int.tryParse(_floorNumberController.text.trim()),
       totalFloors: int.tryParse(_totalFloorsController.text.trim()),
-      isFeatured: _isFeatured,
+      isFeatured: _isFeatured, // 🔥 إرسال حالة التميز المحدثة
       heatingType: _selectedHeatingType,
       landType: _selectedLandType,
       frontagesCount: int.tryParse(_frontagesController.text.trim()),
@@ -355,18 +408,21 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
 
     final cubit = context.read<AddPropertyCubit>();
     if (widget.isEdit) {
-      cubit.editProperty(
-        params: params,
-        originalProperty: widget.propertyEntity!,
+      // تمرير حالة الحجز أيضاً لضمان عدم ضياعها أثناء التعديل
+      final updatedOriginal = widget.propertyEntity!.copyWith(
+        media: _existingMedia,
+        isReserved: _isReserved,
+        isFeatured: _isFeatured,
       );
+      cubit.editProperty(params: params, originalProperty: updatedOriginal);
+      // GoRouter.of(context).pop(); // العودة فوراً بعد التعديل
     } else {
       cubit.submitProperty(params);
     }
-
-    // Navigator.of(context).pop();
+    // GoRouter.of(context).pop(); // العودة فوراً بعد الإرسال
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('بدأت عملية الرفع في الخلفية، تابع الستارة.'),
+        content: Text('بدأت عملية المعالجة في الخلفية، تابع الستارة.'),
         duration: Duration(seconds: 3),
       ),
     );
@@ -383,8 +439,10 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
           children: [
             ImageSection(
               mediaFiles: _mediaFiles,
+              existingMedia: _existingMedia,
               onAddMedia: _pickMedia,
               onRemoveMedia: _removeMedia,
+              onRemoveExistingMedia: _removeExistingMedia,
             ),
             const SizedBox(height: 16),
             MainInfoCard(
@@ -427,7 +485,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               isLicensed: _isLicensed,
               onLicensedChanged: (v) => setState(() => _isLicensed = v!),
               isFeatured: _isFeatured,
-              onFeaturedChanged: (v) => setState(() => _isFeatured = v!),
+              onFeaturedChanged: (v) =>
+                  setState(() => _isFeatured = v!), // 🔥 تمكين التبديل
             ),
             const SizedBox(height: 16),
             DynamicSpecsSection(
@@ -549,7 +608,10 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               whatsappController: _whatsappController,
             ),
             const SizedBox(height: 32),
-            ActionButtons(onSubmit: _uploadOrEditProperty),
+            AddActionButtons(
+              onSubmit: _uploadOrEditProperty,
+              isEdit: widget.isEdit,
+            ),
             const SizedBox(height: 32),
           ],
         ),
