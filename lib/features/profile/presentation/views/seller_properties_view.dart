@@ -18,7 +18,8 @@ class SellerPropertiesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt.get<SellerPropertiesCubit>()..fetchSellerProperties(sellerId),
+      create: (context) =>
+          getIt.get<SellerPropertiesCubit>()..fetchSellerProperties(sellerId),
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -34,17 +35,9 @@ class SellerPropertiesView extends StatelessWidget {
               ),
             ),
             // 🔥 إضافة السحب للتحديث في بروفايل المعلن
-            body: RefreshIndicator(
-              onRefresh: () async {
-                context.read<SellerPropertiesCubit>().fetchSellerProperties(sellerId);
-                await Future.delayed(const Duration(seconds: 1));
-              },
-              color: AppColors.primary,
-              backgroundColor: Colors.white,
-              child: const SellerPropertiesViewBlocBuilder(),
-            ),
+            body: SellerPropertiesViewBlocBuilder(),
           );
-        }
+        },
       ),
     );
   }

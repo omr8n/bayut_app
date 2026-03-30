@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
+import 'package:test_graduation/core/utils/utils.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
-import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 class FeaturedProperties extends StatelessWidget {
@@ -15,27 +17,25 @@ class FeaturedProperties extends StatelessWidget {
 
     return CarouselSlider(
       options: CarouselOptions(
-        height: 320.h, // 🔥 زيادة الارتفاع لضمان عدم حدوث Overflow في الكروت
+        height: Utils(context).getScreenSize.height * 0.45,
+        viewportFraction: .85,
         enlargeCenterPage: true,
-        disableCenter: true,
-        viewportFraction: .8,
+
         autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 5),
+
+        //autoPlayInterval: const Duration(seconds: 5),
+        autoPlayAnimationDuration: const Duration(seconds: 5),
       ),
       items: properties.map((property) {
-        return  PropertyCard(
-              property: property,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        PropertyDetailsScreen(property: property),
-                  ),
-                );
-              },
-            );
-          
+        return PropertyCard(
+          // isCompact: true, // 🔥 تصميم مدمج للعقارات المميزة
+          property: property,
+          onTap: () {
+            GoRouter.of(
+              context,
+            ).push(AppRoutes.propertyDetailsScreen, extra: property);
+          },
+        );
       }).toList(),
     );
   }

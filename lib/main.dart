@@ -7,11 +7,13 @@ import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'package:test_graduation/core/services/custom_bloc_observer.dart';
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
-import 'package:test_graduation/core/services/secure_storage_singleton.dart'; // 🔥 استيراد SecureStorage
+import 'package:test_graduation/core/services/secure_storage_singleton.dart'; 
+import 'package:test_graduation/core/services/firebase_auth_service.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
+import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,11 +21,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   Bloc.observer = CustomBlocObserver();
-  // 🔥 تهيئة كلاً من الـ Prefs والـ SecureStorage
   await Prefs.init();
-  await SecureStorage.init(); // تهيئة التخزين المشفر
+  await SecureStorage.init();
 
-  // تهيئة الستارة (Notifications Channel)
   AwesomeNotifications().initialize(null, [
     NotificationChannel(
       channelKey: 'upload_channel',
@@ -39,9 +39,7 @@ void main() async {
   ]);
 
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    if (!isAllowed) {
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
+    if (!isAllowed) AwesomeNotifications().requestPermissionToSendNotifications();
   });
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -60,12 +58,10 @@ class BayutApp extends StatelessWidget {
       designSize: const Size(390, 844),
       builder: (context, child) => MultiBlocProvider(
         providers: [
-          BlocProvider<AddPropertyCubit>(
-            create: (context) => getIt.get<AddPropertyCubit>(),
-          ),
-          BlocProvider<PropertyCubit>(
-            create: (context) => getIt.get<PropertyCubit>()..fetchProperties(),
-          ),
+          BlocProvider<AddPropertyCubit>(create: (context) => getIt.get<AddPropertyCubit>()),
+          BlocProvider<PropertyCubit>(create: (context) => getIt.get<PropertyCubit>()..fetchProperties()),
+          // 🔥 توفير ProfileCubit عالمياً وجلب البيانات فوراً
+          BlocProvider<ProfileCubit>(create: (context) => ProfileCubit(getIt.get<FirebaseAuthService>())..getUserInfo()),
         ],
         child: MaterialApp.router(
           title: 'بيوت',
@@ -82,11 +78,7 @@ class BayutApp extends StatelessWidget {
             primaryColor: AppColors.primary,
             scaffoldBackgroundColor: AppColors.background,
             fontFamily: 'Dubai',
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.primary,
-              primary: AppColors.primary,
-              secondary: AppColors.secondary,
-            ),
+            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary, primary: AppColors.primary, secondary: AppColors.secondary),
             useMaterial3: true,
           ),
         ),

@@ -21,7 +21,9 @@ class MyPropertiesViewBlocBuilder extends StatelessWidget {
     final bool isLoggedIn = SecureStorage.isLoggedIn;
     final user = FirebaseAuthService().currentUser;
 
-    log("BlocBuilder Check: isLoggedIn = $isLoggedIn, FirebaseUser = ${user?.uid}");
+    log(
+      "BlocBuilder Check: isLoggedIn = $isLoggedIn, FirebaseUser = ${user?.uid}",
+    );
 
     if (!isLoggedIn || user == null) {
       return EmptyBagProperties(

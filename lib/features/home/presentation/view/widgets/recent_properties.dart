@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -24,13 +27,9 @@ class RecentProperties extends StatelessWidget {
             child: PropertyCard(
               property: property,
               onTap: () {
-                Navigator.push(
+                GoRouter.of(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        PropertyDetailsScreen(property: property),
-                  ),
-                );
+                ).push(AppRoutes.propertyDetailsScreen, extra: property);
               },
             ),
           );

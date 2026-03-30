@@ -33,51 +33,52 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: SafeArea(
           // 🔥 إضافة ميزة السحب للتحديث الاحترافية
-          child: Builder(
-            builder: (context) => RefreshIndicator(
-              onRefresh: () async {
-                // إعادة طلب كافة البيانات من Firebase
-                await context.read<PropertyCubit>().fetchProperties();
-                await Future.delayed(const Duration(milliseconds: 1000));
-              },
-              color: AppColors.primary,
-              backgroundColor: Colors.white,
-              edgeOffset: 20, // موقع ظهور المؤشر
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(), // ضروري لعمل السحب دائماً
-                slivers: [
-                  const HomeHeader(),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              // إعادة طلب كافة البيانات من Firebase
+              await context.read<PropertyCubit>().fetchProperties();
+              await Future.delayed(const Duration(milliseconds: 1000));
+            },
+            color: AppColors.primary,
+            backgroundColor: Colors.white,
+            edgeOffset: 20, // موقع ظهور المؤشر
+            child: CustomScrollView(
+              physics:
+                  const AlwaysScrollableScrollPhysics(), // ضروري لعمل السحب دائماً
+              slivers: [
+                const HomeHeader(),
 
-                  // Search Bar
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: SearchBarWidget(
-                        controller: _searchController,
-                        onChanged: (value) {
-                          context.read<PropertyCubit>().searchProperties(value);
-                        },
-                        onFilterTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const SearchScreen()),
-                          );
-                        },
-                      ),
+                // Search Bar
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: SearchBarWidget(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        context.read<PropertyCubit>().searchProperties(value);
+                      },
+                      onFilterTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SearchScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
+                ),
 
-                  const ListTypeButtonsBlocBuilder(),
+                const ListTypeButtonsBlocBuilder(),
 
-                  // عقارات مميزة (featured)
-                  const FeatuerdPropertiesSection(),
+                // عقارات مميزة (featured)
+                const FeatuerdPropertiesSection(),
 
-                  // أحدث العقارات (recent)
-                  const RecentPropertiesSection(),
+                // أحدث العقارات (recent)
+                const RecentPropertiesSection(),
 
-                  const SliverToBoxAdapter(child: SizedBox(height: 80)),
-                ],
-              ),
+                const SliverToBoxAdapter(child: SizedBox(height: 80)),
+              ],
             ),
           ),
         ),

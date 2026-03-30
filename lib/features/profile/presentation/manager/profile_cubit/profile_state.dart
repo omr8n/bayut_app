@@ -9,6 +9,15 @@ abstract class ProfileState extends Equatable {
 
 class ProfileInitial extends ProfileState {}
 
+// 🔥 حالة جديدة عند تحميل بيانات المستخدم
+class ProfileUserLoaded extends ProfileState {
+  final UserEntity user;
+  const ProfileUserLoaded(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
+
 class ProfileDarkModeToggled extends ProfileState {
   final bool isDarkMode;
   const ProfileDarkModeToggled(this.isDarkMode);

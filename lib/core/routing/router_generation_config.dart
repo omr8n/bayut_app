@@ -2,10 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
-import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/auth/presentation/views/sigin_view.dart';
+import 'package:test_graduation/features/auth/presentation/views/verify_otp_view.dart'; // 🔥 استيراد الشاشة الجديدة
+import 'package:test_graduation/features/home/presentation/view/details_view.dart';
+import 'package:test_graduation/features/home/presentation/view/properties_list_view.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'package:test_graduation/features/on_boarding/presentation/views/on_boarding_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/seller_profile_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/seller_properties_view.dart';
@@ -50,6 +51,11 @@ class RouterGenerationConfig {
         name: AppRoutes.loginScreen,
         builder: (context, state) => const SiginView(),
       ),
+      // GoRoute(
+      //   path: AppRoutes.verifyOtpScreen, // 🔥 مسار التحقق من الرمز
+      //   name: AppRoutes.verifyOtpScreen,
+      //   builder: (context, state) => const VerifyOtpScreen(),
+      // ),
       GoRoute(
         path: AppRoutes.mainScreen,
         name: AppRoutes.mainScreen,
@@ -59,7 +65,6 @@ class RouterGenerationConfig {
         path: AppRoutes.sellerProfileView,
         name: AppRoutes.sellerProfileView,
         builder: (context, state) {
-          // 🔥 الإصلاح: التحقق من وجود البيانات قبل التمرير لتجنب خطأ الـ Null
           final property = state.extra as PropertyEntity;
           return SellerProfileView(property: property);
         },
@@ -78,9 +83,25 @@ class RouterGenerationConfig {
       GoRoute(
         path: AppRoutes.addPropertyScreen,
         name: AppRoutes.addPropertyScreen,
-        builder: (context, state) => AddPropertyScreen(
-          propertyEntity: state.extra as PropertyEntity?,
-        ),
+        builder: (context, state) =>
+            AddPropertyScreen(propertyEntity: state.extra as PropertyEntity?),
+      ),
+      GoRoute(
+        path: AppRoutes.propertiesListScreen,
+        name: AppRoutes.propertiesListScreen,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return PropertiesListScreen(
+            title: extra['title'] as String,
+            properties: extra['properties'] as List<PropertyEntity>,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.propertyDetailsScreen,
+        name: AppRoutes.propertyDetailsScreen,
+        builder: (context, state) =>
+            PropertyDetailsScreen(property: state.extra as PropertyEntity),
       ),
     ],
   );

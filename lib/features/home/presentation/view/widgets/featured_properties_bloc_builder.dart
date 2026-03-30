@@ -14,25 +14,24 @@ class FeaturedPropertiesBlocBuilder extends StatelessWidget {
       builder: (context, state) {
         if (state is PropertySuccess) {
           if (state.featuredProperties.isEmpty) {
+            // إذا لم يوجد مميز، نخفي القسم تماماً
             return const SliverToBoxAdapter(child: SizedBox.shrink());
           }
+          // عرض العقارات المميزة الحقيقية
           return SliverToBoxAdapter(
             child: FeaturedProperties(properties: state.featuredProperties),
           );
         } else if (state is PropertyFailure) {
           return SliverToBoxAdapter(
-            child: SizedBox(
-              height: 300,
-              child: Center(child: Text(state.errMessage)),
-            ),
+            child: Center(child: Text(state.errMessage)),
           );
         } else {
-          // 🔥 التصحيح: استخدام Skeletonizer (العادي) لأن الأب هو SliverToBoxAdapter (يتوقع Box)
+          // 🔥 تحميل هيكلي (Skeleton) للعقارات المميزة
           return SliverToBoxAdapter(
             child: Skeletonizer(
               enabled: true,
               child: FeaturedProperties(
-                properties: MockData.properties.take(2).toList(),
+                properties: MockData.properties.where((p) => p.isFeatured).take(2).toList(),
               ),
             ),
           );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class PropertiesHeader extends StatelessWidget {
@@ -12,14 +13,14 @@ class PropertiesHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+      padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 16.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
@@ -29,7 +30,7 @@ class PropertiesHeader extends StatelessWidget {
             child: Text(
               'عرض الكل',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
                 color: AppColors.primary,
               ),

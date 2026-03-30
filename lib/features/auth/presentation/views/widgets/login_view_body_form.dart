@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
+import 'package:test_graduation/core/widgets/custom_primary_button.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 import 'package:test_graduation/features/auth/presentation/cubits/signin_cubit/signin_cubit.dart'; // 🔥
 import 'package:test_graduation/features/auth/presentation/views/widgets/forget_password.dart';
@@ -97,26 +98,7 @@ class _LoginViewBodyFormState extends State<LoginViewBodyForm> {
             const SizedBox(height: 24),
 
             // 🔥 زر تسجيل الدخول مع حالة التحميل
-            BlocBuilder<SigninCubit, SigninState>(
-              builder: (context, state) {
-                return ElevatedButton(
-                  onPressed: state is SigninLoading ? null : _login,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: state is SigninLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          AppStrings.login,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                );
-              },
-            ),
-
+            CustomPriamryButton(title: AppStrings.login, onPressed: _login),
             const SizedBox(height: 24),
             const OrDivider(),
             const SizedBox(height: 24),

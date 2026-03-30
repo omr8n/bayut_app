@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
-import 'package:test_graduation/core/utils/colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
-import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
+import 'package:test_graduation/features/search/presentation/veiw/widgets/empty_state.dart';
 
-// شاشة قائمة العقارات
 class PropertiesListScreen extends StatelessWidget {
   final String title;
   final List<PropertyEntity> properties;
@@ -19,9 +18,14 @@ class PropertiesListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title), centerTitle: true),
+      appBar: AppBar(
+        title: Text(title), 
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: properties.isEmpty
-          ? _buildEmptyState()
+          ? const EmptyState()
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: properties.length,
@@ -30,42 +34,12 @@ class PropertiesListScreen extends StatelessWidget {
                 return PropertyCard(
                   property: property,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            PropertyDetailsScreen(property: property),
-                      ),
-                    );
+                    // 🔥 استخدام push لضمان إمكانية العودة لهذه القائمة
+                    GoRouter.of(context).push(AppRoutes.propertyDetailsScreen, extra: property);
                   },
-                  // onFavorite: () {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(content: Text('تمت الإضافة للمفضلة')),
-                  //   );
-                  // },
                 );
               },
             ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.home_outlined, size: 80, color: AppColors.textLight),
-          const SizedBox(height: 16),
-          Text(
-            'لا توجد عقارات',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
