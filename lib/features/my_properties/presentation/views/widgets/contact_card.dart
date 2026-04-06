@@ -26,14 +26,13 @@ class ContactCard extends StatelessWidget {
               labelText: 'رقم الهاتف للاتصال',
               hintText: '09xxxxxxxx',
               prefixIcon: Icons.phone_callback_outlined,
-              prefixText: '+963 ',
               keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'يرجى إدخال رقم الهاتف';
                 }
-                if (!RegExp(r'^[3-9]\d{7}$').hasMatch(value)) {
-                  return 'يرجى إدخال رقم سوري صحيح';
+                if (!RegExp(r'^09\d{8}$').hasMatch(value)) {
+                  return 'يرجى إدخال رقم سوري صحيح (مثلاً 09xxxxxxxx)';
                 }
                 return null;
               },

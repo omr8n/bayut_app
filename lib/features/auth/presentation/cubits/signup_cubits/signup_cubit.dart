@@ -1,10 +1,8 @@
 import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 import '../../../../../../core/errors/failures.dart';
 import '../../../../../../core/repos/media_repo/media_repo.dart';
 import '../../../domain/entites/user_entity.dart';
@@ -42,21 +40,20 @@ class SignupCubit extends Cubit<SignupState> {
     }
 
     final Either<Failure, UserEntity> result = await authRepo.signUp(
-      email,
-      password,
-      name,
-      phone,
-      imageUrl,
-      () => Timestamp.now(),
+      email: email,
+      password: password,
+      name: name,
+      phone: phone,
+      imageUrl: imageUrl,
     );
 
     result.fold((failure) => emit(SignupFailure(message: failure.message)), (
       userEntity,
     ) async {
-      // 🔥 حفظ الحالة وتحديث الكاش مع LOG
-      await SecureStorage.setBool('isLoggedIn', true);
+      // 🔥 الأمان: تم حذف سطر isLoggedIn وحذف تحديث ProfileCubit
+      // لكي نجبر المستخدم على الذهاب لصفحة الـ Login وإدخال بياناته يدوياً
       log(
-        "SignupCubit: Success for ${userEntity.email}. isLoggedIn set to true.",
+        "SignupCubit: User ${userEntity.email} registered. Waiting for login.",
       );
       emit(SignupSuccess(userEntity: userEntity));
     });

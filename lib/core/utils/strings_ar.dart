@@ -88,8 +88,17 @@ class AppStrings {
   static const String sqm = 'متر مربع';
   static const String sqft = 'قدم مربع';
 
+  // التقسيط
+  static const String installmentAvailable = 'متاح للتقسيط';
+  static const String downPayment = 'الدفعة الأولى';
+  static const String monthlyInstallment = 'القسط الشهري';
+  static const String installmentDuration = 'مدة التقسيط';
+  static const String months = 'أشهر';
+  static const String installmentNotes = 'ملاحظات التقسيط';
+
   // رسائل
   static const String noProperties = 'لا توجد عقارات';
+  static const String noSimilarProperties = 'لا توجد عقارات مشابهة حالياً';
   static const String loading = 'جاري التحميل...';
   static const String error = 'حدث خطأ';
   static const String success = 'تمت العملية بنجاح';

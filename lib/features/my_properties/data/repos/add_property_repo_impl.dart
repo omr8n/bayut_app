@@ -25,7 +25,7 @@ class AddPropertyRepoImpl implements AddPropertyRepo {
       );
 
       return Right(documentId);
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint("🔥 Error in addProperty: $e");
       return Left(ServerFailure('فشل حفظ بيانات العقار: $e'));
     }
@@ -43,7 +43,7 @@ class AddPropertyRepoImpl implements AddPropertyRepo {
       );
 
       return const Right(null);
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint("🔥 Error in editProperty: $e");
       return Left(ServerFailure('فشل تعديل بيانات العقار: $e'));
     }

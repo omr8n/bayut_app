@@ -13,13 +13,16 @@ import 'package:test_graduation/core/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
+import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:test_graduation/features/root/presentation/views/root_view.dart';
+import 'package:test_graduation/features/search/presentation/manager/search_cubit/search_cubit.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Bloc.observer = CustomBlocObserver();
   await Prefs.init();
   await SecureStorage.init();
@@ -42,7 +45,6 @@ void main() async {
     if (!isAllowed) AwesomeNotifications().requestPermissionToSendNotifications();
   });
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -56,11 +58,16 @@ class BayutApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
       builder: (context, child) => MultiBlocProvider(
         providers: [
+          BlocProvider<NavigationCubit>(create: (context) => NavigationCubit()),
           BlocProvider<AddPropertyCubit>(create: (context) => getIt.get<AddPropertyCubit>()),
           BlocProvider<PropertyCubit>(create: (context) => getIt.get<PropertyCubit>()..fetchProperties()),
-          // 🔥 توفير ProfileCubit عالمياً وجلب البيانات فوراً
+          // 🔥 توفير SearchCubit بشكل عالمي لضمان الترابط بين الشاشات ومنع الانهيار
+          BlocProvider<SearchCubit>(create: (context) => getIt.get<SearchCubit>()..fetchAllPropertiesForSearch()),
+          BlocProvider<FavoritesCubit>(create: (context) => getIt.get<FavoritesCubit>()..getFavorites()),
           BlocProvider<ProfileCubit>(create: (context) => ProfileCubit(getIt.get<FirebaseAuthService>())..getUserInfo()),
         ],
         child: MaterialApp.router(

@@ -35,11 +35,11 @@ class UserModel extends UserEntity {
       profilePic: json['profilePic'],
       phoneNumber: json['phoneNumber'],
       // 🔥 التعامل الذكي مع التاريخ: إذا كان نصاً (من SecureStorage) أو Timestamp (من Firestore)
-      createdAt: json['createdAt'] == null 
-          ? null 
-          : (json['createdAt'] is String 
-              ? Timestamp.fromDate(DateTime.parse(json['createdAt'])) 
-              : json['createdAt'] as Timestamp),
+      createdAt: json['createdAt'] == null
+          ? null
+          : (json['createdAt'] is String
+                ? Timestamp.fromDate(DateTime.parse(json['createdAt']))
+                : json['createdAt'] as Timestamp),
       userCart: List.from(json['userCart'] ?? []),
       userWish: List.from(json['userWish'] ?? []),
     );
@@ -58,7 +58,6 @@ class UserModel extends UserEntity {
     );
   }
 
-  @override
   Map<String, dynamic> toMap({bool forFirestore = false}) {
     return {
       'name': name,
@@ -67,8 +66,8 @@ class UserModel extends UserEntity {
       'profilePic': profilePic,
       'phoneNumber': phoneNumber,
       // 🔥 التحويل الموحد: للـ Firestore نرسل ServerTimestamp، وللـ Local نرسل String
-      'createdAt': forFirestore 
-          ? (createdAt ?? FieldValue.serverTimestamp()) 
+      'createdAt': forFirestore
+          ? (createdAt ?? FieldValue.serverTimestamp())
           : createdAt?.toDate().toIso8601String(),
       'userCart': userCart ?? [],
       'userWish': userWish ?? [],

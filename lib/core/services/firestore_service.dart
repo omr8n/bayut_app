@@ -107,7 +107,19 @@ class FireStoreService implements DatabaseService {
     if (documentId.isEmpty) {
       throw ArgumentError('Document ID is required for update');
     }
-    await firestore.collection(path).doc(documentId).update(data);
+
+    // 🔥 المنطق السينيور: إذا وجدنا حقل statusHistory، نقوم بإضافته للقائمة وليس مسحها
+    final Map<String, dynamic> finalData = Map.from(data);
+    if (finalData.containsKey('statusHistory')) {
+      final historyEntry = finalData.remove('statusHistory');
+      await firestore.collection(path).doc(documentId).update({
+        ...finalData,
+        'statusHistory': FieldValue.arrayUnion([historyEntry]),
+      });
+    } else {
+      await firestore.collection(path).doc(documentId).update(finalData);
+    }
+
     log('Document with ID $documentId updated successfully');
   }
 

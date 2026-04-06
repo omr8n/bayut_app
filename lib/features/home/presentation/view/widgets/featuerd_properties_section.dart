@@ -13,31 +13,29 @@ class FeatuerdPropertiesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PropertyCubit, PropertyState>(
-      builder: (context, state) {
-        return MultiSliver(
-          children: [
-            SliverToBoxAdapter(
-              child: PropertiesHeader(
-                title: AppStrings.featuredProperties,
-                onViewAll: () {
-                  if (state is PropertySuccess) {
-                    // 🔥 التعديل: تمرير Map يحتوي على العنوان والقائمة
-                    GoRouter.of(context).push(
-                      AppRoutes.propertiesListScreen,
-                      extra: {
-                        'title': AppStrings.featuredProperties,
-                        'properties': state.featuredProperties,
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
-            const FeaturedPropertiesBlocBuilder(),
-          ],
-        );
-      },
+    return MultiSliver(
+      children: [
+        SliverToBoxAdapter(
+          child: PropertiesHeader(
+            title: AppStrings.featuredProperties,
+            onViewAll: () {
+              // سحب الـ state الحالي عند الضغط فقط لتقليل الـ Rebuilds
+              final state = context.read<PropertyCubit>().state;
+              if (state is PropertySuccess) {
+                GoRouter.of(context).push(
+                  AppRoutes.propertiesListScreen,
+                  extra: {
+                    'title': AppStrings.featuredProperties,
+                    'properties': state.featuredProperties,
+                  },
+                );
+              }
+            },
+          ),
+        ),
+        // 🔥 الـ BlocBuilder موجود فقط حول ما يحتاج للتحديث
+        const FeaturedPropertiesBlocBuilder(),
+      ],
     );
   }
 }

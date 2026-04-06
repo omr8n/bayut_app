@@ -1,86 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/service_locator.dart';
-import 'package:test_graduation/core/widgets/search_bar_widget.dart';
+import 'package:test_graduation/core/widgets/search_field_widget.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/featuerd_properties_section.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/home_header.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/list_type_buttons_bloc_builder.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/recent_properties_section.dart';
-import '../../../search/presentation/veiw/search_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt.get<PropertyCubit>()..fetchProperties(),
-      child: Scaffold(
-        body: SafeArea(
-          // 🔥 إضافة ميزة السحب للتحديث الاحترافية
-          child: RefreshIndicator(
-            onRefresh: () async {
-              // إعادة طلب كافة البيانات من Firebase
-              await context.read<PropertyCubit>().fetchProperties();
-              await Future.delayed(const Duration(milliseconds: 1000));
-            },
-            color: AppColors.primary,
-            backgroundColor: Colors.white,
-            edgeOffset: 20, // موقع ظهور المؤشر
-            child: CustomScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(), // ضروري لعمل السحب دائماً
-              slivers: [
-                const HomeHeader(),
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await context.read<PropertyCubit>().fetchProperties();
+        },
+        color: AppColors.primary,
+        backgroundColor: Colors.white,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // 🔥 الهيدر أصبح SliverToBoxAdapter داخله Widget مرن
+            const SliverToBoxAdapter(child: HomeHeader()),
 
-                // Search Bar
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: SearchBarWidget(
-                      controller: _searchController,
-                      onChanged: (value) {
-                        context.read<PropertyCubit>().searchProperties(value);
-                      },
-                      onFilterTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SearchScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: SearchFieldWidget(
+                  readOnly: true, // جعله للعرض فقط ليعمل كـ "زر"
+                  onTap: () {
+                    // 🔥 التوجه لصفحة اختيار الموقع مباشرة
+                    context.push(AppRoutes.locationSearchPage);
+                  },
                 ),
-
-                const ListTypeButtonsBlocBuilder(),
-
-                // عقارات مميزة (featured)
-                const FeatuerdPropertiesSection(),
-
-                // أحدث العقارات (recent)
-                const RecentPropertiesSection(),
-
-                const SliverToBoxAdapter(child: SizedBox(height: 80)),
-              ],
+              ),
             ),
-          ),
+
+            const ListTypeButtonsBlocBuilder(),
+            const FeatuerdPropertiesSection(),
+            const RecentPropertiesSection(),
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
+          ],
         ),
       ),
     );

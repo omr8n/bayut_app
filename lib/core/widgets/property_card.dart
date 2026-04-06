@@ -1,8 +1,13 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/widgets/communication.dart';
+import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/media_gallery.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:test_graduation/core/utils/viewed_properties_manager.dart';
+import 'package:test_graduation/core/widgets/favorite_button.dart';
 import '../utils/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,13 +17,9 @@ class PropertyCard extends StatefulWidget {
     super.key,
     required this.property,
     this.onTap,
-    this.onFavorite,
-    this.isFavorite = false,
   });
 
-  final bool isFavorite;
-  final VoidCallback? onFavorite;
-  final VoidCallback? onTap;
+  final Function(int index)? onTap;
   final PropertyEntity property;
 
   @override
@@ -35,163 +36,312 @@ class _PropertyCardState extends State<PropertyCard> {
     super.dispose();
   }
 
-  // وظائف التواصل
-  Future<void> _makeCall() async {
-    final Uri url = Uri.parse('tel:${widget.property.phone}');
-    if (await canLaunchUrl(url)) await launchUrl(url);
-  }
-
-  Future<void> _sendWhatsApp() async {
-    final Uri url = Uri.parse('https://wa.me/${widget.property.whatsapp}');
-    if (await canLaunchUrl(url))
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-  }
-
-  Future<void> _sendEmail() async {
-    final Uri url = Uri.parse(
-      'mailto:support@bayut.com?subject=استفسار عن عقار: ${widget.property.title}',
-    );
-    if (await canLaunchUrl(url)) await launchUrl(url);
-  }
-
   @override
   Widget build(BuildContext context) {
     final numberFormat = NumberFormat('#,###');
-    final images = widget.property.images.isNotEmpty
-        ? widget.property.images
-        : ['https://via.placeholder.com/800x450?text=No+Image'];
+    final List<String> allMedia = widget.property.media.isNotEmpty
+        ? widget.property.media
+        : (widget.property.images.isNotEmpty
+              ? widget.property.images
+              : ['https://via.placeholder.com/800x450?text=No+Media']);
+
+    final int displayCount = allMedia.length > 3 ? 3 : allMedia.length;
 
     return GestureDetector(
-      onTap: widget.onTap,
-      child: Flexible(
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: Colors.grey.shade200),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 1. معرض الصور (Image Carousel)
-              Stack(
+      onTap: () {
+        if (widget.onTap != null) {
+          widget.onTap!(0); // للحفاظ على التوافق القديم إذا كان هناك منطق خاص
+        } else {
+          context.push(
+            AppRoutes.propertyDetailsScreen,
+            extra: {
+              'property': widget.property,
+              'initialIndex': 0,
+            },
+          );
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. قسم الصور
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Stack(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9, // ✅ تثبيت الـ Ratio لمنع الـ Overflow
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: images.length,
-                      onPageChanged: (index) =>
-                          setState(() => _currentImageIndex = index),
-                      itemBuilder: (context, index) => FittedBox(
-                        fit: BoxFit.cover,
-                        child: FancyShimmerImage(
-                          imageUrl: images[index],
-                          boxFit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: displayCount,
+                    onPageChanged: (index) =>
+                        setState(() => _currentImageIndex = index),
+                    itemBuilder: (context, index) {
+                      final url = allMedia[index];
+                      final isVideo = url.toLowerCase().endsWith('.mp4');
+                      final isLastVisible = index == 2 && allMedia.length > 3;
+
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // نستخدم IgnorePointer هنا لضمان أن حدث النقر يمر للـ GestureDetector الأب
+                          // لكي يتم الانتقال لصفحة التفاصيل بغض النظر عن محتوى الصورة/الفيديو
+                          IgnorePointer(
+                            child: isVideo
+                                ? VideoThumbnailWidget(videoUrl: url)
+                                : FancyShimmerImage(
+                                    imageUrl: url,
+                                    boxFit: BoxFit.cover,
+                                  ),
+                          ),
+                          if (isVideo)
+                            IgnorePointer(
+                              child: Center(
+                                child: Container(
+                                  padding: EdgeInsets.all(8.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.4),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: Colors.white,
+                                    size: 30.sp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (isLastVisible)
+                            IgnorePointer(
+                              child: Container(
+                                color: Colors.black.withOpacity(0.5),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add_photo_alternate_outlined,
+                                        color: Colors.white,
+                                        size: 28.sp,
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Text(
+                                        'عرض الكل (+${allMedia.length - 3})',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
-                  // مؤشر النقاط (Dots)
-                  if (images.length > 1)
+
+                  // النقاط (Dots Indicator)
+                  if (displayCount > 1)
                     Positioned(
-                      bottom: 12,
+                      bottom: 12.h,
                       left: 0,
                       right: 0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
-                          images.length,
+                          displayCount,
                           (index) => Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
-                            width: 6,
-                            height: 6,
+                            margin: EdgeInsets.symmetric(horizontal: 3.w),
+                            width: _currentImageIndex == index ? 12.w : 6.w,
+                            height: 6.w,
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
                               color: _currentImageIndex == index
                                   ? Colors.white
                                   : Colors.white.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  // ملصق الحالة (بيع/إيجار) - يمين
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: widget.property.listingType == ListingType.sale
-                              ? AppColors.forSale
-                              : AppColors.forRent,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            widget.property.listingType.arabicName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
+
+                  // شارة "شوهد" (Viewed Badge)
+                  ValueListenableBuilder(
+                    valueListenable: ViewedPropertiesManager().changeNotifier,
+                    builder: (context, _, __) {
+                      if (!ViewedPropertiesManager().isViewed(widget.property.id)) {
+                        return const SizedBox.shrink();
+                      }
+                      return Positioned(
+                        bottom: 12.h,
+                        left: 12.w,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
                           ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(20.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'شوهد',
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 4.w),
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: Colors.grey[600],
+                                size: 14.sp,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // شارة الحالة (للبيع / للايجار)
+                  Positioned(
+                    top: 12.h,
+                    right: 12.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: widget.property.listingType == ListingType.sale
+                            ? AppColors.forSale
+                            : AppColors.forRent,
+                        borderRadius: BorderRadius.circular(8.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        widget.property.listingType.arabicName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                  // 🔥 ملصق "مميز" - يسار
+
+                  // شارة "مميز" (Featured Badge) - تم إعادتها
                   if (widget.property.isFeatured)
                     Positioned(
-                      top: 12,
-                      left: 12,
+                      top: 12.h,
+                      left: 12.w,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 5.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(8),
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(8.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Icon(
-                                Icons.star,
+                            Icon(
+                              Icons.star_rounded,
+                              color: Colors.white,
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'مميز',
+                              style: TextStyle(
                                 color: Colors.white,
-                                size: 14.sp,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: const Text(
-                                'مميز',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  // 🔥 شارة "قيد التقسيط" (Under Installment Badge)
+                  if (widget.property.status == PropertyStatus.underInstallment)
+                    Positioned(
+                      top: 45.h, // وضعه تحت شارة "مميز" إذا وُجدت، أو في مكان بارز
+                      left: 12.w,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 5.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade800,
+                          borderRadius: BorderRadius.circular(8.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.history_toggle_off_rounded,
+                              color: Colors.white,
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              'قيد التقسيط',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
@@ -200,163 +350,108 @@ class _PropertyCardState extends State<PropertyCard> {
                     ),
                 ],
               ),
+            ),
 
-              // 2. المحتوى (نفس بيانات بيوت)
-              Flexible(
-                flex: 3,
+            // 2. قسم المحتوى
+            Flexible(
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // السعر والعملة
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          '${numberFormat.format(widget.property.price)} ${widget.property.currency}',
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: SizedBox(height: 4.h),
-                      ),
-                      // المواصفات (غرف، حمامات، مساحة)
-                      Flexible(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            if (widget.property.bedrooms != null)
-                              _buildInfoItem(
-                                Icons.bed_outlined,
-                                '${widget.property.bedrooms}',
-                              ),
-                            if (widget.property.bathrooms != null)
-                              _buildInfoItem(
-                                Icons.bathroom_outlined,
-                                '${widget.property.bathrooms}',
-                              ),
-                            _buildInfoItem(
-                              Icons.square_foot_outlined,
-                              '${widget.property.area.toInt()} م²',
-                            ),
-                          ],
-                        ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: const SizedBox(height: 8),
-                      ),
-                      // العنوان
-                      Flexible(
-                        flex: 1,
-                        child: Text(
-                          widget.property.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      // الموقع
-                      Flexible(
-                        flex: 1,
-                        child: Row(
-                          children: [
-                            FittedBox(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Icon(
-                                Icons.location_on_outlined,
-                                size: 14.sp,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
                               child: Text(
-                                '${widget.property.governorate} - ${widget.property.city}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                '${numberFormat.format(widget.property.price)} ${widget.property.currency}',
                                 style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Colors.grey,
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                          FavoriteButton(
+                            propertyId: widget.property.id,
+                            size: 24,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8.h),
+                      Wrap(
+                        spacing: 15.w,
+                        runSpacing: 5.h,
+                        children: [
+                          if (widget.property.bedrooms != null)
+                            _buildInfoItem(
+                              Icons.bed_outlined,
+                              '${widget.property.bedrooms} غرف',
+                            ),
+                          _buildInfoItem(
+                            Icons.square_foot_outlined,
+                            '${widget.property.area.toInt()} م²',
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12.h),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            widget.property.title,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_rounded,
+                                size: 14.sp,
+                                color: AppColors.primary,
+                              ),
+                              SizedBox(width: 4.w),
+                              Text(
+                                '${widget.property.governorate}، ${widget.property.city}',
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-
-              // 3. أزرار التواصل (WhatsApp, Call, Email)
-              Flexible(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: Colors.grey.shade100),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      _buildActionButton(
-                        'واتساب',
-                        Icons.chat_bubble_outline,
-                        const Color(0xFF25D366),
-                        _sendWhatsApp,
-                      ),
-                      _buildActionButton(
-                        'اتصال',
-                        Icons.phone_outlined,
-                        AppColors.success,
-                        _makeCall,
-                      ),
-                      _buildActionButton(
-                        'الإيميل',
-                        Icons.email_outlined,
-                        Colors.blue,
-                        _sendEmail,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoItem(IconData icon, String value) {
-    return FittedBox(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: Row(
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Icon(icon, size: 16, color: Colors.grey[600]),
             ),
-            const SizedBox(width: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: const TextStyle(fontSize: 12, color: Colors.black87),
-              ),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CommunicationButtons(property: widget.property),
             ),
           ],
         ),
@@ -364,40 +459,21 @@ class _PropertyCardState extends State<PropertyCard> {
     );
   }
 
-  Widget _buildActionButton(
-    String label,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return Flexible(
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Icon(icon, size: 18, color: color),
-              ),
-              const SizedBox(width: 6),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
-              ),
-            ],
+  Widget _buildInfoItem(IconData icon, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 18.sp, color: Colors.grey[700]),
+        SizedBox(width: 6.w),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
           ),
         ),
-      ),
+      ],
     );
   }
 }

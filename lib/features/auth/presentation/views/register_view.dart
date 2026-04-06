@@ -25,7 +25,7 @@ class _RegisterViewState extends State<RegisterView> {
       child: BlocProvider(
         create: (context) =>
             SignupCubit(getIt.get<AuthRepo>(), getIt.get<MediaRepo>()),
-        child: Scaffold(body: RegisterViewBodyBlocConsumer()),
+        child: Scaffold(body: RigisterViewBodyBlocConsumer()),
       ),
 
       //  const Scaffold(

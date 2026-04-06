@@ -9,6 +9,9 @@ abstract class ProfileState extends Equatable {
 
 class ProfileInitial extends ProfileState {}
 
+// 🔥 حالة التحميل لتفعيل الـ Skeleton في الهيدر
+class ProfileLoading extends ProfileState {}
+
 // 🔥 حالة جديدة عند تحميل بيانات المستخدم
 class ProfileUserLoaded extends ProfileState {
   final UserEntity user;

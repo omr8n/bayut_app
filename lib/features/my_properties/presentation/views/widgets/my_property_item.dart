@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 
 class MyPropertyItem extends StatelessWidget {
-  const MyPropertyItem({super.key, required this.property, this.onReserved});
+  const MyPropertyItem({super.key, required this.property, this.onSold});
 
   final PropertyEntity property;
-  final VoidCallback? onReserved; // 🔥 دالة الانتقال للـ Tab المحجوز
+  final VoidCallback? onSold; // 🔥 دالة الانتقال للـ Tab المباع
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +25,10 @@ class MyPropertyItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
       child: InkWell(
-        onTap: () => GoRouter.of(
-          context,
-        ).push(AppRoutes.addPropertyScreen, extra: property),
+        onTap: () => GoRouter.of(context).push(
+          AppRoutes.propertyDashboard,
+          extra: property,
+        ),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -112,22 +114,28 @@ class MyPropertyItem extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(
-                                  Icons.calendar_month_outlined,
-                                  size: 14,
-                                  color: Colors.grey,
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_month_outlined,
+                                      size: 14,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      DateFormat(
+                                        'yyyy/MM/dd',
+                                      ).format(property.createdAt),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  DateFormat(
-                                    'yyyy/MM/dd',
-                                  ).format(property.createdAt),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 11,
-                                  ),
-                                ),
+                                _buildOldViewsBadge(), // 🔥 إرجاع المشاهدات بالشكل القديم هنا
                               ],
                             ),
                           ],
@@ -166,29 +174,53 @@ class MyPropertyItem extends StatelessWidget {
                                 .toggleFeatured(property),
                           ),
                           const SizedBox(width: 16),
-                          // 🔥 زر الحجز: يغير الحالة وينتقل للـ Tab المحجوز
+                          // 🔥 زر التقسيط
                           _buildActionItem(
-                            property.isReserved
-                                ? Icons.lock_rounded
-                                : Icons.lock_person_rounded,
-                            'محجوز',
+                            property.status == PropertyStatus.underInstallment
+                                ? Icons.timer_rounded
+                                : Icons.timer_outlined,
+                            'قيد التقسيط',
+                            Colors.orange.shade800,
+                            () => context
+                                .read<MyPropertiesCubit>()
+                                .updatePropertyStatus(
+                                  property,
+                                  property.status ==
+                                          PropertyStatus.underInstallment
+                                      ? PropertyStatus.active
+                                      : PropertyStatus.underInstallment,
+                                ),
+                          ),
+                          const SizedBox(width: 16),
+                          // 🔥 زر البيع: يغير الحالة وينتقل للـ Tab المباع
+                          _buildActionItem(
+                            property.status == PropertyStatus.sold
+                                ? Icons.check_circle_rounded
+                                : Icons.sell_rounded,
+                            'مباع',
                             Colors.teal,
                             () {
-                              context.read<MyPropertiesCubit>().toggleReserved(
-                                property,
-                              );
-                              if (!property.isReserved) {
-                                onReserved
-                                    ?.call(); // تنفيذ الانتقال للـ Tab الآخر
+                              if (property.status == PropertyStatus.sold) {
+                                // إذا كان مباعاً ونريد إلغاءه، نطلب السبب
+                                _showCancellationDialog(context);
+                              } else {
+                                context
+                                    .read<MyPropertiesCubit>()
+                                    .updatePropertyStatus(
+                                      property,
+                                      PropertyStatus.sold,
+                                    );
+                                onSold?.call(); // تنفيذ الانتقال للـ Tab الآخر
                               }
                             },
                           ),
                           const SizedBox(width: 16),
+                          // 🔥 زر السجل التاريخي
                           _buildActionItem(
-                            Icons.visibility_outlined,
-                            '${property.views}',
-                            Colors.grey,
-                            () {},
+                            Icons.history_rounded,
+                            'السجل',
+                            Colors.blueGrey,
+                            () => _showStatusHistory(context),
                           ),
                         ],
                       ),
@@ -263,12 +295,42 @@ class MyPropertyItem extends StatelessWidget {
     );
   }
 
+  Widget _buildOldViewsBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.visibility_outlined,
+            size: 16,
+            color: AppColors.primary,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            '${property.views}',
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatusChip() {
-    String label = 'نشط';
+    String label = property.status.arabicName;
     Color color = AppColors.primary;
-    if (property.isReserved) {
-      label = 'محجوز';
+    if (property.status == PropertyStatus.sold) {
       color = Colors.redAccent;
+    } else if (property.status == PropertyStatus.underInstallment) {
+      color = Colors.orange;
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -285,6 +347,203 @@ class MyPropertyItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showCancellationDialog(BuildContext context) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: const Text('سبب إلغاء البيع', textAlign: TextAlign.center),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'مثلاً: تعثر المشتري في الدفع...',
+            border: OutlineInputBorder(),
+          ),
+          maxLines: 3,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                context.read<MyPropertiesCubit>().updatePropertyStatus(
+                  property,
+                  PropertyStatus.active,
+                  statusReason: controller.text.trim(),
+                );
+                Navigator.pop(dialogContext);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            child: const Text(
+              'تأكيد الإلغاء',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showStatusHistory(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (context) {
+        final history = property.statusHistory.reversed.toList();
+        return Container(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'سجل حالة العقار',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (history.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Text('لا يوجد سجل حركات حالياً'),
+                  ),
+                )
+              else
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: history.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final item = history[index];
+                      final status = PropertyStatus.values.firstWhere(
+                        (e) => e.name == item['status'],
+                        orElse: () => PropertyStatus.active,
+                      );
+                      final date = item['timestamp'] != null
+                          ? DateTime.parse(item['timestamp'])
+                          : DateTime.now();
+                      final reason = item['reason'] as String?;
+
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: _getStatusColor(status),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              if (index != history.length - 1)
+                                Container(
+                                  width: 2,
+                                  height: 40,
+                                  color: Colors.grey.shade200,
+                                ),
+                            ],
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      status.arabicName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      DateFormat('yyyy/MM/dd HH:mm').format(
+                                        date,
+                                      ),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (reason != null && reason.isNotEmpty)
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 4),
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      'السبب: $reason',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade700,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'إغلاق',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Color _getStatusColor(PropertyStatus status) {
+    switch (status) {
+      case PropertyStatus.active:
+        return AppColors.primary;
+      case PropertyStatus.sold:
+        return Colors.redAccent;
+      case PropertyStatus.underInstallment:
+        return Colors.orange;
+    }
   }
 
   Widget _buildPlaceholder() {

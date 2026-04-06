@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 
 enum OnBoardingStep { intro, purpose, propertyType, location }
 
 class OnBoardingState {
   final OnBoardingStep step;
-  final ListingType? listingType; // بيع أو إيجار من مشروعك
-  final PropertyType? propertyType; // نوع العقار من مشروعك
+  final ListingType? listingType;
+  final PropertyType? propertyType;
   final List<String> selectedLocations;
 
   OnBoardingState({
@@ -42,6 +43,28 @@ class OnBoardingCubit extends Cubit<OnBoardingState> {
     } else if (state.step == OnBoardingStep.propertyType) {
       emit(state.copyWith(step: OnBoardingStep.location));
     }
+  }
+
+  // 🔥 دالة حفظ التفضيلات الموحدة
+  Future<void> completeOnBoarding() async {
+    // 1. حفظ الغرض
+    if (state.listingType != null) {
+      Prefs.setString('user_purpose', state.listingType == ListingType.sale ? 'buy' : 'rent');
+    }
+    
+    // 2. حفظ نوع العقار
+    if (state.propertyType != null) {
+      Prefs.setString('user_property_type', state.propertyType!.name);
+    }
+
+    // 3. 🔥 توحيد المحافظة: حفظ أول محافظة مختارة لكي يقرأها الفلتر
+    if (state.selectedLocations.isNotEmpty) {
+      // نأخذ أول محافظة اختارها المستخدم لتكون هي القيمة الافتراضية للبحث
+      Prefs.setString('user_location', state.selectedLocations.first);
+      Prefs.setStringList('user_selected_locations', state.selectedLocations);
+    }
+
+    Prefs.setBool('isOnBoardingSeen', true);
   }
 
   void previousStep() {

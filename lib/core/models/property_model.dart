@@ -14,7 +14,8 @@ class PropertyModel extends PropertyEntity {
     required super.createdAt,
     super.views,
     super.isFeatured,
-    super.isReserved, // 🔥
+    super.status,
+    super.statusHistory, // 🔥 الجديد
     required super.images,
     required super.media,
     required super.facilities,
@@ -23,7 +24,8 @@ class PropertyModel extends PropertyEntity {
     required super.location,
     required super.phone,
     required super.whatsapp,
-    required super.sellerId, 
+    super.email,
+    required super.sellerId,
     required super.sellerName,
     super.sellerImage,
     super.sellerJoinDate,
@@ -77,7 +79,14 @@ class PropertyModel extends PropertyEntity {
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : DateTime.now(),
       views: json['views'] as int? ?? 0,
       isFeatured: json['isFeatured'] as bool? ?? false,
-      isReserved: json['isReserved'] as bool? ?? false, // 🔥
+      status: PropertyStatus.values.firstWhere(
+        (e) => e.name == json['status'],
+        orElse: () => PropertyStatus.active,
+      ),
+      statusHistory: (json['statusHistory'] as List?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          const [], // 🔥 قراءة السجل
       images: List<String>.from(json['images'] as List? ?? []),
       media: List<String>.from(json['media'] as List? ?? json['images'] as List? ?? []),
       facilities: List<String>.from(json['facilities'] as List? ?? []),
@@ -86,6 +95,7 @@ class PropertyModel extends PropertyEntity {
       location: json['location'] as String? ?? '',
       phone: json['phone'] as String? ?? '',
       whatsapp: json['whatsapp'] as String? ?? '',
+      email: json['email'] as String?,
       sellerId: json['sellerId'] as String? ?? 'unknown',
       sellerName: json['sellerName'] as String? ?? 'مستخدم',
       sellerImage: json['sellerImage'] as String?,
@@ -128,6 +138,7 @@ class PropertyModel extends PropertyEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -141,7 +152,8 @@ class PropertyModel extends PropertyEntity {
       'createdAt': createdAt.toIso8601String(),
       'views': views,
       'isFeatured': isFeatured,
-      'isReserved': isReserved, // 🔥
+      'status': status.name,
+      'statusHistory': statusHistory, // 🔥 حفظ السجل
       'images': images,
       'media': media,
       'facilities': facilities,
@@ -150,6 +162,7 @@ class PropertyModel extends PropertyEntity {
       'location': location,
       'phone': phone,
       'whatsapp': whatsapp,
+      'email': email,
       'sellerId': sellerId,
       'sellerName': sellerName,
       'sellerImage': sellerImage,
@@ -205,7 +218,8 @@ class PropertyModel extends PropertyEntity {
       createdAt: entity.createdAt,
       views: entity.views,
       isFeatured: entity.isFeatured,
-      isReserved: entity.isReserved, // 🔥
+      status: entity.status,
+      statusHistory: entity.statusHistory, // 🔥
       images: entity.images,
       media: entity.media,
       facilities: entity.facilities,
@@ -214,6 +228,7 @@ class PropertyModel extends PropertyEntity {
       location: entity.location,
       phone: entity.phone,
       whatsapp: entity.whatsapp,
+      email: entity.email,
       sellerId: entity.sellerId,
       sellerName: entity.sellerName,
       sellerImage: entity.sellerImage,
@@ -269,7 +284,8 @@ class PropertyModel extends PropertyEntity {
       createdAt: createdAt,
       views: views,
       isFeatured: isFeatured,
-      isReserved: isReserved, // 🔥
+      status: status,
+      statusHistory: statusHistory,
       images: images,
       media: media,
       facilities: facilities,
@@ -278,6 +294,7 @@ class PropertyModel extends PropertyEntity {
       location: location,
       phone: phone,
       whatsapp: whatsapp,
+      email: email,
       sellerId: sellerId,
       sellerName: sellerName,
       sellerImage: sellerImage,

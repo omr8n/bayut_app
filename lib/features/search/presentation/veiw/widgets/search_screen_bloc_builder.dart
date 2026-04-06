@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/recent_properties.dart';
+import '../../manager/search_cubit/search_cubit.dart'; // 🔥
 import 'empty_state.dart';
 import 'search_results_count.dart';
 
@@ -12,9 +12,10 @@ class SearchScreenBlocBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PropertyCubit, PropertyState>(
+    // 🔥 التعديل: الاستماع لـ SearchCubit المستقل
+    return BlocBuilder<SearchCubit, SearchState>(
       builder: (context, state) {
-        if (state is PropertySuccess) {
+        if (state is SearchSuccess) {
           final properties = state.properties;
 
           if (properties.isEmpty) {
@@ -35,7 +36,7 @@ class SearchScreenBlocBuilder extends StatelessWidget {
           );
         }
 
-        if (state is PropertyFailure) {
+        if (state is SearchFailure) {
           return SliverFillRemaining(
             hasScrollBody: false,
             child: Center(
@@ -44,7 +45,7 @@ class SearchScreenBlocBuilder extends StatelessWidget {
           );
         }
 
-        // 🔥 استخدام Skeletonizer.sliver للتحميل بشكل هيكلي أنيق
+        // Skeleton Loading State
         return Skeletonizer.sliver(
           enabled: true,
           child: SliverMainAxisGroup(

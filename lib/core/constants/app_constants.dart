@@ -212,13 +212,15 @@ class AppConstants {
     "درعا",
     "السويداء",
     "القنيطرة",
+    "القامشلي",
   ];
   static String selectedFinishType = 'سوبر ديلوكس';
   static String selectedOwnershipType = 'طابو أخضر';
   static String selectedDirection = 'قبلي';
   static String selectedHeatingType = 'شوفاج';
   static String selectedGovernorate = 'دمشق';
-  static String selectedCurrency = 'usd'; // تم تعديل القيمة الافتراضية لتناسب القائمة
+  static String selectedCurrency =
+      'usd'; // تم تعديل القيمة الافتراضية لتناسب القائمة
   static String selectedShopLocation = 'شارع رئيسي';
   static String selectedLandType = 'سكنية';
   static String selectedFarmType = 'نباتية';

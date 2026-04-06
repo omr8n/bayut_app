@@ -9,10 +9,11 @@ class NightModeSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileCubit, ProfileState>(
-      buildWhen: (previous, current) => current is ProfileDarkModeToggled,
+      // 🔥 تم إزالة buildWhen لضمان مزامنة حالة المفتاح مع الحالة الفعلية دائماً
       builder: (context, state) {
         final cubit = context.read<ProfileCubit>();
         return SwitchListTile(
+          activeColor: AppColors.primary,
           secondary: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(

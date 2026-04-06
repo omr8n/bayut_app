@@ -4,7 +4,6 @@
 // import 'package:pin_code_fields/pin_code_fields.dart';
 // import 'package:test_graduation/core/routing/app_routes.dart';
 // import 'package:test_graduation/core/utils/colors.dart';
-// import 'package:test_graduation/core/widgets/custom_primary_button.dart';
 
 // class VerifyOtpScreen extends StatefulWidget {
 //   const VerifyOtpScreen({super.key});
@@ -17,6 +16,8 @@
 //   final formKey = GlobalKey<FormState>();
 //   late TextEditingController pinCodeController;
 
+//   bool isNavigated = false; 
+
 //   @override
 //   void initState() {
 //     super.initState();
@@ -27,6 +28,14 @@
 //   void dispose() {
 //     pinCodeController.dispose();
 //     super.dispose();
+//   }
+
+//   void _onOtpCompleted(String pin) {
+//     if (isNavigated) return;
+//     isNavigated = true;
+
+//     // 🔥 التعديل: التوجه لصفحة تسجيل الدخول (Login) حصراً بعد الـ OTP
+//     GoRouter.of(context).pushReplacement(AppRoutes.loginScreen);
 //   }
 
 //   @override
@@ -43,7 +52,6 @@
 //                 crossAxisAlignment: CrossAxisAlignment.start,
 //                 children: [
 //                   SizedBox(height: 20.h),
-//                   // 🔥 زر الرجوع الأنيق
 //                   Align(
 //                     alignment: Alignment.centerRight,
 //                     child: IconButton(
@@ -63,14 +71,15 @@
 //                   ),
 //                   SizedBox(height: 10.h),
 //                   Text(
-//                     "يرجى إدخال رمز التحقق الذي أرسلناه للتو إلى بريدك الإلكتروني.",
+//                     "يرجى إدخال الرمز المرسل أو الضغط على متابعة للانتقال لصفحة تسجيل الدخول.",
 //                     style: TextStyle(
 //                       fontSize: 14.sp,
 //                       color: AppColors.textSecondary,
 //                     ),
 //                   ),
 //                   SizedBox(height: 40.h),
-//                   // 🔥 حقل إدخال الرمز المنسق
+                  
+//                   // 🔥 حقل إدخال الرمز الموحد (استخدام PinCodeTextField للأمان والاستقرار)
 //                   PinCodeTextField(
 //                     appContext: context,
 //                     length: 4,
@@ -78,11 +87,7 @@
 //                     obscureText: false,
 //                     animationType: AnimationType.scale,
 //                     keyboardType: TextInputType.number,
-//                     textStyle: TextStyle(
-//                       fontSize: 22.sp,
-//                       fontWeight: FontWeight.bold,
-//                       color: AppColors.primary,
-//                     ),
+//                     textStyle: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold, color: AppColors.primary),
 //                     pinTheme: PinTheme(
 //                       shape: PinCodeFieldShape.box,
 //                       borderRadius: BorderRadius.circular(12.r),
@@ -98,52 +103,31 @@
 //                     ),
 //                     enableActiveFill: true,
 //                     onChanged: (value) {},
-//                     onCompleted: (value) {
-//                       GoRouter.of(
-//                         context,
-//                       ).pushReplacement(AppRoutes.mainScreen);
-//                     },
+//                     onCompleted: _onOtpCompleted, // 🔥 التوجيه للـ Login
 //                   ),
+
 //                   SizedBox(height: 40.h),
-//                   // 🔥 زر التأكيد الموحد
-//                   CustomPriamryButton(
-//                     title: "تأكيد",
-//                     onPressed: () {
-//                       if (pinCodeController.text.length == 4) {
-//                         GoRouter.of(
-//                           context,
-//                         ).pushReplacement(AppRoutes.mainScreen);
-//                       }
-//                     },
-//                   ),
-//                   SizedBox(height: 30.h),
-//                   // 🔥 رابط إعادة الإرسال
+                  
 //                   Center(
 //                     child: GestureDetector(
 //                       onTap: () {
-//                         // منطق إعادة الإرسال يوضع هنا
+//                         GoRouter.of(context).pushReplacement(AppRoutes.loginScreen);
 //                       },
 //                       child: RichText(
 //                         text: TextSpan(
 //                           text: "لم يصلك الرمز؟ ",
-//                           style: TextStyle(
-//                             fontSize: 14.sp,
-//                             color: AppColors.textSecondary,
-//                             fontFamily: 'Dubai',
-//                           ),
+//                           style: TextStyle(fontSize: 14.sp, color: AppColors.textSecondary, fontFamily: 'Dubai'),
 //                           children: [
 //                             TextSpan(
 //                               text: "إعادة الإرسال",
-//                               style: TextStyle(
-//                                 color: AppColors.secondary,
-//                                 fontWeight: FontWeight.bold,
-//                               ),
+//                               style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold),
 //                             ),
 //                           ],
 //                         ),
 //                       ),
 //                     ),
 //                   ),
+//                   SizedBox(height: 20.h),
 //                 ],
 //               ),
 //             ),

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/strings_ar.dart';
@@ -27,7 +28,7 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
     _tabController = TabController(length: 2, vsync: this);
   }
 
-  void navigateToReservedTab() {
+  void navigateToSoldTab() {
     if (_tabController.index != 1) {
       _tabController.animateTo(1);
     }
@@ -51,8 +52,12 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
 
   @override
   Widget build(BuildContext context) {
-    final active = widget.properties.where((p) => !p.isReserved).toList();
-    final reserved = widget.properties.where((p) => p.isReserved).toList();
+    final active = widget.properties
+        .where((p) => p.status != PropertyStatus.sold)
+        .toList();
+    final sold = widget.properties
+        .where((p) => p.status == PropertyStatus.sold)
+        .toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF3F5F9),
@@ -68,7 +73,7 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
           indicatorColor: AppColors.primary,
           tabs: const [
             Tab(text: 'النشطة'),
-            Tab(text: 'المحجوزة'),
+            Tab(text: 'المباعة'),
           ],
         ),
       ),
@@ -80,8 +85,11 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
         child: TabBarView(
           controller: _tabController,
           children: [
-            PropertiesListView(properties: active, onReservedAction: navigateToReservedTab),
-            PropertiesListView(properties: reserved),
+            PropertiesListView(
+              properties: active,
+              onSoldAction: navigateToSoldTab,
+            ),
+            PropertiesListView(properties: sold),
           ],
         ),
       ),

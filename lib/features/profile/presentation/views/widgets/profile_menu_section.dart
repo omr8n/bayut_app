@@ -11,6 +11,7 @@ import 'package:test_graduation/features/profile/presentation/views/guide_view.d
 import 'package:test_graduation/features/profile/presentation/views/settings_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/terms_view.dart';
 
+import 'package:test_graduation/features/profile/presentation/views/favorites_view.dart';
 import 'night_mode_switch.dart';
 import 'profile_menu_item.dart';
 
@@ -45,12 +46,36 @@ class ProfileMenuSection extends StatelessWidget {
               if (isLoggedIn) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyPropertiesScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const MyPropertiesScreen(),
+                  ),
                 );
               } else {
                 MyAppMethods.showErrorORWarningDialog(
                   context: context,
                   subtitle: 'يرجى تسجيل الدخول أولاً للوصول لعقاراتك',
+                  fct: () => GoRouter.of(context).push(AppRoutes.loginScreen),
+                );
+              }
+            },
+          ),
+          _buildDivider(),
+          ProfileMenuItem(
+            icon: Icons.favorite_outline,
+            title: 'المفضلة',
+            iconColor: Colors.red,
+            onTap: () {
+              if (isLoggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritesView(),
+                  ),
+                );
+              } else {
+                MyAppMethods.showErrorORWarningDialog(
+                  context: context,
+                  subtitle: 'يرجى تسجيل الدخول أولاً للوصول للمفضلة',
                   fct: () => GoRouter.of(context).push(AppRoutes.loginScreen),
                 );
               }
@@ -113,7 +138,7 @@ class ProfileMenuSection extends StatelessWidget {
             ),
           ),
           _buildDivider(),
-          
+
           // 🔥 زر تفاعلي: تسجيل دخول (للزائر) أو تسجيل خروج (للمسجل)
           ProfileMenuItem(
             icon: isLoggedIn ? Icons.logout : Icons.login,

@@ -13,14 +13,20 @@ import 'package:test_graduation/features/auth/data/repos/auth_repo_impl.dart';
 import 'package:test_graduation/features/auth/domain/repos/auth_repo.dart';
 import 'package:test_graduation/features/auth/presentation/cubits/signup_cubits/signup_cubit.dart';
 import 'package:test_graduation/features/auth/presentation/cubits/signin_cubit/signin_cubit.dart';
+import 'package:test_graduation/features/auth/presentation/manager/forget_password_cubit/forget_password_cubit.dart';
 import 'package:test_graduation/features/my_properties/data/repos/add_property_repo_impl.dart';
 import 'package:test_graduation/features/my_properties/domain/repos/add_property_repo.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
-import 'package:test_graduation/features/profile/data/repos/rating_repo_impl.dart'; // 🔥
-import 'package:test_graduation/features/profile/domain/repos/rating_repo.dart'; // 🔥
-import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart'; // 🔥
+import 'package:test_graduation/features/profile/data/repos/rating_repo_impl.dart';
+import 'package:test_graduation/features/profile/domain/repos/rating_repo.dart';
+import 'package:test_graduation/features/profile/data/repos/favorites_repo_impl.dart';
+import 'package:test_graduation/features/profile/domain/repos/favorites_repo.dart';
+import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
+import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/seller_properties_cubit/seller_properties_cubit.dart';
+import 'package:test_graduation/features/search/presentation/manager/search_cubit/search_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -34,15 +40,23 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<MediaRepo>(() => MediaRepoImpl(getIt<StorageService>()));
   getIt.registerLazySingleton<AddPropertyRepo>(() => AddPropertyRepoImpl(getIt<DatabaseService>()));
   getIt.registerLazySingleton<PropertyRepo>(() => PropertyRepoImpl(getIt<DatabaseService>()));
-  getIt.registerLazySingleton<RatingRepo>(() => RatingRepoImpl(getIt<DatabaseService>())); // 🔥 سجل التقييم
+  getIt.registerLazySingleton<FavoritesRepo>(() => FavoritesRepoImpl(getIt<DatabaseService>()));
+  getIt.registerLazySingleton<RatingRepo>(() => RatingRepoImpl(getIt<DatabaseService>()));
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepoImpl(databaseService: getIt<DatabaseService>(), firebaseAuthService: getIt<FirebaseAuthService>()));
 
   // Cubits
   getIt.registerLazySingleton<AddPropertyCubit>(() => AddPropertyCubit(mediaRepo: getIt<MediaRepo>(), addPropertiesRepo: getIt<AddPropertyRepo>()));
   getIt.registerFactory<PropertyCubit>(() => PropertyCubit(getIt<PropertyRepo>()));
+  
+  // 🔥 تسجيل SearchCubit المستقل
+  getIt.registerFactory<SearchCubit>(() => SearchCubit(getIt<PropertyRepo>()));
+
   getIt.registerFactory<SignupCubit>(() => SignupCubit(getIt<AuthRepo>(), getIt<MediaRepo>()));
   getIt.registerFactory<SigninCubit>(() => SigninCubit(getIt<AuthRepo>()));
   getIt.registerFactory<MyPropertiesCubit>(() => MyPropertiesCubit(getIt<PropertyRepo>()));
   getIt.registerFactory<SellerPropertiesCubit>(() => SellerPropertiesCubit(getIt<PropertyRepo>()));
-  getIt.registerFactory<RatingCubit>(() => RatingCubit(getIt<RatingRepo>())); // 🔥 سجل كيوبيت التقييم
+  getIt.registerFactory<RatingCubit>(() => RatingCubit(getIt<RatingRepo>()));
+  getIt.registerFactory<FavoritesCubit>(() => FavoritesCubit(getIt<FavoritesRepo>(), getIt<FirebaseAuthService>()));
+  getIt.registerFactory<ForgetPasswordCubit>(() => ForgetPasswordCubit(getIt<AuthRepo>()));
+  getIt.registerFactory<ProfileCubit>(() => ProfileCubit(getIt<FirebaseAuthService>()));
 }

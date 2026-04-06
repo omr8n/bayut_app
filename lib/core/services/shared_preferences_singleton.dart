@@ -25,6 +25,15 @@ class Prefs {
     return _instance.getString(key) ?? "";
   }
 
+  // 🔥 إضافة دعم القوائم (لسجل البحث)
+  static Future<void> setStringList(String key, List<String> value) async {
+    await _instance.setStringList(key, value);
+  }
+
+  static List<String>? getStringList(String key) {
+    return _instance.getStringList(key);
+  }
+
   static Future<bool> setint(String key, int value) {
     return _instance.setInt(key, value);
   }
@@ -33,7 +42,7 @@ class Prefs {
     return _instance.remove(key);
   }
 
-  static Object getint(String key) {
-    return _instance.getInt(key) ?? "";
+  static int getint(String key) { // تصحيح نوع الإرجاع
+    return _instance.getInt(key) ?? 0;
   }
 }

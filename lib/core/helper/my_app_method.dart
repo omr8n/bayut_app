@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:test_graduation/core/utils/app_images.dart';
 import 'package:test_graduation/features/profile/presentation/views/widgets/add_rating_dialog.dart';
 
-// import '../widgets/subtitle_text.dart';
-// import '../widgets/title_text.dart';
-
 class MyAppMethods {
   static void showAddRatingDialog(
     BuildContext context, {
@@ -27,44 +24,48 @@ class MyAppMethods {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius.circular(16.0),
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(Assets.imagesWarning, height: 60, width: 60),
-              const SizedBox(height: 16.0),
-              Text(subtitle, style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          // 🔥 الحل: تحديد قيود العرض والارتفاع لمنع الـ Infinite Size
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              maxHeight: MediaQuery.of(context).size.height * 0.4,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Visibility(
-                    visible: !isError,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.green),
-                      ),
-                    ),
+                  const SizedBox(height: 10),
+                  Image.asset(Assets.imagesWarning, height: 60, width: 60),
+                  const SizedBox(height: 16.0),
+                  Text(
+                    subtitle,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      fct();
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "OK",
-                      style: TextStyle(color: Colors.red),
-                    ),
+                  const SizedBox(height: 24.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (!isError)
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("إلغاء", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                        ),
+                      TextButton(
+                        onPressed: () {
+                          fct();
+                          Navigator.pop(context);
+                        },
+                        child: const Text("موافق", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -81,39 +82,33 @@ class MyAppMethods {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Center(child: Text("Choose option")),
+          title: const Center(child: Text("اختر عملية")),
           content: SingleChildScrollView(
             child: ListBody(
               children: [
                 TextButton.icon(
                   onPressed: () {
                     cameraFCT();
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
+                    if (Navigator.canPop(context)) Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.camera),
-                  label: const Text("Camera"),
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text("الكاميرا"),
                 ),
                 TextButton.icon(
                   onPressed: () {
                     galleryFCT();
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
+                    if (Navigator.canPop(context)) Navigator.pop(context);
                   },
                   icon: const Icon(Icons.image),
-                  label: const Text("Gallery"),
+                  label: const Text("المعرض"),
                 ),
                 TextButton.icon(
                   onPressed: () {
                     removeFCT();
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
+                    if (Navigator.canPop(context)) Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.remove),
-                  label: const Text("Remove"),
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  label: const Text("حذف الصورة", style: TextStyle(color: Colors.red)),
                 ),
               ],
             ),
@@ -123,135 +118,3 @@ class MyAppMethods {
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:e_commerce_shop_smart/core/utils/app_images.dart';
-// import '../widgets/subtitle_text.dart';
-// import '../widgets/title_text.dart';
-
-// class MyAppMethods {
-//   static Future<void> showErrorOrWarningDialog({
-//     required BuildContext context,
-//     required String subtitle,
-//     required VoidCallback onConfirm,
-//     bool isError = true,
-//   }) async {
-//     await showGeneralDialog(
-//       context: context,
-//       barrierDismissible: true,
-//       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-//       transitionDuration: const Duration(milliseconds: 300),
-//       pageBuilder: (context, animation, secondaryAnimation) {
-//         return Center(
-//           child: AlertDialog(
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(12.0),
-//             ),
-//             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-//             content: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 Image.asset(
-//                   Assets.imagesWarning,
-//                   height: 60,
-//                   width: 60,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 SubtitleTextWidget(
-//                   label: subtitle,
-//                   fontWeight: FontWeight.w600,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     if (!isError)
-//                       TextButton(
-//                         onPressed: () => Navigator.pop(context),
-//                         child: const SubtitleTextWidget(
-//                           label: "Cancel",
-//                           color: Colors.green,
-//                         ),
-//                       ),
-//                     TextButton(
-//                       onPressed: () {
-//                         Navigator.pop(context);
-//                         onConfirm();
-//                       },
-//                       child: const SubtitleTextWidget(
-//                         label: "OK",
-//                         color: Colors.red,
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       },
-//       transitionBuilder: (context, animation, secondaryAnimation, child) {
-//         return ScaleTransition(
-//           scale: animation,
-//           child: child,
-//         );
-//       },
-//     );
-//   }
-
-//   static Future<void> imagePickerDialog({
-//     required BuildContext context,
-//     required VoidCallback onCameraPick,
-//     required VoidCallback onGalleryPick,
-//     required VoidCallback onRemoveImage,
-//   }) async {
-//     await showDialog(
-//       context: context,
-//       builder: (context) {
-//         final List<Map<String, dynamic>> options = [
-//           {
-//             'icon': Icons.camera,
-//             'label': 'Camera',
-//             'onTap': onCameraPick,
-//           },
-//           {
-//             'icon': Icons.image,
-//             'label': 'Gallery',
-//             'onTap': onGalleryPick,
-//           },
-//           {
-//             'icon': Icons.remove,
-//             'label': 'Remove',
-//             'onTap': onRemoveImage,
-//           },
-//         ];
-
-//         return AlertDialog(
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(12.0),
-//           ),
-//           title: const Center(
-//             child: TitlesTextWidget(label: "Choose Option"),
-//           ),
-//           content: SingleChildScrollView(
-//             child: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: options.map((option) {
-//                 return TextButton.icon(
-//                   onPressed: () {
-//                     option['onTap']();
-//                     if (Navigator.canPop(context)) {
-//                       Navigator.pop(context);
-//                     }
-//                   },
-//                   icon: Icon(option['icon']),
-//                   label: Text(option['label']),
-//                 );
-//               }).toList(),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

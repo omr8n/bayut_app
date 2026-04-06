@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
@@ -78,7 +78,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   late bool _hasInstallment;
   late bool _isLicensed;
   late bool _isFeatured;
-  late bool _isReserved; // 🔥 إضافة الحالة
+  late PropertyStatus _status; // 🔥 التغيير من bool إلى Enum
   late String _selectedFinishType;
   late String _selectedOwnershipType;
   late String _selectedDirection;
@@ -184,7 +184,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     _hasInstallment = p?.hasInstallment ?? false;
     _isLicensed = p?.isLicensed ?? false;
     _isFeatured = p?.isFeatured ?? false; // 🔥 تأكيد استعادة حالة التميز
-    _isReserved = p?.isReserved ?? false; // 🔥 تأكيد استعادة حالة الحجز
+    _status = p?.status ?? PropertyStatus.active; // 🔥 تأكيد استعادة الحالة (Enum)
     _selectedFinishType = p?.finishType ?? AppConstants.finishTypes.first;
     _selectedOwnershipType =
         p?.ownershipType ?? AppConstants.ownershipTypes.first;
@@ -408,10 +408,10 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
 
     final cubit = context.read<AddPropertyCubit>();
     if (widget.isEdit) {
-      // تمرير حالة الحجز أيضاً لضمان عدم ضياعها أثناء التعديل
+      // تمرير الحالة الحالية لضمان عدم ضياعها أثناء التعديل
       final updatedOriginal = widget.propertyEntity!.copyWith(
         media: _existingMedia,
-        isReserved: _isReserved,
+        status: _status, // 🔥
         isFeatured: _isFeatured,
       );
       cubit.editProperty(params: params, originalProperty: updatedOriginal);

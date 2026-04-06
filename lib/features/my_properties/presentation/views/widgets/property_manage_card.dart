@@ -8,6 +8,7 @@ import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/card_action_item.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PropertyManageCard extends StatelessWidget {
   final PropertyEntity property;
@@ -77,19 +78,47 @@ class PropertyManageCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on,
-                            size: 14,
+                            size: 14.sp,
                             color: Colors.grey,
                           ),
                           Text(
                             property.city,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 8),
+                      // خانة المشاهدات (Views Count)
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.visibility_outlined,
+                              size: 14.sp,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              '${property.views} مشاهدة',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

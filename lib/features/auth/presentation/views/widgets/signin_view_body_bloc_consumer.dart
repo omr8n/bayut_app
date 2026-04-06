@@ -15,7 +15,7 @@ class SigninViewBodyBlocConsumer extends StatelessWidget {
     return BlocConsumer<SigninCubit, SigninState>(
       listener: (context, state) {
         if (state is SigninSuccess) {
-          // ذكاء: استبدال الشاشة بالكامل للتوجه للرئيسية
+          // 🔥 طلبك: التوجه لشاشة الـ OTP فور نجاح تسجيل الدخول
           GoRouter.of(context).pushReplacement(AppRoutes.mainScreen);
         }
 

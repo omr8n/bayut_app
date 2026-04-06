@@ -119,7 +119,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
           (_) => _showSuccessNotification(id, params.title, isUpdate: isUpdate),
         );
       }
-    } catch (e, stack) {
+    } catch (e) {
       log("🔥 Critical Error in Process: $e");
       _showErrorNotification(
         id,
@@ -213,6 +213,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
       location: params.location,
       phone: params.phone,
       whatsapp: params.whatsapp,
+      email: user?.email, // 🔥 أضفت هذا السطر لجلب إيميل المستخدم من الـ Auth
       sellerId: user?.uId ?? "unknown",
       sellerName: user?.name ?? "معلن موثوق",
       sellerImage: user?.profilePic,

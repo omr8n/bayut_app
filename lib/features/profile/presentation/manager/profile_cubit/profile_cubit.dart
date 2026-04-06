@@ -3,33 +3,49 @@ import 'package:equatable/equatable.dart';
 import 'package:test_graduation/core/helper/functions/get_user.dart';
 import 'package:test_graduation/core/services/firebase_auth_service.dart';
 import 'package:test_graduation/core/services/secure_storage_singleton.dart';
+import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 import '../../../../auth/domain/entites/user_entity.dart';
 
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final FirebaseAuthService _authService;
-  UserEntity? user; // 🔥 مخزن بيانات المستخدم
+  UserEntity? user; 
+  bool _isDarkMode = false; // 🔥 إضافة المتغير المفقود
 
-  ProfileCubit(this._authService) : super(ProfileInitial());
+  ProfileCubit(this._authService) : super(ProfileInitial()) {
+    // تحميل حالة الثيم عند البداية
+    _isDarkMode = Prefs.getBool('isDarkMode');
+  }
 
-  bool _isDarkMode = false;
   bool get isDarkMode => _isDarkMode;
 
-  // 🔥 جلب بيانات المستخدم وتحديث الحالة
+  // 🔥 إعادة دالة تبديل الوضع الليلي
+  void toggleDarkMode(bool value) {
+    _isDarkMode = value;
+    Prefs.setBool('isDarkMode', value);
+    emit(ProfileDarkModeToggled(value));
+  }
+
+  void updateUser(UserEntity newUser) {
+    user = newUser;
+    emit(ProfileUserLoaded(newUser));
+  }
+
   Future<void> getUserInfo() async {
     if (!SecureStorage.isLoggedIn) return;
     try {
+      emit(ProfileLoading()); // 🔥 تفعيل حالة التحميل للهيدر
       user = await getUser();
-      emit(ProfileUserLoaded(user!));
+      if (user != null) {
+        emit(ProfileUserLoaded(user!));
+      } else {
+        emit(ProfileInitial());
+      }
     } catch (e) {
-      // معالجة الخطأ بصمت
+      user = null;
+      emit(ProfileInitial());
     }
-  }
-
-  void toggleDarkMode(bool value) {
-    _isDarkMode = value;
-    emit(ProfileDarkModeToggled(value));
   }
 
   Future<void> logout() async {
@@ -40,7 +56,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       user = null;
       emit(ProfileLogoutSuccess());
     } catch (e) {
-      emit(ProfileLogoutFailure('فشل في تسجيل الخروج: ${e.toString()}'));
+      emit(ProfileLogoutFailure('فشل في تسجيل الخروج'));
     }
   }
 }

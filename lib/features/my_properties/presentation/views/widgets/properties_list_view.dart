@@ -3,10 +3,14 @@ import 'package:test_graduation/features/my_properties/domain/entities/property_
 import 'my_property_item.dart';
 
 class PropertiesListView extends StatelessWidget {
-  const PropertiesListView({super.key, required this.properties, this.onReservedAction});
+  const PropertiesListView({
+    super.key,
+    required this.properties,
+    this.onSoldAction,
+  });
 
   final List<PropertyEntity> properties;
-  final VoidCallback? onReservedAction; // 🔥 دالة لإخطار الواجهة بالانتقال
+  final VoidCallback? onSoldAction; // 🔥 دالة لإخطار الواجهة بالانتقال
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +19,18 @@ class PropertiesListView extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: const EdgeInsets.only(top: 16, bottom: 50),
       child: ListView.builder(
+        reverse: true,
         padding: EdgeInsets.zero,
         itemCount: properties.length,
         itemBuilder: (context, index) {
-          return MyPropertyItem(
-            property: properties[index],
-            onReserved: onReservedAction, // تمرير الوظيفة للبطاقة
+          return Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: MyPropertyItem(
+              property: properties[index],
+              onSold: onSoldAction, // تمرير الوظيفة للبطاقة
+            ),
           );
         },
       ),

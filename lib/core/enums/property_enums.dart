@@ -19,6 +19,21 @@ enum Currency { usd, tryCurrency }
 
 enum ListingType { sale, rent }
 
+enum PropertyStatus { active, sold, underInstallment }
+
+extension PropertyStatusExtension on PropertyStatus {
+  String get arabicName {
+    switch (this) {
+      case PropertyStatus.active:
+        return 'نشط';
+      case PropertyStatus.sold:
+        return 'مباع';
+      case PropertyStatus.underInstallment:
+        return 'قيد التقسيط';
+    }
+  }
+}
+
 extension PropertyTypeExtension on PropertyType {
   String get arabicName {
     switch (this) {

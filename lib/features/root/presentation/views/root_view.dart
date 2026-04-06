@@ -1,65 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/widgets/global_upload_overlay.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/features/home/presentation/view/home_view.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/my_properties_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/profile_view.dart';
 import 'package:test_graduation/features/search/presentation/veiw/search_screen.dart';
 import 'package:test_graduation/features/root/presentation/views/widgets/custom_bottom_navigation_bar.dart';
 
-class RootView extends StatefulWidget {
-  static const routeName = '/';
-  const RootView({super.key});
-
-  @override
-  State<RootView> createState() => _RootViewState();
+// 🔥 الكيوبيت لخدمة كافة التطبيق (الانتقال بين التبويبات)
+class NavigationCubit extends Cubit<int> {
+  NavigationCubit() : super(0);
+  void changeIndex(int index) => emit(index);
 }
 
-class _RootViewState extends State<RootView> {
-  late PageController controller;
-  int currentView = 0;
+class RootView extends StatelessWidget {
+  const RootView({super.key});
 
-  List<Widget> screens = [
-    const HomeScreen(),
-    const SearchScreen(),
-    const MyPropertiesScreen(),
-    const ProfileView(),
+  final List<Widget> screens = const [
+    HomeScreen(),
+    SearchScreen(),
+    MyPropertiesScreen(),
+    ProfileView(),
   ];
 
   @override
-  void initState() {
-    super.initState();
-    controller = PageController(initialPage: currentView);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          body: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: controller,
-            onPageChanged: (index) {
-              setState(() => currentView = index);
-            },
-            children: screens,
-          ),
+    // 🔥 الاستماع للكيوبيت الموفر عالمياً في main.dart
+    return BlocBuilder<NavigationCubit, int>(
+      builder: (context, currentIndex) {
+        return Scaffold(
+          body: IndexedStack(index: currentIndex, children: screens),
           bottomNavigationBar: CustomBottonNavigationBar(
-            selectedIndex: currentView,
-            onTap: (index) {
-              setState(() => currentView = index);
-              controller.animateToPage(
-                currentView,
-                duration: const Duration(milliseconds: 150),
-                curve: Curves.easeInOutCubic,
-              );
-            },
+            selectedIndex: currentIndex,
+            onTap: (index) =>
+                context.read<NavigationCubit>().changeIndex(index),
           ),
-        ),
-
-        // 🔥 شريط الرفع العالمي (يظهر فوق كل الشاشات في الخلفية)
-        // const GlobalUploadOverlay(),
-      ],
+        );
+      },
     );
   }
 }

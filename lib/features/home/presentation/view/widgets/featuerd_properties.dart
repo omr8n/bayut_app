@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/utils.dart';
@@ -17,8 +17,8 @@ class FeaturedProperties extends StatelessWidget {
 
     return CarouselSlider(
       options: CarouselOptions(
-        height: Utils(context).getScreenSize.height * 0.45,
-        viewportFraction: .85,
+        height: Utils(context).getScreenSize.height * 0.47,
+        viewportFraction: .95,
         enlargeCenterPage: true,
 
         autoPlay: true,
@@ -28,12 +28,13 @@ class FeaturedProperties extends StatelessWidget {
       ),
       items: properties.map((property) {
         return PropertyCard(
-          // isCompact: true, // 🔥 تصميم مدمج للعقارات المميزة
           property: property,
-          onTap: () {
-            GoRouter.of(
-              context,
-            ).push(AppRoutes.propertyDetailsScreen, extra: property);
+          onTap: (imageIndex) {
+            // 🔥 استقبال الـ index من الكارد
+            GoRouter.of(context).push(
+              AppRoutes.propertyDetailsScreen,
+              extra: {'property': property, 'initialIndex': imageIndex},
+            );
           },
         );
       }).toList(),

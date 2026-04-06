@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/repos/property_repo/property_repo.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
@@ -52,12 +53,28 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
     }
   }
 
-  // 🔥 تبديل حالة الحجز
-  Future<void> toggleReserved(PropertyEntity property) async {
-    final newStatus = !property.isReserved;
-    final result = await productsRepo.updatePropertyStatus(property.id, {
-      'isReserved': newStatus,
-    });
+  // 🔥 تحديث حالة العقار مع حفظ السجل (History)
+  Future<void> updatePropertyStatus(
+    PropertyEntity property,
+    PropertyStatus newStatus, {
+    String? statusReason,
+  }) async {
+    final Map<String, dynamic> historyEntry = {
+      'status': newStatus.name,
+      'timestamp': DateTime.now().toIso8601String(),
+      'reason': statusReason ?? (newStatus == PropertyStatus.sold ? 'تمت عملية البيع' : 'تحديث الحالة'),
+    };
+
+    final Map<String, dynamic> updates = {
+      'status': newStatus.name,
+      'statusHistory': historyEntry, // سيتم معالجته كـ arrayUnion في الـ Service
+    };
+
+    final result = await productsRepo.updatePropertyStatus(
+      property.id,
+      updates,
+    );
+
     if (result.isLeft()) {
       result.fold((f) => emit(MyPropertiesFailure(f.message)), (_) {});
     }
