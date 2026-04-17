@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/features/home/presentation/view/properties_list_view.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/item_type_button.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -18,6 +19,7 @@ class ListTypeButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -25,7 +27,7 @@ class ListTypeButtons extends StatelessWidget {
           children: [
             Expanded(
               child: ItemTypeButton(
-                title: AppStrings.forSale,
+                title: localizations.translate(LangKeys.forSale),
                 icon: Icons.sell_outlined,
                 color: AppColors.forSale,
                 onTap: () {
@@ -33,7 +35,7 @@ class ListTypeButtons extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PropertiesListScreen(
-                        title: AppStrings.forSale,
+                        title: localizations.translate(LangKeys.forSale),
                         properties: saleProperties, // 🔥 تمرير البيانات الحقيقية
                       ),
                     ),
@@ -44,7 +46,7 @@ class ListTypeButtons extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: ItemTypeButton(
-                title: AppStrings.forRent,
+                title: localizations.translate(LangKeys.forRent),
                 icon: Icons.key_outlined,
                 color: AppColors.forRent,
                 onTap: () {
@@ -52,7 +54,7 @@ class ListTypeButtons extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PropertiesListScreen(
-                        title: AppStrings.forRent,
+                        title: localizations.translate(LangKeys.forRent),
                         properties: rentProperties, // 🔥 تمرير البيانات الحقيقية
                       ),
                     ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class CustomBottonNavigationBar extends StatelessWidget {
@@ -13,6 +15,7 @@ class CustomBottonNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -34,26 +37,26 @@ class CustomBottonNavigationBar extends StatelessWidget {
         selectedFontSize: 12,
         unselectedFontSize: 12,
         elevation: 0,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'الرئيسية',
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: localizations.translate(LangKeys.home),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
-            label: 'بحت',
+            icon: const Icon(Icons.search_outlined),
+            activeIcon: const Icon(Icons.search),
+            label: localizations.translate(LangKeys.search),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_box_outlined),
-            activeIcon: Icon(Icons.add_box),
-            label: 'عقاراتي',
+            icon: const Icon(Icons.add_box_outlined),
+            activeIcon: const Icon(Icons.add_box),
+            label: localizations.translate(LangKeys.myProperties),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'حسابي',
+            icon: const Icon(Icons.person_outline),
+            activeIcon: const Icon(Icons.person),
+            label: localizations.translate(LangKeys.myAccount),
           ),
         ],
       ),

@@ -7,6 +7,7 @@ class ProfileMenuItem extends StatelessWidget {
   final Color iconColor;
   final VoidCallback onTap;
   final bool isLast;
+  final Widget? trailing;
 
   const ProfileMenuItem({
     super.key,
@@ -15,6 +16,7 @@ class ProfileMenuItem extends StatelessWidget {
     required this.iconColor,
     required this.onTap,
     this.isLast = false,
+    this.trailing,
   });
 
   @override
@@ -36,11 +38,12 @@ class ProfileMenuItem extends StatelessWidget {
           color: AppColors.textPrimary,
         ),
       ),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey,
-      ),
+      trailing: trailing ??
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: Colors.grey,
+          ),
       onTap: onTap,
       shape: isLast
           ? const RoundedRectangleBorder(

@@ -16,218 +16,284 @@ class AppConstants {
   ];
 
   // 🔥 إضافة قائمة العملات لضمان عمل الاختيار
-  static const List<String> currencies = ['usd', 'ل.س', 'try'];
+  static const List<String> currencies = ['usd', 'currency_lira', 'try'];
 
   static const Map<String, Map<String, dynamic>> commonFacilities = {
-    'مصعد': {'value': false, 'icon': Icons.elevator_outlined},
-    'موقف سيارة': {'value': false, 'icon': Icons.local_parking_outlined},
-    'بلكون/شرفة': {'value': false, 'icon': Icons.balcony_outlined},
-    'مستودع/قبو': {'value': false, 'icon': Icons.storage_outlined},
-    'حديقة': {'value': false, 'icon': Icons.park_outlined},
-    'تكييف': {'value': false, 'icon': Icons.ac_unit_outlined},
-    'مفروش': {'value': false, 'icon': Icons.chair_outlined},
-    'صرف صحي': {'value': false, 'icon': Icons.plumbing_outlined},
-    'غاز طبيعي': {'value': false, 'icon': Icons.gas_meter_outlined},
-    'إنترنت': {'value': false, 'icon': Icons.wifi_outlined},
-    'هاتف أرضي': {'value': false, 'icon': Icons.phone_android_outlined},
-    'طاقة شمسية': {'value': false, 'icon': Icons.solar_power_outlined},
+    'elevator': {'value': false, 'icon': Icons.elevator_outlined},
+    'parking': {'value': false, 'icon': Icons.local_parking_outlined},
+    'balcony': {'value': false, 'icon': Icons.balcony_outlined},
+    'warehouse': {'value': false, 'icon': Icons.storage_outlined},
+    'garden': {'value': false, 'icon': Icons.park_outlined},
+    'ac': {'value': false, 'icon': Icons.ac_unit_outlined},
+    'furnished': {'value': false, 'icon': Icons.chair_outlined},
+    'sewage': {'value': false, 'icon': Icons.plumbing_outlined},
+    'natural_gas': {'value': false, 'icon': Icons.gas_meter_outlined},
+    'internet': {'value': false, 'icon': Icons.wifi_outlined},
+    'landline': {'value': false, 'icon': Icons.phone_android_outlined},
+    'solar_power': {'value': false, 'icon': Icons.solar_power_outlined},
   };
   static const Map<String, Map<String, dynamic>> villaFacilities = {
-    'مسبح': {'value': false, 'icon': Icons.pool_outlined},
-    'حديقة': {'value': false, 'icon': Icons.yard_outlined},
-    'كراج': {'value': false, 'icon': Icons.garage_outlined},
-    'نظام أمني': {'value': false, 'icon': Icons.security_outlined},
-    'غرفة خادمة': {'value': false, 'icon': Icons.person_outline},
-    'غرفة سائق': {'value': false, 'icon': Icons.person_pin_circle_outlined},
-    'مفروش': {'value': false, 'icon': Icons.chair_outlined},
+    'pool': {'value': false, 'icon': Icons.pool_outlined},
+    'garden': {'value': false, 'icon': Icons.yard_outlined},
+    'garage': {'value': false, 'icon': Icons.garage_outlined},
+    'security_system': {'value': false, 'icon': Icons.security_outlined},
+    'maid_room': {'value': false, 'icon': Icons.person_outline},
+    'driver_room': {'value': false, 'icon': Icons.person_pin_circle_outlined},
+    'furnished': {'value': false, 'icon': Icons.chair_outlined},
   };
   static const Map<String, Map<String, dynamic>> shopFacilities = {
-    'مخزن': {'value': false, 'icon': Icons.warehouse_outlined},
-    'حمام': {'value': false, 'icon': Icons.wc_outlined},
-    'مجهز': {'value': false, 'icon': Icons.build_outlined},
-    'تكييف': {'value': false, 'icon': Icons.ac_unit_outlined},
+    'store': {'value': false, 'icon': Icons.warehouse_outlined},
+    'bathroom': {'value': false, 'icon': Icons.wc_outlined},
+    'equipped': {'value': false, 'icon': Icons.build_outlined},
+    'ac': {'value': false, 'icon': Icons.ac_unit_outlined},
   };
   static const Map<String, Map<String, dynamic>> landFacilities = {
-    'رخصة بناء': {'value': false, 'icon': Icons.assignment_outlined},
-    'كهرباء': {'value': false, 'icon': Icons.electric_bolt_outlined},
-    'ماء': {'value': false, 'icon': Icons.water_drop_outlined},
-    'صرف صحي': {'value': false, 'icon': Icons.plumbing_outlined},
+    'building_license': {'value': false, 'icon': Icons.assignment_outlined},
+    'electricity': {'value': false, 'icon': Icons.electric_bolt_outlined},
+    'water': {'value': false, 'icon': Icons.water_drop_outlined},
+    'sewage': {'value': false, 'icon': Icons.plumbing_outlined},
   };
   static const Map<String, Map<String, dynamic>> farmFacilities = {
-    'بئر ماء': {'value': false, 'icon': Icons.water_drop_outlined},
-    'منزل في المزرعة': {'value': false, 'icon': Icons.home_outlined},
-    'كهرباء': {'value': false, 'icon': Icons.electric_bolt_outlined},
-    'مستودع': {'value': false, 'icon': Icons.warehouse_outlined},
+    'water_well': {'value': false, 'icon': Icons.water_drop_outlined},
+    'farmhouse': {'value': false, 'icon': Icons.home_outlined},
+    'electricity': {'value': false, 'icon': Icons.electric_bolt_outlined},
+    'warehouse': {'value': false, 'icon': Icons.warehouse_outlined},
   };
   static const Map<String, Map<String, dynamic>> poolFacilities = {
-    'نظام تدفئة': {'value': false, 'icon': Icons.fireplace_outlined},
-    'نظام تنقية': {'value': false, 'icon': Icons.water_outlined},
-    'غرف تبديل': {'value': false, 'icon': Icons.checkroom_outlined},
-    'حمامات': {'value': false, 'icon': Icons.wc_outlined},
-    'موقف سيارات': {'value': false, 'icon': Icons.local_parking_outlined},
+    'heating_system': {'value': false, 'icon': Icons.fireplace_outlined},
+    'filtration_system': {'value': false, 'icon': Icons.water_outlined},
+    'changing_rooms': {'value': false, 'icon': Icons.checkroom_outlined},
+    'bathrooms_plural': {'value': false, 'icon': Icons.wc_outlined},
+    'parking': {'value': false, 'icon': Icons.local_parking_outlined},
   };
   static const Map<String, Map<String, dynamic>> clinicFacilities = {
-    'غرفة انتظار': {'value': false, 'icon': Icons.chair_outlined},
-    'استقبال': {'value': false, 'icon': Icons.desk_outlined},
-    'غرفة أشعة': {'value': false, 'icon': Icons.settings_overscan_outlined},
-    'غرفة عمليات': {'value': false, 'icon': Icons.medical_services_outlined},
-    'حمام': {'value': false, 'icon': Icons.wc_outlined},
-    'تكييف مركزي': {'value': false, 'icon': Icons.ac_unit_outlined},
+    'waiting_room': {'value': false, 'icon': Icons.chair_outlined},
+    'reception': {'value': false, 'icon': Icons.desk_outlined},
+    'x_ray_room': {'value': false, 'icon': Icons.settings_overscan_outlined},
+    'surgery_room': {'value': false, 'icon': Icons.medical_services_outlined},
+    'bathroom': {'value': false, 'icon': Icons.wc_outlined},
+    'central_ac': {'value': false, 'icon': Icons.ac_unit_outlined},
   };
   static const Map<String, Map<String, dynamic>> warehouseFacilities = {
-    'منصة تحميل': {'value': false, 'icon': Icons.local_shipping_outlined},
-    'مكتب': {'value': false, 'icon': Icons.business_center_outlined},
-    'رافعة': {'value': false, 'icon': Icons.precision_manufacturing_outlined},
-    'حمام': {'value': false, 'icon': Icons.wc_outlined},
-    'كهرباء': {'value': false, 'icon': Icons.electric_bolt_outlined},
+    'loading_platform': {'value': false, 'icon': Icons.local_shipping_outlined},
+    'office': {'value': false, 'icon': Icons.business_center_outlined},
+    'crane': {'value': false, 'icon': Icons.precision_manufacturing_outlined},
+    'bathroom': {'value': false, 'icon': Icons.wc_outlined},
+    'electricity': {'value': false, 'icon': Icons.electric_bolt_outlined},
   };
   static const Map<String, Map<String, dynamic>> hallFacilities = {
-    'منصة/مسرح': {'value': false, 'icon': Icons.theater_comedy_outlined},
-    'نظام صوت': {'value': false, 'icon': Icons.volume_up_outlined},
-    'جهاز عرض': {'value': false, 'icon': Icons.videocam_outlined},
-    'مطبخ': {'value': false, 'icon': Icons.kitchen_outlined},
-    'تكييف': {'value': false, 'icon': Icons.ac_unit_outlined},
-    'موقف سيارات': {'value': false, 'icon': Icons.local_parking_outlined},
+    'stage': {'value': false, 'icon': Icons.theater_comedy_outlined},
+    'sound_system': {'value': false, 'icon': Icons.volume_up_outlined},
+    'projector': {'value': false, 'icon': Icons.videocam_outlined},
+    'kitchen': {'value': false, 'icon': Icons.kitchen_outlined},
+    'ac': {'value': false, 'icon': Icons.ac_unit_outlined},
+    'parking': {'value': false, 'icon': Icons.local_parking_outlined},
   };
   static const Map<String, Map<String, dynamic>> officeFacilities = {
-    'قاعة اجتماعات': {'value': false, 'icon': Icons.groups_outlined},
-    'مطبخ': {'value': false, 'icon': Icons.kitchen_outlined},
-    'حمام': {'value': false, 'icon': Icons.wc_outlined},
-    'تكييف مركزي': {'value': false, 'icon': Icons.ac_unit_outlined},
-    'مصعد': {'value': false, 'icon': Icons.elevator_outlined},
-    'موقف سيارة': {'value': false, 'icon': Icons.local_parking_outlined},
+    'meeting_room': {'value': false, 'icon': Icons.groups_outlined},
+    'kitchen': {'value': false, 'icon': Icons.kitchen_outlined},
+    'bathroom': {'value': false, 'icon': Icons.wc_outlined},
+    'central_ac': {'value': false, 'icon': Icons.ac_unit_outlined},
+    'elevator': {'value': false, 'icon': Icons.elevator_outlined},
+    'parking': {'value': false, 'icon': Icons.local_parking_outlined},
   };
   static const Map<String, Map<String, dynamic>> workshopFacilities = {
-    'كهرباء صناعية (380V)': {
+    'industrial_electricity': {
       'value': false,
       'icon': Icons.electric_bolt_outlined,
     },
-    'تهوية': {'value': false, 'icon': Icons.air_outlined},
-    'معدات': {'value': false, 'icon': Icons.handyman_outlined},
-    'مكتب': {'value': false, 'icon': Icons.desk_outlined},
-    'حمام': {'value': false, 'icon': Icons.wc_outlined},
+    'ventilation': {'value': false, 'icon': Icons.air_outlined},
+    'equipment': {'value': false, 'icon': Icons.handyman_outlined},
+    'office': {'value': false, 'icon': Icons.desk_outlined},
+    'bathroom': {'value': false, 'icon': Icons.wc_outlined},
   };
   static const List<String> finishTypes = [
-    'سوبر ديلوكس',
-    'ديلوكس',
-    'عادي',
-    'على العظم',
-    'قديم',
+    'super_deluxe',
+    'deluxe',
+    'normal',
+    'on_skeleton',
+    'old',
   ];
   static const List<String> ownershipTypes = [
-    'طابو أخضر',
-    'سجل مؤقت',
-    'كاتب عدل',
-    'حكم محكمة',
-    'أسهم',
-    'وكالة',
-    'إسكان',
-    'جمعية سكنية ',
-    'فروغ',
-    'تملك مالي',
+    'green_taboo',
+    'temporary_register',
+    'notary_public',
+    'court_ruling',
+    'shares',
+    'agency',
+    'housing',
+    'housing_association',
+    'forough',
+    'financial_ownership',
   ];
   static const List<String> directions = [
-    'قبلي',
-    'شمالي',
-    'شرقي',
-    'غربي',
-    'أكثر من جهة',
-    'واجهة بحرية',
-    'واجهة على الشارع',
-    'إطلالة جبلية',
-    'إطلالة على مسبح',
-    'إطلالة على حديقة',
-    'إطلالة داخلية',
-    'إطلالة على مدينة',
+    'southern',
+    'northern',
+    'eastern',
+    'western',
+    'multi_direction',
+    'sea_front',
+    'street_front',
+    'mountain_view',
+    'pool_view',
+    'garden_view',
+    'internal_view',
+    'city_view',
   ];
   static const List<String> shopLocationTypes = [
-    'شارع رئيسي',
-    'شارع فرعي',
-    'داخل سوق',
-    'مول تجاري',
-    'زاوية',
+    'main_street',
+    'side_street',
+    'inside_market',
+    'mall',
+    'corner',
   ];
   static const List<String> landType = [
-    'سكنية',
-    'زراعية',
-    'تجارية',
-    'صناعية',
-    'سياحية',
+    'residential',
+    'agricultural',
+    'commercial',
+    'industrial',
+    'tourist',
   ];
   static const List<String> farmTypes = [
-    'نباتية',
-    'حيوانية',
-    'مختلطة',
-    'سياحية',
+    'plant',
+    'animal',
+    'mixed',
+    'tourist',
   ];
   static const List<String> irrigationTypes = [
-    'تنقيط',
-    'رش',
-    'غمر',
-    'بئر',
-    'نهر',
-    'بعلي',
-    'سقي',
-    'رذاذ',
-    'غير متوفر',
+    'drip',
+    'spray',
+    'flood',
+    'well',
+    'river',
+    'rainfed',
+    'irrigation',
+    'mist',
+    'not_available',
   ];
   static const List<String> poolTypes = [
-    'خاص',
-    'عام',
-    'أطفال',
-    'مغطى',
-    'مفتوح',
-    'نصف مغطى',
+    'private',
+    'public',
+    'children',
+    'covered',
+    'open',
+    'half_covered',
   ];
-  static const List<String> poolSizes = ['صغير', 'متوسط', 'كبير', 'أولمبي'];
+  static const List<String> poolSizes = ['small', 'medium', 'large', 'olympic'];
   static const List<String> heatingTypes = [
-    'شوفاج',
-    'تكييف',
-    'مركزي',
-    'طاقة شمسية',
-    'مدفأة غاز',
-    'حطب',
-    'مدفأة مازوت',
-    'غير متوفر',
+    'central_heating',
+    'air_conditioning',
+    'central',
+    'solar_energy',
+    'gas_heater',
+    'wood',
+    'fuel_heater',
+    'not_available',
   ];
   static const List<String> warehouseFloorTypes = [
-    'بيتون',
-    'بلاط',
-    'إيبوكسي',
-    'أسفلت',
-    'تراب',
+    'concrete',
+    'tiles',
+    'epoxy',
+    'asphalt',
+    'soil',
   ];
   static const List<String> governorates = [
-    "دمشق",
-    "ريف دمشق",
-    "حلب",
-    "حمص",
-    "حماة",
-    "اللاذقية",
-    "طرطوس",
-    "إدلب",
-    "الرقة",
-    "دير الزور",
-    "الحسكة",
-    "درعا",
-    "السويداء",
-    "القنيطرة",
-    "القامشلي",
+    "damascus",
+    "rif_damascus",
+    "aleppo",
+    "homs",
+    "hama",
+    "latakia",
+    "tartus",
+    "idlib",
+    "raqqa",
+    "deir_ez_zor",
+    "hasakah",
+    "daraa",
+    "sweida",
+    "quneitra",
+    "qamishli",
   ];
-  static String selectedFinishType = 'سوبر ديلوكس';
-  static String selectedOwnershipType = 'طابو أخضر';
-  static String selectedDirection = 'قبلي';
-  static String selectedHeatingType = 'شوفاج';
-  static String selectedGovernorate = 'دمشق';
-  static String selectedCurrency =
-      'usd'; // تم تعديل القيمة الافتراضية لتناسب القائمة
-  static String selectedShopLocation = 'شارع رئيسي';
-  static String selectedLandType = 'سكنية';
-  static String selectedFarmType = 'نباتية';
-  static String selectedIrrigationType = 'تنقيط';
-  static String selectedPoolType = 'خاص';
-  static String selectedPoolSize = 'متوسط';
-  static String selectedWarehouseFloorType = 'بيتون';
+
+  static const Map<String, List<String>> governorateSearchMap = {
+    'damascus': ['دمشق', 'الشام', 'شام', 'damascus', 'al-sham', 'sham'],
+    'rif_damascus': [
+      'ريف دمشق',
+      'ريف الشام',
+      'ريف',
+      'rif damascus',
+      'rural damascus'
+    ],
+    'aleppo': ['حلب', 'aleppo', 'halab'],
+    'homs': ['حمص', 'homs', 'hims'],
+    'hama': ['حماة', 'حماه', 'hama', 'hamah'],
+    'latakia': [
+      'اللاذقية',
+      'اللاذقيه',
+      'لاذقية',
+      'لاذقيه',
+      'لادقية',
+      'لادقيه',
+      'latakia',
+      'lattakia'
+    ],
+    'tartus': ['طرطوس', 'tartus', 'tartous'],
+    'idlib': ['إدلب', 'ادلب', 'idlib', 'edlib'],
+    'raqqa': ['الرقة', 'الرقه', 'رقة', 'رقه', 'raqqa', 'rakka'],
+    'deir_ez_zor': ['دير الزور', 'ديرالزور', 'دير', 'deir ez-zor', 'deir ezzor'],
+    'hasakah': ['الحسكة', 'الحسكه', 'حسكة', 'حسكه', 'hasakah', 'hassakeh'],
+    'daraa': ['درعا', 'daraa', 'dar\'a'],
+    'sweida': ['السويداء', 'سويداء', 'sweida', 'suwayda'],
+    'quneitra': [
+      'القنيطرة',
+      'القنيطره',
+      'قنيطرة',
+      'قنيطره',
+      'quneitra',
+      'qunaytra'
+    ],
+    'qamishli': ['القامشلي', 'قامشلي', 'qamishli', 'kamishly'],
+  };
+
+  static String normalizeText(String text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replaceAll('أ', 'ا')
+        .replaceAll('إ', 'ا')
+        .replaceAll('آ', 'ا')
+        .replaceAll('ة', 'ه')
+        .replaceAll('ى', 'ي')
+        .replaceAll('ذ', 'د');
+  }
+
+  /// وظيفة مساعدة للتحقق مما إذا كان اسم المحافظة يطابق الكود المعطى
+  static bool isMatchingGovernorate(String? dataValue, String? selectedKey) {
+    if (dataValue == null || selectedKey == null) return false;
+    if (selectedKey == 'الكل') return true;
+
+    final nData = normalizeText(dataValue);
+    final nKey = normalizeText(selectedKey);
+
+    if (nData == nKey) return true;
+
+    final searchTerms = governorateSearchMap[selectedKey.toLowerCase()] ?? [];
+    return searchTerms.any((term) => normalizeText(term) == nData);
+  }
+
+  static String selectedFinishType = 'super_deluxe';
+  static String selectedOwnershipType = 'green_taboo';
+  static String selectedDirection = 'southern';
+  static String selectedHeatingType = 'central_heating';
+  static String selectedGovernorate = 'damascus';
+  static String selectedCurrency = 'usd';
+  static String selectedShopLocation = 'main_street';
+  static String selectedLandType = 'residential';
+  static String selectedFarmType = 'plant';
+  static String selectedIrrigationType = 'drip';
+  static String selectedPoolType = 'private';
+  static String selectedPoolSize = 'medium';
+  static String selectedWarehouseFloorType = 'concrete';
 
   static const kIsOnBoardingViewSeen = 'isOnBoardingViewSeen';
   static const kUserData = 'userData';

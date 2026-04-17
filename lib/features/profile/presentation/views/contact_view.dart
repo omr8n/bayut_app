@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,28 +16,34 @@ class ContactView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('اتصل بنا وتابعنا'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(localizations.translate(LangKeys.contactUsFollowUs)),
+        centerTitle: true,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text(
-            'نحن هنا لمساعدتك دائماً. يمكنك التواصل معنا عبر القنوات التالية:',
-            style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+          Text(
+            localizations.translate(LangKeys.contactUsHelpText),
+            style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
           _buildContactOption(
+            context: context,
             icon: Icons.email_outlined,
-            title: 'البريد الإلكتروني للدعم',
+            title: localizations.translate(LangKeys.supportEmail),
             subtitle: 'support@baytesy.com',
             color: Colors.orange,
             onTap: () => _launchURL('mailto:support@baytesy.com'),
           ),
           _buildContactOption(
-            icon: Icons.chat_bubble_outline, // أيقونة بديلة للواتساب
-            title: 'واتساب لخدمة العملاء',
+            context: context,
+            icon: Icons.chat_bubble_outline,
+            title: localizations.translate(LangKeys.customerServiceWhatsapp),
             subtitle: '+963 935 922 621',
             color: Colors.green,
             onTap: () => _launchURL('https://wa.me/963935922621'),
@@ -43,9 +51,9 @@ class ContactView extends StatelessWidget {
           const SizedBox(height: 30),
           const Divider(),
           const SizedBox(height: 20),
-          const Text(
-            'تابعنا على وسائل التواصل الاجتماعي',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            localizations.translate(LangKeys.followUsSocial),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -65,12 +73,14 @@ class ContactView extends StatelessWidget {
   }
 
   Widget _buildContactOption({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
     required Color color,
     required VoidCallback onTap,
   }) {
+    final localizations = AppLocalizations.of(context)!;
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
@@ -80,7 +90,11 @@ class ContactView extends StatelessWidget {
         leading: Icon(icon, color: color, size: 30),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          textDirection: localizations.isEnLocale ? TextDirection.ltr : TextDirection.rtl,
+        ),
       ),
     );
   }
@@ -93,7 +107,7 @@ class ContactView extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: CircleAvatar(
           radius: 30,
-          backgroundColor: color.withValues(alpha: 0.1),
+          backgroundColor: color.withOpacity(0.1),
           child: Icon(icon, color: color, size: 32),
         ),
       ),

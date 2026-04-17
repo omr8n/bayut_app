@@ -1,0 +1,542 @@
+class LangKeys {
+  static const String appName = 'app_name';
+  static const String login = 'login';
+  static const String welcome = 'welcome';
+  static const String email = 'email';
+  static const String password = 'password';
+  static const String loggedSuccessfully = 'logged_successfully';
+  static const String loggedError = 'logged_error';
+  static const String createAccount = 'create_account';
+  static const String signUpWelcome = 'sign_up_welcome';
+  static const String signUp = 'sign_up';
+  static const String youHaveAccount = 'you_have_account';
+  static const String fullName = 'full_name';
+  static const String chooseProducts = 'choose_products';
+  static const String applicationFeatures = 'application_features';
+  static const String languageTitle = 'language_title';
+  static const String logOut = 'log_out';
+  static const String yes = 'yes';
+  static const String no = 'no';
+  static const String darkMode = 'dark_mode';
+  static const String langCode = 'lang_code';
+  static const String notifications = 'notifications';
+  static const String viewAll = 'view_all';
+
+  // Auth
+  static const String welcomeBack = 'welcome_back';
+  static const String loginToContinue = 'login_to_continue';
+  static const String emailHint = 'email_hint';
+  static const String passwordHint = 'password_hint';
+  static const String invalidEmail = 'invalid_email';
+  static const String weakPassword = 'weak_password';
+  static const String forgotPassword = 'forgot_password';
+  static const String loginButton = 'login_button';
+  static const String googleLogin = 'google_login';
+  static const String dontHaveAccount = 'dont_have_account';
+  static const String register = 'register';
+  static const String registerWelcome = 'register_welcome';
+  static const String fullNameHint = 'full_name_hint';
+  static const String resetPassword = 'reset_password';
+  static const String resetPasswordInstructions = 'reset_password_instructions';
+  static const String sendResetLink = 'send_reset_link';
+  static const String resetLinkSent = 'reset_link_sent';
+  static const String phone = 'phone';
+  static const String phoneHint = 'phone_hint';
+  static const String confirmPassword = 'confirm_password';
+  static const String passwordsDontMatch = 'passwords_dont_match';
+  static const String alreadyHaveAccount = 'already_have_account';
+
+  // Validation
+  static const String pleaseEnterName = 'please_enter_name';
+  static const String pleaseEnterEmail = 'please_enter_email';
+  static const String pleaseEnterPhone = 'please_enter_phone';
+  static const String pleaseEnterPassword = 'please_enter_password';
+  static const String passwordTooShort = 'password_too_short';
+  static const String pleaseConfirmPassword = 'please_confirm_password';
+
+  // Home & Search
+  static const String findYourDream = 'find_your_dream';
+  static const String findYourPerfectHomeTitle = 'find_your_perfect_home_title';
+  static const String findYourPerfectHomeDesc = 'find_your_perfect_home_desc';
+  static const String smartInteractiveMapTitle = 'smart_interactive_map_title';
+  static const String smartInteractiveMapDesc = 'smart_interactive_map_desc';
+  static const String fastDirectContactTitle = 'fast_direct_contact_title';
+  static const String fastDirectContactDesc = 'fast_direct_contact_desc';
+  static const String startNow = 'start_now';
+  static const String next = 'next';
+  static const String back = 'back';
+  static const String skip = 'skip';
+  static const String searchProperties = 'search_properties';
+  static const String featuredProperties = 'featured_properties';
+  static const String recentProperties = 'recent_properties';
+  static const String forSale = 'for_sale';
+  static const String forRent = 'for_rent';
+  static const String searchHere = 'search_here';
+  static const String home = 'home';
+  static const String myAccount = 'my_account';
+  static const String search = 'search';
+  static const String sortBy = 'sort_by';
+  static const String newest = 'newest';
+  static const String priceLowToHigh = 'price_low_to_high';
+  static const String priceHighToLow = 'price_high_to_low';
+  static const String areaLargest = 'area_largest';
+  static const String noResults = 'no_results';
+  static const String tryAdjustingSearch = 'try_adjusting_search';
+  static const String searchResults = 'search_results';
+  static const String propertyFound = 'property_found';
+  static const String twoPropertiesFound = 'two_properties_found';
+  static const String propertiesFoundCount = 'properties_found_count';
+  static const String propertyFoundCount = 'property_found_count';
+  static const String description = 'description';
+  static const String facilitiesAndServices = 'facilities_and_services';
+  static const String similarProperties = 'similar_properties';
+  static const String propertyDetails = 'property_details';
+  static const String share = 'share';
+  static const String price = 'price';
+  static const String area = 'area';
+  static const String rooms = 'rooms';
+  static const String bathrooms = 'bathrooms';
+  static const String bedrooms = 'bedrooms';
+  static const String floor = 'floor';
+  static const String status = 'status';
+  static const String roomsCount = 'rooms_count';
+  static const String bathroomsCount = 'bathrooms_count';
+  static const String verifiedMember = 'verified_member';
+  static const String installmentAvailable = 'installment_available';
+  static const String downPayment = 'down_payment';
+  static const String monthlyInstallment = 'monthly_installment';
+  static const String installmentDuration = 'installment_duration';
+  static const String months = 'months';
+  static const String call = 'call';
+  static const String filterResults = 'filter_results';
+  static const String listingType = 'listing_type';
+  static const String propertyType = 'property_type';
+  static const String priceRange = 'price_range';
+  static const String areaRange = 'area_range';
+  static const String roomsAndBaths = 'rooms_and_baths';
+  static const String additionalOptions = 'additional_options';
+  static const String featuredOnly = 'featured_only';
+  static const String licensedProperty = 'licensed_property';
+  static const String from = 'from';
+  static const String to = 'to';
+  static const String myProperties = 'my_properties';
+  static const String activeProperties = 'active_properties';
+  static const String soldProperties = 'sold_properties';
+  static const String addNewProperty = 'add_new_property';
+  static const String basicInfo = 'basic_info';
+  static const String buildingAge = 'building_age';
+  static const String year = 'year';
+  static const String leaveEmptyForNew = 'leave_empty_for_new';
+  static const String finishType = 'finish_type';
+  static const String ownershipType = 'ownership_type';
+  static const String directionAndView = 'direction_and_view';
+  static const String licensedPropertyQuestion = 'licensed_property_question';
+  static const String featureProperty = 'feature_property';
+  static const String featuredDescription = 'featured_description';
+  static const String installmentAvailableQuestion =
+      'installment_available_question';
+  static const String availableFacilities = 'available_facilities';
+  static const String location = 'location';
+  static const String contactInfo = 'contact_info';
+  static const String processingStarted = 'processing_started';
+  static const String writeInstallmentNotes = 'write_installment_notes';
+  static const String saved = 'saved';
+  static const String save = 'save';
+  static const String propertyTitle = 'property_title';
+  static const String propertyDescription = 'property_description';
+  static const String purpose = 'purpose';
+  static const String lookForSaleOrRent = 'look_for_sale_or_rent';
+  static const String whatPropertyTypeLookFor = 'what_property_type_look_for';
+  static const String whichAreasInterestedIn = 'which_areas_interested_in';
+  static const String startExploring = 'start_exploring';
+  static const String currency = 'currency';
+  static const String phoneForCall = 'phone_for_call';
+  static const String phoneHintFormat = 'phone_hint_format';
+  static const String invalidPhoneFormat = 'invalid_phone_format';
+  static const String countryCodeInstruction = 'country_code_instruction';
+  static const String whatsappNumber = 'whatsapp_number';
+  static const String whatsappDifferent = 'whatsapp_different';
+  static const String governorate = 'governorate';
+  static const String city = 'city';
+
+  // Finish Types
+  static const String superDeluxe = 'super_deluxe';
+  static const String deluxe = 'deluxe';
+  static const String normal = 'normal';
+  static const String onSkeleton = 'on_skeleton';
+  static const String old = 'old';
+
+  // Ownership Types
+  static const String greenTaboo = 'green_taboo';
+  static const String temporaryRegister = 'temporary_register';
+  static const String notaryPublic = 'notary_public';
+  static const String courtRuling = 'court_ruling';
+  static const String shares = 'shares';
+  static const String agency = 'agency';
+  static const String housing = 'housing';
+  static const String housingAssociation = 'housing_association';
+  static const String forough = 'forough';
+  static const String financialOwnership = 'financial_ownership';
+
+  // Directions
+  static const String southern = 'southern';
+  static const String northern = 'northern';
+  static const String eastern = 'eastern';
+  static const String western = 'western';
+  static const String multiDirection = 'multi_direction';
+  static const String seaFront = 'sea_front';
+  static const String streetFront = 'street_front';
+  static const String mountainView = 'mountain_view';
+  static const String poolView = 'pool_view';
+  static const String gardenView = 'garden_view';
+  static const String internalView = 'internal_view';
+  static const String cityView = 'city_view';
+
+  // Governorates
+  static const String damascus = 'damascus';
+  static const String rifDamascus = 'rif_damascus';
+  static const String aleppo = 'aleppo';
+  static const String homs = 'homs';
+  static const String hama = 'hama';
+  static const String latakia = 'latakia';
+  static const String tartus = 'tartus';
+  static const String idlib = 'idlib';
+  static const String raqqa = 'raqqa';
+  static const String deirEzZor = 'deir_ez_zor';
+  static const String hasakah = 'hasakah';
+  static const String daraa = 'daraa';
+  static const String sweida = 'sweida';
+  static const String quneitra = 'quneitra';
+  static const String qamishli = 'qamishli';
+
+  // Shop Locations
+  static const String mainStreet = 'main_street';
+  static const String sideStreet = 'side_street';
+  static const String insideMarket = 'inside_market';
+  static const String mall = 'mall';
+  static const String corner = 'corner';
+
+  // Land Types
+  static const String residential = 'residential';
+  static const String agricultural = 'agricultural';
+  static const String commercial = 'commercial';
+  static const String industrial = 'industrial';
+  static const String tourist = 'tourist';
+
+  // Farm Types
+  static const String plant = 'plant';
+  static const String animal = 'animal';
+  static const String mixed = 'mixed';
+
+  // Irrigation Types
+  static const String drip = 'drip';
+  static const String spray = 'spray';
+  static const String flood = 'flood';
+  static const String well = 'well';
+  static const String river = 'river';
+  static const String rainfed = 'rainfed';
+  static const String irrigation = 'irrigation';
+  static const String mist = 'mist';
+  static const String notAvailable = 'not_available';
+
+  // Pool Types
+  static const String private = 'private';
+  static const String public = 'public';
+  static const String children = 'children';
+  static const String covered = 'covered';
+  static const String open = 'open';
+  static const String halfCovered = 'half_covered';
+
+  // Pool Sizes
+  static const String small = 'small';
+  static const String medium = 'medium';
+  static const String large = 'large';
+  static const String olympic = 'olympic';
+
+  // Heating Types
+  static const String centralHeating = 'central_heating';
+  static const String airConditioning = 'air_conditioning';
+  static const String central = 'central';
+  static const String solarEnergy = 'solar_energy';
+  static const String gasHeater = 'gas_heater';
+  static const String wood = 'wood';
+  static const String fuelHeater = 'fuel_heater';
+
+  // Warehouse Floor Types
+  static const String concrete = 'concrete';
+  static const String tiles = 'tiles';
+  static const String epoxy = 'epoxy';
+  static const String asphalt = 'asphalt';
+  static const String soil = 'soil';
+
+  // Facilities
+  static const String elevator = 'elevator';
+  static const String parking = 'parking';
+  static const String balcony = 'balcony';
+  static const String warehouse = 'warehouse';
+  static const String garden = 'garden';
+  static const String ac = 'ac';
+  static const String furnished = 'furnished';
+  static const String sewage = 'sewage';
+  static const String naturalGas = 'natural_gas';
+  static const String internet = 'internet';
+  static const String landline = 'landline';
+  static const String solarPower = 'solar_power';
+  static const String pool = 'pool';
+  static const String garage = 'garage';
+  static const String securitySystem = 'security_system';
+  static const String maidRoom = 'maid_room';
+  static const String driverRoom = 'driver_room';
+  static const String store = 'store';
+  static const String bathroom = 'bathroom';
+  static const String equipped = 'equipped';
+  static const String buildingLicense = 'building_license';
+  static const String electricity = 'electricity';
+  static const String water = 'water';
+  static const String waterWell = 'water_well';
+  static const String farmhouse = 'farmhouse';
+  static const String heatingSystem = 'heating_system';
+  static const String filtrationSystem = 'filtration_system';
+  static const String changingRooms = 'changing_rooms';
+  static const String bathrooms_plural = 'bathrooms_plural';
+  static const String waitingRoom = 'waiting_room';
+  static const String reception = 'reception';
+  static const String xRayRoom = 'x_ray_room';
+  static const String surgeryRoom = 'surgery_room';
+  static const String centralAc = 'central_ac';
+  static const String loadingPlatform = 'loading_platform';
+  static const String office = 'office';
+  static const String crane = 'crane';
+  static const String stage = 'stage';
+  static const String soundSystem = 'sound_system';
+  static const String projector = 'projector';
+  static const String kitchen = 'kitchen';
+  static const String meetingRoom = 'meeting_room';
+  static const String industrialElectricity = 'industrial_electricity';
+  static const String ventilation = 'ventilation';
+  static const String equipment = 'equipment';
+
+  // Property Types
+  static const String buildings = 'buildings';
+  static const String housesAndApartments = 'houses_and_apartments';
+  static const String underConstruction = 'under_construction';
+  static const String villas = 'villas';
+  static const String shops = 'shops';
+  static const String mallShops = 'mall_shops';
+  static const String lands = 'lands';
+  static const String farms = 'farms';
+  static const String pools = 'pools';
+  static const String clinics = 'clinics';
+  static const String warehouses = 'warehouses';
+  static const String halls = 'halls';
+  static const String offices = 'offices';
+  static const String workshops = 'workshops';
+
+  // Listing Types
+  static const String sale = 'sale';
+  static const String rent = 'rent';
+
+  // Property Status
+  static const String active = 'active';
+  static const String sold = 'sold';
+  static const String underInstallment = 'under_installment';
+  static const String updateStatus = 'update_status';
+  static const String deleteProperty = 'delete_property';
+  static const String deleteConfirmation = 'delete_confirmation';
+  static const String cancelAction = 'cancel_action';
+  static const String permanentDelete = 'permanent_delete';
+  static const String activeStatusDesc = 'active_status_desc';
+  static const String soldStatusDesc = 'sold_status_desc';
+  static const String installmentStatusDesc = 'installment_status_desc';
+  static const String cancelSaleReason = 'cancel_sale_reason';
+  static const String enterReasonHere = 'enter_reason_here';
+  static const String confirmAction = 'confirm_action';
+  static const String addMedia = 'add_media';
+  static const String updateStatusTitle = 'update_status_title';
+
+  // Messages
+  static const String noProperties = 'no_properties';
+  static const String loading = 'loading';
+  static const String error = 'error';
+  static const String retry = 'retry';
+  static const String noInternet = 'no_internet';
+  static const String connectionRestored = 'connection_restored';
+
+  // Profile
+  static const String guestUser = 'guest_user';
+  static const String loginToPost = 'login_to_post';
+  static const String favorites = 'favorites';
+  static const String settings = 'settings';
+  static const String guide = 'guide';
+  static const String guideUsage = 'guide_usage';
+  static const String terms = 'terms';
+  static const String termsOfUse = 'terms_of_use';
+  static const String termsIntroduction = 'terms_introduction';
+  static const String term1Title = 'term1_title';
+  static const String term1Content = 'term1_content';
+  static const String term2Title = 'term2_title';
+  static const String term2Content = 'term2_content';
+  static const String term3Title = 'term3_title';
+  static const String term3Content = 'term3_content';
+  static const String term4Title = 'term4_title';
+  static const String term4Content = 'term4_content';
+  static const String term5Title = 'term5_title';
+  static const String term5Content = 'term5_content';
+  static const String term6Title = 'term6_title';
+  static const String term6Content = 'term6_content';
+
+  static const String guideLicensedTitle = 'guide_licensed_title';
+  static const String guideLicensedContent = 'guide_licensed_content';
+  static const String guideInstallmentTitle = 'guide_installment_title';
+  static const String guideInstallmentContent = 'guide_installment_content';
+  static const String guideOfflineTitle = 'guide_offline_title';
+  static const String guideOfflineContent = 'guide_offline_content';
+  static const String guideTypesTitle = 'guide_types_title';
+  static const String guideTypesContent = 'guide_types_content';
+  static const String guideFeaturedTitle = 'guide_featured_title';
+  static const String guideFeaturedContent = 'guide_featured_content';
+  static const String guideContactTitle = 'guide_contact_title';
+  static const String guideContactContent = 'guide_contact_content';
+  static const String rateApp = 'rate_app';
+  static const String shareApp = 'share_app';
+  static const String contactUs = 'contact_us';
+  static const String contactUsFollowUs = 'contact_us_follow_us';
+  static const String contactUsHelpText = 'contact_us_help_text';
+  static const String supportEmail = 'support_email';
+  static const String customerServiceWhatsapp = 'customer_service_whatsapp';
+  static const String followUsSocial = 'follow_us_social';
+  static const String logoutConfirmation = 'logout_confirmation';
+  static const String loginRequiredSubtitle = 'login_required_subtitle';
+  static const String favoritesLoginRequired = 'favorites_login_required';
+  static const String loginToContinueAction = 'login_to_continue_action';
+
+  // Auth Errors
+  static const String emailAlreadyInUse = 'email_already_in_use';
+  static const String userNotFound = 'user_not_found';
+  static const String invalidCredential = 'invalid_credential';
+  static const String networkRequestFailed = 'network_request_failed';
+  static const String unexpectedError = 'unexpected_error';
+  static const String passwordResetError = 'password_reset_error';
+  static const String requiresRecentLogin = 'requires_recent_login';
+  static const String updatePasswordError = 'update_password_error';
+  static const String currentPasswordIncorrect = 'current_password_incorrect';
+
+  // Settings
+  static const String account = 'account';
+  static const String editProfile = 'edit_profile';
+  static const String changePassword = 'change_password';
+  static const String app = 'app';
+  static const String language = 'language';
+  static const String about = 'about';
+  static const String aboutApp = 'about_app';
+  static const String privacyPolicy = 'privacy_policy';
+
+  // Notifications
+  static const String uploadingProperty = 'uploading_property';
+  static const String editingProperty = 'editing_property';
+  static const String processingFile = 'processing_file';
+  static const String savingData = 'saving_data';
+  static const String uploadSuccess = 'upload_success';
+  static const String editSuccess = 'edit_success';
+  static const String uploadFailed = 'upload_failed';
+  static const String personalInfo = 'personal_info';
+  static const String changePasswordOptional = 'change_password_optional';
+  static const String currentPassword = 'current_password';
+  static const String newPassword = 'new_password';
+  static const String updateSuccess = 'update_success';
+  static const String atLeast6Characters = 'at_least_6_characters';
+  static const String at_least_6_characters = 'at_least_6_characters';
+  static const String profileUpdated = 'profile_updated';
+  static const String cannotChangeEmail = 'cannot_change_email';
+  static const String favoritesEmpty = 'favorites_empty';
+  static const String deleteAccount = 'delete_account';
+  static const String recentLocations = 'recent_locations';
+  static const String availableLocations = 'available_locations';
+  static const String locationNotFound = 'location_not_found';
+  static const String locationNotFoundSubtitle = 'location_not_found_subtitle';
+  static const String resetSearch = 'reset_search';
+  static const String doneAction = 'done_action';
+  static const String activityHistory = 'activity_history';
+  static const String totalViews = 'total_views';
+  static const String totalFloors = 'total_floors';
+  static const String commercialActivity = 'commercial_activity';
+  static const String frontageWidth = 'frontage_width';
+  static const String frontagesCount = 'frontages_count';
+  static const String streetWidth = 'street_width';
+  static const String crops = 'crops';
+  static const String warehouseHeight = 'warehouse_height';
+  static const String currentStatus = 'current_status';
+  static const String featuredStatus = 'featured_status';
+  static const String featuredProperty = 'featured_property';
+  static const String normalProperty = 'normal_property';
+  static const String viewsCount = 'views_count';
+  static const String edit = 'edit';
+  static const String delete = 'delete';
+
+  // Video Player
+  static const String videoPlayFailed = 'video_play_failed';
+  static const String videoLoadFailed = 'video_load_failed';
+  static const String sharePropertyMessage = 'share_property_message';
+  static const String sharePropertyPrice = 'share_property_price';
+  static const String sharePropertyLocation = 'share_property_location';
+  static const String sharePropertyArea = 'share_property_area';
+
+  // Rating
+  static const String rateSellerExperience = 'rate_seller_experience';
+  static const String overallRating = 'overall_rating';
+  static const String writeYourOpinion = 'write_your_opinion';
+  static const String ratingHint = 'rating_hint';
+  static const String cancel = 'cancel';
+  static const String sendRating = 'send_rating';
+  static const String ratingSuccess = 'rating_success';
+
+  // General Messages
+  static const String sellerProfile = 'seller_profile';
+  static const String usersReviews = 'users_reviews';
+  static const String rateSeller = 'rate_seller';
+  static const String sellerProperties = 'seller_properties';
+  static const String sellerRatingCount = 'seller_rating_count';
+  static const String chooseAction = 'choose_action';
+  static const String camera = 'camera';
+  static const String gallery = 'gallery';
+  static const String deleteImage = 'delete_image';
+  static const String whatsapp = 'whatsapp';
+  static const String all = 'all';
+  static const String addProperty = 'add_property';
+  static const String editProperty = 'edit_property';
+  static const String areaUnit = 'area_unit';
+  static const String installmentNotes = 'installment_notes';
+  static const String ok = 'ok';
+  static const String pleaseSelectImage = 'please_select_image';
+  static const String noSimilarProperties = 'no_similar_properties';
+  static const String processCompleted = 'process_completed';
+  static const String editFailed = 'edit_failed';
+  static const String deleteAccountConfirmation = 'delete_account_confirmation';
+  static const String deleteAccount_confirmation =
+      'delete_account_confirmation';
+  static const String deletePropertyFailed = 'delete_property_failed';
+  static const String updateStatusFailed = 'update_status_failed';
+  static const String loginToRateSeller = 'login_to_rate_seller';
+  static const String lastUpdate = 'last_update';
+  static const String noRatingsYet = 'no_ratings_yet';
+  static const String beFirstToRate = 'be_first_to_rate';
+  static const String noPropertiesForSeller = 'no_properties_for_seller';
+  static const String currencyLira = 'currency_lira';
+  static const String technicalSpecifications = 'technical_specifications';
+  static const String mezzehExample = 'mezzeh_example';
+  static const String reset = 'reset';
+  static const String apply = 'apply';
+  static const String pleaseEnterArea = 'please_enter_area';
+  static const String enterCorrectNumber = 'enter_correct_number';
+  static const String uploadImageFailed = 'upload_image_failed';
+  static const String dataProcessingFailed = 'data_processing_failed';
+  static const String capacity = 'capacity';
+  static const String saleCompleted = 'sale_completed';
+  static const String statusUpdated = 'status_updated';
+  static const String offlineMode = 'offline_mode';
+  static const String trustedSeller = 'trusted_seller';
+  static const String newMember = 'new_member';
+  static const String userLabel = 'user_label';
+  static const String memberSinceYear = 'member_since_year';
+  static const String unlicensed = 'unlicensed';
+}

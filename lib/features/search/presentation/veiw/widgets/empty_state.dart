@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class EmptyState extends StatelessWidget {
@@ -6,6 +8,7 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -13,7 +16,7 @@ class EmptyState extends StatelessWidget {
           Icon(Icons.search_off, size: 80, color: AppColors.textLight),
           const SizedBox(height: 16),
           Text(
-            'لا توجد نتائج',
+            localizations.translate(LangKeys.noResults),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -22,7 +25,7 @@ class EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'جرب تعديل معايير البحث',
+            localizations.translate(LangKeys.tryAdjustingSearch),
             style: TextStyle(fontSize: 14, color: AppColors.textLight),
           ),
         ],

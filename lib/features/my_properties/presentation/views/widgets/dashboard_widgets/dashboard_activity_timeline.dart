@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
@@ -20,7 +23,9 @@ class DashboardActivityTimeline extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: history.isEmpty
-          ? const Center(child: Text('لا يوجد سجل حركات مسجل بعد'))
+          ? Center(
+            child: Text(AppLocalizations.of(context)!.translate(LangKeys.noResults)),
+          )
           : ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -32,9 +37,18 @@ class DashboardActivityTimeline extends StatelessWidget {
                   (e) => e.name == item['status'],
                   orElse: () => PropertyStatus.active,
                 );
-                final date = item['timestamp'] != null 
-                    ? DateTime.parse(item['timestamp']) 
-                    : DateTime.now();
+                
+                // معالجة التاريخ بمرونة (String أو Timestamp)
+                DateTime date;
+                final ts = item['timestamp'];
+                if (ts is Timestamp) {
+                  date = ts.toDate();
+                } else if (ts is String) {
+                  date = DateTime.tryParse(ts) ?? DateTime.now();
+                } else {
+                  date = DateTime.now();
+                }
+
                 final reason = item['reason'] as String?;
 
                 return Row(
@@ -63,11 +77,11 @@ class DashboardActivityTimeline extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                status.arabicName,
+                                status.localizedName(context),
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                               Text(
-                                DateFormat('yyyy/MM/dd').format(date),
+                                DateFormat('yyyy/MM/dd HH:mm').format(date),
                                 style: const TextStyle(color: Colors.grey, fontSize: 11),
                               ),
                             ],
@@ -91,6 +105,7 @@ class DashboardActivityTimeline extends StatelessWidget {
     switch (status) {
       case PropertyStatus.active: return AppColors.primary;
       case PropertyStatus.sold: return Colors.redAccent;
+      case PropertyStatus.rented: return Colors.purple;
       case PropertyStatus.underInstallment: return Colors.orange;
     }
   }

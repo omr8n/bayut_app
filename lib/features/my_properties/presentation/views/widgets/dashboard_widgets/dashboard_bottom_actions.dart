@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
+
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 
@@ -16,6 +19,9 @@ class DashboardBottomActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context);
+    if (locale == null) return const SizedBox.shrink();
+
     return Container(
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 30.h),
       decoration: BoxDecoration(
@@ -25,7 +31,7 @@ class DashboardBottomActions extends StatelessWidget {
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -34,14 +40,19 @@ class DashboardBottomActions extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: () => _showStatusUpdateDialog(context, property),
               icon: const Icon(Icons.sync_rounded, color: Colors.white),
-              label: const Text(
-                'تحديث الحالة',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              label: Text(
+                locale.translate(LangKeys.updateStatus),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 elevation: 0,
               ),
             ),
@@ -50,7 +61,9 @@ class DashboardBottomActions extends StatelessWidget {
           _CircleActionButton(
             icon: Icons.edit_note_rounded,
             color: Colors.blue,
-            onTap: () => GoRouter.of(context).push(AppRoutes.addPropertyScreen, extra: property),
+            onTap: () => GoRouter.of(
+              context,
+            ).push(AppRoutes.addPropertyScreen, extra: property),
           ),
           const SizedBox(width: 12),
           _CircleActionButton(
@@ -72,23 +85,33 @@ class DashboardBottomActions extends StatelessWidget {
   }
 
   void _showDeleteConfirmDialog(BuildContext context, PropertyEntity property) {
+    final locale = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dContext) => AlertDialog(
-        title: const Text('حذف العقار'),
-        content: const Text('هل أنت متأكد؟ لا يمكن التراجع عن هذه الخطوة.'),
+        title: Text(locale.translate(LangKeys.deleteProperty)),
+        content: Text(locale.translate(LangKeys.deleteConfirmation)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dContext), child: const Text('إلغاء')),
+          TextButton(
+            onPressed: () => Navigator.pop(dContext),
+            child: Text(locale.translate(LangKeys.cancelAction)),
+          ),
           TextButton(
             onPressed: () {
               final user = FirebaseAuth.instance.currentUser;
               if (user != null) {
-                context.read<MyPropertiesCubit>().deleteProperty(property.id, user.uid);
+                context.read<MyPropertiesCubit>().deleteProperty(
+                  property.id,
+                  user.uid,
+                );
                 Navigator.pop(dContext);
                 Navigator.pop(context);
               }
             },
-            child: const Text('حذف نهائي', style: TextStyle(color: Colors.red)),
+            child: Text(
+              locale.translate(LangKeys.permanentDelete),
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -101,7 +124,11 @@ class _CircleActionButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _CircleActionButton({required this.icon, required this.color, required this.onTap});
+  const _CircleActionButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +153,7 @@ class _StatusUpdateSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -138,29 +166,65 @@ class _StatusUpdateSheet extends StatelessWidget {
           Container(
             width: 40,
             height: 4,
-            decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           const SizedBox(height: 20),
-          const Text('تحديث حالة العقار', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            locale.translate(LangKeys.updateStatusTitle),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 20),
-          _buildOption(context, PropertyStatus.active, 'نشط (متاح للجميع)', Icons.check_circle_outline),
-          _buildOption(context, PropertyStatus.underInstallment, 'قيد التقسيط', Icons.timer_outlined),
-          _buildOption(context, PropertyStatus.sold, 'تم البيع (إخفاء)', Icons.sell_rounded),
+          _buildOption(
+            context,
+            PropertyStatus.active,
+            locale.translate(LangKeys.activeStatusDesc),
+            Icons.check_circle_outline,
+          ),
+          _buildOption(
+            context,
+            PropertyStatus.underInstallment,
+            locale.translate(LangKeys.installmentStatusDesc),
+            Icons.timer_outlined,
+          ),
+          _buildOption(
+            context,
+            PropertyStatus.sold,
+            locale.translate(LangKeys.soldStatusDesc),
+            Icons.sell_rounded,
+          ),
+          _buildOption(
+            context,
+            PropertyStatus.rented,
+            "تم التأجير", // سيتم ربطها بـ LangKeys لاحقاً
+            Icons.key_rounded,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildOption(BuildContext context, PropertyStatus status, String title, IconData icon) {
+  Widget _buildOption(
+    BuildContext context,
+    PropertyStatus status,
+    String title,
+    IconData icon,
+  ) {
     return ListTile(
       leading: Icon(icon, color: _getStatusColor(status)),
       title: Text(title),
       onTap: () {
         Navigator.pop(context);
-        if (status == PropertyStatus.active && property.status == PropertyStatus.sold) {
+        if (status == PropertyStatus.active &&
+            property.status == PropertyStatus.sold) {
           _showReasonDialog(context, status);
         } else {
-          context.read<MyPropertiesCubit>().updatePropertyStatus(property, status);
+          context.read<MyPropertiesCubit>().updatePropertyStatus(
+            property,
+            status,
+          );
         }
       },
     );
@@ -168,22 +232,32 @@ class _StatusUpdateSheet extends StatelessWidget {
 
   void _showReasonDialog(BuildContext context, PropertyStatus status) {
     final controller = TextEditingController();
+    final locale = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dContext) => AlertDialog(
-        title: const Text('سبب إلغاء البيع'),
+        title: Text(locale.translate(LangKeys.cancelSaleReason)),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(hintText: 'ادخل السبب هنا...'),
+          decoration: InputDecoration(
+            hintText: locale.translate(LangKeys.enterReasonHere),
+          ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dContext), child: const Text('إلغاء')),
+          TextButton(
+            onPressed: () => Navigator.pop(dContext),
+            child: Text(locale.translate(LangKeys.cancelAction)),
+          ),
           ElevatedButton(
             onPressed: () {
-              context.read<MyPropertiesCubit>().updatePropertyStatus(property, status, statusReason: controller.text);
+              context.read<MyPropertiesCubit>().updatePropertyStatus(
+                property,
+                status,
+                statusReason: controller.text,
+              );
               Navigator.pop(dContext);
             },
-            child: const Text('تأكيد'),
+            child: Text(locale.translate(LangKeys.confirmAction)),
           ),
         ],
       ),
@@ -192,9 +266,14 @@ class _StatusUpdateSheet extends StatelessWidget {
 
   Color _getStatusColor(PropertyStatus status) {
     switch (status) {
-      case PropertyStatus.active: return AppColors.primary;
-      case PropertyStatus.sold: return Colors.redAccent;
-      case PropertyStatus.underInstallment: return Colors.orange;
+      case PropertyStatus.active:
+        return AppColors.primary;
+      case PropertyStatus.sold:
+        return Colors.redAccent;
+      case PropertyStatus.rented:
+        return Colors.purple;
+      case PropertyStatus.underInstallment:
+        return Colors.orange;
     }
   }
 }

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
@@ -15,34 +16,30 @@ class UserActionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
-        // 🔥 استخدام Skeletonizer لتجربة تحميل احترافية
-        final bool isLoading = state is ProfileLoading;
+        // نأخذ المستخدم مباشرة من الـ Cubit
         final user = context.read<ProfileCubit>().user;
         final bool isLoggedIn = user != null;
 
-        return Skeletonizer(
-          enabled: isLoading,
-          child: Flexible(
-            flex: 3,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (isLoggedIn) ...[
-                    _WelcomeText(name: user.name),
-                    SizedBox(width: 12.w),
-                    const _NotificationBadge(),
-                    SizedBox(width: 10.w),
-                  ],
-                  _ProfileAvatar(
-                    isLoggedIn: isLoggedIn,
-                    imageUrl: user?.profilePic,
-                    name: user?.name,
-                  ),
+        return Flexible(
+          flex: 3,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (isLoggedIn) ...[
+                  _WelcomeText(name: user.name),
+                  SizedBox(width: 12.w),
+                  const _NotificationBadge(),
+                  SizedBox(width: 10.w),
                 ],
-              ),
+                _ProfileAvatar(
+                  isLoggedIn: isLoggedIn,
+                  imageUrl: user?.profilePic,
+                  name: user?.name,
+                ),
+              ],
             ),
           ),
         );
@@ -57,13 +54,14 @@ class _WelcomeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstName = name?.split(' ').first ?? 'مستخدم';
+    final localizations = AppLocalizations.of(context)!;
+    final firstName = name?.split(' ').first ?? localizations.translate(LangKeys.guestUser);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'هلا،',
+          localizations.isEnLocale ? 'Hello,' : 'هلا،',
           style: TextStyle(
             fontSize: 11.sp,
             color: Colors.grey.shade600,

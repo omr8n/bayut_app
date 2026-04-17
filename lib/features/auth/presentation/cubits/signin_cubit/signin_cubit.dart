@@ -25,7 +25,12 @@ class SigninCubit extends Cubit<SigninState> {
     result.fold((failure) => emit(SigninFailure(message: failure.message)), (
       userEntity,
     ) async {
-      // 🔥 تم إلغاء فحص التفعيل مؤقتاً
+      // التحقق من حالة الحظر (Banned)
+      if (userEntity.status == 'banned') {
+        emit(SigninFailure(message: "عذراً، هذا الحساب محظور من قبل الإدارة. يرجى التواصل مع الدعم الفني."));
+        return;
+      }
+
       await SecureStorage.setBool('isLoggedIn', true);
 
       // تحديث بيانات المستخدم في الكيوبيت العالمي فوراً

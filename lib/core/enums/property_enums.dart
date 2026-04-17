@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 enum PropertyType {
   buildings,
   housesAndApartments,
@@ -19,63 +23,74 @@ enum Currency { usd, tryCurrency }
 
 enum ListingType { sale, rent }
 
-enum PropertyStatus { active, sold, underInstallment }
+enum PropertyStatus { active, sold, rented, underInstallment }
 
 extension PropertyStatusExtension on PropertyStatus {
-  String get arabicName {
+  String localizedName(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    if (localizations == null) return name; // fallback to enum name string
+
     switch (this) {
       case PropertyStatus.active:
-        return 'نشط';
+        return localizations.translate(LangKeys.active);
       case PropertyStatus.sold:
-        return 'مباع';
+        return localizations.translate(LangKeys.sold);
+      case PropertyStatus.rented:
+        return "مؤجر"; // سأضيفها كنص مباشر حالياً لضمان العمل فوراً
       case PropertyStatus.underInstallment:
-        return 'قيد التقسيط';
+        return localizations.translate(LangKeys.underInstallment);
     }
   }
 }
 
 extension PropertyTypeExtension on PropertyType {
-  String get arabicName {
+  String localizedName(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    if (localizations == null) return name;
+
     switch (this) {
       case PropertyType.buildings:
-        return 'مباني';
+        return localizations.translate(LangKeys.buildings);
       case PropertyType.housesAndApartments:
-        return 'المنازل والشقق';
+        return localizations.translate(LangKeys.housesAndApartments);
       case PropertyType.underConstruction:
-        return 'منازل وشقق قيد الإنشاء';
+        return localizations.translate(LangKeys.underConstruction);
       case PropertyType.villas:
-        return 'الفيلات';
+        return localizations.translate(LangKeys.villas);
       case PropertyType.shops:
-        return 'محلات';
+        return localizations.translate(LangKeys.shops);
       case PropertyType.mallShops:
-        return 'محلات في مراكز تجارية';
+        return localizations.translate(LangKeys.mallShops);
       case PropertyType.lands:
-        return 'أراضي';
+        return localizations.translate(LangKeys.lands);
       case PropertyType.farms:
-        return 'مزارع';
+        return localizations.translate(LangKeys.farms);
       case PropertyType.pools:
-        return 'مسابح';
+        return localizations.translate(LangKeys.pools);
       case PropertyType.clinics:
-        return 'عيادات';
+        return localizations.translate(LangKeys.clinics);
       case PropertyType.warehouses:
-        return 'مستودعات';
+        return localizations.translate(LangKeys.warehouses);
       case PropertyType.halls:
-        return 'صالات';
+        return localizations.translate(LangKeys.halls);
       case PropertyType.offices:
-        return 'مكاتب';
+        return localizations.translate(LangKeys.offices);
       case PropertyType.workshops:
-        return 'ورش';
+        return localizations.translate(LangKeys.workshops);
     }
   }
 }
 
 extension ListingTypeExtension on ListingType {
-  String get arabicName {
+  String localizedName(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    if (localizations == null) return name;
+
     switch (this) {
       case ListingType.sale:
-        return 'للبيع';
+        return localizations.translate(LangKeys.sale);
       case ListingType.rent:
-        return 'للإيجار';
+        return localizations.translate(LangKeys.rent);
     }
   }
 }

@@ -13,6 +13,7 @@ class PropertyEntity extends Equatable {
   final DateTime createdAt;
   final int views;
   final bool isFeatured;
+  final bool isApproved; // 🔥 إضافة حقل الموافقة
   final PropertyStatus status;
   final List<Map<String, dynamic>> statusHistory; // 🔥 السجل التاريخي الجديد
   final List<String> images;
@@ -80,6 +81,7 @@ class PropertyEntity extends Equatable {
     required this.createdAt,
     this.views = 0,
     this.isFeatured = false,
+    this.isApproved = true, // 🔥 القيمة الافتراضية
     this.status = PropertyStatus.active,
     this.statusHistory = const [], // القيمة الافتراضية قائمة فارغة
     required this.images,
@@ -94,7 +96,7 @@ class PropertyEntity extends Equatable {
     required this.sellerId,
     required this.sellerName,
     this.sellerImage,
-    this.sellerJoinDate = 'عضو منذ سنة',
+    this.sellerJoinDate = 'new_member',
     this.sellerRating = 4.5,
     this.buildingAge,
     this.finishType,
@@ -144,6 +146,7 @@ class PropertyEntity extends Equatable {
     DateTime? createdAt,
     int? views,
     bool? isFeatured,
+    bool? isApproved,
     PropertyStatus? status,
     List<Map<String, dynamic>>? statusHistory,
     List<String>? images,
@@ -207,6 +210,7 @@ class PropertyEntity extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       views: views ?? this.views,
       isFeatured: isFeatured ?? this.isFeatured,
+      isApproved: isApproved ?? this.isApproved,
       status: status ?? this.status,
       statusHistory: statusHistory ?? this.statusHistory,
       images: images ?? this.images,
@@ -268,6 +272,7 @@ class PropertyEntity extends Equatable {
     listingType,
     sellerId,
     isFeatured,
+    isApproved,
     status,
     statusHistory,
     email,

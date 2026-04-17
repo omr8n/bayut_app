@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class LogoSection extends StatelessWidget {
@@ -49,11 +51,12 @@ class _LogoText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'BAYUT',
+          localizations.translate(LangKeys.appName).toUpperCase(),
           style: TextStyle(
             fontSize: 24.sp,
             fontWeight: FontWeight.w900,
@@ -62,7 +65,7 @@ class _LogoText extends StatelessWidget {
           ),
         ),
         Text(
-          'Syrian Real Estate',
+          localizations.isEnLocale ? 'Syrian Real Estate' : 'عقارات سوريا المتكاملة',
           style: TextStyle(
             fontSize: 10.sp,
             fontWeight: FontWeight.w600,

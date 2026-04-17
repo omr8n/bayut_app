@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/core/widgets/communication.dart';
 import 'package:test_graduation/core/widgets/custom_circle_button.dart';
 import 'package:test_graduation/core/widgets/custom_draggable_sheet.dart';
 import 'package:test_graduation/core/widgets/favorite_button.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/media_gallery.dart';
-import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/property_details_contact_buttons.dart';
+
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/property_details_facilities.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/property_details_header.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/property_details_installment.dart';
@@ -96,6 +97,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final numberFormat = NumberFormat('#,###');
     final mediaList = widget.property.media.isNotEmpty
         ? widget.property.media
@@ -132,10 +134,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               SizedBox(height: 15.h),
               Text(
                 widget.property.title,
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.h),
               PropertyDetailsLocation(property: widget.property),
@@ -146,7 +145,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 format: numberFormat,
               ),
               SizedBox(height: 24.h),
-              _buildSectionTitle(AppStrings.description),
+              _buildSectionTitle(localizations.translate(LangKeys.description)),
               Text(
                 widget.property.description,
                 style: TextStyle(
@@ -157,20 +156,18 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               ),
               if (widget.property.facilities.isNotEmpty) ...[
                 SizedBox(height: 24.h),
-                _buildSectionTitle('المرافق والخدمات'),
+                _buildSectionTitle(
+                  localizations.translate(LangKeys.facilitiesAndServices),
+                ),
                 PropertyDetailsFacilities(
                   facilities: widget.property.facilities,
                 ),
               ],
-              PropertyTypeSpecificDetails(
-                property: widget.property,
-              ),
+              PropertyTypeSpecificDetails(property: widget.property),
               SizedBox(height: 24.h),
               PropertyDetailsSeller(property: widget.property),
               SizedBox(height: 10.h),
-              SimilarPropertiesSection(
-                currentProperty: widget.property,
-              ),
+              SimilarPropertiesSection(currentProperty: widget.property),
             ],
           ),
 
@@ -192,7 +189,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                       CustomCircleButton(
                         icon: Icons.share_outlined,
                         onTap: () {
-                          ShareService.shareProperty(widget.property);
+                          ShareService.shareProperty(context, widget.property);
                         },
                       ),
                       SizedBox(width: 12.w),

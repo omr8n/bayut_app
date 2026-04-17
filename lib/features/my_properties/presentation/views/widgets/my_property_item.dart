@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -25,10 +27,9 @@ class MyPropertyItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
       child: InkWell(
-        onTap: () => GoRouter.of(context).push(
-          AppRoutes.propertyDashboard,
-          extra: property,
-        ),
+        onTap: () => GoRouter.of(
+          context,
+        ).push(AppRoutes.propertyDashboard, extra: property),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -67,7 +68,7 @@ class MyPropertyItem extends StatelessWidget {
                           Positioned(
                             top: 6,
                             right: 6,
-                            child: _buildStatusChip(),
+                            child: _buildStatusChip(context),
                           ),
                         ],
                       ),
@@ -87,7 +88,7 @@ class MyPropertyItem extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${numberFormat.format(property.price)} ${property.currency}',
+                              '${numberFormat.format(property.price)} ${AppLocalizations.of(context)!.translate(property.currency.trim().toLowerCase())}',
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
@@ -104,7 +105,7 @@ class MyPropertyItem extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${property.governorate} - ${property.city}',
+                                  '${AppLocalizations.of(context)!.translate(property.governorate)} - ${property.city}',
                                   style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12,
@@ -152,7 +153,9 @@ class MyPropertyItem extends StatelessWidget {
                         children: [
                           _buildActionItem(
                             Icons.edit_note_rounded,
-                            'تعديل',
+                            AppLocalizations.of(
+                              context,
+                            )!.translate(LangKeys.edit),
                             Colors.blue,
                             () {
                               GoRouter.of(context).push(
@@ -167,7 +170,9 @@ class MyPropertyItem extends StatelessWidget {
                             property.isFeatured
                                 ? Icons.star_rounded
                                 : Icons.star_border_rounded,
-                            'مميز',
+                            AppLocalizations.of(
+                              context,
+                            )!.translate(LangKeys.featuredProperty),
                             Colors.amber.shade700,
                             () => context
                                 .read<MyPropertiesCubit>()
@@ -179,7 +184,9 @@ class MyPropertyItem extends StatelessWidget {
                             property.status == PropertyStatus.underInstallment
                                 ? Icons.timer_rounded
                                 : Icons.timer_outlined,
-                            'قيد التقسيط',
+                            AppLocalizations.of(
+                              context,
+                            )!.translate(LangKeys.underInstallment),
                             Colors.orange.shade800,
                             () => context
                                 .read<MyPropertiesCubit>()
@@ -197,7 +204,9 @@ class MyPropertyItem extends StatelessWidget {
                             property.status == PropertyStatus.sold
                                 ? Icons.check_circle_rounded
                                 : Icons.sell_rounded,
-                            'مباع',
+                            AppLocalizations.of(
+                              context,
+                            )!.translate(LangKeys.sold),
                             Colors.teal,
                             () {
                               if (property.status == PropertyStatus.sold) {
@@ -218,7 +227,9 @@ class MyPropertyItem extends StatelessWidget {
                           // 🔥 زر السجل التاريخي
                           _buildActionItem(
                             Icons.history_rounded,
-                            'السجل',
+                            AppLocalizations.of(
+                              context,
+                            )!.translate(LangKeys.activityHistory),
                             Colors.blueGrey,
                             () => _showStatusHistory(context),
                           ),
@@ -269,15 +280,22 @@ class MyPropertyItem extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text('حذف العقار', textAlign: TextAlign.center),
-        content: const Text(
-          'هل أنت متأكد من رغبتك في حذف هذا العقار نهائياً؟',
+        title: Text(
+          AppLocalizations.of(context)!.translate(LangKeys.delete),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          AppLocalizations.of(
+            context,
+          )!.translate(LangKeys.deleteAccountConfirmation),
           textAlign: TextAlign.center,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('إلغاء'),
+            child: Text(
+              AppLocalizations.of(context)!.translate(LangKeys.cancel),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -285,9 +303,12 @@ class MyPropertyItem extends StatelessWidget {
               if (user != null) cubit.deleteProperty(property.id, user.uid);
               Navigator.pop(dialogContext);
             },
-            child: const Text(
-              'حذف',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            child: Text(
+              AppLocalizations.of(context)!.translate(LangKeys.delete),
+              style: const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -324,8 +345,8 @@ class MyPropertyItem extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusChip() {
-    String label = property.status.arabicName;
+  Widget _buildStatusChip(BuildContext context) {
+    String label = property.status.localizedName(context);
     Color color = AppColors.primary;
     if (property.status == PropertyStatus.sold) {
       color = Colors.redAccent;
@@ -355,19 +376,26 @@ class MyPropertyItem extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text('سبب إلغاء البيع', textAlign: TextAlign.center),
+        title: Text(
+          AppLocalizations.of(context)!.translate(LangKeys.cancel),
+          textAlign: TextAlign.center,
+        ),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'مثلاً: تعثر المشتري في الدفع...',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(
+              context,
+            )!.translate(LangKeys.ratingHint),
+            border: const OutlineInputBorder(),
           ),
           maxLines: 3,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('إلغاء'),
+            child: Text(
+              AppLocalizations.of(context)!.translate(LangKeys.cancel),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -381,9 +409,9 @@ class MyPropertyItem extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text(
-              'تأكيد الإلغاء',
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              AppLocalizations.of(context)!.translate(LangKeys.confirmPassword),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -405,9 +433,11 @@ class MyPropertyItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'سجل حالة العقار',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(
+                  context,
+                )!.translate(LangKeys.activityHistory),
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
@@ -415,10 +445,14 @@ class MyPropertyItem extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               if (history.isEmpty)
-                const Center(
+                Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32),
-                    child: Text('لا يوجد سجل حركات حالياً'),
+                    padding: const EdgeInsets.symmetric(vertical: 32),
+                    child: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.translate(LangKeys.noResults),
+                    ),
                   ),
                 )
               else
@@ -469,16 +503,16 @@ class MyPropertyItem extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      status.arabicName,
+                                      status.localizedName(context),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                       ),
                                     ),
                                     Text(
-                                      DateFormat('yyyy/MM/dd HH:mm').format(
-                                        date,
-                                      ),
+                                      DateFormat(
+                                        'yyyy/MM/dd HH:mm',
+                                      ).format(date),
                                       style: const TextStyle(
                                         color: Colors.grey,
                                         fontSize: 11,
@@ -495,7 +529,7 @@ class MyPropertyItem extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      'السبب: $reason',
+                                      '${AppLocalizations.of(context)!.translate(LangKeys.description)}: $reason',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey.shade700,
@@ -522,9 +556,9 @@ class MyPropertyItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'إغلاق',
-                    style: TextStyle(color: Colors.white),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate(LangKeys.ok),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -543,6 +577,8 @@ class MyPropertyItem extends StatelessWidget {
         return Colors.redAccent;
       case PropertyStatus.underInstallment:
         return Colors.orange;
+      case PropertyStatus.rented:
+        return Colors.purple;
     }
   }
 

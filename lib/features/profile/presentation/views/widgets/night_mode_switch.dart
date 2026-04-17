@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 
@@ -8,6 +10,7 @@ class NightModeSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context);
     return BlocBuilder<ProfileCubit, ProfileState>(
       // 🔥 تم إزالة buildWhen لضمان مزامنة حالة المفتاح مع الحالة الفعلية دائماً
       builder: (context, state) {
@@ -26,9 +29,9 @@ class NightModeSwitch extends StatelessWidget {
               size: 24,
             ),
           ),
-          title: const Text(
-            'الوضع الليلي',
-            style: TextStyle(
+          title: Text(
+            locale!.translate(LangKeys.darkMode),
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.textPrimary,

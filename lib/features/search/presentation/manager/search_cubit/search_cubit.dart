@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -43,7 +44,7 @@ class SearchCubit extends Cubit<SearchState> {
         properties,
       ) {
         _allProperties = properties;
-        
+
         if (resetFilters) {
           _initFromPrefs();
         } else {
@@ -71,16 +72,16 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   void _initFromPrefs() {
-    final String? purpose = Prefs.getString('user_purpose');
-    final String? typeName = Prefs.getString('user_property_type');
-    final String? location = Prefs.getString('user_location');
+    final String purpose = Prefs.getString('user_purpose');
+    final String typeName = Prefs.getString('user_property_type');
+    final String location = Prefs.getString('user_location');
 
     ListingType? initialListingType = purpose == 'buy'
         ? ListingType.sale
         : (purpose == 'rent' ? ListingType.rent : null);
 
     PropertyType? initialPropertyType;
-    if (typeName != null && typeName.isNotEmpty) {
+    if (typeName.isNotEmpty) {
       try {
         initialPropertyType = PropertyType.values.firstWhere(
           (e) => e.name == typeName,
@@ -158,7 +159,8 @@ class SearchCubit extends Cubit<SearchState> {
 
     // 🎯 تحديث الذاكرة الحية
     // الاختيارات الأساسية (تحتاج ذكاء للحفاظ على الـ Onboarding)
-    if (propertyType != null || isExplicitNull) currentPropertyType = propertyType;
+    if (propertyType != null || isExplicitNull)
+      currentPropertyType = propertyType;
     if (listingType != null || isExplicitNull) currentListingType = listingType;
     if (governorate != null || isExplicitNull) currentGovernorate = governorate;
 
@@ -176,11 +178,26 @@ class SearchCubit extends Cubit<SearchState> {
     currentFeatured = isFeatured;
     currentQuery = query ?? currentQuery;
     currentSortBy = sortBy ?? currentSortBy;
-    
+
+    // 🔥 تحسين: إذا كان البحث يطابق اسم محافظة تماماً (بالعربي أو الإنكليزي)، يتم تطبيقه كفلتر موقع مباشر
+    if (currentQuery != null && currentQuery!.isNotEmpty) {
+      final q = currentQuery!.trim().toLowerCase();
+      for (var entry in AppConstants.governorateSearchMap.entries) {
+        if (entry.value.any((term) => term.toLowerCase() == q)) {
+          currentGovernorate = entry.key;
+          break;
+        }
+      }
+    }
+
     // 💾 المزامنة مع Prefs
-    if (currentPropertyType != null) Prefs.setString('user_property_type', currentPropertyType!.name);
+    if (currentPropertyType != null)
+      Prefs.setString('user_property_type', currentPropertyType!.name);
     if (currentListingType != null) {
-      Prefs.setString('user_purpose', currentListingType == ListingType.sale ? 'buy' : 'rent');
+      Prefs.setString(
+        'user_purpose',
+        currentListingType == ListingType.sale ? 'buy' : 'rent',
+      );
     }
     Prefs.setString('user_location', currentGovernorate ?? 'الكل');
 
@@ -191,34 +208,51 @@ class SearchCubit extends Cubit<SearchState> {
       if (currentInstallment == true && !p.hasInstallment) return false;
 
       if (currentQuery != null && currentQuery!.isNotEmpty) {
-        final q = currentQuery!.toLowerCase();
-        if (!p.title.toLowerCase().contains(q) &&
-            !p.location.toLowerCase().contains(q))
-          return false;
+        final q = currentQuery!.toLowerCase().trim();
+        bool matchesQuery = p.title.toLowerCase().contains(q) ||
+            p.location.toLowerCase().contains(q);
+
+        // التحقق مما إذا كان البحث يطابق المحافظة (بالاسم المعرب أو المفتاح)
+        if (!matchesQuery) {
+          final govSearchTerms =
+              AppConstants.governorateSearchMap[p.governorate] ?? [];
+          if (govSearchTerms.any((term) => term.toLowerCase().contains(q)) ||
+              p.governorate.toLowerCase().contains(q)) {
+            matchesQuery = true;
+          }
+        }
+
+        if (!matchesQuery) return false;
       }
 
-      if (currentPropertyType != null && p.type != currentPropertyType)
+      if (currentPropertyType != null && p.type != currentPropertyType) {
         return false;
-      if (currentListingType != null && p.listingType != currentListingType)
+      }
+      if (currentListingType != null && p.listingType != currentListingType) {
         return false;
+      }
       if (currentGovernorate != null &&
           currentGovernorate != 'الكل' &&
-          p.governorate != currentGovernorate)
+          !AppConstants.isMatchingGovernorate(p.governorate, currentGovernorate)) {
         return false;
+      }
 
       // تصفية السعر
       if (currentMinPrice != null && p.price < currentMinPrice!) return false;
       if (currentMaxPrice != null && p.price > currentMaxPrice!) return false;
-      
+
       // تصفية المساحة
-      if (currentMinArea != null && (p.area ?? 0) < currentMinArea!) return false;
-      if (currentMaxArea != null && (p.area ?? 0) > currentMaxArea!) return false;
+      if (currentMinArea != null && (p.area) < currentMinArea!) return false;
+      if (currentMaxArea != null && (p.area) > currentMaxArea!) return false;
 
       // تصفية الغرف والحمامات
-      if (currentRooms != null && (p.totalRooms ?? 0) < currentRooms!) return false;
-      if (currentBedrooms != null && (p.bedrooms ?? 0) < currentBedrooms!) return false;
-      if (currentBathrooms != null && (p.bathrooms ?? 0) < currentBathrooms!) return false;
-      
+      if (currentRooms != null && (p.totalRooms ?? 0) < currentRooms!)
+        return false;
+      if (currentBedrooms != null && (p.bedrooms ?? 0) < currentBedrooms!)
+        return false;
+      if (currentBathrooms != null && (p.bathrooms ?? 0) < currentBathrooms!)
+        return false;
+
       // تصفية الطابق
       if (currentFloor != null && p.floorNumber != currentFloor) return false;
 

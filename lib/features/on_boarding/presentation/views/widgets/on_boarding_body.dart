@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/on_boarding/data/models/on_boarding_model.dart';
 import 'package:test_graduation/features/on_boarding/presentation/manager/on_boarding_cubit.dart';
@@ -16,23 +18,37 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
   late PageController pageController;
   int currentIndex = 0;
 
-  final List<OnBoardingModel> onBoardingData = [
-    OnBoardingModel(
-      image: 'assets/images/address_map.png',
-      title: 'ابحث عن منزلك المثالي',
-      description: 'اكتشف آلاف العقارات المتاحة للبيع والإيجار في أفضل المواقع في سوريا.',
-    ),
-    OnBoardingModel(
-      image: 'assets/images/rounded_map.png',
-      title: 'خريطة تفاعلية ذكية',
-      description: 'استخدم الخريطة للعثور على العقارات القريبة منك وتصفح المرافق المحيطة بسهولة.',
-    ),
-    OnBoardingModel(
-      image: 'assets/images/successful.png',
-      title: 'تواصل مباشر وسريع',
-      description: 'تواصل مع المعلنين مباشرة عبر الاتصال أو الواتساب بضغطة زر واحدة.',
-    ),
-  ];
+  List<OnBoardingModel> getOnBoardingData(BuildContext context) {
+    return [
+      OnBoardingModel(
+        image: 'assets/images/address_map.png',
+        title: AppLocalizations.of(
+          context,
+        )!.translate(LangKeys.findYourPerfectHomeTitle),
+        description: AppLocalizations.of(
+          context,
+        )!.translate(LangKeys.findYourPerfectHomeDesc),
+      ),
+      OnBoardingModel(
+        image: 'assets/images/rounded_map.png',
+        title: AppLocalizations.of(
+          context,
+        )!.translate(LangKeys.smartInteractiveMapTitle),
+        description: AppLocalizations.of(
+          context,
+        )!.translate(LangKeys.smartInteractiveMapDesc),
+      ),
+      OnBoardingModel(
+        image: 'assets/images/successful.png',
+        title: AppLocalizations.of(
+          context,
+        )!.translate(LangKeys.fastDirectContactTitle),
+        description: AppLocalizations.of(
+          context,
+        )!.translate(LangKeys.fastDirectContactDesc),
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -48,6 +64,7 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
 
   @override
   Widget build(BuildContext context) {
+    final onBoardingData = getOnBoardingData(context);
     return Stack(
       children: [
         Column(
@@ -62,14 +79,17 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                 },
                 itemCount: onBoardingData.length,
                 itemBuilder: (context, index) {
-                  return PageViewItem(
-                    onBoardingModel: onBoardingData[index],
-                  );
+                  return PageViewItem(onBoardingModel: onBoardingData[index]);
                 },
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24, bottom: 50, top: 10),
+              padding: const EdgeInsets.only(
+                left: 24,
+                right: 24,
+                bottom: 50,
+                top: 10,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -83,7 +103,9 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                         height: 8,
                         width: currentIndex == index ? 28 : 8,
                         decoration: BoxDecoration(
-                          color: currentIndex == index ? AppColors.primary : Colors.grey.withOpacity(0.3),
+                          color: currentIndex == index
+                              ? AppColors.primary
+                              : Colors.grey.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -100,12 +122,22 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                             foregroundColor: Colors.white,
                             elevation: 5,
                             shadowColor: AppColors.primary.withOpacity(0.4),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                            padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 35,
+                              vertical: 15,
+                            ),
                           ),
-                          child: const Text(
-                            'ابدأ الآن',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          child: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.translate(LangKeys.startNow),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         )
                       : GestureDetector(
@@ -121,7 +153,11 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                               color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.arrow_forward_ios, size: 20, color: Colors.white),
+                            child: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 20,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                 ],

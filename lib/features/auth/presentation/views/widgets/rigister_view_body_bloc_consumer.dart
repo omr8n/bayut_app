@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:test_graduation/core/routing/app_routes.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+
 import 'package:test_graduation/core/widgets/loading_manager.dart';
 import 'package:test_graduation/features/auth/presentation/views/widgets/register_view_body.dart';
 import '../../../../../core/helper/build_error_bar.dart';
@@ -21,7 +22,20 @@ class RigisterViewBodyBlocConsumer extends StatelessWidget {
         }
 
         if (state is SignupFailure) {
-          showBar(context, state.message);
+          final locale = AppLocalizations.of(context)!;
+          // If message is a key, translate it. If it contains translated content (already processed), keep it.
+          // Since I updated Cubit to send ALREADY TRANSLATED message for some cases, 
+          // but others (from failure.message) might be keys or raw strings.
+          // Better logic: if it's a known key, translate. Otherwise use as is.
+          
+          String translatedMessage;
+          try {
+            translatedMessage = locale.translate(state.message);
+          } catch (_) {
+            translatedMessage = state.message;
+          }
+
+          showBar(context, translatedMessage);
         }
       },
       builder: (context, state) {

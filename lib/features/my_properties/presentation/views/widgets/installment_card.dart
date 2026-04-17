@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 
 class InstallmentCard extends StatelessWidget {
@@ -25,6 +27,7 @@ class InstallmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -37,7 +40,7 @@ class InstallmentCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: CheckboxListTile(
-                title: const Text('نعم متاح بالتقسيط'),
+                title: Text(locale.translate(LangKeys.installmentAvailableQuestion)),
                 value: hasInstallment,
                 secondary: const Icon(Icons.credit_card),
                 onChanged: onInstallmentChanged,
@@ -50,8 +53,8 @@ class InstallmentCard extends StatelessWidget {
                   Expanded(
                     child: CustomTextFormField(
                       controller: downPaymentController,
-                      textAlign: TextAlign.right,
-                      labelText: 'الدفعة الأولى',
+                      textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                      labelText: locale.translate(LangKeys.downPayment),
                       prefixIcon: Icons.account_balance_wallet,
                       keyboardType: TextInputType.number,
                     ),
@@ -60,8 +63,8 @@ class InstallmentCard extends StatelessWidget {
                   Expanded(
                     child: CustomTextFormField(
                       controller: monthlyInstallmentController,
-                      textAlign: TextAlign.right,
-                      labelText: 'القسط الشهري',
+                      textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                      labelText: locale.translate(LangKeys.monthlyInstallment),
                       prefixIcon: Icons.calendar_month,
                       keyboardType: TextInputType.number,
                     ),
@@ -75,13 +78,13 @@ class InstallmentCard extends StatelessWidget {
                     child: CustomTextFormField(
                       controller: installmentDurationController,
                       focusNode: durationNode,
-                      textAlign: TextAlign.right,
-                      labelText: 'مدة التقسيط',
+                      textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                      labelText: locale.translate(LangKeys.installmentDuration),
                       prefixIcon: Icons.access_time,
                       keyboardType: TextInputType.number,
                       suffixText: durationNode.hasFocus ||
                               installmentDurationController.text.isNotEmpty
-                          ? 'شهر'
+                          ? locale.translate(LangKeys.months)
                           : null,
                     ),
                   ),
@@ -93,8 +96,8 @@ class InstallmentCard extends StatelessWidget {
                       child: AbsorbPointer(
                         child: CustomTextFormField(
                           controller: installmentNotesController,
-                          textAlign: TextAlign.right,
-                          labelText: 'ملاحظات',
+                          textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                          labelText: locale.translate(LangKeys.installmentNotes),
                           prefixIcon: Icons.note_alt,
                         ),
                       ),

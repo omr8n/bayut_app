@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/recent_properties.dart';
+import 'package:test_graduation/core/widgets/no_network_widget.dart';
 import '../../manager/search_cubit/search_cubit.dart'; // 🔥
 import 'empty_state.dart';
 import 'search_results_count.dart';
@@ -39,8 +40,10 @@ class SearchScreenBlocBuilder extends StatelessWidget {
         if (state is SearchFailure) {
           return SliverFillRemaining(
             hasScrollBody: false,
-            child: Center(
-              child: Text(state.errMessage, style: const TextStyle(color: Colors.red)),
+            child: NoNetworkWidget(
+              onRetry: () {
+                context.read<SearchCubit>().fetchAllPropertiesForSearch();
+              },
             ),
           );
         }

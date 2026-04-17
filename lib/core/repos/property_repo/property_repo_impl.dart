@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:test_graduation/core/models/property_model.dart';
+import 'package:test_graduation/core/services/connectivity_service.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import '../../errors/failures.dart';
 import '../../services/data_service.dart';
 import '../../utils/backend_endpoint.dart';
@@ -9,7 +11,8 @@ import 'property_repo.dart';
 
 class PropertyRepoImpl extends PropertyRepo {
   final DatabaseService databaseService;
-  PropertyRepoImpl(this.databaseService);
+  final ConnectivityService connectivityService;
+  PropertyRepoImpl(this.databaseService, this.connectivityService);
 
   @override
   Stream<Either<Failure, List<PropertyEntity>>> getProperty() {
@@ -23,7 +26,7 @@ class PropertyRepoImpl extends PropertyRepo {
         return right<Failure, List<PropertyEntity>>(properties);
       } catch (e) {
         return left<Failure, List<PropertyEntity>>(
-          ServerFailure('فشل في معالجة البيانات'),
+          ServerFailure(LangKeys.unexpectedError),
         );
       }
     });
@@ -48,7 +51,7 @@ class PropertyRepoImpl extends PropertyRepo {
             return right<Failure, List<PropertyEntity>>(properties);
           } catch (e) {
             return left<Failure, List<PropertyEntity>>(
-              ServerFailure('فشل في جلب عقاراتك الخاصة'),
+              ServerFailure(LangKeys.unexpectedError),
             );
           }
         });
@@ -56,6 +59,9 @@ class PropertyRepoImpl extends PropertyRepo {
 
   @override
   Future<Either<Failure, Unit>> deleteProperty(String productId) async {
+    if (!await connectivityService.isConnected) {
+      return left(NetworkFailure());
+    }
     try {
       await databaseService.deleteData(
         path: BackendEndpoint.getProperty,
@@ -63,7 +69,7 @@ class PropertyRepoImpl extends PropertyRepo {
       );
       return right(unit);
     } catch (e) {
-      return left(ServerFailure("فشل حذف العقار: ${e.toString()}"));
+      return left(ServerFailure(LangKeys.deletePropertyFailed, extra: e.toString()));
     }
   }
 
@@ -72,6 +78,9 @@ class PropertyRepoImpl extends PropertyRepo {
     String propertyId,
     Map<String, dynamic> data,
   ) async {
+    if (!await connectivityService.isConnected) {
+      return left(NetworkFailure());
+    }
     try {
       await databaseService.updateData(
         path: BackendEndpoint.getProperty,
@@ -80,7 +89,7 @@ class PropertyRepoImpl extends PropertyRepo {
       );
       return right(unit);
     } catch (e) {
-      return left(ServerFailure("فشل تحديث حالة العقار: ${e.toString()}"));
+      return left(ServerFailure(LangKeys.updateStatusFailed, extra: e.toString()));
     }
   }
 }

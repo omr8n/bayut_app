@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/constants/app_constants.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/on_boarding/presentation/manager/on_boarding_cubit.dart';
@@ -18,10 +20,12 @@ class LocationStep extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 60),
-              const Text(
-                'ما هي المناطق التي تهتم بها؟',
+              Text(
+                AppLocalizations.of(
+                  context,
+                )!.translate(LangKeys.whichAreasInterestedIn),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -37,7 +41,7 @@ class LocationStep extends StatelessWidget {
                       loc,
                     );
                     return FilterChip(
-                      label: Text(loc),
+                      label: Text(AppLocalizations.of(context)!.translate(loc)),
                       selected: isSelected,
                       onSelected: (_) =>
                           context.read<OnBoardingCubit>().toggleLocation(loc),
@@ -81,9 +85,9 @@ class LocationStep extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'تخطي',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.translate(LangKeys.skip),
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -117,9 +121,11 @@ class LocationStep extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'ابدأ الاستكشاف',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(
+                  context,
+                )!.translate(LangKeys.startExploring),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

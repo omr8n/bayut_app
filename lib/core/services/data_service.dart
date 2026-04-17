@@ -82,7 +82,7 @@ abstract class DatabaseService {
     String? documentId,
   });
 
-  Future<List<dynamic>> getCollectionDocuments({
+  Future<List<Map<String, dynamic>>> getCollectionDocuments({
     required String path,
     String? whereField,
     dynamic isEqualTo,
@@ -112,4 +112,10 @@ abstract class DatabaseService {
   });
 
   Future<void> deleteData({required String path, required String documentId});
+
+  Future<int> countDocuments({
+    required String path,
+    String? whereField,
+    dynamic isEqualTo,
+  });
 }

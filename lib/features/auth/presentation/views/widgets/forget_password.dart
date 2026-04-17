@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 
 class FogetPassword extends StatelessWidget {
   const FogetPassword({super.key});
@@ -20,9 +21,9 @@ class FogetPassword extends StatelessWidget {
           //   ),
           // );
         },
-        child: const Text(
-          AppStrings.forgotPassword,
-          style: TextStyle(
+        child: Text(
+          AppLocalizations.of(context)!.translate(LangKeys.forgotPassword),
+          style: const TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.w600,
           ),

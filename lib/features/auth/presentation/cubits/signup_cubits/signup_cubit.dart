@@ -3,6 +3,9 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../../core/language/app_localizations.dart';
+import '../../../../../../core/language/lang_keys.dart';
+import '../../../../../../core/routing/router_generation_config.dart';
 import '../../../../../../core/errors/failures.dart';
 import '../../../../../../core/repos/media_repo/media_repo.dart';
 import '../../../domain/entites/user_entity.dart';
@@ -33,7 +36,19 @@ class SignupCubit extends Cubit<SignupState> {
 
       uploadResult.fold((failure) {
         uploadFailed = true;
-        emit(SignupFailure(message: "فشل رفع الصورة: ${failure.message}"));
+        final context = RouterGenerationConfig
+            .goRouter
+            .configuration
+            .navigatorKey
+            .currentContext!;
+        final locale = AppLocalizations.of(context)!;
+        emit(
+          SignupFailure(
+            message: locale
+                .translate(LangKeys.uploadImageFailed)
+                .replaceFirst('{error}', failure.message),
+          ),
+        );
       }, (url) => imageUrl = url);
 
       if (uploadFailed) return;

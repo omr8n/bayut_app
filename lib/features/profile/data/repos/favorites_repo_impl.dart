@@ -70,10 +70,8 @@ class FavoritesRepoImpl implements FavoritesRepo {
         );
         
         final favoriteProperties = allPropertiesData
-            .map((e) {
-              // استخراج البيانات من الـ Snapshot وإضافة المعرف (id)
-              final data = e.data();
-              data['id'] = e.id; 
+            .map((data) {
+              // البيانات الآن تأتي كـ Map وتحتوي على الـ id مسبقاً من الـ Service
               return PropertyModel.fromJson(data).toEntity();
             })
             .where((element) => favoriteIds.contains(element.id))

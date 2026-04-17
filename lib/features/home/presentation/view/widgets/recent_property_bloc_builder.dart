@@ -3,36 +3,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 import 'recent_properties.dart';
 
 class RecentPropertyBlocBuilder extends StatelessWidget {
-  const RecentPropertyBlocBuilder({
-    super.key,
-    this.searchController,
-  });
+  const RecentPropertyBlocBuilder({super.key, this.searchController});
 
   final TextEditingController? searchController;
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return BlocBuilder<PropertyCubit, PropertyState>(
       builder: (context, state) {
         if (state is PropertySuccess) {
           if (state.recentProperties.isEmpty) {
-            return const SliverToBoxAdapter(
-              child: Center(child: Text('لا توجد عقارات حديثة')),
+            return SliverToBoxAdapter(
+              child: Center(
+                child: Text(localizations.translate(LangKeys.noProperties)),
+              ),
             );
           }
           return RecentProperties(properties: state.recentProperties);
-        } else if (state is PropertyFailure) {
-          return SliverToBoxAdapter(
-            child: Center(
-              child: Text(
-                'خطأ: ${state.errMessage}',
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-          );
         } else {
           // 🔥 التصحيح: استخدام Skeletonizer.sliver لأن الودجت بداخل Viewport يتوقع Slivers
           return Skeletonizer.sliver(

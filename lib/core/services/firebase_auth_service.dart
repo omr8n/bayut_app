@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../language/lang_keys.dart';
 import '../errors/exceptions.dart';
 
 class FirebaseAuthService {
@@ -20,10 +21,10 @@ class FirebaseAuthService {
     } on FirebaseAuthException catch (e) {
       log("Auth Error: ${e.code}");
       switch (e.code) {
-        case 'weak-password': throw CustomException(message: 'الرقم السري ضعيف جداً.');
-        case 'email-already-in-use': throw CustomException(message: 'لقد قمت بالتسجيل مسبقاً. الرجاء تسجيل الدخول.');
-        case 'network-request-failed': throw CustomException(message: 'تأكد من اتصالك بالانترنت.');
-        default: throw CustomException(message: 'حدث خطأ، حاول مرة أخرى.');
+        case 'weak-password': throw CustomException(message: LangKeys.weakPassword);
+        case 'email-already-in-use': throw CustomException(message: LangKeys.emailAlreadyInUse);
+        case 'network-request-failed': throw CustomException(message: LangKeys.networkRequestFailed);
+        default: throw CustomException(message: LangKeys.unexpectedError);
       }
     }
   }
@@ -42,9 +43,9 @@ class FirebaseAuthService {
       switch (e.code) {
         case 'user-not-found':
         case 'wrong-password':
-        case 'invalid-credential': throw CustomException(message: 'البريد أو كلمة المرور غير صحيحة.');
-        case 'network-request-failed': throw CustomException(message: 'تأكد من اتصالك بالانترنت.');
-        default: throw CustomException(message: 'حدث خطأ، حاول مرة أخرى.');
+        case 'invalid-credential': throw CustomException(message: LangKeys.invalidCredential);
+        case 'network-request-failed': throw CustomException(message: LangKeys.networkRequestFailed);
+        default: throw CustomException(message: LangKeys.unexpectedError);
       }
     }
   }
@@ -56,16 +57,39 @@ class FirebaseAuthService {
     } on FirebaseAuthException catch (e) {
       log("Reset Password Error: ${e.code}");
       switch (e.code) {
-        case 'user-not-found': throw CustomException(message: 'هذا البريد غير مسجل لدينا.');
-        case 'invalid-email': throw CustomException(message: 'البريد الإلكتروني غير صحيح.');
-        case 'network-request-failed': throw CustomException(message: 'تأكد من اتصالك بالانترنت.');
-        default: throw CustomException(message: 'حدث خطأ، حاول مرة أخرى لاحقاً.');
+        case 'user-not-found': throw CustomException(message: LangKeys.userNotFound);
+        case 'invalid-email': throw CustomException(message: LangKeys.invalidEmail);
+        case 'network-request-failed': throw CustomException(message: LangKeys.networkRequestFailed);
+        default: throw CustomException(message: LangKeys.passwordResetError);
       }
     }
   }
 
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  Future<void> updatePassword({required String newPassword}) async {
+    try {
+      await _auth.currentUser?.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      log("Update Password Error: ${e.code}");
+      switch (e.code) {
+        case 'weak-password': throw CustomException(message: LangKeys.weakPassword);
+        case 'requires-recent-login': throw CustomException(message: LangKeys.requiresRecentLogin);
+        default: throw CustomException(message: LangKeys.updatePasswordError);
+      }
+    }
+  }
+
+  Future<void> reauthenticate({required String email, required String password}) async {
+    try {
+      AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+      await _auth.currentUser?.reauthenticateWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      log("Reauth Error: ${e.code}");
+      throw CustomException(message: LangKeys.currentPasswordIncorrect);
+    }
   }
 
   Future<void> deleteUser() async {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart';
@@ -13,6 +15,7 @@ class SellerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(20),
@@ -43,9 +46,9 @@ class SellerHeader extends StatelessWidget {
                       child: const Icon(Icons.home, color: Color(0xFF0D47A1), size: 30),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'العقارات',
-                      style: TextStyle(
+                    Text(
+                      locale.translate(LangKeys.myProperties),
+                      style: const TextStyle(
                         color: Color(0xFF0D47A1),
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -64,7 +67,7 @@ class SellerHeader extends StatelessWidget {
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      property.sellerJoinDate,
+                      locale.translate(property.sellerJoinDate),
                       style: const TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                     const SizedBox(height: 10),
@@ -109,7 +112,7 @@ class SellerHeader extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              'تقييم المعلن ($totalReviews تقييم)',
+                              '${locale.translate(LangKeys.sellerRatingCount)} ($totalReviews)',
                               style: const TextStyle(color: Colors.grey, fontSize: 11),
                             ),
                           ],

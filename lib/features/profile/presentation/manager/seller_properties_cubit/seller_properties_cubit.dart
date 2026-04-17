@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/repos/property_repo/property_repo.dart';
-import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
+
 import 'seller_properties_state.dart';
 
 class SellerPropertiesCubit extends Cubit<SellerPropertiesState> {

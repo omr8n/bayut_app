@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
 import 'package:test_graduation/features/search/presentation/manager/search_cubit/search_cubit.dart';
 import 'package:test_graduation/features/search/presentation/veiw/widgets/search_header.dart';
 import 'package:test_graduation/features/search/presentation/veiw/widgets/search_screen_bloc_builder.dart';
@@ -31,11 +32,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     // 🎯 حذفنا BlocProvider من هنا ليعتمد على العالمي في main.dart لضمان مزامنة الفلترة
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(AppStrings.search),
+        title: Text(localizations.translate(LangKeys.search)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -47,21 +49,21 @@ class _SearchScreenState extends State<SearchScreen> {
             },
             icon: const Icon(Icons.sort),
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'newest',
-                child: Text(AppStrings.newest),
+                child: Text(localizations.translate(LangKeys.newest)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'priceLowToHigh',
-                child: Text(AppStrings.priceLowToHigh),
+                child: Text(localizations.translate(LangKeys.priceLowToHigh)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'priceHighToLow',
-                child: Text(AppStrings.priceHighToLow),
+                child: Text(localizations.translate(LangKeys.priceHighToLow)),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'areaLargest',
-                child: Text(AppStrings.areaLargest),
+                child: Text(localizations.translate(LangKeys.areaLargest)),
               ),
             ],
           ),

@@ -1,3 +1,6 @@
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'dart:developer';
 import 'dart:math' hide log;
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -121,10 +124,18 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
       }
     } catch (e) {
       log("🔥 Critical Error in Process: $e");
+      final context = RouterGenerationConfig
+          .goRouter
+          .configuration
+          .navigatorKey
+          .currentContext!;
+      final locale = AppLocalizations.of(context)!;
       _showErrorNotification(
         id,
         params.title,
-        "فشل في معالجة البيانات: $e",
+        locale
+            .translate(LangKeys.dataProcessingFailed)
+            .replaceFirst('{error}', e.toString()),
         isUpdate: isUpdate,
       );
     } finally {
@@ -139,15 +150,34 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     int total, {
     required bool isUpdate,
   }) {
-    final action = isUpdate ? 'تعديل' : 'رفع';
+    final context = RouterGenerationConfig
+        .goRouter
+        .configuration
+        .navigatorKey
+        .currentContext!;
+    final locale = AppLocalizations.of(context);
+
+    final actionTitle = isUpdate
+        ? locale!
+              .translate(LangKeys.editingProperty)
+              .replaceFirst('{title}', title)
+        : locale!
+              .translate(LangKeys.uploadingProperty)
+              .replaceFirst('{title}', title);
+
+    final actionBody = total > 0
+        ? locale
+              .translate(LangKeys.processingFile)
+              .replaceFirst('{current}', current.toString())
+              .replaceFirst('{total}', total.toString())
+        : locale.translate(LangKeys.savingData);
+
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'upload_channel',
-        title: 'جاري $action عقار: $title',
-        body: total > 0
-            ? 'معالجة الملف $current من $total...'
-            : 'جاري حفظ البيانات...',
+        title: actionTitle,
+        body: actionBody,
         category: NotificationCategory.Progress,
         notificationLayout: NotificationLayout.ProgressBar,
         progress: total > 0 ? (current / total) * 100 : 0,
@@ -161,13 +191,24 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     String title, {
     required bool isUpdate,
   }) {
-    final status = isUpdate ? 'التعديل' : 'الرفع';
+    final context = RouterGenerationConfig
+        .goRouter
+        .configuration
+        .navigatorKey
+        .currentContext!;
+    final locale = AppLocalizations.of(context);
+
+    final status = isUpdate
+        ? locale!.translate(LangKeys.editSuccess)
+        : locale!.translate(LangKeys.uploadSuccess);
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'upload_channel',
-        title: 'تم $status بنجاح! ✅',
-        body: 'تمت العملية لـ ($title) بنجاح.',
+        title: status,
+        body: locale
+            .translate(LangKeys.processCompleted)
+            .replaceFirst('{title}', title),
       ),
     );
   }
@@ -178,13 +219,22 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     String error, {
     required bool isUpdate,
   }) {
-    final status = isUpdate ? 'التعديل' : 'الرفع';
+    final context = RouterGenerationConfig
+        .goRouter
+        .configuration
+        .navigatorKey
+        .currentContext!;
+    final locale = AppLocalizations.of(context);
+
+    final status = isUpdate
+        ? locale!.translate(LangKeys.editFailed)
+        : locale!.translate(LangKeys.uploadFailed);
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'upload_channel',
-        title: 'فشل $status! ❌',
-        body: '$error',
+        title: status,
+        body: error,
       ),
     );
   }

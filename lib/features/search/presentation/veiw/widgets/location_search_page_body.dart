@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/constants/app_constants.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 import 'package:test_graduation/core/utils/colors.dart';
@@ -21,10 +23,15 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   List<String> filteredGovernorates = [];
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadAndSyncData();
+  }
+
+  @override
   void initState() {
     super.initState();
     filteredGovernorates = AppConstants.governorates;
-    _loadAndSyncData();
     widget.searchController.addListener(_onSearchChanged);
   }
 
@@ -35,35 +42,50 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 
   void _onSearchChanged() {
-    final query = widget.searchController.text.trim();
+    final locale = AppLocalizations.of(context)!;
+    final query = widget.searchController.text.trim().toLowerCase();
     setState(() {
       if (query.isEmpty) {
         filteredGovernorates = AppConstants.governorates;
       } else {
-        filteredGovernorates = AppConstants.governorates
-            .where((loc) => loc.contains(query))
-            .toList();
+        filteredGovernorates = AppConstants.governorates.where((loc) {
+          final localizedName = locale.translate(loc).toLowerCase();
+          final searchTerms = AppConstants.governorateSearchMap[loc] ?? [];
+
+          return localizedName.contains(query) ||
+              loc.toLowerCase().contains(query) ||
+              searchTerms.any((term) => term.toLowerCase().contains(query));
+        }).toList();
       }
-      
+
       // إذا كان النص المكتوب يطابق تماماً محافظة، نختارها تلقائياً
-      if (filteredGovernorates.contains(query)) {
-        selectedLoc = query;
+      final match = AppConstants.governorates.firstWhere(
+        (loc) =>
+            loc.toLowerCase() == query ||
+            locale.translate(loc).toLowerCase() == query,
+        orElse: () => '',
+      );
+
+      if (match.isNotEmpty) {
+        selectedLoc = match;
       }
     });
   }
 
   // 🔥 جلب سجل البحث ومزامنة الموقع الابتدائي بذكاء
   void _loadAndSyncData() {
+    final locale = AppLocalizations.of(context)!;
     recentSearches = Prefs.getStringList('search_history') ?? [];
 
     //优先 جلب الموقع من الكيوبيت لضمان المزامنة مع الفلترة، ثم من Prefs
     final cubitLoc = context.read<SearchCubit>().currentGovernorate;
-    final String initialLoc = cubitLoc ?? Prefs.getString('user_location');
+    final String initialLoc =
+        cubitLoc ?? Prefs.getString('user_location') ?? '';
 
-    if (initialLoc.isNotEmpty && initialLoc != 'الكل') {
+    if (initialLoc.isNotEmpty && initialLoc != LangKeys.all) {
       setState(() {
         selectedLoc = initialLoc;
-        widget.searchController.text = initialLoc;
+        widget.searchController.text = locale.translate(initialLoc);
 
         if (!recentSearches.contains(initialLoc)) {
           recentSearches.insert(0, initialLoc);
@@ -80,14 +102,16 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 
   void _onLocationSelected(String loc) {
+    final locale = AppLocalizations.of(context)!;
     setState(() {
       selectedLoc = loc;
-      widget.searchController.text = loc;
+      widget.searchController.text = locale.translate(loc);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -96,7 +120,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
           // 1. سجل البحث (يظهر فوق المحافظات)
           if (recentSearches.isNotEmpty) ...[
             _buildSectionHeader(
-              'المواقع التي تم البحث عنها مؤخراً',
+              locale.translate(LangKeys.recentLocations),
               Icons.history,
             ),
             const SizedBox(height: 12),
@@ -112,8 +136,12 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
 
           // 2. المحافظات
           _buildSectionHeader(
-            filteredGovernorates.isEmpty ? 'الموقع غير موجود' : 'المواقع المتاحة',
-            filteredGovernorates.isEmpty ? Icons.error_outline : Icons.trending_up,
+            filteredGovernorates.isEmpty
+                ? locale.translate(LangKeys.locationNotFound)
+                : locale.translate(LangKeys.availableLocations),
+            filteredGovernorates.isEmpty
+                ? Icons.error_outline
+                : Icons.trending_up,
           ),
           const SizedBox(height: 20),
           Expanded(
@@ -122,12 +150,19 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.location_off, size: 60, color: Colors.grey[300]),
+                        Icon(
+                          Icons.location_off,
+                          size: 60,
+                          color: Colors.grey[300],
+                        ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'عذراً، هذا الموقع غير متوفر حالياً\nنحن نغطي المحافظات السورية فقط',
+                        Text(
+                          locale.translate(LangKeys.locationNotFoundSubtitle),
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
@@ -143,7 +178,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                   ),
           ),
           const SizedBox(height: 20),
-          _buildActionButtons(context),
+          _buildActionButtons(context, locale),
         ],
       ),
     );
@@ -167,10 +202,11 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 
   Widget _buildRecentChip(String label) {
+    final locale = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () => _onLocationSelected(label),
       child: Chip(
-        label: Text(label),
+        label: Text(locale.translate(label)),
         backgroundColor: Colors.grey[100],
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -179,6 +215,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 
   Widget _buildLocationItem(String loc) {
+    final locale = AppLocalizations.of(context)!;
     bool isSelected = selectedLoc == loc;
     return GestureDetector(
       onTap: () => _onLocationSelected(loc),
@@ -194,7 +231,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
           ),
         ),
         child: Text(
-          loc,
+          locale.translate(loc),
           style: TextStyle(
             color: isSelected ? AppColors.primary : Colors.black87,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -204,7 +241,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(BuildContext context, AppLocalizations locale) {
     return Row(
       children: [
         Expanded(
@@ -220,9 +257,9 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
-              'إعادة البحث',
-              style: TextStyle(
+            child: Text(
+              locale.translate(LangKeys.resetSearch),
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -235,23 +272,29 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
             tag: 'filter_hero',
             child: ElevatedButton(
               onPressed: () {
-                final locToSave = selectedLoc ?? 'الكل';
-                
+                final locToSave = selectedLoc ?? LangKeys.all;
+
                 // 1. حفظ الموقع في الـ Cubit والـ Prefs لضمان توفره للفلترة
                 Prefs.setString('user_location', locToSave);
-                context.read<SearchCubit>().currentGovernorate = (locToSave == 'الكل') ? null : locToSave;
+                context.read<SearchCubit>().currentGovernorate =
+                    (locToSave == LangKeys.all)
+                    ? null
+                    : locToSave;
 
-                // 2. التحقق من أين أتينا؟ 
+                // 2. التحقق من أين أتينا؟
                 // سنستخدم محاولة الـ Pop، إذا نجحت ورجعنا للفلترة فهذا المطلوب.
                 // لكن الأضمن هندسياً هو فحص الـ extra أو المسار.
                 // هنا سنقوم بفتح الفلترة إذا كنا جايين من الـ Home
-                
+
                 final bool canPop = Navigator.of(context).canPop();
-                
+
                 // إذا كنا في صفحة الموقع وتم استدعاؤها من الفلترة، سنرجع بالـ Pop
                 // لمعرفة ذلك، نتحقق من وجود صفحة الفلترة في مسار الراوتر
-                if (canPop && GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString().contains(AppRoutes.filterScreen)) {
-                   Navigator.of(context).pop(locToSave);
+                if (canPop &&
+                    GoRouter.of(context).routerDelegate.currentConfiguration.uri
+                        .toString()
+                        .contains(AppRoutes.filterScreen)) {
+                  Navigator.of(context).pop(locToSave);
                 } else {
                   // إذا جايين من الـ Home، نفتح صفحة الفلترة
                   context.pushReplacement(
@@ -267,9 +310,9 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'تم',
-                style: TextStyle(
+              child: Text(
+                locale.translate(LangKeys.doneAction),
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),

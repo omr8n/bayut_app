@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
 
 class AddActionButtons extends StatelessWidget {
   final VoidCallback onSubmit;
@@ -30,11 +31,10 @@ class AddActionButtons extends StatelessWidget {
             elevation: 0,
           ),
           child: Text(
-            isEdit ? 'تعديل العقار' : AppStrings.addProperty,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            isEdit
+                ? AppLocalizations.of(context)!.translate(LangKeys.editProperty)
+                : AppLocalizations.of(context)!.translate(LangKeys.addProperty),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       ),

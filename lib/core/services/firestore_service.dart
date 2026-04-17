@@ -73,8 +73,7 @@ class FireStoreService implements DatabaseService {
   }
 
   @override
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-  getCollectionDocuments({
+  Future<List<Map<String, dynamic>>> getCollectionDocuments({
     required String path,
     String? whereField,
     dynamic isEqualTo,
@@ -86,7 +85,13 @@ class FireStoreService implements DatabaseService {
     }
 
     final snapshot = await ref.get();
-    return snapshot.docs;
+    
+    // 🔥 تحويل كل وثيقة إلى Map وإضافة الـ ID الخاص بها
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id; // التأكد من وجود الـ ID في البيانات
+      return data;
+    }).toList();
   }
 
   @override
@@ -143,5 +148,21 @@ class FireStoreService implements DatabaseService {
     }
     await firestore.collection(path).doc(documentId).delete();
     log('Document with ID $documentId deleted successfully from $path');
+  }
+
+  @override
+  Future<int> countDocuments({
+    required String path,
+    String? whereField,
+    dynamic isEqualTo,
+  }) async {
+    Query<Map<String, dynamic>> query = firestore.collection(path);
+
+    if (whereField != null && isEqualTo != null) {
+      query = query.where(whereField, isEqualTo: isEqualTo);
+    }
+
+    final aggregateQuery = await query.count().get();
+    return aggregateQuery.count ?? 0;
   }
 }

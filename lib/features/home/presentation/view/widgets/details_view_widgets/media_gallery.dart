@@ -95,6 +95,7 @@ class VideoThumbnailWidget extends StatefulWidget {
 class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
   late VideoPlayerController _controller;
   bool _isInitialized = false;
+  bool _hasError = false; // 🔥 إضافة متغير لمتابعة الخطأ
 
   @override
   void initState() {
@@ -102,9 +103,19 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
         if (mounted) {
-          // الانتقال لثانية واحدة لتجنب الشاشة السوداء في بداية بعض الفيديوهات
           _controller.seekTo(const Duration(seconds: 1));
-          setState(() => _isInitialized = true);
+          setState(() {
+            _isInitialized = true;
+            _hasError = false;
+          });
+        }
+      }).catchError((error) {
+        // 🔥 معالجة الخطأ هنا لمنع انهيار التطبيق
+        if (mounted) {
+          setState(() {
+            _hasError = true;
+            _isInitialized = false;
+          });
         }
       });
   }
@@ -117,10 +128,29 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_hasError) {
+      return Container(
+        color: Colors.grey.shade100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.video_collection_outlined, color: Colors.grey.shade400, size: 40.sp),
+            SizedBox(height: 8.h),
+            Text(
+              "الفيديو غير متاح حالياً",
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 12.sp),
+            ),
+          ],
+        ),
+      );
+    }
+    
     if (!_isInitialized) {
       return Container(
         color: Colors.grey.shade200,
-        child: const Center(child: CircularProgressIndicator(color: Colors.green, strokeWidth: 2)),
+        child: const Center(
+          child: CircularProgressIndicator(color: Colors.green, strokeWidth: 2),
+        ),
       );
     }
     return SizedBox.expand(

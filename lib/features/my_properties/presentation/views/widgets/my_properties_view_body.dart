@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/properties_list_view.dart';
@@ -52,6 +53,7 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     final active = widget.properties
         .where((p) => p.status != PropertyStatus.sold)
         .toList();
@@ -62,7 +64,7 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
     return Scaffold(
       backgroundColor: const Color(0xFFF3F5F9),
       appBar: AppBar(
-        title: const Text('عقاراتي'),
+        title: Text(locale.translate(LangKeys.myProperties)),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -71,9 +73,9 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
           labelColor: AppColors.primary,
           unselectedLabelColor: Colors.grey,
           indicatorColor: AppColors.primary,
-          tabs: const [
-            Tab(text: 'النشطة'),
-            Tab(text: 'المباعة'),
+          tabs: [
+            Tab(text: locale.translate(LangKeys.activeProperties)),
+            Tab(text: locale.translate(LangKeys.soldProperties)),
           ],
         ),
       ),
@@ -97,9 +99,12 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
         onPressed: () => GoRouter.of(context).push(AppRoutes.addPropertyScreen),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          AppStrings.addProperty,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        label: Text(
+          locale.translate(LangKeys.addProperty),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

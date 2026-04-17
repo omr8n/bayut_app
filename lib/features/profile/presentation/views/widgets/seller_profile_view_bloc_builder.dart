@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart'; // 🔥 استيراد
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/features/profile/domain/entities/rating_entity.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_state.dart';
@@ -12,6 +13,7 @@ class SellerProfileViewBlocBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return BlocBuilder<RatingCubit, RatingState>(
       builder: (context, state) {
         if (state is RatingsLoaded) {
@@ -31,7 +33,7 @@ class SellerProfileViewBlocBuilder extends StatelessWidget {
             },
           );
         } else if (state is RatingFailure) {
-          return Center(child: Text(state.message));
+          return Center(child: Text(locale.translate(state.message)));
         } else {
           // 🔥 استخدام Skeletonizer للتقييمات أثناء التحميل
           return Skeletonizer(
@@ -45,8 +47,8 @@ class SellerProfileViewBlocBuilder extends StatelessWidget {
                 return RatingItem(
                   rating: RatingEntity(
                     id: '', sellerId: '', raterId: '', 
-                    raterName: 'اسم مستخدم وهمي', 
-                    rating: 5, comment: 'هذا نص تعليق هيكلي طويل لتجربة التحميل الأنيقة...', 
+                    raterName: 'Fake User Name', 
+                    rating: 5, comment: 'This is a long skeleton comment text for testing the loading experience...',
                     createdAt: DateTime.now(),
                   ),
                 );

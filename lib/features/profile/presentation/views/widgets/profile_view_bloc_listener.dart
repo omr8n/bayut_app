@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import '../../manager/profile_cubit/profile_cubit.dart';
 
@@ -20,7 +21,9 @@ class ProfileViewBlocListener extends StatelessWidget {
           // ❌ عرض رسالة الخطأ في حال الفشل
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errMessage),
+              content: Text(
+                AppLocalizations.of(context)!.translate(state.errMessage),
+              ),
               backgroundColor: Colors.red,
             ),
           );

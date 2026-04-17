@@ -5,15 +5,19 @@ import 'package:test_graduation/core/routing/base_routes.dart';
 import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
+
+import 'package:test_graduation/features/admin/presentation/views/admin_properties_view.dart';
+import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
 import 'package:test_graduation/features/auth/presentation/views/register_view.dart';
 import 'package:test_graduation/features/auth/presentation/views/sigin_view.dart';
 import 'package:test_graduation/features/auth/presentation/views/forget_password_view.dart';
-import 'package:test_graduation/features/auth/presentation/views/verify_otp_view.dart';
+
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 import 'package:test_graduation/features/home/presentation/view/properties_list_view.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
+
 import 'package:test_graduation/features/on_boarding/presentation/views/on_boarding_view.dart';
+import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/views/seller_profile_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/seller_properties_view.dart';
 import 'package:test_graduation/features/root/presentation/views/root_view.dart';
@@ -21,9 +25,29 @@ import 'package:test_graduation/features/my_properties/presentation/views/add_pr
 import 'package:test_graduation/features/search/presentation/veiw/filter_screen.dart';
 import 'package:test_graduation/features/search/presentation/veiw/location_search_page.dart';
 import 'package:test_graduation/features/home/presentation/view/video_view.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/my_properties_view.dart';
+import 'package:test_graduation/features/profile/presentation/views/contact_view.dart';
+import 'package:test_graduation/features/profile/presentation/views/edit_profile_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/favorites_view.dart';
+import 'package:test_graduation/features/profile/presentation/views/guide_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/profile_view.dart';
+import 'package:test_graduation/features/profile/presentation/views/settings_view.dart';
+import 'package:test_graduation/features/profile/presentation/views/terms_view.dart';
+
 import 'package:test_graduation/features/my_properties/presentation/views/property_dashboard_view.dart';
+
+// Admin Imports
+import 'package:test_graduation/features/admin/presentation/views/admin_dashboard_screen.dart';
+import 'package:test_graduation/features/admin/presentation/views/admin_users_screen.dart';
+
+import 'package:test_graduation/features/admin/presentation/views/admin_reports_screen.dart';
+import 'package:test_graduation/features/admin/presentation/views/admin_notifications_screen.dart';
+import 'package:test_graduation/features/admin/presentation/views/admin_settings_screen.dart';
+
+import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
+import 'package:test_graduation/features/admin/presentation/views/admin_settings_view.dart';
+import 'package:test_graduation/features/admin/presentation/views/widgets/audit_logs/audit_logs_screen.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_action_cubit/admin_action_cubit.dart';
 import 'app_routes.dart';
 
 class RouterGenerationConfig {
@@ -236,16 +260,167 @@ class RouterGenerationConfig {
         name: AppRoutes.propertyDashboard,
         pageBuilder: (context, state) {
           final property = state.extra as PropertyEntity;
+          return BaseRoute(child: PropertyDashboardView(property: property));
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.myPropertiesScreen,
+        name: AppRoutes.myPropertiesScreen,
+        pageBuilder: (context, state) =>
+            BaseRoute(child: const MyPropertiesScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsView,
+        name: AppRoutes.settingsView,
+        pageBuilder: (context, state) => BaseRoute(child: const SettingsView()),
+      ),
+      GoRoute(
+        path: AppRoutes.editProfileView,
+        name: AppRoutes.editProfileView,
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
           return BaseRoute(
-            child: BlocProvider.value(
-              value:
-                  getIt<
-                    MyPropertiesCubit
-                  >(), // 🔥 توفير الـ Cubit الموجود أصلاً
-              child: PropertyDashboardView(property: property),
+            child: EditProfileView(
+              user: extra['user'] as UserEntity,
+              isPasswordChange: extra['isPasswordChange'] as bool? ?? false,
             ),
           );
         },
+      ),
+      GoRoute(
+        path: AppRoutes.guideView,
+        name: AppRoutes.guideView,
+        pageBuilder: (context, state) => BaseRoute(child: const GuideView()),
+      ),
+      GoRoute(
+        path: AppRoutes.termsView,
+        name: AppRoutes.termsView,
+        pageBuilder: (context, state) => BaseRoute(child: const TermsView()),
+      ),
+      GoRoute(
+        path: AppRoutes.contactView,
+        name: AppRoutes.contactView,
+        pageBuilder: (context, state) => BaseRoute(child: const ContactView()),
+      ),
+
+      GoRoute(
+        path: AppRoutes.adminDashboard,
+        name: AppRoutes.adminDashboard,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminCubit>(),
+            child: const AdminDashboardScreen(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminUsers,
+        name: AppRoutes.adminUsers,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminCubit>(),
+            child: const AdminUsersScreen(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminProperties,
+        name: AppRoutes.adminProperties,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminCubit>(),
+            child: const AdminPropertiesView(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminReports,
+        name: AppRoutes.adminReports,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminCubit>(),
+            child: const AdminReportsScreen(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminNotifications,
+        name: AppRoutes.adminNotifications,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminCubit>(),
+            child: const AdminNotificationsScreen(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminSettings,
+        name: AppRoutes.adminSettings,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminCubit>(),
+            child: const AdminSettingsScreen(),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminAuditLogs,
+        name: AppRoutes.adminAuditLogs,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: BlocProvider(
+            create: (context) => getIt<AdminActionCubit>(),
+            child: const AuditLogsScreen(),
+          ),
+        ),
       ),
     ],
   );

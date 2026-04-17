@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/custom_primary_button.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 class FilterButtons extends StatelessWidget {
   final VoidCallback onReset;
   final VoidCallback onApply;
@@ -14,6 +17,7 @@ class FilterButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -26,9 +30,9 @@ class FilterButtons extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              'إعادة تعيين',
-              style: TextStyle(
+            child: Text(
+              locale.translate(LangKeys.reset),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.primary,
@@ -38,7 +42,10 @@ class FilterButtons extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: CustomPriamryButton(onPressed: onApply, title: 'تطبيق'),
+          child: CustomPriamryButton(
+            onPressed: onApply,
+            title: locale.translate(LangKeys.apply),
+          ),
         ),
       ],
     );

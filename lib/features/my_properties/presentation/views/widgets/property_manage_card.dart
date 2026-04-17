@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -95,7 +97,10 @@ class PropertyManageCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       // خانة المشاهدات (Views Count)
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
@@ -110,7 +115,12 @@ class PropertyManageCard extends StatelessWidget {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              '${property.views} مشاهدة',
+                              AppLocalizations.of(context)!
+                                  .translate(LangKeys.viewsCount)
+                                  .replaceAll(
+                                    '{count}',
+                                    property.views.toString(),
+                                  ),
                               style: TextStyle(
                                 color: AppColors.primary,
                                 fontSize: 11.sp,
@@ -134,7 +144,7 @@ class PropertyManageCard extends StatelessWidget {
               children: [
                 CardActionWidget(
                   icon: Icons.edit_outlined,
-                  label: 'تعديل',
+                  label: AppLocalizations.of(context)!.translate(LangKeys.edit),
                   color: Colors.blue,
                   onTap: () {
                     GoRouter.of(
@@ -144,7 +154,9 @@ class PropertyManageCard extends StatelessWidget {
                 ),
                 CardActionWidget(
                   icon: Icons.delete_outline,
-                  label: 'حذف',
+                  label: AppLocalizations.of(
+                    context,
+                  )!.translate(LangKeys.delete),
                   color: Colors.red,
                   onTap: () {
                     if (user != null) {

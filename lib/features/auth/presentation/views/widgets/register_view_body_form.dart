@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_graduation/core/helper/my_app_method.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_login_register.dart';
 import 'package:test_graduation/core/widgets/custom_primary_button.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
@@ -54,7 +55,7 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
       cameraFCT: () async {
         final XFile? image = await picker.pickImage(
           source: ImageSource.camera,
-          preferredCameraDevice: CameraDevice.front, // تفعيل الكاميرا الأمامية للسيلفي
+          preferredCameraDevice: CameraDevice.front,
           imageQuality: 50,
         );
         if (image != null) setState(() => _pickedImage = image);
@@ -74,12 +75,12 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // اختيار الصورة الشخصية (سيلفي أو معرض)
           PickImageWidget(
             pickedImage: _pickedImage,
             function: _pickImage,
@@ -88,15 +89,15 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
 
           CustomTextFormField(
             controller: _nameController,
-            textAlign: TextAlign.right,
-            labelText: AppStrings.fullName,
+            textAlign: TextAlign.start,
+            labelText: localizations.translate(LangKeys.fullName),
             textInputAction: TextInputAction.next,
-            hintText: 'الاسم الكامل',
+            hintText: localizations.translate(LangKeys.fullNameHint),
             prefixIcon: Icons.person_outline,
             onEditingComplete: () => FocusScope.of(context).requestFocus(_emailFocusNode),
             keyboardType: TextInputType.name,
             validator: (value) {
-              if (value == null || value.isEmpty) return 'يرجى إدخال الاسم';
+              if (value == null || value.isEmpty) return localizations.translate(LangKeys.pleaseEnterName);
               return null;
             },
           ),
@@ -104,17 +105,17 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
 
           CustomTextFormField(
             focusNode: _emailFocusNode,
+            textAlign: TextAlign.start,
             textInputAction: TextInputAction.next,
             onEditingComplete: () => FocusScope.of(context).requestFocus(_phoneFocusNode),
             keyboardType: TextInputType.emailAddress,
             controller: _emailController,
-            textAlign: TextAlign.right,
-            labelText: AppStrings.email,
-            hintText: 'example@email.com',
+            labelText: localizations.translate(LangKeys.email),
+            hintText: localizations.translate(LangKeys.emailHint),
             prefixIcon: Icons.email_outlined,
             validator: (value) {
-              if (value == null || value.isEmpty) return 'يرجى إدخال البريد';
-              if (!value.contains('@')) return 'بريد غير صحيح';
+              if (value == null || value.isEmpty) return localizations.translate(LangKeys.pleaseEnterEmail);
+              if (!value.contains('@')) return localizations.translate(LangKeys.invalidEmail);
               return null;
             },
           ),
@@ -122,16 +123,16 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
 
           CustomTextFormField(
             focusNode: _phoneFocusNode,
+            textAlign: TextAlign.start,
             textInputAction: TextInputAction.next,
             onEditingComplete: () => FocusScope.of(context).requestFocus(_passFocusNode),
             controller: _phoneController,
             keyboardType: TextInputType.phone,
-            textAlign: TextAlign.right,
-            labelText: AppStrings.phone,
-            hintText: '+963...',
+            labelText: localizations.translate(LangKeys.phone),
+            hintText: localizations.translate(LangKeys.phoneHint),
             prefixIcon: Icons.phone_outlined,
             validator: (value) {
-              if (value == null || value.isEmpty) return 'يرجى إدخال رقم الهاتف';
+              if (value == null || value.isEmpty) return localizations.translate(LangKeys.pleaseEnterPhone);
               return null;
             },
           ),
@@ -139,21 +140,21 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
 
           CustomTextFormField(
             focusNode: _passFocusNode,
+            textAlign: TextAlign.start,
             controller: _passwordController,
             obscureText: _obscurePassword,
-            textAlign: TextAlign.right,
             textInputAction: TextInputAction.next,
             onEditingComplete: () => FocusScope.of(context).requestFocus(_confirmPassFocusNode),
-            labelText: AppStrings.password,
-            hintText: '••••••••',
+            labelText: localizations.translate(LangKeys.password),
+            hintText: localizations.translate(LangKeys.passwordHint),
             prefixIcon: Icons.lock_outline,
             suffixIcon: IconButton(
               icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) return 'يرجى إدخال كلمة المرور';
-              if (value.length < 6) return 'يجب أن تكون 6 أحرف على الأقل';
+              if (value == null || value.isEmpty) return localizations.translate(LangKeys.pleaseEnterPassword);
+              if (value.length < 6) return localizations.translate(LangKeys.passwordTooShort);
               return null;
             },
           ),
@@ -161,33 +162,33 @@ class _RegisterViewBodyFormState extends State<RegisterViewBodyForm> {
 
           CustomTextFormField(
             focusNode: _confirmPassFocusNode,
+            textAlign: TextAlign.start,
             controller: _confirmPasswordController,
             obscureText: _obscureConfirmPassword,
-            textAlign: TextAlign.right,
-            labelText: AppStrings.confirmPassword,
-            hintText: '••••••••',
+            labelText: localizations.translate(LangKeys.confirmPassword),
+            hintText: localizations.translate(LangKeys.passwordHint),
             prefixIcon: Icons.lock_outline,
             suffixIcon: IconButton(
               icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
               onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) return 'يرجى تأكيد كلمة المرور';
-              if (value != _passwordController.text) return 'كلمة المرور غير متطابقة';
+              if (value == null || value.isEmpty) return localizations.translate(LangKeys.pleaseConfirmPassword);
+              if (value != _passwordController.text) return localizations.translate(LangKeys.passwordsDontMatch);
               return null;
             },
           ),
           const SizedBox(height: 32),
 
           CustomPriamryButton(
-            title: AppStrings.register,
+            title: localizations.translate(LangKeys.register),
             onPressed: _register,
           ),
           const SizedBox(height: 24),
 
           CustomLoginRegister(
-            title: AppStrings.alreadyHaveAccount,
-            titleButton: AppStrings.login,
+            title: localizations.translate(LangKeys.alreadyHaveAccount),
+            titleButton: localizations.translate(LangKeys.login),
             onPressed: () => Navigator.pop(context),
           ),
         ],

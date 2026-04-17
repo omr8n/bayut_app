@@ -21,6 +21,7 @@ class CustomTextFormField extends StatelessWidget {
     this.prefixText,
     this.readOnly = false,
     this.onTap,
+    this.onChanged,
   });
 
   final TextEditingController controller;
@@ -35,6 +36,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final void Function()? onEditingComplete;
   final void Function(String)? onFieldSubmitted;
+  final void Function(String)? onChanged;
   final int? maxLines;
   final FocusNode? focusNode;
   final String? suffixText;
@@ -54,6 +56,7 @@ class CustomTextFormField extends StatelessWidget {
       textInputAction: textInputAction,
       onEditingComplete: onEditingComplete,
       onFieldSubmitted: onFieldSubmitted,
+      onChanged: onChanged,
       readOnly: readOnly,
       onTap: onTap,
       decoration: InputDecoration(

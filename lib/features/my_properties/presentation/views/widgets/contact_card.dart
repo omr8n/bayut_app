@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 
 class ContactCard extends StatelessWidget {
@@ -13,6 +15,7 @@ class ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -22,26 +25,26 @@ class ContactCard extends StatelessWidget {
           children: [
             CustomTextFormField(
               controller: phoneController,
-              textAlign: TextAlign.right,
-              labelText: 'رقم الهاتف للاتصال',
-              hintText: '09xxxxxxxx',
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              labelText: locale.translate(LangKeys.phoneForCall),
+              hintText: locale.translate(LangKeys.phoneHintFormat),
               prefixIcon: Icons.phone_callback_outlined,
               keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'يرجى إدخال رقم الهاتف';
+                  return locale.translate(LangKeys.pleaseEnterPhone);
                 }
                 if (!RegExp(r'^09\d{8}$').hasMatch(value)) {
-                  return 'يرجى إدخال رقم سوري صحيح (مثلاً 09xxxxxxxx)';
+                  return locale.translate(LangKeys.invalidPhoneFormat);
                 }
                 return null;
               },
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 16),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 16),
               child: Text(
-                'تذكر إضافة رمز الدولة (مثلاً +963 لسوريا)',
-                style: TextStyle(color: Colors.grey, fontSize: 11),
+                locale.translate(LangKeys.countryCodeInstruction),
+                style: const TextStyle(color: Colors.grey, fontSize: 11),
               ),
             ),
             Row(
@@ -57,24 +60,27 @@ class ContactCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.chat_outlined, color: Colors.green),
                         const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'رقم واتساب',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                locale.translate(LangKeys.whatsappNumber),
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'رقم واتساب إذا كان مختلف أو انسخ رقم ال...',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 10,
+                              Text(
+                                locale.translate(LangKeys.whatsappDifferent),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 10,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),

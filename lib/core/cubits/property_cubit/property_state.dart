@@ -13,11 +13,12 @@ class PropertyInitial extends PropertyState {}
 class PropertyLoading extends PropertyState {}
 
 class PropertySuccess extends PropertyState {
-  final List<PropertyEntity> properties; // 🔥 القائمة الشاملة لكل النتائج المطابقة (للبحث)
+  final List<PropertyEntity> properties;
   final List<PropertyEntity> featuredProperties;
   final List<PropertyEntity> recentProperties;
   final List<PropertyEntity> saleProperties;
   final List<PropertyEntity> rentProperties;
+  final bool isOffline; // ✅ إضافة متغير لمعرفة إذا كانت البيانات "أوفلاين"
 
   const PropertySuccess({
     required this.properties,
@@ -25,6 +26,7 @@ class PropertySuccess extends PropertyState {
     required this.recentProperties,
     required this.saleProperties,
     required this.rentProperties,
+    this.isOffline = false,
   });
 
   @override
@@ -34,6 +36,7 @@ class PropertySuccess extends PropertyState {
         recentProperties,
         saleProperties,
         rentProperties,
+        isOffline,
       ];
 }
 

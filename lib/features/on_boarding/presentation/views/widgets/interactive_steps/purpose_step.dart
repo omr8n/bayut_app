@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/on_boarding/presentation/manager/on_boarding_cubit.dart';
 
@@ -16,10 +18,12 @@ class PurposeStep extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 60),
-              const Text(
-                'هل تبحث عن عقار للبيع أو للإيجار؟',
+              Text(
+                AppLocalizations.of(
+                  context,
+                )!.translate(LangKeys.lookForSaleOrRent),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -27,7 +31,8 @@ class PurposeStep extends StatelessWidget {
               ),
               const SizedBox(height: 50),
               _buildPillOption(
-                title: ListingType.rent.arabicName,
+                context,
+                title: ListingType.rent.localizedName(context),
                 isSelected: state.listingType == ListingType.rent,
                 onTap: () => context.read<OnBoardingCubit>().setListingType(
                   ListingType.rent,
@@ -35,7 +40,8 @@ class PurposeStep extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               _buildPillOption(
-                title: ListingType.sale.arabicName,
+                context,
+                title: ListingType.sale.localizedName(context),
                 isSelected: state.listingType == ListingType.sale,
                 onTap: () => context.read<OnBoardingCubit>().setListingType(
                   ListingType.sale,
@@ -50,7 +56,8 @@ class PurposeStep extends StatelessWidget {
     );
   }
 
-  Widget _buildPillOption({
+  Widget _buildPillOption(
+    BuildContext context, {
     required String title,
     required bool isSelected,
     required VoidCallback onTap,
@@ -97,9 +104,9 @@ class PurposeStep extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'تخطي',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.translate(LangKeys.skip),
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -123,9 +130,9 @@ class PurposeStep extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'التالي',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.translate(LangKeys.next),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

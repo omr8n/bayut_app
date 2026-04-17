@@ -13,10 +13,11 @@ class SearchLoading extends SearchState {}
 
 class SearchSuccess extends SearchState {
   final List<PropertyEntity> properties;
-  const SearchSuccess(this.properties);
+  final bool isOffline;
+  const SearchSuccess(this.properties, {this.isOffline = false});
 
   @override
-  List<Object?> get props => [properties];
+  List<Object?> get props => [properties, isOffline];
 }
 
 class SearchFailure extends SearchState {

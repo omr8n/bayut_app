@@ -1,6 +1,8 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/widgets/communication.dart';
@@ -38,6 +40,7 @@ class _PropertyCardState extends State<PropertyCard> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final numberFormat = NumberFormat('#,###');
     final List<String> allMedia = widget.property.media.isNotEmpty
         ? widget.property.media
@@ -138,7 +141,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                       ),
                                       SizedBox(height: 4.h),
                                       Text(
-                                        'عرض الكل (+${allMedia.length - 3})',
+                                        '${localizations.translate(LangKeys.viewAll)} (+${allMedia.length - 3})',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -210,7 +213,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'شوهد',
+                                localizations.isEnLocale ? 'Viewed' : 'شوهد',
                                 style: TextStyle(
                                   color: Colors.grey[700],
                                   fontSize: 10.sp,
@@ -253,7 +256,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         ],
                       ),
                       child: Text(
-                        widget.property.listingType.arabicName,
+                        widget.property.listingType.localizedName(context),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10.sp,
@@ -294,7 +297,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              'مميز',
+                              localizations.isEnLocale ? 'Featured' : 'مميز',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.sp,
@@ -337,7 +340,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              'قيد التقسيط',
+                              localizations.translate(LangKeys.underInstallment),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.sp,
@@ -370,7 +373,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               fit: BoxFit.scaleDown,
                               alignment: Alignment.centerRight,
                               child: Text(
-                                '${numberFormat.format(widget.property.price)} ${widget.property.currency}',
+                                '${numberFormat.format(widget.property.price)} ${localizations.translate(widget.property.currency.trim().toLowerCase())}',
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w900,
@@ -393,11 +396,11 @@ class _PropertyCardState extends State<PropertyCard> {
                           if (widget.property.bedrooms != null)
                             _buildInfoItem(
                               Icons.bed_outlined,
-                              '${widget.property.bedrooms} غرف',
+                              '${widget.property.bedrooms} ${localizations.translate(LangKeys.rooms)}',
                             ),
                           _buildInfoItem(
                             Icons.square_foot_outlined,
-                            '${widget.property.area.toInt()} م²',
+                            '${widget.property.area.toInt()} ${localizations.isEnLocale ? 'm²' : 'م²'}',
                           ),
                         ],
                       ),
@@ -406,7 +409,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         width: double.infinity,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
+                          alignment: localizations.isEnLocale ? Alignment.centerLeft : Alignment.centerRight,
                           child: Text(
                             widget.property.title,
                             style: TextStyle(
@@ -422,7 +425,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         width: double.infinity,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
+                          alignment: localizations.isEnLocale ? Alignment.centerLeft : Alignment.centerRight,
                           child: Row(
                             children: [
                               Icon(
@@ -432,7 +435,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               ),
                               SizedBox(width: 4.w),
                               Text(
-                                '${widget.property.governorate}، ${widget.property.city}',
+                                '${localizations.translate(widget.property.governorate)}، ${widget.property.city}',
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   color: Colors.grey[600],

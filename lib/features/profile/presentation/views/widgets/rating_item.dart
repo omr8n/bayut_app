@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/features/profile/domain/entities/rating_entity.dart';
 
 class RatingItem extends StatelessWidget {
@@ -9,6 +10,7 @@ class RatingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -58,7 +60,7 @@ class RatingItem extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               rating.comment,
-              textAlign: TextAlign.right,
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               style: const TextStyle(color: Colors.black87, fontSize: 13, height: 1.4),
             ),
           ],

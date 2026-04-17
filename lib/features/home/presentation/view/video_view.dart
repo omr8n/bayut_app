@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/widgets/communication.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:video_player/video_player.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
@@ -10,7 +9,7 @@ class VideoView extends StatefulWidget {
   final List<String> videoUrls;
   final int initialIndex;
   final String? heroTag;
-  final PropertyEntity? property; // 🔥 إضافة بيانات العقار
+  final PropertyEntity? property;
 
   const VideoView({
     super.key,
@@ -28,6 +27,7 @@ class _VideoViewState extends State<VideoView> {
   late PageController _pageController;
   late int _currentIndex;
   final Map<int, VideoPlayerController> _controllers = {};
+  final Map<int, bool> _errorStates = {}; // 🔥 لتتبع الأخطاء لكل فيديو
   bool _isShowingImages = true;
   bool _showControls = true;
 
@@ -51,11 +51,21 @@ class _VideoViewState extends State<VideoView> {
         Uri.parse(widget.videoUrls[index]),
       );
       _controllers[index] = controller;
+      
+      // 🔥 إضافة catchError لمنع الـ PlatformException
       controller.initialize().then((_) {
         if (mounted && _currentIndex == index) {
-          setState(() {});
+          setState(() {
+            _errorStates[index] = false;
+          });
           controller.play();
           controller.setLooping(true);
+        }
+      }).catchError((error) {
+        if (mounted) {
+          setState(() {
+            _errorStates[index] = true;
+          });
         }
       });
     }
@@ -76,21 +86,22 @@ class _VideoViewState extends State<VideoView> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. الميديا (خلف كل شيء)
           GestureDetector(
             onTap: () => setState(() => _showControls = !_showControls),
             child: PageView.builder(
               controller: _pageController,
               itemCount: widget.videoUrls.length,
               onPageChanged: (index) {
-                if (_controllers.containsKey(_currentIndex))
+                if (_controllers.containsKey(_currentIndex)) {
                   _controllers[_currentIndex]!.pause();
+                }
                 setState(() {
                   _currentIndex = index;
                   _isShowingImages = !_isVideo(widget.videoUrls[index]);
                 });
-                if (_isVideo(widget.videoUrls[index]))
+                if (_isVideo(widget.videoUrls[index])) {
                   _initializeController(index);
+                }
               },
               itemBuilder: (context, index) {
                 final url = widget.videoUrls[index];
@@ -101,7 +112,7 @@ class _VideoViewState extends State<VideoView> {
             ),
           ),
 
-          // 2. الواجهة العلوية (Header)
+          // Header
           Positioned(
             top: 0,
             left: 0,
@@ -128,22 +139,6 @@ class _VideoViewState extends State<VideoView> {
               ),
             ),
           ),
-
-          // 3. أزرار التواصل (Bottom) بأسلوب Hero للاستمرارية البصرية
-          // Positioned(
-          //   bottom: 30.h,
-          //   left: 20.w,
-          //   right: 20.w,
-          //   child: _buildAnimatedOverlay(
-          //     child: Hero(
-          //       tag: 'contact_buttons_${widget.property?.id}', // 🔥 التاج السحري المشترك
-          //       child: Material(
-          //         color: Colors.transparent, // للحفاظ على خلفية الـ Row المخصصة
-          //         child: _buildContactRow(),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -165,7 +160,6 @@ class _VideoViewState extends State<VideoView> {
       onInteractionStart: (_) => setState(() => _showControls = false),
       onInteractionEnd: (_) => setState(() => _showControls = true),
       child: SizedBox.expand(
-        // 🔥 جعل الصورة تملأ كامل المساحة المتاحة
         child: Center(
           child: Hero(
             tag: (index == widget.initialIndex && widget.heroTag != null)
@@ -173,8 +167,7 @@ class _VideoViewState extends State<VideoView> {
                 : 'gallery_item_$index',
             child: FancyShimmerImage(
               imageUrl: url,
-              boxFit: BoxFit
-                  .contain, // يحافظ على أبعاد الصورة مع تكبيرها لأقصى حد ممكن
+              boxFit: BoxFit.contain,
               width: double.infinity,
               height: double.infinity,
             ),
@@ -185,10 +178,37 @@ class _VideoViewState extends State<VideoView> {
   }
 
   Widget _buildVideoPlayer(int index) {
+    // 🔥 التحقق من حالة الخطأ أولاً
+    if (_errorStates[index] == true) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.wifi_off, color: Colors.white70, size: 50.sp),
+            SizedBox(height: 10.h),
+            const Text(
+              'تعذر تحميل الفيديو، تأكد من الاتصال',
+              style: TextStyle(color: Colors.white, fontFamily: 'Dubai'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _errorStates.remove(index);
+                  _controllers.remove(index)?.dispose();
+                });
+                _initializeController(index);
+              },
+              child: const Text('إعادة المحاولة', style: TextStyle(color: AppColors.primary)),
+            )
+          ],
+        ),
+      );
+    }
+
     final controller = _controllers[index];
     if (controller == null || !controller.value.isInitialized) {
       return const Center(
-        child: CircularProgressIndicator(color: Colors.green),
+        child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
     return InteractiveViewer(
@@ -214,13 +234,9 @@ class _VideoViewState extends State<VideoView> {
                       size: 65.sp,
                     ),
                     onPressed: () {
-                      // 🔥 الإصلاح: تنفيذ الأوامر أولاً ثم تحديث الحالة بشكل متزامن
-                      if (controller.value.isPlaying) {
-                        controller.pause();
-                      } else {
-                        controller.play();
-                      }
-                      setState(() {}); // تحديث الواجهة فقط لتغيير الأيقونة
+                      setState(() {
+                        controller.value.isPlaying ? controller.pause() : controller.play();
+                      });
                     },
                   ),
                 ),
@@ -250,21 +266,23 @@ class _VideoViewState extends State<VideoView> {
         children: [
           _toggleItem('الصور', _isShowingImages, () {
             int firstImg = widget.videoUrls.indexWhere((u) => !_isVideo(u));
-            if (firstImg != -1)
+            if (firstImg != -1) {
               _pageController.animateToPage(
                 firstImg,
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
               );
+            }
           }),
           _toggleItem('الفيديو', !_isShowingImages, () {
             int firstVid = widget.videoUrls.indexWhere((u) => _isVideo(u));
-            if (firstVid != -1)
+            if (firstVid != -1) {
               _pageController.animateToPage(
                 firstVid,
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
               );
+            }
           }),
         ],
       ),
@@ -319,25 +337,4 @@ class _VideoViewState extends State<VideoView> {
       ),
     );
   }
-
-  // Widget _buildContactRow() {
-  //   // إذا لم تتوفر بيانات العقار، لا نعرض أزرار التواصل
-  //   if (widget.property == null) return const SizedBox.shrink();
-
-  //   return Container(
-  //     padding: EdgeInsets.all(12.w),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white, // أبيض ناصع كما في الصورة الأصلية لبيوت
-  //       borderRadius: BorderRadius.circular(16.r), // زوايا منحنية فخمة
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.black.withOpacity(0.3),
-  //           blurRadius: 20,
-  //           offset: const Offset(0, 10),
-  //         ),
-  //       ],
-  //     ),
-  //     child: CommunicationButtons(property: widget.property!),
-  //   );
-  // }
 }

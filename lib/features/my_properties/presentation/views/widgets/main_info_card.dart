@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/constants/app_constants.dart'; // 🔥 استيراد الثوابت
+import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 import 'package:test_graduation/core/widgets/type_chip.dart';
 
@@ -33,6 +34,7 @@ class MainInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -42,15 +44,15 @@ class MainInfoCard extends StatelessWidget {
           children: [
             CustomTextFormField(
               controller: titleController,
-              textAlign: TextAlign.right,
-              labelText: 'اسم العقار',
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              labelText: locale.translate(LangKeys.propertyTitle),
               prefixIcon: Icons.title,
             ),
             const SizedBox(height: 16),
             CustomTextFormField(
               controller: descriptionController,
-              textAlign: TextAlign.right,
-              labelText: 'وصف العقار',
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              labelText: locale.translate(LangKeys.propertyDescription),
               maxLines: 3,
               prefixIcon: Icons.description,
             ),
@@ -61,27 +63,27 @@ class MainInfoCard extends StatelessWidget {
                   child: CustomTextFormField(
                     controller: priceController,
                     focusNode: priceNode,
-                    textAlign: TextAlign.right,
-                    labelText: 'السعر',
+                    textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                    labelText: locale.translate(LangKeys.price),
                     prefixIcon: Icons.attach_money,
                     keyboardType: TextInputType.number,
-                    suffixText: priceNode.hasFocus || priceController.text.isNotEmpty
-                        ? selectedCurrency
-                        : null,
                   ),
                 ),
                 const SizedBox(width: 8),
-                _buildCurrencySelector(),
+                _buildCurrencySelector(context),
               ],
             ),
             const SizedBox(height: 24),
-            const Text('الغرض', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              locale.translate(LangKeys.purpose),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: TypeChip(
-                    label: AppStrings.forSale,
+                    label: locale.translate(LangKeys.sale),
                     isSelected: selectedListingType == ListingType.sale,
                     onTap: () => onListingTypeChanged(ListingType.sale),
                   ),
@@ -89,7 +91,7 @@ class MainInfoCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TypeChip(
-                    label: AppStrings.forRent,
+                    label: locale.translate(LangKeys.rent),
                     isSelected: selectedListingType == ListingType.rent,
                     onTap: () => onListingTypeChanged(ListingType.rent),
                   ),
@@ -97,14 +99,17 @@ class MainInfoCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            const Text('نوع العقار', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              locale.translate(LangKeys.propertyType),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: PropertyType.values
                   .map((type) => TypeChip(
-                        label: type.arabicName,
+                        label: type.localizedName(context),
                         isSelected: selectedPropertyType == type,
                         onTap: () => onPropertyTypeChanged(type),
                       ))
@@ -116,7 +121,8 @@ class MainInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrencySelector() {
+  Widget _buildCurrencySelector(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
@@ -127,13 +133,19 @@ class MainInfoCard extends StatelessWidget {
         children: [
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              // 🔥 التأكد من أن القيمة الحالية موجودة فعلياً في القائمة الممررة
-              value: AppConstants.currencies.contains(selectedCurrency) 
-                  ? selectedCurrency 
-                  : AppConstants.currencies.first,
-              items: AppConstants.currencies // 🔥 استخدام القائمة الموحدة من AppConstants
-                  .map((curr) => DropdownMenuItem(value: curr, child: Text(curr)))
-                  .toList(),
+              value:
+                  AppConstants.currencies.contains(selectedCurrency)
+                      ? selectedCurrency
+                      : AppConstants.currencies.first,
+              items:
+                  AppConstants.currencies
+                      .map(
+                        (curr) => DropdownMenuItem(
+                          value: curr,
+                          child: Text(locale.translate(curr)),
+                        ),
+                      )
+                      .toList(),
               onChanged: onCurrencyChanged,
             ),
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 
 class DynamicSpecsSection extends StatelessWidget {
@@ -108,6 +110,7 @@ class DynamicSpecsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -119,27 +122,250 @@ class DynamicSpecsSection extends StatelessWidget {
             CustomTextFormField(
               controller: areaController,
               focusNode: areaNode,
-              hintText: 'المساحة',
+              hintText: locale.translate(LangKeys.area),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              textAlign: TextAlign.right,
-              suffixText: 'م²',
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              suffixText: locale.translate(LangKeys.areaUnit),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'الرجاء إدخال المساحة';
+                  return locale.translate(LangKeys.pleaseEnterArea);
                 }
                 if (double.tryParse(value) == null) {
-                  return 'أدخل رقم صحيح';
+                  return locale.translate(LangKeys.enterCorrectNumber);
                 }
                 return null;
               },
             ),
             const SizedBox(height: 12),
             // ... بقية الحقول حسب نوع العقار
+            if (selectedPropertyType == PropertyType.housesAndApartments ||
+                selectedPropertyType == PropertyType.underConstruction ||
+                selectedPropertyType == PropertyType.villas ||
+                selectedPropertyType == PropertyType.offices ||
+                selectedPropertyType == PropertyType.clinics) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextFormField(
+                      controller: roomsController,
+                      hintText: locale.translate(LangKeys.rooms),
+                      keyboardType: TextInputType.number,
+                      textAlign: locale.isEnLocale
+                          ? TextAlign.left
+                          : TextAlign.right,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomTextFormField(
+                      controller: bathroomsController,
+                      hintText: locale.translate(LangKeys.bathrooms),
+                      keyboardType: TextInputType.number,
+                      textAlign: locale.isEnLocale
+                          ? TextAlign.left
+                          : TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.housesAndApartments ||
+                selectedPropertyType == PropertyType.offices ||
+                selectedPropertyType == PropertyType.clinics ||
+                selectedPropertyType == PropertyType.shops) ...[
+              CustomTextFormField(
+                controller: floorNumberController,
+                hintText: locale.translate(LangKeys.floor),
+                keyboardType: TextInputType.number,
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.buildings) ...[
+              CustomTextFormField(
+                controller: totalFloorsController,
+                hintText: locale.translate(
+                  LangKeys.floor,
+                ), // Using 'floor' as label for simplicity or define a new key if needed
+                keyboardType: TextInputType.number,
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.shops ||
+                selectedPropertyType == PropertyType.mallShops) ...[
+              _buildDropdownField(
+                locale.translate(LangKeys.location),
+                selectedShopLocation,
+                shopLocationTypes,
+                onShopLocationChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+              CustomTextFormField(
+                controller: commercialActivityController,
+                hintText: locale.translate(
+                  LangKeys.technicalSpecifications,
+                ), // Assuming this is used for activity details or add a new key
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.lands) ...[
+              _buildDropdownField(
+                locale.translate(LangKeys.propertyType),
+                selectedLandType,
+                landTypes,
+                onLandTypeChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+              CustomTextFormField(
+                controller: streetWidthController,
+                focusNode: streetWidthNode,
+                hintText: locale.translate(LangKeys.streetFront),
+                keyboardType: TextInputType.number,
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.farms) ...[
+              _buildDropdownField(
+                locale.translate(LangKeys.propertyType),
+                selectedFarmType,
+                farmTypes,
+                onFarmTypeChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+              _buildDropdownField(
+                locale.translate(LangKeys.irrigation),
+                selectedIrrigationType,
+                irrigationTypes,
+                onIrrigationTypeChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+              CustomTextFormField(
+                controller: cropsController,
+                hintText: locale.translate(LangKeys.plant),
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.pools) ...[
+              _buildDropdownField(
+                locale.translate(LangKeys.pool),
+                selectedPoolType,
+                poolTypes,
+                onPoolTypeChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+              _buildDropdownField(
+                locale.translate(LangKeys.area),
+                selectedPoolSize,
+                poolSizes,
+                onPoolSizeChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.warehouses) ...[
+              CustomTextFormField(
+                controller: warehouseHeightController,
+                focusNode: warehouseHeightNode,
+                hintText: locale.translate(
+                  LangKeys.floor,
+                ), // Using floor for height or add a new key
+                keyboardType: TextInputType.number,
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+              _buildDropdownField(
+                locale.translate(LangKeys.floor),
+                selectedWarehouseFloorType,
+                warehouseFloorTypes,
+                onWarehouseFloorTypeChanged,
+                locale,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.halls) ...[
+              CustomTextFormField(
+                controller: hallCapacityController,
+                focusNode: hallCapacityNode,
+                hintText: locale.translate(
+                  LangKeys.capacity,
+                ), // Need to add capacity key
+                keyboardType: TextInputType.number,
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            if (selectedPropertyType == PropertyType.workshops) ...[
+              CustomTextFormField(
+                controller: workshopTypeController,
+                hintText: locale.translate(LangKeys.propertyType),
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+              CustomTextFormField(
+                controller: workshopHeightController,
+                focusNode: workshopHeightNode,
+                hintText: locale.translate(LangKeys.floor),
+                keyboardType: TextInputType.number,
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+              const SizedBox(height: 12),
+            ],
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDropdownField(
+    String label,
+    String value,
+    List<String> items,
+    Function(String?) onChanged,
+    AppLocalizations locale,
+  ) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: label,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: items
+          .map(
+            (String val) => DropdownMenuItem<String>(
+              value: val,
+              alignment: locale.isEnLocale
+                  ? AlignmentDirectional.centerStart
+                  : AlignmentDirectional.centerEnd,
+              child: Text(
+                locale.translate(val),
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: onChanged,
     );
   }
 }

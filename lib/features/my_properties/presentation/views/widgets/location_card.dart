@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/constants/app_constants.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 
-class LocationCard extends StatelessWidget {
+class LocationCard extends StatefulWidget {
   final String selectedGovernorate;
   final List<String> governorates;
   final Function(String?) onGovernorateChanged;
@@ -16,26 +19,69 @@ class LocationCard extends StatelessWidget {
   });
 
   @override
+  State<LocationCard> createState() => _LocationCardState();
+}
+
+class _LocationCardState extends State<LocationCard> {
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            CustomTextFormField(
+              controller: _searchController,
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              labelText: locale.translate(LangKeys.governorate),
+              prefixIcon: Icons.search,
+              hintText: locale.isEnLocale ? "Search (e.g. Latakia or اللاذقية)" : "بحث (مثلاً اللاذقية أو Latakia)",
+              onChanged: (value) {
+                if (value.isEmpty) return;
+                final normalizedInput = value.trim().toLowerCase();
+
+                for (var entry in AppConstants.governorateSearchMap.entries) {
+                  final govKey = entry.key;
+                  final searchTerms = entry.value;
+
+                  if (searchTerms.any((term) => term.toLowerCase().contains(normalizedInput))) {
+                    widget.onGovernorateChanged(govKey);
+                    break;
+                  }
+                }
+              },
+            ),
+            const SizedBox(height: 12),
             _buildDropdownField(
-              'المحافظة',
-              Icons.map_outlined,
-              selectedGovernorate,
-              governorates,
-              onGovernorateChanged,
+              locale.translate(LangKeys.governorate),
+              Icons.location_city,
+              widget.selectedGovernorate,
+              widget.governorates,
+              widget.onGovernorateChanged,
+              locale,
             ),
             const SizedBox(height: 16),
             CustomTextFormField(
-              controller: locationController,
-              textAlign: TextAlign.right,
-              labelText: 'المدينة أو المنطقة',
-              hintText: 'مثال: المزة',
+              controller: widget.locationController,
+              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              labelText: locale.translate(LangKeys.city),
+              hintText: locale.translate(LangKeys.mezzehExample),
               prefixIcon: Icons.business_outlined,
             ),
           ],
@@ -50,9 +96,10 @@ class LocationCard extends StatelessWidget {
     String value,
     List<String> items,
     Function(String?) onChanged,
+    AppLocalizations locale,
   ) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
@@ -63,8 +110,14 @@ class LocationCard extends StatelessWidget {
           .map(
             (String val) => DropdownMenuItem<String>(
               value: val,
-              alignment: AlignmentDirectional.centerEnd,
-              child: Text(val, textAlign: TextAlign.right),
+              alignment:
+                  locale.isEnLocale
+                      ? AlignmentDirectional.centerStart
+                      : AlignmentDirectional.centerEnd,
+              child: Text(
+                locale.translate(val),
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
             ),
           )
           .toList(),

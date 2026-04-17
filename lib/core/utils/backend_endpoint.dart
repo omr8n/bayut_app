@@ -6,7 +6,10 @@ class BackendEndpoint {
   static const updateUserData = 'users';
   static const propertyCollection = 'property';
   static const getProperty = 'property';
-  static const addOrder = 'Orders';
-  static const getOrders = 'Orders';
-  static const updateOrder = 'Orders';
+  // static const addOrder = 'Orders';
+  // static const getOrders = 'Orders';
+  // static const updateOrder = 'Orders';
+  static const addReport = 'reports';
+  static const adminActions = 'admin_actions';
+  static const appConfig = 'app_config';
 }

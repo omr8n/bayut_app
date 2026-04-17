@@ -17,6 +17,7 @@ dependencies:
   cloudinary_flutter: ^1.3.0
   cloudinary_public: ^0.23.1
   cloudinary_url_gen: ^1.8.0
+  connectivity_plus: ^7.1.0
   cupertino_icons: ^1.0.8
   dartz: null
   dio: ^5.4.0
@@ -29,6 +30,8 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_localization: ^0.4.0
   flutter_screenutil: ^5.9.3
+  flutter_localizations:
+    sdk: flutter
   flutter_secure_storage: null
   flutter_spinkit: ^5.2.2
   flutter_svg: ^2.0.9
@@ -49,6 +52,8 @@ dependencies:
   url_launcher: ^6.3.2
   uuid: ^4.3.3
   video_player: null
+  iconly: ^1.0.1
+  fl_chart: ^1.2.0
 dev_dependencies:
   flutter_lints: ^6.0.0
   # 🔥 إضافة مكتبة الشاشة الافتتاحية
@@ -74,3 +79,5 @@ flutter:
     - assets/images/banners/
     - assets/images/categories/
     - assets/images/dashboard/
+    - lang/ar.json
+    - lang/en.json

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import '../utils/colors.dart';
-import '../utils/strings_ar.dart';
 
 class SearchFieldWidget extends StatelessWidget {
   const SearchFieldWidget({
@@ -22,6 +23,7 @@ class SearchFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Container(
       height: 52,
       decoration: BoxDecoration(
@@ -41,11 +43,11 @@ class SearchFieldWidget extends StatelessWidget {
         onTap: onTap,
         readOnly: readOnly,
         autofocus: autofocus,
-        textAlign: TextAlign.right,
+        textAlign: localizations.isEnLocale ? TextAlign.left : TextAlign.right,
         cursorColor: AppColors.primary,
         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
-          hintText: hintText ?? AppStrings.searchHere,
+          hintText: hintText ?? localizations.translate(LangKeys.searchHere),
           hintStyle: const TextStyle(
             color: AppColors.textLight, 
             fontSize: 14,

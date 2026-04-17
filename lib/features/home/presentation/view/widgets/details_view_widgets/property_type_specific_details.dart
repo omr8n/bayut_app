@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
@@ -9,17 +11,27 @@ class PropertyTypeSpecificDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final List<Map<String, String>> specs = [];
     if (property.buildingAge != null) {
-      specs.add({'عمر البناء': '${property.buildingAge} سنوات'});
+      specs.add({
+        localizations.translate(LangKeys.buildingAge):
+        '${property.buildingAge} ${localizations.translate(LangKeys.year)}'
+      });
     }
-    if (property.finishType != null) specs.add({'الكسوة': property.finishType!});
-    
+    if (property.finishType != null) {
+      specs.add({localizations.translate(LangKeys.finishType): localizations.translate(property.finishType!)});
+    }
+
     switch (property.type) {
       case PropertyType.housesAndApartments:
       case PropertyType.villas:
-        if (property.floorNumber != null) specs.add({'الطابق': '${property.floorNumber}'});
-        if (property.heatingType != null) specs.add({'التدفئة': property.heatingType!});
+        if (property.floorNumber != null) {
+          specs.add({localizations.translate(LangKeys.floor): '${property.floorNumber}'});
+        }
+        if (property.heatingType != null) {
+          specs.add({localizations.translate(LangKeys.heatingSystem): localizations.translate(property.heatingType!)});
+        }
         break;
       default:
         break;
@@ -31,7 +43,10 @@ class PropertyTypeSpecificDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
-        const Text('المواصفات الفنية', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(
+          localizations.translate(LangKeys.technicalSpecifications),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 12),
         GridView.builder(
           shrinkWrap: true,

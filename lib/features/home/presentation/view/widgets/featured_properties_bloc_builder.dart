@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/data/mock_data.dart';
+
 import 'featuerd_properties.dart';
 
 class FeaturedPropertiesBlocBuilder extends StatelessWidget {
@@ -21,17 +22,16 @@ class FeaturedPropertiesBlocBuilder extends StatelessWidget {
           return SliverToBoxAdapter(
             child: FeaturedProperties(properties: state.featuredProperties),
           );
-        } else if (state is PropertyFailure) {
-          return SliverToBoxAdapter(
-            child: Center(child: Text(state.errMessage)),
-          );
         } else {
           // 🔥 تحميل هيكلي (Skeleton) للعقارات المميزة
           return SliverToBoxAdapter(
             child: Skeletonizer(
               enabled: true,
               child: FeaturedProperties(
-                properties: MockData.properties.where((p) => p.isFeatured).take(2).toList(),
+                properties: MockData.properties
+                    .where((p) => p.isFeatured)
+                    .take(2)
+                    .toList(),
               ),
             ),
           );

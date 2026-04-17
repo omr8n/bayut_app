@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/app_images.dart';
 import 'package:test_graduation/features/profile/presentation/views/widgets/add_rating_dialog.dart';
 
@@ -19,6 +21,7 @@ class MyAppMethods {
     required VoidCallback fct,
     bool isError = true,
   }) async {
+    final locale = AppLocalizations.of(context)!;
     await showDialog(
       context: context,
       builder: (context) {
@@ -47,19 +50,33 @@ class MyAppMethods {
                   ),
                   const SizedBox(height: 24.0),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (!isError)
+                      if (!isError) ...[
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text("إلغاء", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                          child: Text(
+                            locale.translate(LangKeys.cancel),
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
+                        const SizedBox(width: 10),
+                      ],
                       TextButton(
                         onPressed: () {
                           fct();
                           Navigator.pop(context);
                         },
-                        child: const Text("موافق", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          locale.translate(LangKeys.ok),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -78,11 +95,12 @@ class MyAppMethods {
     required VoidCallback galleryFCT,
     required VoidCallback removeFCT,
   }) async {
+    final locale = AppLocalizations.of(context)!;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Center(child: Text("اختر عملية")),
+          title: Center(child: Text(locale.translate(LangKeys.chooseAction))),
           content: SingleChildScrollView(
             child: ListBody(
               children: [
@@ -92,7 +110,7 @@ class MyAppMethods {
                     if (Navigator.canPop(context)) Navigator.pop(context);
                   },
                   icon: const Icon(Icons.camera_alt),
-                  label: const Text("الكاميرا"),
+                  label: Text(locale.translate(LangKeys.camera)),
                 ),
                 TextButton.icon(
                   onPressed: () {
@@ -100,7 +118,7 @@ class MyAppMethods {
                     if (Navigator.canPop(context)) Navigator.pop(context);
                   },
                   icon: const Icon(Icons.image),
-                  label: const Text("المعرض"),
+                  label: Text(locale.translate(LangKeys.gallery)),
                 ),
                 TextButton.icon(
                   onPressed: () {
@@ -108,7 +126,10 @@ class MyAppMethods {
                     if (Navigator.canPop(context)) Navigator.pop(context);
                   },
                   icon: const Icon(Icons.delete, color: Colors.red),
-                  label: const Text("حذف الصورة", style: TextStyle(color: Colors.red)),
+                  label: Text(
+                    locale.translate(LangKeys.deleteImage),
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
               ],
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class PropertiesHeader extends StatelessWidget {
@@ -12,6 +14,7 @@ class PropertiesHeader extends StatelessWidget {
   final VoidCallback onViewAll;
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 16.h),
       child: Row(
@@ -28,7 +31,7 @@ class PropertiesHeader extends StatelessWidget {
           GestureDetector(
             onTap: onViewAll,
             child: Text(
-              'عرض الكل',
+              localizations.translate(LangKeys.viewAll),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,

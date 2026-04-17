@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/utils/colors.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 
@@ -22,26 +24,36 @@ class DashboardStatsGrid extends StatelessWidget {
       mainAxisSpacing: 12,
       children: [
         _StatCard(
-          title: 'إجمالي المشاهدات',
+          title: AppLocalizations.of(context)!.translate(LangKeys.totalViews),
           value: '${property.views}',
           icon: Icons.visibility_rounded,
           color: AppColors.primary,
         ),
         _StatCard(
-          title: 'الحالة الحالية',
-          value: property.status.arabicName,
+          title: AppLocalizations.of(
+            context,
+          )!.translate(LangKeys.currentStatus),
+          value: property.status.localizedName(context),
           icon: Icons.info_outline_rounded,
           color: _getStatusColor(property.status),
         ),
         _StatCard(
-          title: 'نوع العقار',
-          value: property.type.name,
+          title: AppLocalizations.of(context)!.translate(LangKeys.propertyType),
+          value: property.type.localizedName(context),
           icon: Icons.home_work_rounded,
           color: Colors.blue,
         ),
         _StatCard(
-          title: 'حالة التميز',
-          value: property.isFeatured ? 'عقار مميز' : 'عادي',
+          title: AppLocalizations.of(
+            context,
+          )!.translate(LangKeys.featuredStatus),
+          value: property.isFeatured
+              ? AppLocalizations.of(
+                  context,
+                )!.translate(LangKeys.featuredProperty)
+              : AppLocalizations.of(
+                  context,
+                )!.translate(LangKeys.normalProperty),
           icon: property.isFeatured
               ? Icons.star_rounded
               : Icons.star_border_rounded,
@@ -59,6 +71,8 @@ class DashboardStatsGrid extends StatelessWidget {
         return AppColors.primary;
       case PropertyStatus.sold:
         return Colors.redAccent;
+      case PropertyStatus.rented:
+        return Colors.purple; // لون مميز للمؤجر
       case PropertyStatus.underInstallment:
         return Colors.orange;
     }

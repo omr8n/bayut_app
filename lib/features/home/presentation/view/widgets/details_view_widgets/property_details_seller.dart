@@ -4,6 +4,9 @@ import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 class PropertyDetailsSeller extends StatelessWidget {
   final PropertyEntity property;
   const PropertyDetailsSeller({super.key, required this.property});
@@ -36,14 +39,21 @@ class PropertyDetailsSeller extends StatelessWidget {
                   property.sellerName,
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                const Text(
-                  'عضو موثق',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                Text(
+                  AppLocalizations.of(context)!.translate(LangKeys.verifiedMember),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
             const Spacer(),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey,
+              textDirection: AppLocalizations.of(context)!.isEnLocale
+                  ? TextDirection.ltr
+                  : TextDirection.rtl,
+            ),
           ],
         ),
       ),

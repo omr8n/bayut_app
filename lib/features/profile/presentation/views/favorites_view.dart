@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/property_card.dart';
 import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_state.dart';
@@ -12,9 +14,13 @@ class FavoritesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('المفضلة', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          locale!.translate(LangKeys.favorites),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -31,11 +37,20 @@ class FavoritesView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.favorite_border, size: 80.sp, color: Colors.grey[300]),
+                    Icon(
+                      Icons.favorite_border,
+                      size: 80.sp,
+                      color: Colors.grey[300],
+                    ),
                     SizedBox(height: 16.h),
                     Text(
-                      'قائمة المفضلة فارغة',
-                      style: TextStyle(fontSize: 18.sp, color: Colors.grey[600]),
+                      locale!.translate(
+                        LangKeys.noResults,
+                      ), // Or a more specific key if available
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ],
                 ),

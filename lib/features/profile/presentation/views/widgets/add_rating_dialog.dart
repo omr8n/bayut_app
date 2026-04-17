@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart';
@@ -26,36 +28,46 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return BlocProvider(
       create: (context) => getIt.get<RatingCubit>(),
       child: BlocConsumer<RatingCubit, RatingState>(
         listener: (context, state) {
           if (state is RatingSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('تم إرسال تقييمك بنجاح! ✅'), backgroundColor: AppColors.success),
+              SnackBar(
+                  content: Text(localizations.translate(LangKeys.ratingSuccess)),
+                  backgroundColor: AppColors.success),
             );
             Navigator.pop(context);
           } else if (state is RatingFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+              SnackBar(
+                  content: Text(localizations.translate(state.message)),
+                  backgroundColor: Colors.red),
             );
           }
         },
         builder: (context, state) {
           return Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Center(
-                      child: Text('تقييم تجربة المعلن', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Center(
+                      child: Text(
+                          localizations.translate(LangKeys.rateSellerExperience),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
                     const Divider(height: 32),
-                    const Text(':التقييم العام', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(localizations.translate(LangKeys.overallRating),
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
@@ -63,30 +75,37 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                         (index) => IconButton(
                           onPressed: () => setState(() => _rating = index + 1),
                           icon: Icon(
-                            index < _rating ? Icons.star_rounded : Icons.star_outline_rounded,
-                            color: index < _rating ? Colors.amber : Colors.grey.shade300,
+                            index < _rating
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
+                            color:
+                                index < _rating ? Colors.amber : Colors.grey.shade300,
                             size: 40,
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(':اكتب رأيك (اختياري)', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(localizations.translate(LangKeys.writeYourOpinion),
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _commentController,
                       maxLines: 3,
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.start,
                       decoration: InputDecoration(
-                        hintText: 'مثلاً: المعلن صادق والبيانات دقيقة...',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        hintText: localizations.translate(LangKeys.ratingHint),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                     const SizedBox(height: 24),
                     Row(
                       children: [
                         Expanded(
-                          child: TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+                          child: TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(localizations.translate(LangKeys.cancel))),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -102,12 +121,20 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             child: state is RatingLoading
-                                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                : const Text('إرسال التقييم', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white, strokeWidth: 2))
+                                : Text(localizations.translate(LangKeys.sendRating),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
                           ),
                         ),
                       ],

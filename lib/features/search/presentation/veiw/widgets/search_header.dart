@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/widgets/search_bar_widget.dart';
 
@@ -12,12 +15,26 @@ class SearchHeader extends StatelessWidget {
     required this.onApply,
     this.selectedPropertyType,
     this.selectedListingType,
-    this.minPrice, this.maxPrice, this.minArea, this.maxArea,
-    this.governorate, this.finishType, this.ownershipType,
-    this.direction, this.heatingType,
-    this.landType, this.farmType, this.irrigationType, this.poolType, // 🔥
-    this.minRooms, this.minBedrooms, this.minBathrooms, this.floorNumber,
-    this.isLicensed, this.hasInstallment, this.isFeatured,
+    this.minPrice,
+    this.maxPrice,
+    this.minArea,
+    this.maxArea,
+    this.governorate,
+    this.finishType,
+    this.ownershipType,
+    this.direction,
+    this.heatingType,
+    this.landType,
+    this.farmType,
+    this.irrigationType,
+    this.poolType, // 🔥
+    this.minRooms,
+    this.minBedrooms,
+    this.minBathrooms,
+    this.floorNumber,
+    this.isLicensed,
+    this.hasInstallment,
+    this.isFeatured,
   });
 
   final TextEditingController controller;
@@ -26,17 +43,28 @@ class SearchHeader extends StatelessWidget {
   final void Function({
     PropertyType? propertyType,
     ListingType? listingType,
-    double? minPrice, double? maxPrice,
-    double? minArea, double? maxArea,
-    String? governorate, String? finishType,
-    String? ownershipType, String? direction,
-    String? heatingType, String? landType,
-    String? farmType, String? irrigationType,
-    String? poolType, int? minRooms,
-    int? minBedrooms, int? minBathrooms,
-    int? floorNumber, bool? isLicensed,
-    bool? hasInstallment, bool? isFeatured,
-  }) onApply;
+    double? minPrice,
+    double? maxPrice,
+    double? minArea,
+    double? maxArea,
+    String? governorate,
+    String? finishType,
+    String? ownershipType,
+    String? direction,
+    String? heatingType,
+    String? landType,
+    String? farmType,
+    String? irrigationType,
+    String? poolType,
+    int? minRooms,
+    int? minBedrooms,
+    int? minBathrooms,
+    int? floorNumber,
+    bool? isLicensed,
+    bool? hasInstallment,
+    bool? isFeatured,
+  })
+  onApply;
 
   final PropertyType? selectedPropertyType;
   final ListingType? selectedListingType;
@@ -48,11 +76,24 @@ class SearchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
+    final String displayLocation =
+        (governorate == null ||
+                governorate == locale.translate(LangKeys.all) ||
+                governorate == 'الكل' ||
+                governorate == 'All' ||
+                governorate == '')
+            ? locale.translate(LangKeys.searchHere)
+            : (AppConstants.governorates.contains(governorate)
+                ? locale.translate(governorate!)
+                : governorate!);
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SearchBarWidget(
         controller: controller,
         onChanged: onChanged,
+        hintText: displayLocation,
         onFilterTap: () {
           context.push(
             AppRoutes.filterScreen,
@@ -60,12 +101,18 @@ class SearchHeader extends StatelessWidget {
               'governorate': governorate,
               'propertyType': selectedPropertyType,
               'listingType': selectedListingType,
-              'minPrice': minPrice, 'maxPrice': maxPrice,
-              'minArea': minArea, 'maxArea': maxArea,
-              'minRooms': minRooms, 'isFeatured': isFeatured,
-              'isLicensed': isLicensed, 'hasInstallment': hasInstallment,
-              'landType': landType, 'farmType': farmType,
-              'irrigationType': irrigationType, 'poolType': poolType,
+              'minPrice': minPrice,
+              'maxPrice': maxPrice,
+              'minArea': minArea,
+              'maxArea': maxArea,
+              'minRooms': minRooms,
+              'isFeatured': isFeatured,
+              'isLicensed': isLicensed,
+              'hasInstallment': hasInstallment,
+              'landType': landType,
+              'farmType': farmType,
+              'irrigationType': irrigationType,
+              'poolType': poolType,
             },
           );
         },

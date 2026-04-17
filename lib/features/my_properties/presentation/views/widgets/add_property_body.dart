@@ -19,6 +19,9 @@ import 'package:test_graduation/features/my_properties/presentation/views/widget
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/main_info_card.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/section_header.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 class AddPropertyBody extends StatefulWidget {
   const AddPropertyBody({super.key, required this.isEdit, this.propertyEntity});
 
@@ -184,7 +187,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     _hasInstallment = p?.hasInstallment ?? false;
     _isLicensed = p?.isLicensed ?? false;
     _isFeatured = p?.isFeatured ?? false; // 🔥 تأكيد استعادة حالة التميز
-    _status = p?.status ?? PropertyStatus.active; // 🔥 تأكيد استعادة الحالة (Enum)
+    _status =
+        p?.status ?? PropertyStatus.active; // 🔥 تأكيد استعادة الحالة (Enum)
     _selectedFinishType = p?.finishType ?? AppConstants.finishTypes.first;
     _selectedOwnershipType =
         p?.ownershipType ?? AppConstants.ownershipTypes.first;
@@ -301,29 +305,30 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   void _onFacilityToggle(String key) {
     setState(() {
       Map<String, Map<String, dynamic>> map;
-      if (_selectedPropertyType == PropertyType.villas)
+      if (_selectedPropertyType == PropertyType.villas) {
         map = _currentVillaFacilities;
-      else if (_selectedPropertyType == PropertyType.shops ||
-          _selectedPropertyType == PropertyType.mallShops)
+      } else if (_selectedPropertyType == PropertyType.shops ||
+          _selectedPropertyType == PropertyType.mallShops) {
         map = _currentShopFacilities;
-      else if (_selectedPropertyType == PropertyType.lands)
+      } else if (_selectedPropertyType == PropertyType.lands) {
         map = _currentLandFacilities;
-      else if (_selectedPropertyType == PropertyType.farms)
+      } else if (_selectedPropertyType == PropertyType.farms) {
         map = _currentFarmFacilities;
-      else if (_selectedPropertyType == PropertyType.pools)
+      } else if (_selectedPropertyType == PropertyType.pools) {
         map = _currentPoolFacilities;
-      else if (_selectedPropertyType == PropertyType.clinics)
+      } else if (_selectedPropertyType == PropertyType.clinics) {
         map = _currentClinicFacilities;
-      else if (_selectedPropertyType == PropertyType.warehouses)
+      } else if (_selectedPropertyType == PropertyType.warehouses) {
         map = _currentWarehouseFacilities;
-      else if (_selectedPropertyType == PropertyType.halls)
+      } else if (_selectedPropertyType == PropertyType.halls) {
         map = _currentHallFacilities;
-      else if (_selectedPropertyType == PropertyType.offices)
+      } else if (_selectedPropertyType == PropertyType.offices) {
         map = _currentOfficeFacilities;
-      else if (_selectedPropertyType == PropertyType.workshops)
+      } else if (_selectedPropertyType == PropertyType.workshops) {
         map = _currentWorkshopFacilities;
-      else
+      } else {
         map = _currentCommonFacilities;
+      }
 
       if (map.containsKey(key)) map[key]!['value'] = !map[key]!['value'];
     });
@@ -331,6 +336,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
 
   void _uploadOrEditProperty() {
     if (!_formKey.currentState!.validate()) return;
+    final locale = AppLocalizations.of(context);
 
     List<String> allSelectedFacilities = [];
     void collect(Map<String, Map<String, dynamic>> m) {
@@ -415,21 +421,20 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
         isFeatured: _isFeatured,
       );
       cubit.editProperty(params: params, originalProperty: updatedOriginal);
-      // GoRouter.of(context).pop(); // العودة فوراً بعد التعديل
     } else {
       cubit.submitProperty(params);
     }
-    // GoRouter.of(context).pop(); // العودة فوراً بعد الإرسال
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('بدأت عملية المعالجة في الخلفية، تابع الستارة.'),
-        duration: Duration(seconds: 3),
+      SnackBar(
+        content: Text(locale!.translate(LangKeys.processingStarted)),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -462,8 +467,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
                   setState(() => _selectedPropertyType = v),
             ),
             const SizedBox(height: 16),
-            const SectionHeader(
-              title: 'المعلومات الأساسية',
+            SectionHeader(
+              title: locale!.translate(LangKeys.basicInfo),
               icon: Icons.info_outline,
               color: Colors.blue,
             ),
@@ -546,8 +551,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
             ),
             const SizedBox(height: 16),
             if (_selectedListingType == ListingType.sale) ...[
-              const SectionHeader(
-                title: 'هل العقار متاح بالتقسيط؟',
+              SectionHeader(
+                title: locale.translate(LangKeys.installmentAvailableQuestion),
                 icon: Icons.credit_card,
                 color: Colors.green,
               ),
@@ -564,8 +569,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               ),
               const SizedBox(height: 16),
             ],
-            const SectionHeader(
-              title: 'المرافق والخدمات المتوفرة',
+            SectionHeader(
+              title: locale.translate(LangKeys.availableFacilities),
               icon: Icons.check_circle_outline,
               color: Colors.green,
             ),
@@ -585,8 +590,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               onFacilityToggle: _onFacilityToggle,
             ),
             const SizedBox(height: 16),
-            const SectionHeader(
-              title: 'الموقع',
+            SectionHeader(
+              title: locale.translate(LangKeys.location),
               icon: Icons.location_on,
               color: AppColors.primary,
             ),
@@ -598,8 +603,8 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               locationController: _locationController,
             ),
             const SizedBox(height: 16),
-            const SectionHeader(
-              title: 'معلومات التواصل',
+            SectionHeader(
+              title: locale.translate(LangKeys.contactInfo),
               icon: Icons.phone,
               color: AppColors.primary,
             ),
@@ -620,18 +625,22 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   }
 
   void _showNotesDialog() {
+    final locale = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text('ملاحظات عن التقسيط', textAlign: TextAlign.center),
+        title: Text(
+          locale!.translate(LangKeys.installmentNotes),
+          textAlign: TextAlign.center,
+        ),
         content: TextField(
           controller: _installmentNotesController,
           maxLines: 5,
-          textAlign: TextAlign.right,
-          decoration: const InputDecoration(
-            hintText: 'اكتب تفاصيل التقسيط هنا...',
-            border: OutlineInputBorder(),
+          textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+          decoration: InputDecoration(
+            hintText: locale.translate(LangKeys.writeInstallmentNotes),
+            border: const OutlineInputBorder(),
           ),
         ),
         actions: [
@@ -642,9 +651,9 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
               ),
-              child: const Text(
-                'تم الحفظ',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                locale.translate(LangKeys.saved),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ),

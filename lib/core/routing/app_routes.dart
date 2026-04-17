@@ -17,4 +17,19 @@ class AppRoutes {
   static const String favoritesView = '/favoritesView'; // 🔥 المسار الجديد
   static const String profileView = '/profileView'; // 🔥 مسار بروفايل المستخدم
   static const String propertyDashboard = '/propertyDashboard'; // 🔥 لوحة تحكم العقار
+  static const String myPropertiesScreen = '/myPropertiesScreen';
+  static const String settingsView = '/settingsView';
+  static const String editProfileView = '/editProfileView';
+  static const String guideView = '/guideView';
+  static const String termsView = '/termsView';
+  static const String contactView = '/contactView';
+
+  // Admin Routes
+  static const String adminDashboard = '/adminDashboard';
+  static const String adminUsers = '/adminUsers';
+  static const String adminProperties = '/adminProperties';
+  static const String adminReports = '/adminReports';
+  static const String adminNotifications = '/adminNotifications';
+  static const String adminSettings = '/adminSettings';
+  static const String adminAuditLogs = '/adminAuditLogs';
 }

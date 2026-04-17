@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/core/utils/strings_ar.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 
 class PropertyDetailsInstallment extends StatelessWidget {
@@ -18,12 +19,13 @@ class PropertyDetailsInstallment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!property.hasInstallment) return const SizedBox.shrink();
+    final locale = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 24.h),
-        _buildSectionTitle(AppStrings.installmentAvailable),
+        _buildSectionTitle(locale.translate(LangKeys.installmentAvailable)),
         Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
@@ -37,13 +39,13 @@ class PropertyDetailsInstallment extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildInstallmentItem(
-                    AppStrings.downPayment,
-                    '${format.format(property.downPayment ?? 0)} ${property.currency}',
+                    locale.translate(LangKeys.downPayment),
+                    '${format.format(property.downPayment ?? 0)} ${locale.translate(property.currency)}',
                     Icons.payments_outlined,
                   ),
                   _buildInstallmentItem(
-                    AppStrings.monthlyInstallment,
-                    '${format.format(property.monthlyInstallment ?? 0)} ${property.currency}',
+                    locale.translate(LangKeys.monthlyInstallment),
+                    '${format.format(property.monthlyInstallment ?? 0)} ${locale.translate(property.currency)}',
                     Icons.calendar_month_outlined,
                   ),
                 ],
@@ -53,25 +55,33 @@ class PropertyDetailsInstallment extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildInstallmentItem(
-                    AppStrings.installmentDuration,
-                    '${property.installmentDuration ?? 0} ${AppStrings.months}',
+                    locale.translate(LangKeys.installmentDuration),
+                    '${property.installmentDuration ?? 0} ${locale.translate(LangKeys.months)}',
                     Icons.timer_outlined,
                   ),
                 ],
               ),
-              if (property.installmentNotes != null && property.installmentNotes!.isNotEmpty) ...[
-                Divider(height: 24.h, color: AppColors.primary.withOpacity(0.1)),
+              if (property.installmentNotes != null &&
+                  property.installmentNotes!.isNotEmpty) ...[
+                Divider(
+                  height: 24.h,
+                  color: AppColors.primary.withOpacity(0.1),
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info_outline, size: 20.sp, color: AppColors.primary),
+                    Icon(
+                      Icons.info_outline,
+                      size: 20.sp,
+                      color: AppColors.primary,
+                    ),
                     SizedBox(width: 8.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppStrings.installmentNotes,
+                            locale.translate(LangKeys.installmentNotes),
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: AppColors.textSecondary,

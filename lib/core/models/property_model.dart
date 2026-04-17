@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../features/my_properties/domain/entities/property_entity.dart';
 import '../enums/property_enums.dart';
 
@@ -15,7 +16,7 @@ class PropertyModel extends PropertyEntity {
     super.views,
     super.isFeatured,
     super.status,
-    super.statusHistory, // 🔥 الجديد
+    super.statusHistory,
     required super.images,
     required super.media,
     required super.facilities,
@@ -67,16 +68,30 @@ class PropertyModel extends PropertyEntity {
   });
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
+    // معالجة التاريخ بمرونة (String أو Timestamp)
+    DateTime parseDate(dynamic date) {
+      if (date == null) return DateTime.now();
+      if (date is Timestamp) return date.toDate();
+      if (date is String) return DateTime.tryParse(date) ?? DateTime.now();
+      return DateTime.now();
+    }
+
     return PropertyModel(
       id: json['id'] as String? ?? '',
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      type: PropertyType.values.firstWhere((e) => e.name == json['type'], orElse: () => PropertyType.housesAndApartments),
-      listingType: ListingType.values.firstWhere((e) => e.name == json['listingType'], orElse: () => ListingType.sale),
+      type: PropertyType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => PropertyType.housesAndApartments,
+      ),
+      listingType: ListingType.values.firstWhere(
+        (e) => e.name == json['listingType'],
+        orElse: () => ListingType.sale,
+      ),
       price: (json['price'] as num? ?? 0).toDouble(),
       currency: json['currency'] as String? ?? 'usd',
       area: (json['area'] as num? ?? 0).toDouble(),
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : DateTime.now(),
+      createdAt: parseDate(json['createdAt']),
       views: json['views'] as int? ?? 0,
       isFeatured: json['isFeatured'] as bool? ?? false,
       status: PropertyStatus.values.firstWhere(
@@ -86,7 +101,7 @@ class PropertyModel extends PropertyEntity {
       statusHistory: (json['statusHistory'] as List?)
               ?.map((e) => Map<String, dynamic>.from(e as Map))
               .toList() ??
-          const [], // 🔥 قراءة السجل
+          const [],
       images: List<String>.from(json['images'] as List? ?? []),
       media: List<String>.from(json['media'] as List? ?? json['images'] as List? ?? []),
       facilities: List<String>.from(json['facilities'] as List? ?? []),
@@ -97,9 +112,9 @@ class PropertyModel extends PropertyEntity {
       whatsapp: json['whatsapp'] as String? ?? '',
       email: json['email'] as String?,
       sellerId: json['sellerId'] as String? ?? 'unknown',
-      sellerName: json['sellerName'] as String? ?? 'مستخدم',
+      sellerName: json['sellerName'] as String? ?? 'user_label',
       sellerImage: json['sellerImage'] as String?,
-      sellerJoinDate: json['sellerJoinDate'] as String? ?? 'عضو منذ سنة',
+      sellerJoinDate: json['sellerJoinDate'] as String? ?? 'new_member',
       sellerRating: (json['sellerRating'] as num? ?? 4.5).toDouble(),
       buildingAge: json['buildingAge'] as int?,
       finishType: json['finishType'] as String?,
@@ -138,7 +153,6 @@ class PropertyModel extends PropertyEntity {
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -153,7 +167,7 @@ class PropertyModel extends PropertyEntity {
       'views': views,
       'isFeatured': isFeatured,
       'status': status.name,
-      'statusHistory': statusHistory, // 🔥 حفظ السجل
+      'statusHistory': statusHistory,
       'images': images,
       'media': media,
       'facilities': facilities,
@@ -219,7 +233,7 @@ class PropertyModel extends PropertyEntity {
       views: entity.views,
       isFeatured: entity.isFeatured,
       status: entity.status,
-      statusHistory: entity.statusHistory, // 🔥
+      statusHistory: entity.statusHistory,
       images: entity.images,
       media: entity.media,
       facilities: entity.facilities,

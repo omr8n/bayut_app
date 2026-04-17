@@ -1,37 +1,32 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/constants/app_constants.dart';
-import 'package:test_graduation/core/services/secure_storage_singleton.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
-import 'package:test_graduation/features/auth/data/models/user_model.dart';
+import '../../manager/profile_cubit/profile_cubit.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 فحص حالة تسجيل الدخول
-    final bool isLoggedIn = SecureStorage.isLoggedIn;
+    final locale = AppLocalizations.of(context);
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        final user = context.read<ProfileCubit>().user;
 
-    return FutureBuilder<String>(
-      future: SecureStorage.getString(AppConstants.kUserData),
-      builder: (context, snapshot) {
-        String name = "مستخدم زائر";
-        String email = "سجل دخولك لتتمكن من إضافة عقارات";
-        String? imageUrl;
-
-        if (isLoggedIn && snapshot.hasData && snapshot.data!.isNotEmpty) {
-          try {
-            final user = UserModel.fromJson(jsonDecode(snapshot.data!));
-            name = user.name;
-            email = user.email;
-            imageUrl = user.profilePic;
-          } catch (_) {}
-        }
+        String name = user?.name ?? locale!.translate(LangKeys.guestUser);
+        String email = user?.email ?? locale!.translate(LangKeys.loginToPost);
+        String? imageUrl = user?.profilePic;
 
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.only(top: 60, bottom: 30, left: 20, right: 20),
+          padding: const EdgeInsets.only(
+            top: 60,
+            bottom: 30,
+            left: 20,
+            right: 20,
+          ),
           decoration: const BoxDecoration(
             gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.only(
@@ -49,16 +44,25 @@ class ProfileHeader extends StatelessWidget {
                     : null,
                 child: (imageUrl == null || imageUrl.isEmpty)
                     ? Text(
-                        name[0].toUpperCase(),
-                        style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
+                        name.isNotEmpty ? name[0].toUpperCase() : "?",
+                        style: const TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       )
                     : null,
               ),
               const SizedBox(height: 15),
               Text(
                 name,
-                style: const TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              const SizedBox(height: 5),
               Text(
                 email,
                 textAlign: TextAlign.center,

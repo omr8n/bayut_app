@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 
 class BasicInfoCard extends StatelessWidget {
@@ -39,6 +41,7 @@ class BasicInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -51,16 +54,16 @@ class BasicInfoCard extends StatelessWidget {
                   child: CustomTextFormField(
                     controller: buildingAgeController,
                     focusNode: ageNode,
-                    textAlign: TextAlign.right,
-                    labelText: 'عمر البناء',
+                    textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                    labelText: locale.translate(LangKeys.buildingAge),
                     prefixIcon: Icons.calendar_today,
                     keyboardType: TextInputType.number,
                     suffixText:
                         ageNode.hasFocus ||
                             buildingAgeController.text.isNotEmpty
-                        ? 'سنة'
+                        ? locale.translate(LangKeys.year)
                         : null,
-                    hintText: ageNode.hasFocus ? '' : 'اتركه فارغاً للجديد',
+                    hintText: ageNode.hasFocus ? '' : locale.translate(LangKeys.leaveEmptyForNew),
                   ),
                 ),
               ],
@@ -70,32 +73,35 @@ class BasicInfoCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildDropdownField(
-                    'نوع الكسوة',
+                    locale.translate(LangKeys.finishType),
                     Icons.format_paint,
                     selectedFinishType,
                     finishTypes,
                     onFinishTypeChanged,
+                    locale,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildDropdownField(
-                    'نوع الملكية',
+                    locale.translate(LangKeys.ownershipType),
                     Icons.assignment,
                     selectedOwnershipType,
                     ownershipTypes,
                     onOwnershipTypeChanged,
+                    locale,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             _buildDropdownField(
-              'الاتجاه والإطلالة',
+              locale.translate(LangKeys.directionAndView),
               Icons.explore,
               selectedDirection,
               directions,
               onDirectionChanged,
+              locale,
             ),
             const SizedBox(height: 16),
             Container(
@@ -104,9 +110,9 @@ class BasicInfoCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: CheckboxListTile(
-                title: const Text(
-                  'العقار مرخص (رخصة بناء)',
-                  style: TextStyle(fontSize: 14),
+                title: Text(
+                  locale.translate(LangKeys.licensedPropertyQuestion),
+                  style: const TextStyle(fontSize: 14),
                 ),
                 value: isLicensed,
                 secondary: const Icon(
@@ -124,17 +130,17 @@ class BasicInfoCard extends StatelessWidget {
                 color: Colors.amber.withValues(alpha: 0.05),
               ),
               child: SwitchListTile(
-                title: const Text(
-                  'تمييز العقار (إعلان ممول)',
-                  style: TextStyle(
+                title: Text(
+                  locale.translate(LangKeys.featureProperty),
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.amber,
                   ),
                 ),
-                subtitle: const Text(
-                  'سيظهر في قسم العقارات المميزة بالصفحة الرئيسية',
-                  style: TextStyle(fontSize: 11),
+                subtitle: Text(
+                  locale.translate(LangKeys.featuredDescription),
+                  style: const TextStyle(fontSize: 11),
                 ),
                 value: isFeatured,
                 secondary: const Icon(Icons.stars, color: Colors.amber),
@@ -153,9 +159,10 @@ class BasicInfoCard extends StatelessWidget {
     String value,
     List<String> items,
     Function(String?) onChanged,
+    AppLocalizations locale,
   ) {
     return DropdownButtonFormField<String>(
-      initialValue: value,
+      value: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
@@ -166,8 +173,14 @@ class BasicInfoCard extends StatelessWidget {
           .map(
             (String val) => DropdownMenuItem<String>(
               value: val,
-              alignment: AlignmentDirectional.centerEnd,
-              child: Text(val, textAlign: TextAlign.right),
+              alignment:
+                  locale.isEnLocale
+                      ? AlignmentDirectional.centerStart
+                      : AlignmentDirectional.centerEnd,
+              child: Text(
+                locale.translate(val),
+                textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+              ),
             ),
           )
           .toList(),

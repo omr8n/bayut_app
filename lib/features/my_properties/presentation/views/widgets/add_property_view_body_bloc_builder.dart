@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
@@ -23,8 +25,12 @@ class AddPropertyViewBodyBlocBuilder extends StatelessWidget {
             SnackBar(
               content: Text(
                 isUpdate
-                    ? 'تم تحديث بيانات العقار بنجاح! ✅'
-                    : 'تم إضافة العقار بنجاح! ✅',
+                    ? AppLocalizations.of(
+                        context,
+                      )!.translate(LangKeys.editSuccess)
+                    : AppLocalizations.of(
+                        context,
+                      )!.translate(LangKeys.uploadSuccess),
               ),
               backgroundColor: AppColors.success,
             ),
@@ -36,7 +42,9 @@ class AddPropertyViewBodyBlocBuilder extends StatelessWidget {
         } else if (state is AddPropertyFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errMessage),
+              content: Text(
+                AppLocalizations.of(context)!.translate(state.errMessage),
+              ),
               backgroundColor: Colors.red,
             ),
           );

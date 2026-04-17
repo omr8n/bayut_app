@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
-
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class FacilitiesCard extends StatelessWidget {
@@ -37,6 +37,7 @@ class FacilitiesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context);
     Map<String, Map<String, dynamic>> facilities;
 
     // تحديد قائمة المرافق بناءً على نوع العقار (نفس منطق الكود الأصلي)
@@ -105,7 +106,7 @@ class FacilitiesCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    key,
+                    locale!.translate(key),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: isSelected

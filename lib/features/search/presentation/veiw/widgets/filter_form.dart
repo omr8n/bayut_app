@@ -15,6 +15,9 @@ import '../../manager/search_cubit/search_cubit.dart';
 import '../widgets/filter_section_title.dart';
 import '../widgets/filter_buttons.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 class FilterForm extends StatefulWidget {
   final PropertyType? selectedPropertyType;
   final ListingType? selectedListingType;
@@ -82,28 +85,32 @@ class _FilterFormState extends State<FilterForm> {
   @override
   void initState() {
     super.initState();
-    _initFields();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initFields();
+    });
   }
 
   void _initFields() {
-    propertyType = widget.selectedPropertyType;
-    listingType = widget.selectedListingType;
-    governorate = widget.selectedGovernorate ?? 'الكل';
-    isLicensed = widget.isLicensed;
-    hasInstallment = widget.hasInstallment;
-    isFeatured = widget.isFeatured;
-    minRooms = widget.minRooms;
-    minBedrooms = widget.minBedrooms;
-    minBathrooms = widget.minBathrooms;
-    floorNumber = widget.floorNumber;
+    setState(() {
+      propertyType = widget.selectedPropertyType;
+      listingType = widget.selectedListingType;
+      governorate = widget.selectedGovernorate ?? LangKeys.all;
+      isLicensed = widget.isLicensed;
+      hasInstallment = widget.hasInstallment;
+      isFeatured = widget.isFeatured;
+      minRooms = widget.minRooms;
+      minBedrooms = widget.minBedrooms;
+      minBathrooms = widget.minBathrooms;
+      floorNumber = widget.floorNumber;
 
-    _priceRange = RangeValues(
-      widget.minPrice ?? 0,
-      widget.maxPrice ?? 5000000000,
-    );
-    _areaRange = RangeValues(widget.minArea ?? 0, widget.maxArea ?? 5000);
+      _priceRange = RangeValues(
+        widget.minPrice ?? 0,
+        widget.maxPrice ?? 5000000000,
+      );
+      _areaRange = RangeValues(widget.minArea ?? 0, widget.maxArea ?? 5000);
 
-    _updateControllers();
+      _updateControllers();
+    });
   }
 
   void _updateControllers() {
@@ -125,6 +132,7 @@ class _FilterFormState extends State<FilterForm> {
   @override
   Widget build(BuildContext context) {
     final format = NumberFormat('#,###');
+    final locale = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -133,14 +141,14 @@ class _FilterFormState extends State<FilterForm> {
         mainAxisSize: MainAxisSize.min,
         children: [
           BuildSection(
-            title: 'نوع الإعلان',
+            title: locale.translate(LangKeys.listingType),
             icon: Icons.campaign_rounded,
             children: [
               Row(
                 children: [
-                  _buildTypeOption('للبيع', ListingType.sale),
+                  _buildTypeOption(locale.translate(LangKeys.sale), ListingType.sale),
                   const SizedBox(width: 12),
-                  _buildTypeOption('للإيجار', ListingType.rent),
+                  _buildTypeOption(locale.translate(LangKeys.rent), ListingType.rent),
                 ],
               ),
             ],
@@ -150,13 +158,26 @@ class _FilterFormState extends State<FilterForm> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Stack(
               children: [
-                const SearchFieldWidget(),
+                SearchFieldWidget(
+                  controller: TextEditingController(
+                    text: (governorate == null ||
+                            governorate == LangKeys.all ||
+                            governorate == 'الكل' ||
+                            governorate == 'All')
+                        ? locale.translate(LangKeys.searchHere)
+                        : (AppConstants.governorates.contains(governorate)
+                            ? locale.translate(governorate!)
+                            : governorate),
+                  ),
+                  readOnly: true,
+                ),
                 Positioned.fill(
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () async {
                       // 💡 ننتظر الموقع المختار عند العودة
-                      final selectedLocation = await context.push<String>(AppRoutes.locationSearchPage);
+                      final selectedLocation =
+                          await context.push<String>(AppRoutes.locationSearchPage);
                       if (selectedLocation != null) {
                         setState(() {
                           governorate = selectedLocation;
@@ -171,7 +192,7 @@ class _FilterFormState extends State<FilterForm> {
           ),
 
           BuildSection(
-            title: 'نوع العقار',
+            title: locale.translate(LangKeys.propertyType),
             icon: Icons.home_work_rounded,
             children: [
               Wrap(
@@ -180,7 +201,7 @@ class _FilterFormState extends State<FilterForm> {
                 children: PropertyType.values
                     .map(
                       (type) => TypeChip(
-                        label: type.arabicName,
+                        label: type.localizedName(context),
                         isSelected: propertyType == type,
                         onTap: () => setState(() => propertyType = type),
                       ),
@@ -190,7 +211,7 @@ class _FilterFormState extends State<FilterForm> {
             ],
           ),
           BuildSection(
-            title: 'نطاق السعر (ل.س)',
+            title: '${locale.translate(LangKeys.priceRange)} (${locale.translate(LangKeys.currencyLira)})',
             icon: Icons.monetization_on_rounded,
             children: [
               Container(
@@ -236,7 +257,7 @@ class _FilterFormState extends State<FilterForm> {
           ),
 
           BuildSection(
-            title: 'المساحة (م²)',
+            title: '${locale.translate(LangKeys.areaRange)} (${locale.translate(LangKeys.areaUnit)})',
             icon: Icons.architecture_rounded,
             children: [
               Container(
@@ -248,7 +269,7 @@ class _FilterFormState extends State<FilterForm> {
                 child: Column(
                   children: [
                     Text(
-                      '${_areaRange.start.toInt()} - ${_areaRange.end.toInt()} م²',
+                      '${_areaRange.start.toInt()} - ${_areaRange.end.toInt()} ${locale.translate(LangKeys.areaUnit)}',
                       style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
@@ -282,17 +303,17 @@ class _FilterFormState extends State<FilterForm> {
           ),
 
           BuildSection(
-            title: 'الغرف والحمامات',
+            title: locale.translate(LangKeys.roomsAndBaths),
             icon: Icons.king_bed_rounded,
             children: [
               BuildCounterRow(
-                title: 'عدد الغرف',
+                title: locale.translate(LangKeys.roomsCount),
                 value: minRooms,
                 onSelect: (v) => setState(() => minRooms = v),
               ),
               const SizedBox(height: 12),
               BuildCounterRow(
-                title: 'عدد الحمامات',
+                title: locale.translate(LangKeys.bathroomsCount),
                 value: minBathrooms,
                 onSelect: (v) => setState(() => minBathrooms = v),
               ),
@@ -300,25 +321,25 @@ class _FilterFormState extends State<FilterForm> {
           ),
 
           BuildSection(
-            title: 'خيارات إضافية',
+            title: locale.translate(LangKeys.additionalOptions),
             icon: Icons.stars_rounded,
             children: [
               BuildCheckBox(
-                title: 'عقارات مميزة فقط',
+                title: locale.translate(LangKeys.featuredOnly),
                 icon: Icons.auto_awesome,
                 color: Colors.orange,
                 value: isFeatured,
                 onChanged: (v) => setState(() => isFeatured = v),
               ),
               BuildCheckBox(
-                title: 'عقار مرخص',
+                title: locale.translate(LangKeys.licensedProperty),
                 icon: Icons.verified_rounded,
                 color: AppColors.primary,
                 value: isLicensed,
                 onChanged: (v) => setState(() => isLicensed = v),
               ),
               BuildCheckBox(
-                title: 'متاح بالتقسيط',
+                title: locale.translate(LangKeys.installmentAvailable),
                 icon: Icons.account_balance_wallet_rounded,
                 color: Colors.green,
                 value: hasInstallment,
@@ -342,7 +363,7 @@ class _FilterFormState extends State<FilterForm> {
     setState(() {
       propertyType = null;
       listingType = null;
-      governorate = 'الكل';
+      governorate = LangKeys.all;
       minRooms = null;
       minBedrooms = null;
       minBathrooms = null;
@@ -365,7 +386,7 @@ class _FilterFormState extends State<FilterForm> {
       maxPrice: _priceRange.end,
       minArea: _areaRange.start,
       maxArea: _areaRange.end,
-      governorate: (governorate == 'الكل' || governorate == null) ? null : governorate,
+      governorate: (governorate == LangKeys.all || governorate == 'الكل' || governorate == null) ? null : governorate,
       minRooms: minRooms,
       minBedrooms: minBedrooms,
       minBathrooms: minBathrooms,
@@ -393,15 +414,16 @@ class _FilterFormState extends State<FilterForm> {
     double maxLimit,
     bool isPrice,
   ) {
+    final locale = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: TextField(
             controller: min,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'من',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: locale.translate(LangKeys.from),
+              border: const OutlineInputBorder(),
             ),
             onChanged: (v) {
               double val = double.tryParse(v) ?? 0;
@@ -411,17 +433,17 @@ class _FilterFormState extends State<FilterForm> {
             },
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Text('إلى'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(locale.translate(LangKeys.to)),
         ),
         Expanded(
           child: TextField(
             controller: max,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'إلى',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: locale.translate(LangKeys.to),
+              border: const OutlineInputBorder(),
             ),
             onChanged: (v) {
               double val = double.tryParse(v) ?? maxLimit;

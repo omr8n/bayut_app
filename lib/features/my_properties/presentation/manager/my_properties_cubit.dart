@@ -1,3 +1,6 @@
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
@@ -12,7 +15,8 @@ class MyPropertiesLoading extends MyPropertiesState {}
 
 class MyPropertiesSuccess extends MyPropertiesState {
   final List<PropertyEntity> properties;
-  MyPropertiesSuccess(this.properties);
+  final bool isOffline;
+  MyPropertiesSuccess(this.properties, {this.isOffline = false});
 }
 
 class MyPropertiesFailure extends MyPropertiesState {
@@ -33,11 +37,15 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
     _propertiesSubscription?.cancel();
     _propertiesSubscription = productsRepo.getMyProperties(sellerId).listen((
       result,
-    ) {
+    ) async {
       if (isClosed) return;
+      final isOffline = !await productsRepo.connectivityService.isConnected;
+
       result.fold(
-        (failure) => emit(MyPropertiesFailure(failure.message)),
-        (properties) => emit(MyPropertiesSuccess(properties)),
+        (failure) {
+          emit(MyPropertiesFailure(failure.message));
+        },
+        (properties) => emit(MyPropertiesSuccess(properties, isOffline: isOffline)),
       );
     });
   }
@@ -59,10 +67,21 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
     PropertyStatus newStatus, {
     String? statusReason,
   }) async {
+    final context = RouterGenerationConfig
+        .goRouter
+        .configuration
+        .navigatorKey
+        .currentContext!;
+    final locale = AppLocalizations.of(context)!;
+
     final Map<String, dynamic> historyEntry = {
       'status': newStatus.name,
       'timestamp': DateTime.now().toIso8601String(),
-      'reason': statusReason ?? (newStatus == PropertyStatus.sold ? 'تمت عملية البيع' : 'تحديث الحالة'),
+      'reason':
+          statusReason ??
+          (newStatus == PropertyStatus.sold
+              ? locale.translate(LangKeys.saleCompleted)
+              : locale.translate(LangKeys.statusUpdated)),
     };
 
     final Map<String, dynamic> updates = {
