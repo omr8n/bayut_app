@@ -8,6 +8,9 @@ import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
 import 'package:test_graduation/features/auth/data/models/user_model.dart';
+import 'package:test_graduation/core/utils/service_locator.dart';
+import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
+import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import '../../../../auth/domain/entites/user_entity.dart';
 
 part 'profile_state.dart';
@@ -78,6 +81,11 @@ class ProfileCubit extends Cubit<ProfileState> {
       _userSubscription?.cancel();
       await _authService.signOut();
       await SecureStorage.clearAll();
+
+      // 🔥 إعادة تعيين حالات الـ Cubits المرتبطة بالمستخدم
+      getIt.get<MyPropertiesCubit>().resetState();
+      getIt.get<FavoritesCubit>().resetState();
+
       user = null;
       emit(ProfileInitial());
       emit(ProfileLogoutSuccess());

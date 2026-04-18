@@ -14,6 +14,11 @@ class FavoritesCubit extends Cubit<FavoritesState> {
   FavoritesCubit(this.favoritesRepo, this.authService)
     : super(FavoritesInitial());
 
+  void resetState() {
+    _favoritesSubscription?.cancel();
+    emit(FavoritesInitial());
+  }
+
   void getFavorites() {
     final user = authService.currentUser;
     if (user == null) {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // الألوان الأساسية الأصلية لتطبيقك
-  static const Color primary = Color(0xFF0E4C8C); 
-  static const Color secondary = Color(0xFFFF6B35); 
+  static const Color primary = Color(0xFF0E4C8C);
+  static const Color secondary = Color(0xFFFF6B35);
   static const Color accent = Color(0xFF00B4D8);
 
   // ألوان بيوت الإمارات (الأخضر) - تمت إضافتها للـ Onboarding التفاعلي
@@ -28,16 +28,16 @@ class AppColors {
   static const Color info = Color(0xFF0984E3);
 
   // ألوان خاصة
-  static const Color forSale = Color(0xFF00B894); 
-  static const Color forRent = Color(0xFF0984E3); 
-  static const Color featured = Color(0xFFFFD700); 
+  static const Color forSale = Color(0xFF00B894);
+  static const Color forRent = Color(0xFF0984E3);
+  static const Color featured = Color(0xFFFFD700);
 
   // ألوان مساعدة للـ Onboarding (تم استخدامها في الكود السابق)
   static const Color primaryLight = Color(0xFFE7F0F8);
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primary, accent],
+    colors: [primary, Color(0xFF1E3A8A)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

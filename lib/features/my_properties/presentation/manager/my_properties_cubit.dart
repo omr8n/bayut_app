@@ -30,6 +30,11 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
 
   StreamSubscription? _propertiesSubscription;
 
+  void resetState() {
+    _propertiesSubscription?.cancel();
+    emit(MyPropertiesInitial());
+  }
+
   void fetchMyProperties(String sellerId) {
     if (isClosed) return;
     emit(MyPropertiesLoading());

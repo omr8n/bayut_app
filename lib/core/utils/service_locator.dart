@@ -112,7 +112,7 @@ void setupServiceLocator() {
     () => SellerPropertiesCubit(getIt<PropertyRepo>()),
   );
   getIt.registerFactory<RatingCubit>(() => RatingCubit(getIt<RatingRepo>()));
-  getIt.registerFactory<FavoritesCubit>(
+  getIt.registerLazySingleton<FavoritesCubit>(
     () => FavoritesCubit(getIt<FavoritesRepo>(), getIt<FirebaseAuthService>()),
   );
   getIt.registerFactory<ForgetPasswordCubit>(
