@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,14 +26,34 @@ import 'package:test_graduation/features/search/presentation/manager/search_cubi
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+// 🔔 معالج الإشعارات في الخلفية (يجب أن يكون دالة خارج أي كلاس)
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // يمكنك هنا معالجة البيانات التي تصل في الخلفية إذا أردت
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // تعيين معالج الخلفية
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   Bloc.observer = CustomBlocObserver();
   await Prefs.init();
   await SecureStorage.init();
 
   AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'general_channel',
+      channelName: 'إشعارات عامة',
+      channelDescription: 'إشعارات الأخبار والتحديثات من التطبيق',
+      defaultColor: AppColors.primary,
+      ledColor: Colors.white,
+      importance: NotificationImportance.High,
+      channelShowBadge: true,
+      onlyAlertOnce: false,
+    ),
     NotificationChannel(
       channelKey: 'upload_channel',
       channelName: 'عمليات الرفع',
@@ -46,7 +70,46 @@ void main() async {
   setupServiceLocator();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(const BayutApp());
+  // 🔔 طلب إذن الإشعارات لـ Firebase (مهم لأندرويد 13+)
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  // 🔔 الاشتراك في قناة "الكل" لاستقبال الإشعارات الجماعية
+  FirebaseMessaging.instance.subscribeToTopic('all');
+
+  // 🔔 التحقق من إذن Awesome Notifications
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
+
+  // 🔔 الاستماع للإشعارات والتطبيق مفتوح (Foreground)
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: DateTime.now().millisecond, // استخدام ID متغير لمنع تداخل الإشعارات
+          channelKey: 'general_channel', // استخدام القناة العامة للإشعارات من الأدمن
+          title: message.notification!.title,
+          body: message.notification!.body,
+          notificationLayout: NotificationLayout.Default,
+          payload: message.data.map((key, value) => MapEntry(key, value.toString())),
+        ),
+      );
+    }
+  });
+
+  log(
+    "token   ===================== ==  ${await FirebaseMessaging.instance.getToken()}",
+  );
+  runApp(
+    // DevicePreview(enabled: true, builder: (context) => const BayutApp()),
+    const BayutApp(),
+  );
 }
 
 class BayutApp extends StatelessWidget {
@@ -94,6 +157,8 @@ class BayutApp extends StatelessWidget {
                 ),
               ],
               child: MaterialApp.router(
+                // locale: DevicePreview.locale(context),
+                // builder: DevicePreview.appBuilder,
                 title: 'بيوت',
                 debugShowCheckedModeBanner: false,
                 routerConfig: RouterGenerationConfig.goRouter,

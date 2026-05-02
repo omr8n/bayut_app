@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/models/admin_stats_model.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
+import 'modern_stat_card.dart';
+
+class ModernStatGrid extends StatelessWidget {
+  final AdminStats stats;
+
+  const ModernStatGrid({super.key, required this.stats});
+
+  @override
+  Widget build(BuildContext context) {
+    double calculateTrend(List<ChartDataPoint> growth) {
+      if (growth.length < 2) return 0;
+      return growth.last.value - growth[growth.length - 2].value;
+    }
+
+    double userTrend = calculateTrend(stats.userGrowth);
+    double propTrend = calculateTrend(stats.propertyGrowth);
+    double salesTrend = calculateTrend(stats.salesGrowth);
+
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      childAspectRatio: 1.05,
+      children: [
+        ModernStatCard(
+          title: "إجمالي المستخدمين",
+          value: stats.totalUsers.toString(),
+          trend: userTrend >= 0 ? "+${userTrend.toInt()}" : "${userTrend.toInt()}",
+          isUp: userTrend >= 0,
+          icon: Icons.people_alt_rounded,
+          color: const Color(0xFF6366F1),
+          data: stats.userGrowth,
+          onTap: () => context.pushNamed(AppRoutes.adminUsers),
+        ),
+        ModernStatCard(
+          title: "إجمالي العقارات",
+          value: stats.totalProperties.toString(),
+          trend: propTrend >= 0 ? "+${propTrend.toInt()}" : "${propTrend.toInt()}",
+          isUp: propTrend >= 0,
+          icon: Icons.home_rounded,
+          color: const Color(0xFF3B82F6),
+          data: stats.propertyGrowth,
+          onTap: () => context.pushNamed(AppRoutes.adminProperties),
+        ),
+        ModernStatCard(
+          title: "البلاغات النشطة",
+          value: stats.pendingReports.toString(),
+          trend: stats.pendingReports > 0 ? "هام" : "مستقر",
+          isUp: stats.pendingReports == 0,
+          icon: Icons.warning_amber_rounded,
+          color: const Color(0xFFEF4444),
+          onTap: () => context.pushNamed(AppRoutes.adminReports),
+        ),
+        ModernStatCard(
+          title: "إيرادات تقديرية",
+          value: "${(stats.yearly.totalRevenue / 1000).toStringAsFixed(1)}K",
+          trend: salesTrend >= 0 ? "+${salesTrend.toInt()}" : "${salesTrend.toInt()}",
+          isUp: salesTrend >= 0,
+          icon: Icons.monetization_on_rounded,
+          color: const Color(0xFF10B981),
+          data: stats.salesGrowth,
+        ),
+      ],
+    );
+  }
+}

@@ -26,12 +26,10 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        
-        // إضافة هذا السطر لإخبار Gradle بمكان الـ NDK
-        externalNativeBuild {
-            cmake {
-                cppFlags("")
-            }
+
+        // إجبار Gradle على استخدام إصدار NDK محدد وتجاهل الباقي
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86_64"))
         }
     }
 

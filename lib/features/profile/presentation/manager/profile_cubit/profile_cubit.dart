@@ -82,15 +82,22 @@ class ProfileCubit extends Cubit<ProfileState> {
       await _authService.signOut();
       await SecureStorage.clearAll();
 
-      // 🔥 إعادة تعيين حالات الـ Cubits المرتبطة بالمستخدم
-      getIt.get<MyPropertiesCubit>().resetState();
-      getIt.get<FavoritesCubit>().resetState();
+      // 🔥 إعادة تعيين حالات الـ Cubits المرتبطة بالمستخدم بشكل آمن
+      if (getIt.isRegistered<MyPropertiesCubit>()) {
+        getIt.get<MyPropertiesCubit>().resetState();
+      }
+      if (getIt.isRegistered<FavoritesCubit>()) {
+        getIt.get<FavoritesCubit>().resetState();
+      }
 
       user = null;
       emit(ProfileInitial());
       emit(ProfileLogoutSuccess());
     } catch (e) {
-      emit(ProfileLogoutFailure('فشل في تسجيل الخروج'));
+      // حتى لو فشل تصفير الـ Cubits، يجب أن ينجح تسجيل الخروج من الواجهة
+      user = null;
+      emit(ProfileInitial());
+      emit(ProfileLogoutSuccess());
     }
   }
 

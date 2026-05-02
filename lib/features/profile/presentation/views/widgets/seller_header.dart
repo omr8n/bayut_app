@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_state.dart';
@@ -43,7 +44,11 @@ class SellerHeader extends StatelessWidget {
                         color: Color(0xFFE3F2FD),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.home, color: Color(0xFF0D47A1), size: 30),
+                      child: const Icon(
+                        Icons.home,
+                        color: Color(0xFF0D47A1),
+                        size: 30,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -64,7 +69,10 @@ class SellerHeader extends StatelessWidget {
                   children: [
                     Text(
                       property.sellerName,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       locale.translate(property.sellerJoinDate),
@@ -78,7 +86,8 @@ class SellerHeader extends StatelessWidget {
                         double average = 0.0;
                         int totalReviews = 0;
 
-                        if (state is RatingsLoaded && state.ratings.isNotEmpty) {
+                        if (state is RatingsLoaded &&
+                            state.ratings.isNotEmpty) {
                           totalReviews = state.ratings.length;
                           double sum = 0;
                           for (var r in state.ratings) {
@@ -86,7 +95,8 @@ class SellerHeader extends StatelessWidget {
                           }
                           average = sum / totalReviews;
                         } else {
-                          average = property.sellerRating; // القيمة الافتراضية إذا لم يوجد تقييمات
+                          average = property
+                              .sellerRating; // القيمة الافتراضية إذا لم يوجد تقييمات
                         }
 
                         return Column(
@@ -96,15 +106,20 @@ class SellerHeader extends StatelessWidget {
                               children: [
                                 Text(
                                   average.toStringAsFixed(1),
-                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 const SizedBox(width: 8),
                                 Row(
                                   children: List.generate(
                                     5,
                                     (index) => Icon(
-                                      index < average.floor() ? Icons.star_rounded : Icons.star_border_rounded,
-                                      color: Colors.amber,
+                                      index < average.floor()
+                                          ? Icons.star_rounded
+                                          : Icons.star_border_rounded,
+                                      color: AppColors.primary,
                                       size: 20,
                                     ),
                                   ),
@@ -113,7 +128,10 @@ class SellerHeader extends StatelessWidget {
                             ),
                             Text(
                               '${locale.translate(LangKeys.sellerRatingCount)} ($totalReviews)',
-                              style: const TextStyle(color: Colors.grey, fontSize: 11),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 11,
+                              ),
                             ),
                           ],
                         );
@@ -133,7 +151,11 @@ class SellerHeader extends StatelessWidget {
                 child: property.sellerImage == null
                     ? Text(
                         property.sellerName[0],
-                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.blue),
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
                       )
                     : null,
               ),

@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/utils/colors.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
+
+class DateSelector extends StatelessWidget {
+  const DateSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<AdminCubit>();
+    return InkWell(
+      onTap: () async {
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: cubit.selectedDate,
+          firstDate: DateTime(2020),
+          lastDate: DateTime.now(),
+          locale: const Locale('ar'),
+        );
+        if (picked != null) cubit.getStats(date: picked);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "عرض بيانات: ${cubit.selectedDate.day}/${cubit.selectedDate.month}/${cubit.selectedDate.year}",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            const Icon(Icons.calendar_month, color: AppColors.primary),
+          ],
+        ),
+      ),
+    );
+  }
+}

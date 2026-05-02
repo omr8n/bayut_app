@@ -46,42 +46,44 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     }
 
     // 1. التحديث المتفائل (Optimistic Update)
-    // نحدث الحالة محلياً فوراً ليشعر المستخدم بالسرعة
     List<PropertyEntity> currentFavorites = [];
     if (state is FavoritesLoaded) {
       currentFavorites = List.from((state as FavoritesLoaded).favorites);
-      final index = currentFavorites.indexWhere((p) => p.id == propertyId);
-      
-      if (index != -1) {
-        currentFavorites.removeAt(index);
-      } else {
-        // إضافة عقار وهمي مؤقتاً بالـ ID فقط لكي يتلون القلب فوراً
-        // سيتم استبداله بالبيانات الحقيقية عند وصول رد الفايربيس
-        currentFavorites.add(PropertyEntity(
-          id: propertyId,
-          title: '',
-          price: 0,
-          images: const [],
-          media: const [],
-          listingType: ListingType.sale,
-          area: 0,
-          governorate: '',
-          city: '',
-          email: '',
-          description: '',
-          type: PropertyType.housesAndApartments,
-          currency: 'SYP',
-          createdAt: DateTime.now(),
-          facilities: const [],
-          location: '',
-          phone: '',
-          whatsapp: '',
-          sellerId: '',
-          sellerName: '',
-        ));
-      }
-      emit(FavoritesLoaded(currentFavorites));
+    } else if (state is FavoritesFailure || state is FavoritesInitial) {
+      // إذا كانت الحالة فشل، نحاول البدء بقائمة فارغة مؤقتاً لتشغيل الزر
+      currentFavorites = [];
     }
+    
+    final index = currentFavorites.indexWhere((p) => p.id == propertyId);
+    
+    if (index != -1) {
+      currentFavorites.removeAt(index);
+    } else {
+      // إضافة عنصر مؤقت
+      currentFavorites.add(PropertyEntity(
+        id: propertyId,
+        title: '',
+        price: 0,
+        images: const [],
+        media: const [],
+        listingType: ListingType.sale,
+        area: 0,
+        governorate: '',
+        city: '',
+        email: '',
+        description: '',
+        type: PropertyType.housesAndApartments,
+        currency: 'SYP',
+        createdAt: DateTime.now(),
+        facilities: const [],
+        location: '',
+        phone: '',
+        whatsapp: '',
+        sellerId: '',
+        sellerName: '',
+      ));
+    }
+    emit(FavoritesLoaded(currentFavorites));
 
     // 2. التنفيذ في الخلفية
     final result = await favoritesRepo.toggleFavorite(

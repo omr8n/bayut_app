@@ -1,53 +1,10 @@
-// import 'package:flutter/material.dart';
-// import '../../core/utils/colors.dart';
-
-// class AdminNotificationsScreen extends StatelessWidget {
-//   const AdminNotificationsScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final notifications = [
-//       'تمت إضافة عقار جديد',
-//       'تم تسجيل مستخدم جديد',
-//       'تم حل بلاغ',
-//     ];
-
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('الإشعارات'), centerTitle: true),
-//       body: ListView.separated(
-//         padding: const EdgeInsets.all(16),
-//         itemCount: notifications.length,
-//         separatorBuilder: (_, __) => const SizedBox(height: 8),
-//         itemBuilder: (context, index) {
-//           return Container(
-//             padding: const EdgeInsets.all(16),
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.circular(12),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.black.withOpacity(0.05),
-//                   blurRadius: 4,
-//                   offset: const Offset(0, 2),
-//                 ),
-//               ],
-//             ),
-//             child: Text(
-//               notifications[index],
-//               style: const TextStyle(fontSize: 14),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
+import 'package:test_graduation/core/services/notification_service.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/views/widgets/data/admin_mock_data.dart';
+import 'package:uuid/uuid.dart';
 
 // شاشة إدارة الإشعارات
 class AdminNotificationsScreen extends StatefulWidget {
@@ -62,8 +19,10 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _bodyController = TextEditingController();
+  final NotificationService _notificationService = NotificationService();
   NotificationType _selectedType = NotificationType.general;
   bool _sendToAll = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -207,14 +166,16 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: _sendNotification,
+                        onPressed: _isLoading ? null : _sendNotification,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        icon: const Icon(Icons.send, color: Colors.white),
-                        label: const Text(
-                          'إرسال الإشعار',
-                          style: TextStyle(
+                        icon: _isLoading 
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : const Icon(Icons.send, color: Colors.white),
+                        label: Text(
+                          _isLoading ? 'جاري الإرسال...' : 'إرسال الإشعار',
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -234,7 +195,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'سجل الإشعارات',
+                    'سجل الإشعارات المرسلة',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -242,8 +203,21 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  ...AdminMockData.notifications.map(
-                    (AppNotification notif) => _buildNotificationItem(notif),
+                  StreamBuilder<List<AppNotification>>(
+                    stream: _notificationService.getNotificationsStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('لا يوجد إشعارات مرسلة بعد'));
+                      }
+                      return Column(
+                        children: snapshot.data!.map(
+                          (AppNotification notif) => _buildNotificationItem(notif),
+                        ).toList(),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -370,18 +344,47 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
     }
   }
 
-  void _sendNotification() {
+  void _sendNotification() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'تم إرسال الإشعار إلى ${_sendToAll ? AdminMockData.users.length : 1} مستخدم',
-          ),
-          backgroundColor: AppColors.success,
-        ),
-      );
-      _titleController.clear();
-      _bodyController.clear();
+      setState(() => _isLoading = true);
+      try {
+        final notification = AppNotification(
+          id: const Uuid().v4(),
+          title: _titleController.text,
+          body: _bodyController.text,
+          type: _selectedType,
+          sentToAll: _sendToAll,
+          sentAt: DateTime.now(),
+          recipientsCount: _sendToAll ? 100 : 1, // رقم افتراضي للمحاكاة
+        );
+
+        await _notificationService.saveNotification(notification);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'تم حفظ الإشعار في السجل. لإرساله كتنبيه فعلي للجوال، يرجى استخدامه من Firebase Console مع Topic: all',
+              ),
+              backgroundColor: AppColors.success,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+          _titleController.clear();
+          _bodyController.clear();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('فشل الحفظ: $e'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 }

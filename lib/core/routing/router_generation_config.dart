@@ -45,7 +45,7 @@ import 'package:test_graduation/features/admin/presentation/views/admin_notifica
 import 'package:test_graduation/features/admin/presentation/views/admin_settings_screen.dart';
 
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
-import 'package:test_graduation/features/admin/presentation/views/admin_settings_view.dart';
+
 import 'package:test_graduation/features/admin/presentation/views/widgets/audit_logs/audit_logs_screen.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_action_cubit/admin_action_cubit.dart';
 import 'app_routes.dart';
@@ -53,8 +53,11 @@ import 'app_routes.dart';
 class RouterGenerationConfig {
   static GoRouter goRouter = GoRouter(
     initialLocation: AppRoutes.onBoardingScreen,
+    // 🔥 إضافة refreshListenable لجعل الراوتر يشعر بتغييرات الحالة
+    // لكن بما أننا لا نملك ChangeNotifier لـ Auth، سنقوم بتعديل الـ Redirect ليكون أكثر ذكاءً
     redirect: (context, state) {
       final bool isOnBoardingSeen = Prefs.getBool('isOnBoardingSeen');
+      // الفحص المباشر من SecureStorage لضمان أحدث قيمة
       final bool isLoggedIn = SecureStorage.isLoggedIn;
 
       if (!isOnBoardingSeen) {
@@ -69,6 +72,7 @@ class RouterGenerationConfig {
           return AppRoutes.mainScreen;
         }
 
+        // إذا كان يحاول الذهاب للـ Login وهو مسجل دخول فعلياً، نرجعه للـ Main
         if (isLoggedIn && state.matchedLocation == AppRoutes.loginScreen) {
           return AppRoutes.mainScreen;
         }

@@ -39,7 +39,9 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
         listener: _adminListener,
         builder: (context, state) {
           if (state is AdminLoading) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF0F172A)),
+            );
           }
 
           List<ReportEntity> allReports = [];
@@ -54,7 +56,8 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               ReportsFilterSection(
                 allReports: allReports,
                 selectedStatus: _filterStatus,
-                onStatusChanged: (status) => setState(() => _filterStatus = status),
+                onStatusChanged: (status) =>
+                    setState(() => _filterStatus = status),
               ),
               Expanded(
                 child: filteredReports.isEmpty
@@ -84,7 +87,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: AppColors.primary,
+      backgroundColor: Color(0xFF1E293B),
       title: const Text(
         'مركز إدارة الإبلاغات',
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -122,7 +125,11 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.assignment_turned_in_rounded, size: 100, color: Colors.grey[300]),
+          Icon(
+            Icons.assignment_turned_in_rounded,
+            size: 100,
+            color: Colors.grey[300],
+          ),
           const SizedBox(height: 16),
           Text(
             'لا توجد بلاغات في هذا القسم',
@@ -143,10 +150,8 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ReportDetailsBottomSheet(
-        report: report,
-        adminCubit: adminCubit,
-      ),
+      builder: (_) =>
+          ReportDetailsBottomSheet(report: report, adminCubit: adminCubit),
     );
   }
 }

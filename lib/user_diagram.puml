@@ -1,0 +1,37 @@
+@startuml
+
+class UserEntity {
+  +String name
+  +String email
+  +String uId
+  +String role
+  +String status
+  +String? profilePic
+  +String? phoneNumber
+  +Timestamp? createdAt
+  +List<String> userCart
+  +List<String> userWish
+  +String? adminNotes
+  +bool isVerified
+  +int propertiesCount
+  +int reportsCount
+
+  +isAdmin()
+  +isAgent()
+  +isBanned()
+  +isFrozen()
+  +isActive()
+  +copyWith()
+}
+
+class UserModel {
+  +UserModel()
+  +fromFirebaseUser(user)
+  +fromJson(json)
+  +fromEntity(user)
+  +toMap()
+}
+
+UserModel --|> UserEntity
+
+@enduml

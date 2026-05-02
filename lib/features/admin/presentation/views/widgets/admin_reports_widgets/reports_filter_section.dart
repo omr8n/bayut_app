@@ -19,7 +19,7 @@ class ReportsFilterSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: const BoxDecoration(
-        color: AppColors.primary,
+        color: Color(0xFF0F172A),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -42,7 +42,9 @@ class ReportsFilterSection extends StatelessWidget {
               isSelected: selectedStatus == ReportStatus.pending,
               onTap: () => onStatusChanged(ReportStatus.pending),
               color: AppColors.warning,
-              count: allReports.where((r) => r.status == ReportStatus.pending).length,
+              count: allReports
+                  .where((r) => r.status == ReportStatus.pending)
+                  .length,
             ),
             const SizedBox(width: 8),
             _FilterChip(
@@ -50,7 +52,9 @@ class ReportsFilterSection extends StatelessWidget {
               isSelected: selectedStatus == ReportStatus.underReview,
               onTap: () => onStatusChanged(ReportStatus.underReview),
               color: AppColors.info,
-              count: allReports.where((r) => r.status == ReportStatus.underReview).length,
+              count: allReports
+                  .where((r) => r.status == ReportStatus.underReview)
+                  .length,
             ),
             const SizedBox(width: 8),
             _FilterChip(
@@ -58,7 +62,9 @@ class ReportsFilterSection extends StatelessWidget {
               isSelected: selectedStatus == ReportStatus.resolved,
               onTap: () => onStatusChanged(ReportStatus.resolved),
               color: AppColors.success,
-              count: allReports.where((r) => r.status == ReportStatus.resolved).length,
+              count: allReports
+                  .where((r) => r.status == ReportStatus.resolved)
+                  .length,
             ),
             const SizedBox(width: 8),
             _FilterChip(
@@ -66,7 +72,9 @@ class ReportsFilterSection extends StatelessWidget {
               isSelected: selectedStatus == ReportStatus.rejected,
               onTap: () => onStatusChanged(ReportStatus.rejected),
               color: AppColors.error,
-              count: allReports.where((r) => r.status == ReportStatus.rejected).length,
+              count: allReports
+                  .where((r) => r.status == ReportStatus.rejected)
+                  .length,
             ),
           ],
         ),
@@ -119,7 +127,9 @@ class _FilterChip extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: isSelected ? (color ?? AppColors.primary) : Colors.white.withOpacity(0.3),
+                  color: isSelected
+                      ? (color ?? AppColors.primary)
+                      : Colors.white.withOpacity(0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Text(

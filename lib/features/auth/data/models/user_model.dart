@@ -3,18 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../domain/entites/user_entity.dart';
 
 class UserModel extends UserEntity {
-  UserModel({
+  const UserModel({
     required super.name,
     required super.email,
     required super.uId,
-    required super.role,
+    super.role = 'user',
     super.status = 'active',
     super.profilePic,
     super.phoneNumber,
     super.createdAt,
-    super.userCart,
-    super.userWish,
+    super.userCart = const [],
+    super.userWish = const [],
     super.adminNotes,
+    super.isVerified = false,
+    super.propertiesCount = 0,
+    super.reportsCount = 0,
   });
 
   factory UserModel.fromFirebaseUser(firebase_auth.User user) {
@@ -27,28 +30,33 @@ class UserModel extends UserEntity {
       profilePic: user.photoURL,
       phoneNumber: user.phoneNumber,
       createdAt: Timestamp.now(),
-      userCart: [],
-      userWish: [],
+      userCart: const [],
+      userWish: const [],
     );
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      name: json['name'] ?? '',
+      name: json['name'] ?? json['fullName'] ?? '',
       email: json['email'] ?? '',
-      uId: json['uId'] ?? '',
-      role: json['role'] ?? 'user',
+      uId: json['uId'] ?? json['id'] ?? '',
+      role: json['role'] ?? json['userType'] ?? 'user',
       status: json['status'] ?? 'active',
-      profilePic: json['profilePic'],
-      phoneNumber: json['phoneNumber'],
+      profilePic: json['profilePic'] ?? json['photoUrl'],
+      phoneNumber: json['phoneNumber'] ?? json['phone'],
       adminNotes: json['adminNotes'],
+      isVerified: json['isVerified'] ?? false,
+      propertiesCount: json['propertiesCount'] ?? 0,
+      reportsCount: json['reportsCount'] ?? 0,
       createdAt: json['createdAt'] == null
           ? null
           : (json['createdAt'] is String
-              ? Timestamp.fromDate(DateTime.parse(json['createdAt']))
-              : json['createdAt'] as Timestamp),
-      userCart: List.from(json['userCart'] ?? []),
-      userWish: List.from(json['userWish'] ?? []),
+                ? Timestamp.fromDate(DateTime.parse(json['createdAt']))
+                : json['createdAt'] as Timestamp),
+      userCart: List<String>.from(json['userCart'] ?? []),
+      userWish: List<String>.from(
+        json['userWish'] ?? json['favoriteProperties'] ?? [],
+      ),
     );
   }
 
@@ -65,6 +73,9 @@ class UserModel extends UserEntity {
       userCart: user.userCart,
       userWish: user.userWish,
       adminNotes: user.adminNotes,
+      isVerified: user.isVerified,
+      propertiesCount: user.propertiesCount,
+      reportsCount: user.reportsCount,
     );
   }
 
@@ -78,6 +89,9 @@ class UserModel extends UserEntity {
       'profilePic': profilePic,
       'phoneNumber': phoneNumber,
       'adminNotes': adminNotes,
+      'isVerified': isVerified,
+      'propertiesCount': propertiesCount,
+      'reportsCount': reportsCount,
       'createdAt': forFirestore
           ? (createdAt ?? FieldValue.serverTimestamp())
           : createdAt?.toDate().toIso8601String(),

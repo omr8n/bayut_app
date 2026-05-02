@@ -17,10 +17,10 @@ class ProfileMenuSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
-    // 🔥 فحص حالة تسجيل الدخول
-    final bool isLoggedIn = SecureStorage.isLoggedIn;
+    // 🔥 توحيد مصدر الحالة: الاعتماد على الـ Cubit فقط لضمان المزامنة
     final user = context.watch<ProfileCubit>().user;
-    final bool isAdmin = user?.role == 'admin';
+    final bool isLoggedIn = user != null;
+    final bool isAdmin = user?.isAdmin ?? false;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -42,7 +42,7 @@ class ProfileMenuSection extends StatelessWidget {
               icon: Icons.admin_panel_settings_outlined,
               title: "لوحة التحكم (المدير)",
               iconColor: Colors.deepPurple,
-              onTap: () => context.push(AppRoutes.adminDashboard),
+              onTap: () => GoRouter.of(context).push(AppRoutes.adminDashboard),
             ),
             _buildDivider(),
           ],
@@ -52,7 +52,7 @@ class ProfileMenuSection extends StatelessWidget {
             iconColor: Colors.blue,
             onTap: () {
               if (isLoggedIn) {
-                context.push(AppRoutes.myPropertiesScreen);
+                GoRouter.of(context).push(AppRoutes.myPropertiesScreen);
               } else {
                 MyAppMethods.showErrorORWarningDialog(
                   context: context,
@@ -69,7 +69,7 @@ class ProfileMenuSection extends StatelessWidget {
             iconColor: Colors.red,
             onTap: () {
               if (isLoggedIn) {
-                context.push(AppRoutes.favoritesView);
+                GoRouter.of(context).push(AppRoutes.favoritesView);
               } else {
                 MyAppMethods.showErrorORWarningDialog(
                   context: context,
@@ -84,7 +84,7 @@ class ProfileMenuSection extends StatelessWidget {
             icon: Icons.settings_outlined,
             title: locale.translate(LangKeys.settings),
             iconColor: Colors.orange,
-            onTap: () => context.push(AppRoutes.settingsView),
+            onTap: () => GoRouter.of(context).push(AppRoutes.settingsView),
           ),
           _buildDivider(),
           const NightModeSwitch(),
@@ -93,14 +93,14 @@ class ProfileMenuSection extends StatelessWidget {
             icon: Icons.menu_book_outlined,
             title: locale.translate(LangKeys.guide),
             iconColor: Colors.pink,
-            onTap: () => context.push(AppRoutes.guideView),
+            onTap: () => GoRouter.of(context).push(AppRoutes.guideView),
           ),
           _buildDivider(),
           ProfileMenuItem(
             icon: Icons.policy_outlined,
             title: locale.translate(LangKeys.terms),
             iconColor: Colors.teal,
-            onTap: () => context.push(AppRoutes.termsView),
+            onTap: () => GoRouter.of(context).push(AppRoutes.termsView),
           ),
           _buildDivider(),
           ProfileMenuItem(
@@ -121,12 +121,13 @@ class ProfileMenuSection extends StatelessWidget {
             icon: Icons.contact_support_outlined,
             title: locale.translate(LangKeys.contactUs),
             iconColor: Colors.cyan,
-            onTap: () => context.push(AppRoutes.contactView),
+            onTap: () => GoRouter.of(context).push(AppRoutes.contactView),
           ),
           _buildDivider(),
 
           // 🔥 زر تفاعلي: تسجيل دخول (للزائر) أو تسجيل خروج (للمسجل)
           ProfileMenuItem(
+            key: ValueKey('login_logout_$isLoggedIn'), // مفتاح فريد لإجبار إعادة البناء
             icon: isLoggedIn ? Icons.logout : Icons.login,
             title: isLoggedIn
                 ? locale.translate(LangKeys.logOut)
@@ -141,6 +142,7 @@ class ProfileMenuSection extends StatelessWidget {
                   fct: () => context.read<ProfileCubit>().logout(),
                 );
               } else {
+                // للزائر: انتقال مباشر ومضمون باستخدام push
                 GoRouter.of(context).push(AppRoutes.loginScreen);
               }
             },

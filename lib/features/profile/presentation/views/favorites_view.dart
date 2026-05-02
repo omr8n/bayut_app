@@ -9,8 +9,20 @@ import 'package:test_graduation/core/utils/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/features/home/presentation/view/details_view.dart';
 
-class FavoritesView extends StatelessWidget {
+class FavoritesView extends StatefulWidget {
   const FavoritesView({super.key});
+
+  @override
+  State<FavoritesView> createState() => _FavoritesViewState();
+}
+
+class _FavoritesViewState extends State<FavoritesView> {
+  @override
+  void initState() {
+    super.initState();
+    // 🔥 طلب جلب البيانات فور فتح الصفحة
+    context.read<FavoritesCubit>().getFavorites();
+  }
 
   @override
   Widget build(BuildContext context) {

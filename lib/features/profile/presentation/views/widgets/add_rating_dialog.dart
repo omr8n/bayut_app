@@ -36,22 +36,25 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
           if (state is RatingSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text(localizations.translate(LangKeys.ratingSuccess)),
-                  backgroundColor: AppColors.success),
+                content: Text(localizations.translate(LangKeys.ratingSuccess)),
+                backgroundColor: AppColors.success,
+              ),
             );
             Navigator.pop(context);
           } else if (state is RatingFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text(localizations.translate(state.message)),
-                  backgroundColor: Colors.red),
+                content: Text(localizations.translate(state.message)),
+                backgroundColor: Colors.red,
+              ),
             );
           }
         },
         builder: (context, state) {
           return Dialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
@@ -61,33 +64,51 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                   children: [
                     Center(
                       child: Text(
-                          localizations.translate(LangKeys.rateSellerExperience),
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
+                        localizations.translate(LangKeys.rateSellerExperience),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                     const Divider(height: 32),
-                    Text(localizations.translate(LangKeys.overallRating),
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        5,
-                        (index) => IconButton(
-                          onPressed: () => setState(() => _rating = index + 1),
-                          icon: Icon(
-                            index < _rating
-                                ? Icons.star_rounded
-                                : Icons.star_outline_rounded,
-                            color:
-                                index < _rating ? Colors.amber : Colors.grey.shade300,
-                            size: 40,
+                    Text(
+                      localizations.translate(LangKeys.overallRating),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    FittedBox(
+                      // 🔥 حل مشكلة خروج النجوم عن الشاشة
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          5,
+                          (index) => InkWell(
+                            // استخدام InkWell بدل IconButton لتقليل الـ padding التلقائي
+                            onTap: () => setState(() => _rating = index + 1),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: Icon(
+                                index < _rating
+                                    ? Icons.star_rounded
+                                    : Icons.star_outline_rounded,
+                                color: index < _rating
+                                    ? AppColors.primary
+                                    : Colors.grey.shade300,
+                                size: 38,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Text(localizations.translate(LangKeys.writeYourOpinion),
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      localizations.translate(LangKeys.writeYourOpinion),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _commentController,
@@ -96,7 +117,8 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                       decoration: InputDecoration(
                         hintText: localizations.translate(LangKeys.ratingHint),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -104,8 +126,11 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                       children: [
                         Expanded(
                           child: TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(localizations.translate(LangKeys.cancel))),
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(
+                              localizations.translate(LangKeys.cancel),
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -114,15 +139,16 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                                 ? null
                                 : () {
                                     context.read<RatingCubit>().addRating(
-                                          sellerId: widget.sellerId,
-                                          rating: _rating.toDouble(),
-                                          comment: _commentController.text.trim(),
-                                        );
+                                      sellerId: widget.sellerId,
+                                      rating: _rating.toDouble(),
+                                      comment: _commentController.text.trim(),
+                                    );
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             child: state is RatingLoading
@@ -130,11 +156,19 @@ class _AddRatingDialogState extends State<AddRatingDialog> {
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
-                                        color: Colors.white, strokeWidth: 2))
-                                : Text(localizations.translate(LangKeys.sendRating),
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    localizations.translate(
+                                      LangKeys.sendRating,
+                                    ),
                                     style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],

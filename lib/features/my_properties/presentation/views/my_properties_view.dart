@@ -17,15 +17,14 @@ class MyPropertiesScreen extends StatelessWidget {
         final profileCubit = context.read<ProfileCubit>();
         final bool isLoggedIn = profileCubit.user != null;
 
-        // 🎯 إذا كان مسجلاً (لديه بيانات مستخدم) -> ادخله فوراً
         if (isLoggedIn) {
           return const MyPropertiesViewBlocBuilder();
         }
 
-        // إذا لم يكن مسجلاً (user == null) -> اظهر صفحة التنبيه (EmptyBag)
         return EmptyBagProperties(
           onPressed: () {
-            GoRouter.of(context).push(AppRoutes.loginScreen);
+            // نستخدم Navigator مباشرة أو GoRouter بطريقة تضمن عدم التداخل مع الـ Rebuild
+            context.pushNamed(AppRoutes.loginScreen);
           },
         );
       },

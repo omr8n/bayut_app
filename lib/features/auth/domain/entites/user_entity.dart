@@ -1,21 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
-class UserEntity {
+class UserEntity extends Equatable {
   final String name;
   final String email;
   final String uId;
   final String? profilePic;
   final String? phoneNumber;
   final Timestamp? createdAt;
-  final List? userCart, userWish;
-  final String role; // 'user' or 'admin'
+  final List<String>? userCart;
+  final List<String>? userWish;
+  final String role; // 'user', 'admin', 'agent'
   final String status; // 'active', 'frozen', 'banned'
   final String? adminNotes;
   final bool isVerified;
   final int propertiesCount;
   final int reportsCount;
 
-  UserEntity({
+  const UserEntity({
     required this.name,
     required this.email,
     required this.uId,
@@ -24,16 +26,17 @@ class UserEntity {
     this.profilePic,
     this.phoneNumber,
     this.createdAt,
-    this.userCart,
-    this.userWish,
+    this.userCart = const [],
+    this.userWish = const [],
     this.adminNotes,
     this.isVerified = false,
     this.propertiesCount = 0,
     this.reportsCount = 0,
   });
 
-  // Getters ذكية لمنع أخطاء الكود
+  // Getters ذكية
   bool get isAdmin => role == 'admin';
+  bool get isAgent => role == 'agent';
   bool get isBanned => status == 'banned';
   bool get isFrozen => status == 'frozen';
   bool get isActive => status == 'active';
@@ -45,8 +48,8 @@ class UserEntity {
     String? profilePic,
     String? phoneNumber,
     Timestamp? createdAt,
-    List? userCart,
-    List? userWish,
+    List<String>? userCart,
+    List<String>? userWish,
     String? role,
     String? status,
     String? adminNotes,
@@ -71,4 +74,18 @@ class UserEntity {
       reportsCount: reportsCount ?? this.reportsCount,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        uId,
+        email,
+        name,
+        role,
+        status,
+        profilePic,
+        phoneNumber,
+        isVerified,
+        userWish,
+        userCart,
+      ];
 }

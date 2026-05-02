@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/profile/domain/entities/rating_entity.dart';
 
 class RatingItem extends StatelessWidget {
@@ -33,8 +34,10 @@ class RatingItem extends StatelessWidget {
                 children: List.generate(
                   5,
                   (index) => Icon(
-                    index < rating.rating ? Icons.star_rounded : Icons.star_border_rounded,
-                    color: Colors.amber,
+                    index < rating.rating
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    color: AppColors.primary,
                     size: 16,
                   ),
                 ),
@@ -46,13 +49,20 @@ class RatingItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundImage: rating.raterImage != null ? NetworkImage(rating.raterImage!) : null,
-                child: rating.raterImage == null ? const Icon(Icons.person, size: 20) : null,
+                backgroundImage: rating.raterImage != null
+                    ? NetworkImage(rating.raterImage!)
+                    : null,
+                child: rating.raterImage == null
+                    ? const Icon(Icons.person, size: 20)
+                    : null,
               ),
               const SizedBox(width: 10),
               Text(
                 rating.raterName,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -61,7 +71,11 @@ class RatingItem extends StatelessWidget {
             Text(
               rating.comment,
               textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
-              style: const TextStyle(color: Colors.black87, fontSize: 13, height: 1.4),
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 13,
+                height: 1.4,
+              ),
             ),
           ],
         ],

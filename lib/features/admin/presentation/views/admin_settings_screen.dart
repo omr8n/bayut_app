@@ -1,34 +1,3 @@
-// import 'package:flutter/material.dart';
-// import '../../core/utils/colors.dart';
-
-// class AdminSettingsScreen extends StatelessWidget {
-//   const AdminSettingsScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('الإعدادات'), centerTitle: true),
-//       body: ListView(
-//         padding: const EdgeInsets.all(16),
-//         children: const [
-//           ListTile(
-//             title: Text('تغيير كلمة المرور'),
-//             leading: Icon(Icons.lock_outline),
-//           ),
-//           ListTile(
-//             title: Text('الإشعارات'),
-//             leading: Icon(Icons.notifications),
-//           ),
-//           ListTile(
-//             title: Text('حول التطبيق'),
-//             leading: Icon(Icons.info_outline),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 
 import 'package:test_graduation/core/utils/colors.dart';

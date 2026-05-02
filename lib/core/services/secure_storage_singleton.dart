@@ -46,8 +46,8 @@ class SecureStorage {
 
   /// 🔥 تسجيل الخروج (مهم جداً)
   static Future<void> clearAll() async {
+    _isLoggedIn = false; // تحديث القيمة في الذاكرة فوراً
     await _storage.deleteAll();
-    _isLoggedIn = false;
-    log("SecureStorage: All data cleared");
+    log("SecureStorage: All data cleared and _isLoggedIn set to false");
   }
 }

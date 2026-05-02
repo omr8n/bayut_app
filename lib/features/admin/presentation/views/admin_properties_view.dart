@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
-import 'package:test_graduation/features/admin/domain/repos/admin_repo.dart';
+
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'widgets/admin_properties_widgets/admin_properties_view_body.dart';
 
