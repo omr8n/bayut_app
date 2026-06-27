@@ -489,9 +489,6 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
                   setState(() => _selectedDirection = v!),
               isLicensed: _isLicensed,
               onLicensedChanged: (v) => setState(() => _isLicensed = v!),
-              isFeatured: _isFeatured,
-              onFeaturedChanged: (v) =>
-                  setState(() => _isFeatured = v!), // 🔥 تمكين التبديل
             ),
             const SizedBox(height: 16),
             DynamicSpecsSection(

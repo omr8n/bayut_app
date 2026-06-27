@@ -204,7 +204,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                   ),
                   const SizedBox(height: 12),
                   StreamBuilder<List<AppNotification>>(
-                    stream: _notificationService.getNotificationsStream(),
+                    stream: _notificationService.getNotificationsStream(null),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -340,6 +340,8 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
       case NotificationType.promotion:
         return AppColors.success;
       case NotificationType.update:
+        return AppColors.primary;
+      case NotificationType.adminAction:
         return AppColors.primary;
     }
   }

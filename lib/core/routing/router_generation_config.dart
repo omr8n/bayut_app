@@ -33,6 +33,7 @@ import 'package:test_graduation/features/profile/presentation/views/guide_view.d
 import 'package:test_graduation/features/profile/presentation/views/profile_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/settings_view.dart';
 import 'package:test_graduation/features/profile/presentation/views/terms_view.dart';
+import 'package:test_graduation/features/notifications/presentation/screens/notifications_view.dart';
 
 import 'package:test_graduation/features/my_properties/presentation/views/property_dashboard_view.dart';
 
@@ -305,6 +306,12 @@ class RouterGenerationConfig {
         path: AppRoutes.contactView,
         name: AppRoutes.contactView,
         pageBuilder: (context, state) => BaseRoute(child: const ContactView()),
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        name: AppRoutes.notifications,
+        pageBuilder: (context, state) =>
+            BaseRoute(child: const NotificationsView()),
       ),
 
       GoRoute(

@@ -21,6 +21,7 @@ import 'package:test_graduation/features/my_properties/presentation/cubit/add_pr
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
 import 'package:test_graduation/features/root/presentation/manager/navigation_cubit.dart';
 import 'package:test_graduation/features/search/presentation/manager/search_cubit/search_cubit.dart';
 import 'firebase_options.dart';
@@ -155,6 +156,16 @@ class BayutApp extends StatelessWidget {
                 BlocProvider.value(
                   value: getIt.get<ProfileCubit>()..getUserInfo(),
                 ),
+                BlocProvider<UserNotificationCubit>(
+                  create: (context) {
+                    final cubit = getIt.get<UserNotificationCubit>();
+                    final user = context.read<ProfileCubit>().user;
+                    if (user != null) {
+                      cubit.getNotifications(user.uId);
+                    }
+                    return cubit;
+                  },
+                ),
               ],
               child: MaterialApp.router(
                 // locale: DevicePreview.locale(context),
@@ -162,7 +173,6 @@ class BayutApp extends StatelessWidget {
                 title: 'بيوت',
                 debugShowCheckedModeBanner: false,
                 routerConfig: RouterGenerationConfig.goRouter,
-                builder: (context, child) => child!,
                 locale: locale,
                 supportedLocales: AppLocalizationsSetup.supportedLocales,
                 localizationsDelegates:
@@ -181,6 +191,16 @@ class BayutApp extends StatelessWidget {
                   ),
                   useMaterial3: true,
                 ),
+                builder: (context, child) {
+                  return BlocListener<ProfileCubit, ProfileState>(
+                    listener: (context, state) {
+                      if (state is ProfileUserLoaded) {
+                        context.read<UserNotificationCubit>().getNotifications(state.user.uId);
+                      }
+                    },
+                    child: child!,
+                  );
+                },
               ),
             ),
           );

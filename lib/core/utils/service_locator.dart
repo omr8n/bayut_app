@@ -37,6 +37,13 @@ import 'package:test_graduation/features/reports/domain/repositories/report_repo
 import 'package:test_graduation/features/reports/domain/use_cases/send_report_use_case.dart';
 import 'package:test_graduation/features/reports/presentation/cubit/report_cubit.dart';
 
+import 'package:test_graduation/core/services/notification_service.dart';
+import 'package:test_graduation/features/notifications/domain/repos/notification_repository.dart';
+import 'package:test_graduation/features/notifications/data/repos/notification_repository_impl.dart';
+import 'package:test_graduation/features/notifications/domain/use_cases/get_combined_notifications_use_case.dart';
+import 'package:test_graduation/features/notifications/domain/use_cases/send_notification_use_case.dart';
+import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
+
 // Admin Imports
 import 'package:test_graduation/features/admin/domain/repos/admin_repo.dart';
 import 'package:test_graduation/features/admin/data/repos/admin_repo_impl.dart';
@@ -144,12 +151,34 @@ void setupServiceLocator() {
     () => AppConfigRepoImpl(),
   );
   getIt.registerFactory<AdminCubit>(
-    () => AdminCubit(getIt<AdminRepo>(), getIt<AdminActionRepo>()),
+    () => AdminCubit(
+      getIt<AdminRepo>(),
+      getIt<AdminActionRepo>(),
+      getIt<SendNotificationUseCase>(),
+    ),
   );
   getIt.registerFactory<AdminActionCubit>(
     () => AdminActionCubit(getIt<AdminActionRepo>()),
   );
   getIt.registerFactory<AppConfigCubit>(
     () => AppConfigCubit(getIt<AppConfigRepo>()),
+  );
+
+  // Notifications
+  getIt.registerLazySingleton<NotificationService>(() => NotificationService());
+  getIt.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(getIt<NotificationService>()),
+  );
+  getIt.registerLazySingleton<GetCombinedNotificationsUseCase>(
+    () => GetCombinedNotificationsUseCase(getIt<NotificationRepository>()),
+  );
+  getIt.registerLazySingleton<SendNotificationUseCase>(
+    () => SendNotificationUseCase(getIt<NotificationRepository>()),
+  );
+  getIt.registerFactory<UserNotificationCubit>(
+    () => UserNotificationCubit(
+      getIt<GetCombinedNotificationsUseCase>(),
+      getIt<NotificationRepository>(),
+    ),
   );
 }

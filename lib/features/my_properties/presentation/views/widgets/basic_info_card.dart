@@ -17,8 +17,6 @@ class BasicInfoCard extends StatelessWidget {
   final Function(String?) onDirectionChanged;
   final bool isLicensed;
   final Function(bool?) onLicensedChanged;
-  final bool isFeatured;
-  final Function(bool?) onFeaturedChanged;
 
   const BasicInfoCard({
     super.key,
@@ -35,8 +33,6 @@ class BasicInfoCard extends StatelessWidget {
     required this.onDirectionChanged,
     required this.isLicensed,
     required this.onLicensedChanged,
-    required this.isFeatured,
-    required this.onFeaturedChanged,
   });
 
   @override
@@ -120,31 +116,6 @@ class BasicInfoCard extends StatelessWidget {
                   color: Colors.blue,
                 ),
                 onChanged: onLicensedChanged,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.amber.shade200),
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.amber.withValues(alpha: 0.05),
-              ),
-              child: SwitchListTile(
-                title: Text(
-                  locale.translate(LangKeys.featureProperty),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber,
-                  ),
-                ),
-                subtitle: Text(
-                  locale.translate(LangKeys.featuredDescription),
-                  style: const TextStyle(fontSize: 11),
-                ),
-                value: isFeatured,
-                secondary: const Icon(Icons.stars, color: Colors.amber),
-                onChanged: onFeaturedChanged,
               ),
             ),
           ],

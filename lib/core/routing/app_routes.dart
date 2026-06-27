@@ -23,6 +23,7 @@ class AppRoutes {
   static const String guideView = '/guideView';
   static const String termsView = '/termsView';
   static const String contactView = '/contactView';
+  static const String notifications = '/notifications';
 
   // Admin Routes
   static const String adminDashboard = '/adminDashboard';

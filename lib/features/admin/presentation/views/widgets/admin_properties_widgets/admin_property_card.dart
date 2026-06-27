@@ -192,6 +192,7 @@ class AdminPropertyCard extends StatelessWidget {
             onTap: () => adminCubit.togglePropertyApproval(
               property.id,
               !property.isApproved,
+              property.sellerId,
             ),
           ),
           _actionBtn(
@@ -252,7 +253,7 @@ class AdminPropertyCard extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              adminCubit.deleteProperty(property.id);
+              adminCubit.deleteProperty(property.id, property.sellerId);
               Navigator.pop(context);
             },
             child: const Text("حذف"),

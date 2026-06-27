@@ -13,7 +13,7 @@ class UserNotificationRepo {
   ) {
     try {
       return _notificationService
-          .getNotificationsStream()
+          .getNotificationsStream(userId)
           .map(
             (notifications) =>
                 right<Failure, List<AppNotification>>(notifications),
@@ -28,7 +28,7 @@ class UserNotificationRepo {
     String notificationId,
   ) async {
     try {
-      // markAsSeen not yet implemented in service
+      await _notificationService.markAsRead(notificationId);
       return right(unit);
     } catch (e) {
       return left(ServerFailure(e.toString()));

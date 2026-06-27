@@ -7,6 +7,7 @@ import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
+import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 
 class UserActionsSection extends StatelessWidget {
@@ -86,19 +87,29 @@ class _NotificationBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {},
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
-      icon: Badge(
-        label: Text('2', style: TextStyle(fontSize: 10.sp)),
-        backgroundColor: Colors.redAccent,
-        child: Icon(
-          Icons.notifications_none_rounded,
-          color: Colors.black87,
-          size: 24.sp,
-        ),
-      ),
+    return BlocBuilder<UserNotificationCubit, UserNotificationState>(
+      builder: (context, state) {
+        int unreadCount = 0;
+        if (state is UserNotificationSuccess) {
+          unreadCount = state.unreadCount;
+        }
+
+        return IconButton(
+          onPressed: () => context.push(AppRoutes.notifications),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          icon: Badge(
+            isLabelVisible: unreadCount > 0,
+            label: Text(unreadCount.toString(), style: TextStyle(fontSize: 10.sp)),
+            backgroundColor: Colors.redAccent,
+            child: Icon(
+              Icons.notifications_none_rounded,
+              color: Colors.black87,
+              size: 24.sp,
+            ),
+          ),
+        );
+      },
     );
   }
 }

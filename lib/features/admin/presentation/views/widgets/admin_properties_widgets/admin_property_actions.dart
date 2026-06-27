@@ -133,6 +133,7 @@ class AdminPropertyActions extends StatelessWidget {
               context.read<AdminCubit>().togglePropertyApproval(
                 property.id,
                 !property.isApproved,
+                property.sellerId,
               );
               Navigator.pop(dialogContext);
             },
@@ -159,7 +160,7 @@ class AdminPropertyActions extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              context.read<AdminCubit>().deleteProperty(property.id);
+              context.read<AdminCubit>().deleteProperty(property.id, property.sellerId);
               Navigator.pop(dialogContext);
             },
             child: const Text('تأكيد الحذف'),

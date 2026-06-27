@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
@@ -23,20 +22,6 @@ class LocationCard extends StatefulWidget {
 }
 
 class _LocationCardState extends State<LocationCard> {
-  late TextEditingController _searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
@@ -46,28 +31,6 @@ class _LocationCardState extends State<LocationCard> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            CustomTextFormField(
-              controller: _searchController,
-              textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
-              labelText: locale.translate(LangKeys.governorate),
-              prefixIcon: Icons.search,
-              hintText: locale.isEnLocale ? "Search (e.g. Latakia or اللاذقية)" : "بحث (مثلاً اللاذقية أو Latakia)",
-              onChanged: (value) {
-                if (value.isEmpty) return;
-                final normalizedInput = value.trim().toLowerCase();
-
-                for (var entry in AppConstants.governorateSearchMap.entries) {
-                  final govKey = entry.key;
-                  final searchTerms = entry.value;
-
-                  if (searchTerms.any((term) => term.toLowerCase().contains(normalizedInput))) {
-                    widget.onGovernorateChanged(govKey);
-                    break;
-                  }
-                }
-              },
-            ),
-            const SizedBox(height: 12),
             _buildDropdownField(
               locale.translate(LangKeys.governorate),
               Icons.location_city,

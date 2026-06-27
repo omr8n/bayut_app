@@ -339,11 +339,16 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
               onPressed: () {
                 Navigator.pop(ctx);
                 Navigator.pop(context);
-                widget.adminCubit.deleteProperty(widget.report.propertyId);
+                widget.adminCubit.deleteProperty(
+                  widget.report.propertyId,
+                  widget.report.reportedUserId,
+                );
                 widget.adminCubit.updateReportStatus(
                   widget.report.id,
                   'resolved',
-                  adminNote: noteController.text.isEmpty ? 'تم حذف العقار المخالف' : noteController.text,
+                  adminNote: noteController.text.isEmpty
+                      ? 'تم حذف العقار المخالف'
+                      : noteController.text,
                 );
               },
               style: ElevatedButton.styleFrom(

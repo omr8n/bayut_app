@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
+import 'package:test_graduation/features/notifications/domain/repos/notification_repository.dart';
 
 import 'package:test_graduation/features/notifications/domain/use_cases/get_combined_notifications_use_case.dart';
 
@@ -9,10 +10,11 @@ part 'user_notification_state.dart';
 
 class UserNotificationCubit extends Cubit<UserNotificationState> {
   final GetCombinedNotificationsUseCase _getCombinedNotifications;
+  final NotificationRepository _repository;
   StreamSubscription? _notificationsSubscription;
 
-  UserNotificationCubit(this._getCombinedNotifications)
-    : super(UserNotificationInitial());
+  UserNotificationCubit(this._getCombinedNotifications, this._repository)
+      : super(UserNotificationInitial());
 
   void getNotifications(String userId) {
     if (userId.isEmpty) return;
@@ -26,7 +28,8 @@ class UserNotificationCubit extends Cubit<UserNotificationState> {
         result.fold(
           (failure) => emit(UserNotificationFailure(failure.message)),
           (notifications) {
-            emit(UserNotificationSuccess(notifications, 0));
+            final unreadCount = notifications.where((n) => !n.isRead).length;
+            emit(UserNotificationSuccess(notifications, unreadCount));
           },
         );
       },
@@ -36,10 +39,19 @@ class UserNotificationCubit extends Cubit<UserNotificationState> {
     );
   }
 
-  // Note: markAsSeen can also be moved to a UseCase if needed for strict adherence
   Future<void> markAsSeen(String userId, String notificationId) async {
-    // Current implementation relies on Stream update,
-    // but in strict Clean Arch, you'd call a MarkAsSeenUseCase
+    await _repository.markAsSeen(userId, notificationId);
+  }
+
+  Future<void> markAllAsRead(String userId) async {
+    if (state is UserNotificationSuccess) {
+      final notifications = (state as UserNotificationSuccess).notifications;
+      for (var notif in notifications) {
+        if (!notif.isRead) {
+          await _repository.markAsSeen(userId, notif.id);
+        }
+      }
+    }
   }
 
   @override

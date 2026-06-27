@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:url_launcher/url_launcher.dart';
-import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_cubit.dart';
 
 class MaintenanceScreen extends StatefulWidget {
   const MaintenanceScreen({super.key});
@@ -22,9 +21,10 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.9, end: 1.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0.9,
+      end: 1.1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -43,8 +43,8 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final whatsapp =
-        context.read<AdminSettingsCubit>().currentSettings?.socialLinks['whatsapp'] ?? '';
+    // final whatsapp =
+    //     context.read<AdminSettingsCubit>().currentSettings?.socialLinks['whatsapp'] ?? '';
 
     return Scaffold(
       body: Container(
@@ -64,42 +64,39 @@ class _MaintenanceScreenState extends State<MaintenanceScreen>
             const SizedBox(height: 32),
             const Text(
               'نحن نُحدِّث النظام',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             const Text(
               'نعمل على تحسين تجربتك، سنعود قريباً 🚀',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 48),
-            if (whatsapp.isNotEmpty)
-              ElevatedButton.icon(
-                onPressed: () => _launchWhatsApp(whatsapp),
-                icon: const Icon(Icons.chat, color: Colors.white),
-                label: const Text(
-                  'تواصل معنا',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
+            // if (whatsapp.isNotEmpty)
+            //   ElevatedButton.icon(
+            //     onPressed: () => _launchWhatsApp(whatsapp),
+            //     icon: const Icon(Icons.chat, color: Colors.white),
+            //     label: const Text(
+            //       'تواصل معنا',
+            //       style: TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 16,
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: Colors.green,
+            //       padding: const EdgeInsets.symmetric(
+            //         horizontal: 32,
+            //         vertical: 12,
+            //       ),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(30),
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       ),

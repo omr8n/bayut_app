@@ -23,21 +23,25 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
   @override
   Stream<Either<Failure, List<AppNotification>>> getNotificationsStream(String userId) {
-    return _notificationService.getNotificationsStream().map(
+    return _notificationService.getNotificationsStream(userId).map(
       (list) => right<Failure, List<AppNotification>>(list),
     );
   }
 
   @override
   Stream<Either<Failure, List<AppNotification>>> getGlobalNotificationsStream() {
-    return _notificationService.getNotificationsStream().map(
+    return _notificationService.getNotificationsStream(null).map(
       (list) => right<Failure, List<AppNotification>>(list),
     );
   }
 
   @override
   Future<Either<Failure, Unit>> markAsSeen(String userId, String notificationId) async {
-    // Current service doesn't have markAsSeen
-    return right(unit);
+    try {
+      await _notificationService.markAsRead(notificationId);
+      return right(unit);
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
   }
 }
