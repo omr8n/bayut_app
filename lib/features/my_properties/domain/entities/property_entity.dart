@@ -13,6 +13,9 @@ class PropertyEntity extends Equatable {
   final DateTime createdAt;
   final int views;
   final bool isFeatured;
+  final PremiumStatus premiumStatus; // 🔥 حقل حالة التميز الجديد
+  final DateTime? premiumExpiryDate; // 🔥 تاريخ انتهاء التميز
+  final bool premiumReminderSent; // 🔥 تم إرسال إشعار تذكير
   final bool isApproved; // 🔥 إضافة حقل الموافقة
   final PropertyStatus status;
   final List<Map<String, dynamic>> statusHistory; // 🔥 السجل التاريخي الجديد
@@ -81,6 +84,9 @@ class PropertyEntity extends Equatable {
     required this.createdAt,
     this.views = 0,
     this.isFeatured = false,
+    this.premiumStatus = PremiumStatus.none, // القيمة الافتراضية
+    this.premiumExpiryDate,
+    this.premiumReminderSent = false, // القيمة الافتراضية
     this.isApproved = true, // 🔥 القيمة الافتراضية
     this.status = PropertyStatus.active,
     this.statusHistory = const [], // القيمة الافتراضية قائمة فارغة
@@ -146,6 +152,9 @@ class PropertyEntity extends Equatable {
     DateTime? createdAt,
     int? views,
     bool? isFeatured,
+    PremiumStatus? premiumStatus,
+    DateTime? premiumExpiryDate,
+    bool? premiumReminderSent,
     bool? isApproved,
     PropertyStatus? status,
     List<Map<String, dynamic>>? statusHistory,
@@ -210,6 +219,9 @@ class PropertyEntity extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       views: views ?? this.views,
       isFeatured: isFeatured ?? this.isFeatured,
+      premiumStatus: premiumStatus ?? this.premiumStatus,
+      premiumExpiryDate: premiumExpiryDate ?? this.premiumExpiryDate,
+      premiumReminderSent: premiumReminderSent ?? this.premiumReminderSent,
       isApproved: isApproved ?? this.isApproved,
       status: status ?? this.status,
       statusHistory: statusHistory ?? this.statusHistory,
@@ -272,6 +284,9 @@ class PropertyEntity extends Equatable {
     listingType,
     sellerId,
     isFeatured,
+    premiumStatus,
+    premiumExpiryDate,
+    premiumReminderSent,
     isApproved,
     status,
     statusHistory,

@@ -14,17 +14,15 @@ class NotificationService {
       'sentAt': notification.sentAt.toIso8601String(),
       'recipientsCount': notification.recipientsCount,
       'targetUserId': notification.targetUserId,
+      'targetId': notification.targetId, // 🔥 حفظ معرف الهدف
       'isRead': notification.isRead,
+      'fcmToken': notification.fcmToken, // 🔥 هذا الحقل سيقوم بعمل Trigger للإضافة
     });
   }
 
-  // جلب سجل الإشعارات لمستخدم معين أو الجميع
-  Stream<List<AppNotification>> getNotificationsStream(String? userId) {
+  // جلب سجل الإشعارات لمستخدم معين أو الجميع (أو كل شيء للمسؤول)
+  Stream<List<AppNotification>> getNotificationsStream(String? userId, {bool isAdmin = false}) {
     Query query = _firestore.collection('notifications');
-
-    // إذا كان userId موجود، نجلب الإشعارات العامة + الإشعارات الموجهة له
-    // ملاحظة: Firestore لا يدعم OR بسهولة في النسخ القديمة، لكننا سنفترض أننا نريد كل الإشعارات
-    // التي تخصه أو العامة. للتبسيط حالياً سنجلب الكل ونفلتر أو نستخدم query مناسب.
 
     return query
         .orderBy('sentAt', descending: true)
@@ -41,9 +39,11 @@ class NotificationService {
           sentAt: DateTime.parse(data['sentAt'] ?? DateTime.now().toIso8601String()),
           recipientsCount: data['recipientsCount'] ?? 0,
           targetUserId: data['targetUserId'],
+          targetId: data['targetId'], // 🔥 جلب معرف الهدف
           isRead: data['isRead'] ?? false,
         );
       }).where((notif) {
+        if (isAdmin) return true; // المسؤول يرى كل شيء
         if (userId == null) return notif.sentToAll;
         return notif.sentToAll || notif.targetUserId == userId;
       }).toList();

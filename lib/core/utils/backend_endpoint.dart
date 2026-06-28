@@ -12,4 +12,5 @@ class BackendEndpoint {
   static const addReport = 'reports';
   static const adminActions = 'admin_actions';
   static const appConfig = 'app_config';
+  static const financialTransfers = 'financial_transfers'; // 🔥 سجل التحويلات المالية
 }

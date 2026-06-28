@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/features/admin/presentation/views/widgets/admin_dashboard_screen/header_mini_stat.dart';
 
 class SummaryHeader extends StatelessWidget {
@@ -6,6 +7,7 @@ class SummaryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -34,7 +36,7 @@ class SummaryHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'مركز التحكم الذكي 📊',
+                    local.smart_control_center,
                     style: TextStyle(
                       color: Colors.blueAccent.withOpacity(0.8),
                       fontSize: 12,
@@ -43,9 +45,9 @@ class SummaryHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
-                    'أهلاً بك، أيها القائد 👑',
-                    style: TextStyle(
+                  Text(
+                    local.welcome_leader,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -80,8 +82,8 @@ class SummaryHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 HeaderMiniStat(
-                  label: "الحالة",
-                  value: "متصل الآن",
+                  label: local.status,
+                  value: local.online_now,
                   icon: Icons.circle,
                   color: Colors.greenAccent,
                 ),
@@ -91,8 +93,8 @@ class SummaryHeader extends StatelessWidget {
                   color: Colors.white.withOpacity(0.1),
                 ),
                 HeaderMiniStat(
-                  label: "تحديث",
-                  value: "تلقائي",
+                  label: local.updateStatus,
+                  value: local.automatic,
                   icon: Icons.sync_rounded,
                   color: Colors.blueAccent,
                 ),

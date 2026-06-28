@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:intl/intl.dart';
+import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/services/connectivity_service.dart';
@@ -31,10 +33,13 @@ class PropertyDashboardView extends StatefulWidget {
 
 class _PropertyDashboardViewState extends State<PropertyDashboardView> {
   StreamSubscription? _connectivitySubscription;
+  Timer? _countdownTimer; // 🔥 إضافة مؤقت للعداد التنازلي
+  Duration _remainingTime = Duration.zero;
 
   @override
   void initState() {
     super.initState();
+    _startCountdown();
     _connectivitySubscription = getIt<ConnectivityService>().connectivityStream
         .listen((results) {
           final isConnected = !results.contains(ConnectivityResult.none);
@@ -43,6 +48,26 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
             _refreshData();
           }
         });
+  }
+
+  void _startCountdown() {
+    if (widget.property.premiumExpiryDate != null) {
+      _remainingTime = widget.property.premiumExpiryDate!.difference(
+        DateTime.now(),
+      );
+      _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (mounted) {
+          setState(() {
+            _remainingTime = widget.property.premiumExpiryDate!.difference(
+              DateTime.now(),
+            );
+          });
+          if (_remainingTime.isNegative) {
+            timer.cancel();
+          }
+        }
+      });
+    }
   }
 
   void _refreshData() {
@@ -55,6 +80,8 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
+    _countdownTimer
+        ?.cancel(); // 🔥 إغلاق المؤقت لمنع تسريب الذاكرة (Memory Leak)
     super.dispose();
   }
 
@@ -119,6 +146,13 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                           ),
                         ),
                         SizedBox(height: 20.h),
+                        if (currentProperty.premiumStatus ==
+                            PremiumStatus.active)
+                          _buildPremiumStatusBanner(currentProperty)
+                        else if (currentProperty.views >
+                            5) // مثال للمؤهل للتريند
+                          _buildTrendBanner(),
+                        SizedBox(height: 16.h),
                         DashboardStatsGrid(property: currentProperty),
                         SizedBox(height: 30.h),
                         Text(
@@ -133,7 +167,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                         ),
                         SizedBox(height: 16.h),
                         DashboardActivityTimeline(property: currentProperty),
-                        SizedBox(height: 120.h), 
+                        SizedBox(height: 120.h),
                       ],
                     ),
                   ),
@@ -169,6 +203,206 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildTrendBanner() {
+    final locale = AppLocalizations.of(context)!;
+    // 🔥 حساب تاريخ انتهاء التريند ديناميكياً (7 أيام من تاريخ اليوم)
+    final trendExpiry = DateTime.now().add(const Duration(days: 7));
+    final expiryString = DateFormat('yyyy/MM/dd').format(trendExpiry);
+
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Colors.orange.withOpacity(0.1)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.trending_up_rounded,
+                  color: Colors.orange.shade300,
+                  size: 20,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                locale.translate(LangKeys.congratulationsTrend),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange.shade700,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.r),
+            ),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      locale.translate(LangKeys.mostViewed),
+                      style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                    ),
+                    Text(
+                      locale.translate(LangKeys.trendExpiryUntil).replaceFirst('{date}', expiryString),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: Colors.orange.shade300,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Text(
+                  locale.translate(LangKeys.currentRank).replaceFirst('{rank}', '1'),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumStatusBanner(PropertyEntity property) {
+    if (_remainingTime.isNegative) return const SizedBox.shrink();
+    final locale = AppLocalizations.of(context)!;
+
+    final days = _remainingTime.inDays;
+    final hours = _remainingTime.inHours % 24;
+
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F7FA),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Colors.blue.withOpacity(0.1)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.verified_user_rounded,
+                  color: Color(0xFF1E4C9A),
+                  size: 20,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                locale.translate(LangKeys.premiumStatusActiveLabel),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1E4C9A),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD3E3F0),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Text(
+                  locale.translate(LangKeys.remainingTime)
+                      .replaceFirst('{days}', days.toString())
+                      .replaceFirst('{hours}', hours.toString()),
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1E4C9A),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    locale.translate(LangKeys.expiryDateLabel),
+                    style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                  ),
+                  Text(
+                    DateFormat(
+                      'd MMMM yyyy - hh:mm a',
+                      locale.isEnLocale ? 'en' : 'ar',
+                    ).format(property.premiumExpiryDate!),
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          LinearProgressIndicator(
+            value: (_remainingTime.inSeconds / (30 * 24 * 60 * 60)).clamp(0, 1),
+            backgroundColor: Colors.white,
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFD3E3F0)),
+            minHeight: 6.h,
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            children: [
+              Icon(Icons.info_outline_rounded, size: 12.sp, color: Colors.grey),
+              SizedBox(width: 4.w),
+              Text(
+                locale.translate(LangKeys.planProMonth),
+                style: const TextStyle(fontSize: 10, color: Colors.grey),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

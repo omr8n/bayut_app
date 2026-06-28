@@ -10,27 +10,15 @@ class GetCombinedNotificationsUseCase {
   GetCombinedNotificationsUseCase(this.repository);
 
   Stream<Either<Failure, List<AppNotification>>> call(String userId) {
-    // 🔥 تحديد الأنواع صراحة لـ Rx لضمان عدم حدوث Type Mismatch
-    return Rx.combineLatest2<
-        Either<Failure, List<AppNotification>>,
-        Either<Failure, List<AppNotification>>,
-        Either<Failure, List<AppNotification>>>(
-      repository.getNotificationsStream(userId),
-      repository.getGlobalNotificationsStream(),
-      (userRes, globalRes) {
-        return userRes.fold(
-          (f) => Left(f),
-          (userNotifs) => globalRes.fold(
-            (f) => Left(f),
-            (globalNotifs) {
-              final combined = [...userNotifs, ...globalNotifs];
-              // ترتيب تنازلي حسب التاريخ
-              combined.sort((a, b) => b.sentAt.compareTo(a.sentAt));
-              return Right(combined);
-            },
-          ),
-        );
-      },
-    ).asBroadcastStream();
+    // 🔥 تبسيط المنطق: مستودع الإشعارات يقوم بالفعل بجلب الإشعارات العامة والخاصة بالمستخدم معاً
+    // مما يمنع التكرار الناتج عن دمج التدفقين بشكل يدوي.
+    return repository.getNotificationsStream(userId).map((result) {
+      return result.map((notifications) {
+        // ترتيب تنازلي حسب التاريخ لضمان ظهور الأحدث أولاً
+        final sorted = List<AppNotification>.from(notifications);
+        sorted.sort((a, b) => b.sentAt.compareTo(a.sentAt));
+        return sorted;
+      });
+    }).asBroadcastStream();
   }
 }

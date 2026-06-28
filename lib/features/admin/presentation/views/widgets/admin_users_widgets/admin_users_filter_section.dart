@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
 
@@ -18,6 +19,7 @@ class AdminUsersFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
       decoration: const BoxDecoration(
@@ -35,7 +37,7 @@ class AdminUsersFilterSection extends StatelessWidget {
               onChanged: onSearchChanged,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'البحث باسم المستخدم أو البريد...',
+                hintText: local.search_user_hint,
                 hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 filled: true,
@@ -54,14 +56,14 @@ class AdminUsersFilterSection extends StatelessWidget {
             child: Row(
               children: [
                 _UserFilterChip(
-                  label: 'الكل',
+                  label: local.all,
                   isSelected: selectedFilter == null,
                   onTap: () => onFilterChanged(null),
                   count: allUsers.length,
                 ),
                 const SizedBox(width: 8),
                 _UserFilterChip(
-                  label: 'نشط',
+                  label: local.active,
                   isSelected: selectedFilter == 'active',
                   onTap: () => onFilterChanged('active'),
                   color: AppColors.success,
@@ -69,7 +71,7 @@ class AdminUsersFilterSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 _UserFilterChip(
-                  label: 'محظور',
+                  label: local.banned_user,
                   isSelected: selectedFilter == 'blocked',
                   onTap: () => onFilterChanged('blocked'),
                   color: AppColors.error,
@@ -77,7 +79,7 @@ class AdminUsersFilterSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 _UserFilterChip(
-                  label: 'إداريين',
+                  label: local.admins,
                   isSelected: selectedFilter == 'admin',
                   onTap: () => onFilterChanged('admin'),
                   color: AppColors.info,

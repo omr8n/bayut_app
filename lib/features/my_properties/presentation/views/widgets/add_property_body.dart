@@ -22,6 +22,12 @@ import 'package:test_graduation/features/my_properties/presentation/views/widget
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 
+import 'package:test_graduation/features/my_properties/presentation/manager/listing_limit_view_model.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/limit_reached_bottom_sheet.dart';
+import 'package:test_graduation/core/helper/functions/get_user.dart';
+import 'package:provider/provider.dart';
+import 'package:test_graduation/core/services/listing_limit_service.dart';
+
 class AddPropertyBody extends StatefulWidget {
   const AddPropertyBody({super.key, required this.isEdit, this.propertyEntity});
 
@@ -334,9 +340,19 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     });
   }
 
-  void _uploadOrEditProperty() {
+  void _uploadOrEditProperty() async {
     if (!_formKey.currentState!.validate()) return;
     final locale = AppLocalizations.of(context);
+    final user = await getUser();
+
+    // 🔥 التحقق من حدود النشر إذا لم يكن تعديلاً
+    if (!widget.isEdit) {
+      final limitResult = await ListingLimitService().checkListingLimit(user);
+      if (limitResult['canListFree'] == false) {
+        _showLimitReachedSheet(user);
+        return;
+      }
+    }
 
     List<String> allSelectedFacilities = [];
     void collect(Map<String, Map<String, dynamic>> m) {
@@ -657,5 +673,130 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
         ],
       ),
     ).then((_) => setState(() {}));
+  }
+
+  void _showLimitReachedSheet(dynamic user) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ChangeNotifierProvider(
+        create: (_) => ListingLimitViewModel()..checkLimits(user),
+        child: LimitReachedBottomSheet(
+          onPayAndPublish: () async {
+            // محاكاة عملية الدفع
+            final cubit = context.read<AddPropertyCubit>();
+            Navigator.pop(context); // إغلاق الشيت
+
+            // إظهار تنبيه جاري المعالجة
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(AppLocalizations.of(context)!.translate(LangKeys.waitingForPayment))),
+            );
+
+            final success = await cubit.paymentService.processExtraListingPayment(
+              user: user,
+              amount: 5000,
+              propertyTitle: _titleController.text.trim(),
+            );
+
+            if (success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.translate(LangKeys.paymentSuccess)),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              // تنفيذ عملية الرفع الفعلي
+              _executeUpload(user);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.translate(LangKeys.paymentFailed)),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  void _executeUpload(dynamic user) {
+    List<String> allSelectedFacilities = [];
+    void collect(Map<String, Map<String, dynamic>> m) {
+      allSelectedFacilities.addAll(
+        m.entries.where((e) => e.value['value'] == true).map((e) => e.key),
+      );
+    }
+
+    collect(_currentCommonFacilities);
+    collect(_currentVillaFacilities);
+    collect(_currentShopFacilities);
+    collect(_currentLandFacilities);
+    collect(_currentFarmFacilities);
+    collect(_currentPoolFacilities);
+    collect(_currentClinicFacilities);
+    collect(_currentWarehouseFacilities);
+    collect(_currentHallFacilities);
+    collect(_currentOfficeFacilities);
+    collect(_currentWorkshopFacilities);
+
+    final params = AddPropertyParams(
+      title: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      type: _selectedPropertyType,
+      listingType: _selectedListingType,
+      price: double.tryParse(_priceController.text.trim()) ?? 0.0,
+      currency: _selectedCurrency,
+      area: double.tryParse(_areaController.text.trim()) ?? 0.0,
+      governorate: _selectedGovernorate,
+      city: _locationController.text.trim(),
+      location: _locationController.text.trim(),
+      phone: _phoneController.text.trim(),
+      whatsapp: _whatsappController.text.trim(),
+      mediaFiles: _mediaFiles,
+      facilities: allSelectedFacilities.toSet().toList(),
+      buildingAge: int.tryParse(_buildingAgeController.text.trim()),
+      finishType: _selectedFinishType,
+      ownershipType: _selectedOwnershipType,
+      direction: _selectedDirection,
+      isLicensed: _isLicensed,
+      hasInstallment: _hasInstallment,
+      downPayment: double.tryParse(_downPaymentController.text.trim()),
+      monthlyInstallment: double.tryParse(
+        _monthlyInstallmentController.text.trim(),
+      ),
+      installmentDuration: int.tryParse(
+        _installmentDurationController.text.trim(),
+      ),
+      installmentNotes: _installmentNotesController.text.trim(),
+      totalRooms: int.tryParse(_roomsController.text.trim()),
+      bathrooms: int.tryParse(_bathroomsController.text.trim()),
+      floorNumber: int.tryParse(_floorNumberController.text.trim()),
+      totalFloors: int.tryParse(_totalFloorsController.text.trim()),
+      isFeatured: _isFeatured,
+      heatingType: _selectedHeatingType,
+      landType: _selectedLandType,
+      frontagesCount: int.tryParse(_frontagesController.text.trim()),
+      streetWidth: double.tryParse(_streetWidthController.text.trim()),
+      farmType: _selectedFarmType,
+      irrigationType: _selectedIrrigationType,
+      crops: _cropsController.text.trim(),
+      frontageWidth: double.tryParse(_frontageWidthController.text.trim()),
+      shopLocation: _selectedShopLocation,
+      commercialActivity: _commercialActivityController.text.trim(),
+      poolType: _selectedPoolType,
+      poolSize: _selectedPoolSize,
+      examinationRooms: int.tryParse(_examinationRoomsController.text.trim()),
+      medicalEquipment: _medicalEquipmentController.text.trim(),
+      warehouseHeight: double.tryParse(_warehouseHeightController.text.trim()),
+      warehouseFloorType: _selectedWarehouseFloorType,
+      hallCapacity: int.tryParse(_hallCapacityController.text.trim()),
+      workshopType: _workshopTypeController.text.trim(),
+      workshopHeight: double.tryParse(_workshopHeightController.text.trim()),
+    );
+
+    context.read<AddPropertyCubit>().submitProperty(params);
   }
 }

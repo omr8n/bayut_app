@@ -22,12 +22,18 @@ class AppConfigRepoImpl implements AppConfigRepo {
       } else {
         // Return default config if not exists
         final defaultConfig = AppConfigModel(
-          featuredPropertyPrice: 50.0,
-          contactEmail: 'support@aqar.com',
-          contactPhone: '+9710000000',
-          termsOfService: 'شروط الاستخدام...',
-          privacyPolicy: 'سياسة الخصوصية...',
+          appName: 'Bayut Syria',
+          appVersion: '1.0.0',
+          contactEmail: 'support@bayut-syria.com',
+          contactPhone: '+963000000',
+          featuredPropertyPrice: 500.0,
+          maxImagesPerProperty: 10,
+          allowedCities: ['Damascus', 'Aleppo', 'Homs', 'Latakia', 'Tartus', 'Hama'],
+          allowedPropertyTypes: ['Apartment', 'Villa', 'Office', 'Shop', 'Land'],
+          requireAdminApproval: false,
           maintenanceMode: false,
+          termsOfService: 'Terms of Service...',
+          privacyPolicy: 'Privacy Policy...',
         );
         await updateConfig(defaultConfig);
         return Right(defaultConfig);

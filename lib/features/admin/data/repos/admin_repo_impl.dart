@@ -59,7 +59,7 @@ class AdminRepoImpl implements AdminRepo {
           .toList();
       final reports = reportsDocs.map((d) => ReportModel.fromJson(d)).toList();
 
-      // --- حساب الإحصائيات الزمنية الدقيقة ---
+      // --- Precise Time-based Statistics Calculation ---
 
       final int newUsersToday = users
           .where(
@@ -80,7 +80,7 @@ class AdminRepoImpl implements AdminRepo {
           .where((p) => p.status == PropertyStatus.rented && p.createdAt.isAfter(todayStart))
           .length;
 
-      // --- إحصائيات التوزيع ---
+      // --- Distribution Statistics ---
       Map<String, int> propsByType = {};
       for (var p in properties) {
         propsByType[p.type.name] = (propsByType[p.type.name] ?? 0) + 1;
@@ -117,8 +117,12 @@ class AdminRepoImpl implements AdminRepo {
               .where((p) => p.listingType == ListingType.rent)
               .length,
           featuredProperties: properties.where((p) => p.isFeatured).length,
+          pendingPremiumRequests: properties
+              .where((p) => p.premiumStatus == PremiumStatus.pending)
+              .length,
+          pendingProperties: properties.where((p) => !p.isApproved).length, // Calculate unapproved properties
 
-          // نقاط الرسم البياني الديناميكية
+          // Dynamic Chart Data Points
           userGrowth: _generateStats(
             users.map((u) => u.createdAt?.toDate()).toList(),
             timeFilter,
@@ -200,7 +204,7 @@ class AdminRepoImpl implements AdminRepo {
         }
       }
     } else if (filter == 'month') {
-      // عرض كافة أيام الشهر الحالي
+      // Show all days of the current month
       final lastDay = DateTime(now.year, now.month + 1, 0).day;
       for (int i = 1; i <= lastDay; i++) {
         counts["$i"] = 0;
@@ -212,7 +216,7 @@ class AdminRepoImpl implements AdminRepo {
         }
       }
     } else if (filter == 'year') {
-      // أشهر السنة
+      // Months of the year
       for (int i = 1; i <= 12; i++) {
         counts["$i"] = 0;
       }
@@ -223,7 +227,7 @@ class AdminRepoImpl implements AdminRepo {
         }
       }
     } else {
-      // أسبوع (Default)
+      // Week (Default)
       for (int i = 6; i >= 0; i--) {
         final date = now.subtract(Duration(days: i));
         final label = "${date.day}/${date.month}";
@@ -240,7 +244,7 @@ class AdminRepoImpl implements AdminRepo {
   }
 
 
-  // --- باقي الدوال (User & Property Management) ---
+  // --- Other functions (User & Property Management) ---
   @override
   Future<Either<Failure, List<UserEntity>>> getAllUsers() async {
     try {
@@ -248,6 +252,20 @@ class AdminRepoImpl implements AdminRepo {
         path: BackendEndpoint.getUsersData,
       );
       return Right(docs.map((data) => UserModel.fromJson(data)).toList());
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> getUserById(String uId) async {
+    try {
+      final data = await _databaseService.getData(
+        path: BackendEndpoint.getUsersData,
+        documentId: uId,
+      );
+      if (data == null) return Left(ServerFailure("User not found"));
+      return Right(UserModel.fromJson(data));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

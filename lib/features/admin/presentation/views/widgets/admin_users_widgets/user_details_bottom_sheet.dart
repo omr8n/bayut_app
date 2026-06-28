@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
@@ -37,6 +40,7 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return BlocProvider.value(
       value: widget.adminCubit,
       child: DraggableScrollableSheet(
@@ -52,19 +56,25 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
             controller: controller,
             padding: const EdgeInsets.all(24),
             children: [
-              _buildHeader(),
+              _buildHeader(local),
               const SizedBox(height: 24),
-              _buildInfoCard(),
+              _buildInfoCard(local),
               const SizedBox(height: 24),
-              const Text('الملاحظات الإدارية (سرية)', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                local.admin_notes,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
-              _buildNotesField(),
+              _buildNotesField(local),
               const SizedBox(height: 24),
-              const Text('إجراءات الحساب', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                local.account_actions,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
-              _buildActionButtons(context),
+              _buildActionButtons(context, local),
               const SizedBox(height: 32),
-              _buildDangerZone(context),
+              _buildDangerZone(context, local),
             ],
           ),
         ),
@@ -72,23 +82,40 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppLocalizations local) {
     return Row(
       children: [
         CircleAvatar(
           radius: 35,
           backgroundColor: AppColors.primary.withOpacity(0.1),
-          backgroundImage: widget.user.profilePic != null ? NetworkImage(widget.user.profilePic!) : null,
-          child: widget.user.profilePic == null ? const Icon(Icons.person, size: 35, color: AppColors.primary) : null,
+          backgroundImage: widget.user.profilePic != null
+              ? NetworkImage(widget.user.profilePic!)
+              : null,
+          child: widget.user.profilePic == null
+              ? const Icon(Icons.person, size: 35, color: AppColors.primary)
+              : null,
         ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.user.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text(widget.user.role == 'admin' ? 'مدير نظام (Admin)' : 'مستخدم', 
-                   style: TextStyle(color: widget.user.role == 'admin' ? AppColors.info : Colors.grey, fontWeight: FontWeight.w600)),
+              Text(
+                widget.user.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                widget.user.role == 'admin' ? local.admin_role : local.user_role,
+                style: TextStyle(
+                  color: widget.user.role == 'admin'
+                      ? AppColors.info
+                      : Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ),
@@ -96,99 +123,186 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
     );
   }
 
-  Widget _buildInfoCard() {
+  Widget _buildInfoCard(AppLocalizations local) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.grey[200]!)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
       child: Column(
         children: [
           _buildInfoRow(Icons.email, widget.user.email),
           const Divider(),
-          _buildInfoRow(Icons.phone, widget.user.phoneNumber ?? 'لا يوجد رقم هاتف'),
+          _buildInfoRow(
+            Icons.phone,
+            widget.user.phoneNumber ?? local.no_phone_number,
+          ),
           const Divider(),
-          _buildInfoRow(Icons.calendar_today, "تاريخ الانضمام: ${_formatDate(widget.user.createdAt)}"),
+          _buildInfoRow(
+            Icons.calendar_today,
+            local.member_since.replaceFirst('{date}', _formatDate(widget.user.createdAt, local)),
+          ),
         ],
       ),
     );
   }
 
-  String _formatDate(dynamic timestamp) {
-    if (timestamp == null) return "غير معروف";
-    if (timestamp is DateTime) return "${timestamp.year}-${timestamp.month}-${timestamp.day}";
-    return "نشط منذ فترة";
+  String _formatDate(dynamic timestamp, AppLocalizations local) {
+    if (timestamp == null) return local.retry; // Or some fallback
+    if (timestamp is DateTime)
+      return "${timestamp.year}-${timestamp.month}-${timestamp.day}";
+    return local.loading;
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(children: [Icon(icon, size: 18, color: Colors.grey), const SizedBox(width: 12), Text(text, style: const TextStyle(fontSize: 14))]),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: Colors.grey),
+          const SizedBox(width: 12),
+          Text(text, style: const TextStyle(fontSize: 14)),
+        ],
+      ),
     );
   }
 
-  Widget _buildNotesField() {
+  Widget _buildNotesField(AppLocalizations local) {
     return Column(
       children: [
         TextField(
           controller: notesController,
           maxLines: 3,
           decoration: InputDecoration(
-            hintText: 'اكتب ملاحظاتك عن هذا المستخدم هنا... لن يراها أبداً.',
+            hintText: local.write_notes_hint,
             fillColor: Colors.white,
             filled: true,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey[200]!)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey[100]!)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey[100]!),
+            ),
           ),
         ),
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: local.isEnLocale ? Alignment.centerRight : Alignment.centerLeft,
           child: TextButton.icon(
-            onPressed: () => widget.adminCubit.updateAdminNotes(widget.user.uId, notesController.text),
+            onPressed: () => widget.adminCubit.updateAdminNotes(
+              widget.user.uId,
+              notesController.text,
+            ),
             icon: const Icon(Icons.save, size: 16),
-            label: const Text('حفظ الملاحظة'),
+            label: Text(local.save_note),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    return Row(
+  Widget _buildActionButtons(BuildContext context, AppLocalizations local) {
+    return Column(
       children: [
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () => _launchEmail(widget.user.email),
-            icon: const Icon(Icons.mail_outline, color: Colors.white),
-            label: const Text('مراسلة بالبريد', style: TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.info, padding: const EdgeInsets.symmetric(vertical: 12)),
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _launchEmail(widget.user.email),
+                icon: const Icon(Icons.mail_outline, color: Colors.white),
+                label: Text(
+                  local.send_email,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.info,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => widget.adminCubit.toggleUserBlock(
+                  widget.user.uId,
+                  !widget.user.isBanned,
+                ),
+                icon: Icon(
+                  widget.user.isBanned ? Icons.lock_open : Icons.block,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  widget.user.isBanned ? local.unblock_user : local.block_account,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: widget.user.isBanned
+                      ? AppColors.success
+                      : AppColors.error,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 12),
-        Expanded(
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
           child: ElevatedButton.icon(
-            onPressed: () => widget.adminCubit.toggleUserBlock(widget.user.uId, !widget.user.isBanned),
-            icon: Icon(widget.user.isBanned ? Icons.lock_open : Icons.block, color: Colors.white),
-            label: Text(widget.user.isBanned ? 'فك الحظر' : 'حظر الحساب', style: const TextStyle(color: Colors.white)),
-            style: ElevatedButton.styleFrom(backgroundColor: widget.user.isBanned ? AppColors.success : AppColors.error, padding: const EdgeInsets.symmetric(vertical: 12)),
+            onPressed: () {
+              Navigator.pop(context);
+              context.pushNamed(
+                AppRoutes.adminNotifications,
+                extra: {'uId': widget.user.uId, 'name': widget.user.name},
+              );
+            },
+            icon: const Icon(Icons.send_rounded, color: Colors.white),
+            label: Text(
+              local.send_notification_to_user,
+              style: const TextStyle(color: Colors.white),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDangerZone(BuildContext context) {
+  Widget _buildDangerZone(BuildContext context, AppLocalizations local) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.red[50], borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.red[100]!)),
+      decoration: BoxDecoration(
+        color: Colors.red[50],
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.red[100]!),
+      ),
       child: Column(
         children: [
-          const Text('منطقة خطرة', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          Text(
+            local.danger_zone,
+            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: () => _confirmDelete(context),
-              style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
-              child: const Text('حذف المستخدم نهائياً', style: TextStyle(color: Colors.red)),
+              onPressed: () => _confirmDelete(context, local),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.red),
+              ),
+              child: Text(
+                local.delete_user_forever,
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ),
         ],
@@ -196,14 +310,17 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
     );
   }
 
-  void _confirmDelete(BuildContext context) {
+  void _confirmDelete(BuildContext context, AppLocalizations local) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('حذف نهائي'),
-        content: const Text('هل أنت متأكد من حذف هذا الحساب تماماً من قاعدة البيانات؟ لا يمكن التراجع.'),
+        title: Text(local.permanent_delete),
+        content: Text(local.delete_user_confirm),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(local.cancel),
+          ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
@@ -211,7 +328,7 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
               widget.adminCubit.deleteUser(widget.user.uId);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('تأكيد الحذف'),
+            child: Text(local.confirm_delete),
           ),
         ],
       ),

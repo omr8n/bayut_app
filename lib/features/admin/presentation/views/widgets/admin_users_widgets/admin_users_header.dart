@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 
 class AdminUsersHeader extends StatefulWidget {
   const AdminUsersHeader({
@@ -20,6 +21,7 @@ class _AdminUsersHeaderState extends State<AdminUsersHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.all(16.w),
       color: Colors.white,
@@ -27,10 +29,9 @@ class _AdminUsersHeaderState extends State<AdminUsersHeader> {
         children: [
           // Search Field
           TextField(
-            textAlign: TextAlign.right,
             onChanged: widget.onSearchChanged,
             decoration: InputDecoration(
-              hintText: 'ابحث عن مستخدم بالاسم أو البريد...',
+              hintText: local.search_user_hint,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
@@ -50,13 +51,13 @@ class _AdminUsersHeaderState extends State<AdminUsersHeader> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip('الكل', null),
+                _buildFilterChip(local.all, null),
                 SizedBox(width: 8.w),
-                _buildFilterChip('نشط', 'active'),
+                _buildFilterChip(local.active, 'active'),
                 SizedBox(width: 8.w),
-                _buildFilterChip('مجمد', 'frozen'),
+                _buildFilterChip(local.frozen_label, 'frozen'),
                 SizedBox(width: 8.w),
-                _buildFilterChip('محظور', 'banned'),
+                _buildFilterChip(local.banned_user, 'banned'),
               ],
             ),
           ),

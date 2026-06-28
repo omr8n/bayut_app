@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:test_graduation/core/helper/functions/get_user.dart';
@@ -36,7 +37,24 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void updateUser(UserEntity newUser) {
     user = newUser;
+    saveFcmToken(); // 🔥 حفظ التوكن عند تحديث بيانات المستخدم
     emit(ProfileUserLoaded(newUser));
+  }
+
+  Future<void> saveFcmToken() async {
+    if (user == null) return;
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+      if (token != null && token != user!.fcmToken) {
+        await _databaseService.updateData(
+          path: BackendEndpoint.updateUserData,
+          documentId: user!.uId,
+          data: {'fcmToken': token},
+        );
+      }
+    } catch (e) {
+      // فشل حفظ التوكن ليس حرجاً
+    }
   }
 
   Future<void> getUserInfo() async {
@@ -59,7 +77,12 @@ class ProfileCubit extends Cubit<ProfileState> {
             (data) => data['uId'] == uId,
           );
           user = UserModel.fromJson(userData);
-          emit(ProfileUserLoaded(user!));
+          if (user?.status == 'banned') {
+            emit(ProfileUserBanned());
+          } else {
+            saveFcmToken(); // 🔥 حفظ التوكن عند نجاح جلب البيانات من الـ Stream
+            emit(ProfileUserLoaded(user!));
+          }
         } catch (e) {
           // User not found in stream
         }

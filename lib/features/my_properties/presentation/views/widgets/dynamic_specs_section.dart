@@ -189,9 +189,7 @@ class DynamicSpecsSection extends StatelessWidget {
             if (selectedPropertyType == PropertyType.buildings) ...[
               CustomTextFormField(
                 controller: totalFloorsController,
-                hintText: locale.translate(
-                  LangKeys.floor,
-                ), // Using 'floor' as label for simplicity or define a new key if needed
+                hintText: locale.translate(LangKeys.totalFloors),
                 keyboardType: TextInputType.number,
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
@@ -210,9 +208,7 @@ class DynamicSpecsSection extends StatelessWidget {
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: commercialActivityController,
-                hintText: locale.translate(
-                  LangKeys.technicalSpecifications,
-                ), // Assuming this is used for activity details or add a new key
+                hintText: locale.translate(LangKeys.commercialActivity),
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
               const SizedBox(height: 12),
@@ -230,7 +226,7 @@ class DynamicSpecsSection extends StatelessWidget {
               CustomTextFormField(
                 controller: streetWidthController,
                 focusNode: streetWidthNode,
-                hintText: locale.translate(LangKeys.streetFront),
+                hintText: locale.translate(LangKeys.streetWidth),
                 keyboardType: TextInputType.number,
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
@@ -247,7 +243,7 @@ class DynamicSpecsSection extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _buildDropdownField(
-                locale.translate(LangKeys.irrigation),
+                locale.translate(LangKeys.irrigationLabel),
                 selectedIrrigationType,
                 irrigationTypes,
                 onIrrigationTypeChanged,
@@ -256,7 +252,7 @@ class DynamicSpecsSection extends StatelessWidget {
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: cropsController,
-                hintText: locale.translate(LangKeys.plant),
+                hintText: locale.translate(LangKeys.crops),
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
               const SizedBox(height: 12),
@@ -285,15 +281,13 @@ class DynamicSpecsSection extends StatelessWidget {
               CustomTextFormField(
                 controller: warehouseHeightController,
                 focusNode: warehouseHeightNode,
-                hintText: locale.translate(
-                  LangKeys.floor,
-                ), // Using floor for height or add a new key
+                hintText: locale.translate(LangKeys.warehouseHeight),
                 keyboardType: TextInputType.number,
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
               const SizedBox(height: 12),
               _buildDropdownField(
-                locale.translate(LangKeys.floor),
+                locale.translate(LangKeys.warehouseFloorType),
                 selectedWarehouseFloorType,
                 warehouseFloorTypes,
                 onWarehouseFloorTypeChanged,
@@ -306,9 +300,7 @@ class DynamicSpecsSection extends StatelessWidget {
               CustomTextFormField(
                 controller: hallCapacityController,
                 focusNode: hallCapacityNode,
-                hintText: locale.translate(
-                  LangKeys.capacity,
-                ), // Need to add capacity key
+                hintText: locale.translate(LangKeys.hallCapacity),
                 keyboardType: TextInputType.number,
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
@@ -318,14 +310,14 @@ class DynamicSpecsSection extends StatelessWidget {
             if (selectedPropertyType == PropertyType.workshops) ...[
               CustomTextFormField(
                 controller: workshopTypeController,
-                hintText: locale.translate(LangKeys.propertyType),
+                hintText: locale.translate(LangKeys.workshopType),
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),
               const SizedBox(height: 12),
               CustomTextFormField(
                 controller: workshopHeightController,
                 focusNode: workshopHeightNode,
-                hintText: locale.translate(LangKeys.floor),
+                hintText: locale.translate(LangKeys.workshopHeight),
                 keyboardType: TextInputType.number,
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
               ),

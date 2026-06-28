@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
 import 'mini_sparkline.dart';
 
@@ -26,6 +27,7 @@ class ModernStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -96,7 +98,7 @@ class ModernStatCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (trend != "0" && trend != "مستقر")
+                       if (trend != "0" && trend != local.stable)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,

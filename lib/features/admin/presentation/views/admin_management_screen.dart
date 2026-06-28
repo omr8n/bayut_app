@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 
 class AdminManagementScreen extends StatelessWidget {
   const AdminManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text("إدارة المدراء"), centerTitle: true),
+      appBar: AppBar(title: Text(local.admins_management), centerTitle: true),
 
       body: Column(
         children: [
@@ -17,7 +19,7 @@ class AdminManagementScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               decoration: InputDecoration(
-                hintText: "ابحث عن مدير...",
+                hintText: local.search_admin_hint,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.grey.shade100,
@@ -39,7 +41,7 @@ class AdminManagementScreen extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => _showAddAdminDialog(context),
                 icon: const Icon(Icons.person_add),
-                label: const Text("إضافة مدير جديد"),
+                label: Text(local.add_new_admin),
               ),
             ),
           ),
@@ -52,19 +54,19 @@ class AdminManagementScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _adminTile(
-                  name: "عمر العلي",
+                  name: "Omar Al-Ali",
                   email: "omar@example.com",
                   role: "Super Admin",
                   context: context,
                 ),
                 _adminTile(
-                  name: "محمد يوسف",
+                  name: "Mohammad Yousef",
                   email: "mohammad@example.com",
                   role: "Editor",
                   context: context,
                 ),
                 _adminTile(
-                  name: "ليان خالد",
+                  name: "Layan Khaled",
                   email: "lian@example.com",
                   role: "Viewer",
                   context: context,
@@ -84,6 +86,7 @@ class AdminManagementScreen extends StatelessWidget {
     required String role,
     required BuildContext context,
   }) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
@@ -124,7 +127,7 @@ class AdminManagementScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "الصلاحية: $role",
+                  "${local.permission_label}: $role",
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
               ],
@@ -148,6 +151,7 @@ class AdminManagementScreen extends StatelessWidget {
 
   // ===================== ADD ADMIN DIALOG =====================
   void _showAddAdminDialog(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final emailController = TextEditingController();
     final roleController = TextEditingController();
@@ -156,23 +160,23 @@ class AdminManagementScreen extends StatelessWidget {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: const Text("إضافة مدير جديد"),
+          title: Text(local.add_new_admin),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _inputField("الاسم", nameController),
+              _inputField(local.name, nameController),
               const SizedBox(height: 10),
-              _inputField("البريد الإلكتروني", emailController),
+              _inputField(local.email, emailController),
               const SizedBox(height: 10),
-              _inputField("الصلاحية", roleController),
+              _inputField(local.permission_label, roleController),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("إلغاء"),
+              child: Text(local.cancel),
             ),
-            ElevatedButton(onPressed: () {}, child: const Text("إضافة")),
+            ElevatedButton(onPressed: () {}, child: Text(local.register)), // Or localized Add
           ],
         );
       },
@@ -186,6 +190,7 @@ class AdminManagementScreen extends StatelessWidget {
     String oldEmail,
     String oldRole,
   ) {
+    final local = AppLocalizations.of(context)!;
     final nameController = TextEditingController(text: oldName);
     final emailController = TextEditingController(text: oldEmail);
     final roleController = TextEditingController(text: oldRole);
@@ -194,23 +199,23 @@ class AdminManagementScreen extends StatelessWidget {
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: const Text("تعديل بيانات المدير"),
+          title: Text(local.edit_admin_details),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _inputField("الاسم", nameController),
+              _inputField(local.name, nameController),
               const SizedBox(height: 10),
-              _inputField("البريد الإلكتروني", emailController),
+              _inputField(local.email, emailController),
               const SizedBox(height: 10),
-              _inputField("الصلاحية", roleController),
+              _inputField(local.permission_label, roleController),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("إلغاء"),
+              child: Text(local.cancel),
             ),
-            ElevatedButton(onPressed: () {}, child: const Text("حفظ")),
+            ElevatedButton(onPressed: () {}, child: Text(local.save)),
           ],
         );
       },
@@ -219,17 +224,18 @@ class AdminManagementScreen extends StatelessWidget {
 
   // ===================== DELETE CONFIRM =====================
   void _deleteAdmin(BuildContext context, String name) {
+    final local = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("حذف مدير"),
-        content: Text("هل أنت متأكد من حذف $name؟"),
+        title: Text(local.delete_admin),
+        content: Text(local.delete_admin_confirm_label.replaceFirst('{name}', name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("إلغاء"),
+            child: Text(local.cancel),
           ),
-          ElevatedButton(onPressed: () {}, child: const Text("حذف")),
+          ElevatedButton(onPressed: () {}, child: Text(local.delete)),
         ],
       ),
     );

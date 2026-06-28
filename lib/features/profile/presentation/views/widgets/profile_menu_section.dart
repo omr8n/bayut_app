@@ -40,7 +40,7 @@ class ProfileMenuSection extends StatelessWidget {
           if (isAdmin) ...[
             ProfileMenuItem(
               icon: Icons.admin_panel_settings_outlined,
-              title: "لوحة التحكم (المدير)",
+              title: locale!.translate(LangKeys.adminDashboardLabel),
               iconColor: Colors.deepPurple,
               onTap: () => GoRouter.of(context).push(AppRoutes.adminDashboard),
             ),

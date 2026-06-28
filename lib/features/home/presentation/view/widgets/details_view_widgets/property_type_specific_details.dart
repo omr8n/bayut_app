@@ -26,6 +26,9 @@ class PropertyTypeSpecificDetails extends StatelessWidget {
     switch (property.type) {
       case PropertyType.housesAndApartments:
       case PropertyType.villas:
+      case PropertyType.offices:
+      case PropertyType.clinics:
+      case PropertyType.shops:
         if (property.floorNumber != null) {
           specs.add({localizations.translate(LangKeys.floor): '${property.floorNumber}'});
         }
@@ -33,6 +36,68 @@ class PropertyTypeSpecificDetails extends StatelessWidget {
           specs.add({localizations.translate(LangKeys.heatingSystem): localizations.translate(property.heatingType!)});
         }
         break;
+
+      case PropertyType.buildings:
+        if (property.totalFloors != null) {
+          specs.add({localizations.translate(LangKeys.totalFloors): '${property.totalFloors}'});
+        }
+        break;
+
+      case PropertyType.shops:
+      case PropertyType.mallShops:
+        if (property.shopLocation != null) {
+          specs.add({localizations.translate(LangKeys.location): localizations.translate(property.shopLocation!)});
+        }
+        if (property.commercialActivity != null && property.commercialActivity!.isNotEmpty) {
+          specs.add({localizations.translate(LangKeys.commercialActivity): property.commercialActivity!});
+        }
+        break;
+
+      case PropertyType.lands:
+        if (property.landType != null) {
+          specs.add({localizations.translate(LangKeys.propertyType): localizations.translate(property.landType!)});
+        }
+        if (property.streetWidth != null) {
+          specs.add({localizations.translate(LangKeys.streetWidth): '${property.streetWidth} ${localizations.translate(LangKeys.areaUnit)}'});
+        }
+        break;
+
+      case PropertyType.farms:
+        if (property.farmType != null) {
+          specs.add({localizations.translate(LangKeys.propertyType): localizations.translate(property.farmType!)});
+        }
+        if (property.irrigationType != null) {
+          specs.add({localizations.translate(LangKeys.irrigationLabel): localizations.translate(property.irrigationType!)});
+        }
+        if (property.crops != null && property.crops!.isNotEmpty) {
+          specs.add({localizations.translate(LangKeys.crops): property.crops!});
+        }
+        break;
+
+      case PropertyType.warehouses:
+        if (property.warehouseHeight != null) {
+          specs.add({localizations.translate(LangKeys.warehouseHeight): '${property.warehouseHeight}'});
+        }
+        if (property.warehouseFloorType != null) {
+          specs.add({localizations.translate(LangKeys.warehouseFloorType): localizations.translate(property.warehouseFloorType!)});
+        }
+        break;
+
+      case PropertyType.halls:
+        if (property.hallCapacity != null) {
+          specs.add({localizations.translate(LangKeys.hallCapacity): '${property.hallCapacity}'});
+        }
+        break;
+
+      case PropertyType.workshops:
+        if (property.workshopType != null && property.workshopType!.isNotEmpty) {
+          specs.add({localizations.translate(LangKeys.workshopType): property.workshopType!});
+        }
+        if (property.workshopHeight != null) {
+          specs.add({localizations.translate(LangKeys.workshopHeight): '${property.workshopHeight}'});
+        }
+        break;
+
       default:
         break;
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
@@ -11,6 +12,7 @@ class AdminPropertiesStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     final forSale = properties.where((p) => p.listingType == ListingType.sale).length;
     final forRent = properties.where((p) => p.listingType == ListingType.rent).length;
     final featured = properties.where((p) => p.isFeatured).length;
@@ -26,10 +28,10 @@ class AdminPropertiesStats extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('الإجمالي', '${properties.length}', const Color(0xFF1E4C9A)),
-          _buildStatItem('للبيع', '$forSale', const Color(0xFF2E7D32)),
-          _buildStatItem('للإيجار', '$forRent', const Color(0xFF0288D1)),
-          _buildStatItem('مميز', '$featured', const Color(0xFFFBC02D)),
+          _buildStatItem(local.total_label, '${properties.length}', const Color(0xFF1E4C9A)),
+          _buildStatItem(local.for_sale, '$forSale', const Color(0xFF2E7D32)),
+          _buildStatItem(local.for_rent, '$forRent', const Color(0xFF0288D1)),
+          _buildStatItem(local.featured_label, '$featured', const Color(0xFFFBC02D)),
         ],
       ),
     );

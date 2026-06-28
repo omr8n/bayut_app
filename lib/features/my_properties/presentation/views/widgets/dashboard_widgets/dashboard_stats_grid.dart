@@ -24,45 +24,44 @@ class DashboardStatsGrid extends StatelessWidget {
       mainAxisSpacing: 12,
       children: [
         _StatCard(
-          title: AppLocalizations.of(context)!.translate(LangKeys.totalViews),
+          title: 'إجمالي المشاهدات',
           value: '${property.views}',
           icon: Icons.visibility_rounded,
-          color: AppColors.primary,
+          color: const Color(0xFF1E4C9A),
         ),
         _StatCard(
-          title: AppLocalizations.of(
-            context,
-          )!.translate(LangKeys.currentStatus),
+          title: 'الحالة الحالية',
           value: property.status.localizedName(context),
           icon: Icons.info_outline_rounded,
           color: _getStatusColor(property.status),
         ),
         _StatCard(
-          title: AppLocalizations.of(context)!.translate(LangKeys.propertyType),
+          title: 'نوع العقار',
           value: property.type.localizedName(context),
           icon: Icons.home_work_rounded,
           color: Colors.blue,
         ),
         _StatCard(
-          title: AppLocalizations.of(
-            context,
-          )!.translate(LangKeys.featuredStatus),
-          value: property.isFeatured
-              ? AppLocalizations.of(
-                  context,
-                )!.translate(LangKeys.featuredProperty)
-              : AppLocalizations.of(
-                  context,
-                )!.translate(LangKeys.normalProperty),
-          icon: property.isFeatured
-              ? Icons.star_rounded
-              : Icons.star_border_rounded,
-          color: Colors.amber.shade700,
-          onTap: () =>
-              context.read<MyPropertiesCubit>().toggleFeatured(property),
+          title: property.premiumStatus == PremiumStatus.active ? 'عقار مميز' : 'حالة التميز',
+          value: _getPremiumLabel(context),
+          icon: property.premiumStatus == PremiumStatus.active ? Icons.stars_rounded : Icons.hourglass_empty_rounded,
+          color: property.premiumStatus == PremiumStatus.active ? Colors.orange : Colors.blue,
         ),
       ],
     );
+  }
+
+  String _getPremiumLabel(BuildContext context) {
+    switch (property.premiumStatus) {
+      case PremiumStatus.pending:
+        return 'طلب التميز قيد الانتظار';
+      case PremiumStatus.active:
+        return 'نشط';
+      case PremiumStatus.rejected:
+        return 'طلب التميز مرفوض';
+      default:
+        return 'غير مفعل';
+    }
   }
 
   Color _getStatusColor(PropertyStatus status) {

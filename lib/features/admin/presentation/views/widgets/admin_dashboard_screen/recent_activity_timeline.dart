@@ -1,141 +1,152 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
 
 class RecentActivityTimeline extends StatelessWidget {
   final AdminStats stats;
-
   const RecentActivityTimeline({super.key, required this.stats});
 
   @override
   Widget build(BuildContext context) {
-    final activities = [
-      {
-        'title': 'مستخدمين جدد',
-        'value': stats.daily.newUsers.toString(),
-        'color': Colors.orange,
-        'icon': Icons.person_add_rounded,
-        'subtitle': 'انضموا للمنصة اليوم'
-      },
-      {
-        'title': 'عقارات مضافة',
-        'value': stats.daily.newProperties.toString(),
-        'color': Colors.blue,
-        'icon': Icons.add_home_work_rounded,
-        'subtitle': 'تم إدراجها حديثاً'
-      },
-      {
-        'title': 'عمليات بيع',
-        'value': stats.daily.soldProperties.toString(),
-        'color': Colors.green,
-        'icon': Icons.verified_rounded,
-        'subtitle': 'عقارات تم بيعها بنجاح'
-      },
-    ];
-
+    final local = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(25.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Column(
-        children: List.generate(activities.length, (index) {
-          final item = activities[index];
-          final bool isLast = index == activities.length - 1;
+        children: [
+          _buildActivityItem(
+            icon: Icons.person_add_alt_1_rounded,
+            color: const Color(0xFFFFB74D), // Orange
+            title: local.new_users,
+            desc: local.joined_platform_today,
+            count: stats.newUsersToday,
+            isFirst: true,
+          ),
+          _buildActivityItem(
+            icon: Icons.pending_actions_rounded,
+            color: Colors.deepPurpleAccent, // Distinct color for pending tasks
+            title: local.pending_approval,
+            desc: local.properties_need_review,
+            count: stats.pendingProperties,
+          ),
+          _buildActivityItem(
+            icon: Icons.add_home_work_rounded,
+            color: const Color(0xFF64B5F6), // Blue
+            title: local.added_properties,
+            desc: local.recently_listed_today,
+            count: stats.newPropertiesToday,
+          ),
+          _buildActivityItem(
+            icon: Icons.check_circle_rounded,
+            color: const Color(0xFF81C784), // Green
+            title: local.sales_transactions,
+            desc: local.sold_properties,
+            count: stats.soldPropertiesToday,
+          ),
+          _buildActivityItem(
+            icon: Icons.vpn_key_rounded,
+            color: Colors.cyan, // Distinct color for rent
+            title: local.rent_transactions,
+            desc: local.rented_status_desc,
+            count: stats.rentedPropertiesToday,
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
 
-          return IntrinsicHeight(
-            child: Row(
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: (item['color'] as Color).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        item['icon'] as IconData,
-                        color: item['color'] as Color,
-                        size: 20,
-                      ),
-                    ),
-                    if (!isLast)
-                      Expanded(
-                        child: Container(
-                          width: 2,
-                          margin: const EdgeInsets.symmetric(vertical: 4),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                (item['color'] as Color).withOpacity(0.5),
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            item['title'] as String,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Color(0xFF1E293B),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: (item['color'] as Color).withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: (item['color'] as Color).withOpacity(0.1)),
-                            ),
-                            child: Text(
-                              item['value'] as String,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: item['color'] as Color,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        item['subtitle'] as String,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.blueGrey[300],
-                        ),
-                      ),
-                      if (!isLast) const SizedBox(height: 24),
-                    ],
+  Widget _buildActivityItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String desc,
+    required int count,
+    bool isFirst = false,
+    bool isLast = false,
+  }) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 1. Circle with Number (on the left)
+          Center(
+            child: Container(
+              width: 32.w,
+              height: 32.w,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.05),
+                shape: BoxShape.circle,
+                border: Border.all(color: color.withOpacity(0.2)),
+              ),
+              child: Center(
+                child: Text(
+                  '$count',
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.sp,
                   ),
                 ),
-              ],
+              ),
             ),
-          );
-        }),
+          ),
+          const Spacer(),
+          // 2. Texts (in the middle)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                desc,
+                style: TextStyle(color: Colors.grey.shade400, fontSize: 11.sp),
+              ),
+            ],
+          ),
+          SizedBox(width: 16.w),
+          // 3. Line and Icon (on the right)
+          Column(
+            children: [
+              if (!isFirst)
+                Container(
+                  width: 1.5,
+                  height: 15.h,
+                  color: Colors.grey.shade100,
+                ),
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 18.sp),
+              ),
+              if (!isLast)
+                Expanded(
+                  child: Container(width: 1.5, color: Colors.grey.shade100),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

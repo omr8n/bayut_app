@@ -104,6 +104,22 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
     }
   }
 
+  // 🔥 طلب التمييز من الإدارة
+  Future<void> requestPromotion(PropertyEntity property) async {
+    final updates = {
+      'premiumStatus': PremiumStatus.pending.name,
+    };
+
+    final result = await productsRepo.updatePropertyStatus(
+      property.id,
+      updates,
+    );
+
+    if (result.isLeft()) {
+      result.fold((f) => emit(MyPropertiesFailure(f.message)), (_) {});
+    }
+  }
+
   Future<void> deleteProperty(String productId, String sellerId) async {
     final result = await productsRepo.deleteProperty(productId);
     result.fold((failure) {

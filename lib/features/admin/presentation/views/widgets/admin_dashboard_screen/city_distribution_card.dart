@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class CityDistributionCard extends StatelessWidget {
@@ -8,6 +9,7 @@ class CityDistributionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -17,9 +19,9 @@ class CityDistributionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "النشاط حسب المدن",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          Text(
+            local.activity_by_city,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 16),
           ...cities.entries.map((e) {
@@ -34,7 +36,7 @@ class CityDistributionCard extends StatelessWidget {
                     children: [
                       Text(e.key),
                       Text(
-                        "${e.value} عقار",
+                        "${e.value} ${local.property_unit}",
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],

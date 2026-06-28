@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+
 class AdminPowerSection extends StatelessWidget {
   const AdminPowerSection({
     super.key,
@@ -12,6 +14,7 @@ class AdminPowerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -25,9 +28,9 @@ class AdminPowerSection extends StatelessWidget {
             children: [
               const Icon(Icons.gavel_rounded, color: Colors.red),
               const SizedBox(width: 8),
-              const Text(
-                'إجراءات الأدمن الصارمة',
-                style: TextStyle(
+              Text(
+                local.admin_strict_actions,
+                style: const TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
@@ -39,7 +42,7 @@ class AdminPowerSection extends StatelessWidget {
             children: [
               Expanded(
                 child: _PowerButton(
-                  label: 'حذف العقار',
+                  label: local.delete_property,
                   icon: Icons.delete_forever,
                   color: Colors.red,
                   onPressed: onDeleteProperty,
@@ -48,7 +51,7 @@ class AdminPowerSection extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _PowerButton(
-                  label: 'حظر المستخدم',
+                  label: local.block_user,
                   icon: Icons.block,
                   color: Colors.black,
                   onPressed: onBlockUser,

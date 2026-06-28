@@ -16,14 +16,30 @@ class NotificationsView extends StatelessWidget {
     final userId = context.read<ProfileCubit>().user?.uId ?? '';
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFFBFBFC), // خلفية رمادية خفيفة جداً كما في الصورة
       appBar: AppBar(
-        title: const Text('الإشعارات'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'الإشعارات',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           TextButton(
             onPressed: () => context.read<UserNotificationCubit>().markAllAsRead(userId),
-            child: const Text('تحديد الكل كمقروء'),
+            child: Text(
+              'تحديد الكل كمقروء',
+              style: TextStyle(fontSize: 12.sp, color: AppColors.primary),
+            ),
           ),
         ],
       ),
@@ -39,49 +55,32 @@ class NotificationsView extends StatelessWidget {
 
           if (state is UserNotificationSuccess) {
             if (state.notifications.isEmpty) {
-              return const Center(child: Text('لا يوجد إشعارات حالياً'));
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.notifications_none_rounded, size: 64.sp, color: Colors.grey.shade300),
+                    SizedBox(height: 16.h),
+                    Text('لا يوجد إشعارات حالياً', style: TextStyle(color: Colors.grey.shade500)),
+                  ],
+                ),
+              );
             }
 
-            // تقسيم الإشعارات
-            final adminNotifications = state.notifications
-                .where((n) => n.type == NotificationType.adminAction)
-                .toList();
-            final otherNotifications = state.notifications
-                .where((n) => n.type != NotificationType.adminAction)
-                .toList();
-
-            return ListView(
-              padding: EdgeInsets.all(16.w),
-              children: [
-                if (adminNotifications.isNotEmpty) ...[
-                  _buildSectionTitle('إجراءات الإدارة'),
-                  ...adminNotifications.map((n) => _NotificationItem(notification: n, userId: userId)),
-                  SizedBox(height: 20.h),
-                ],
-                if (otherNotifications.isNotEmpty) ...[
-                  _buildSectionTitle('إشعارات عامة'),
-                  ...otherNotifications.map((n) => _NotificationItem(notification: n, userId: userId)),
-                ],
-              ],
+            return ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              itemCount: state.notifications.length,
+              itemBuilder: (context, index) {
+                return _NotificationItem(
+                  notification: state.notifications[index],
+                  userId: userId,
+                );
+              },
             );
           }
 
           return const SizedBox.shrink();
         },
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h, right: 4.w),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
-        ),
       ),
     );
   }
@@ -95,98 +94,143 @@ class _NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // الألوان المستوحاة من الصورة
+    final isUnread = !notification.isRead;
+    final backgroundColor = isUnread ? const Color(0xFFEDF2F7) : Colors.white;
+    final dotColor = Colors.redAccent;
+
     return GestureDetector(
       onTap: () {
-        if (!notification.isRead) {
+        if (isUnread) {
           context.read<UserNotificationCubit>().markAsSeen(userId, notification.id);
         }
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(bottom: 16.h),
+        padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: notification.isRead ? Colors.white : AppColors.primary.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12.r),
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: notification.isRead ? Colors.grey.shade200 : AppColors.primary.withOpacity(0.2),
+            color: isUnread ? const Color(0xFFCBD5E0) : Colors.grey.shade100,
+            width: 0.5,
           ),
+          boxShadow: [
+            if (!isUnread)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+          ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildIcon(),
-            SizedBox(width: 12.w),
+            // المحتوى النصي والتاريخ
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    notification.title,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    notification.body,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: AppColors.textSecondary,
-                    ),
+                  Row(
+                    children: [
+                      if (isUnread) ...[
+                        Container(
+                          width: 8.w,
+                          height: 8.w,
+                          decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                        ),
+                        SizedBox(width: 8.w),
+                      ],
+                      Text(
+                        DateFormat('dd/MM').format(notification.sentAt),
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        notification.title,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF2D3748),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    DateFormat('yyyy/MM/dd HH:mm').format(notification.sentAt),
+                    notification.body,
+                    textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 11.sp,
-                      color: AppColors.textLight,
+                      fontSize: 13.sp,
+                      color: const Color(0xFF718096),
+                      height: 1.5,
                     ),
                   ),
                 ],
               ),
             ),
-            if (!notification.isRead)
-              Container(
-                width: 8.w,
-                height: 8.w,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-              ),
+            SizedBox(width: 16.w),
+            // الأيقونة كما في الصورة (مربع بخلفية فاتحة)
+            _buildThemedIcon(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildIcon() {
-    IconData icon;
-    Color color;
+  Widget _buildThemedIcon() {
+    IconData iconData;
+    Color iconColor;
+    Color bgColor;
 
     switch (notification.type) {
       case NotificationType.adminAction:
-        icon = Icons.admin_panel_settings_rounded;
-        color = AppColors.primary;
+        if (notification.title.contains('حظر')) {
+          iconData = Icons.lock_person_rounded;
+          iconColor = Colors.redAccent;
+          bgColor = Colors.red.shade50;
+        } else if (notification.title.contains('فك')) {
+          iconData = Icons.lock_open_rounded;
+          iconColor = Colors.green;
+          bgColor = Colors.green.shade50;
+        } else if (notification.title.contains('عقار')) {
+          iconData = Icons.home_work_rounded;
+          iconColor = AppColors.primary;
+          bgColor = AppColors.primary.withOpacity(0.1);
+        } else {
+          iconData = Icons.admin_panel_settings_rounded;
+          iconColor = Colors.blueGrey;
+          bgColor = Colors.blueGrey.shade50;
+        }
+        break;
+      case NotificationType.promotion:
+        iconData = Icons.auto_awesome_rounded; // أيقونة النجوم كما في الصورة
+        iconColor = const Color(0xFFF6AD55); // لون ذهبي
+        bgColor = const Color(0xFFFFFAF0);
         break;
       case NotificationType.warning:
-        icon = Icons.warning_amber_rounded;
-        color = Colors.orange;
+        iconData = Icons.report_problem_rounded;
+        iconColor = Colors.orange;
+        bgColor = Colors.orange.shade50;
         break;
       default:
-        icon = Icons.notifications_none_rounded;
-        color = Colors.grey;
+        iconData = Icons.notifications_active_rounded;
+        iconColor = Colors.grey.shade400;
+        bgColor = Colors.grey.shade50;
     }
 
     return Container(
-      padding: EdgeInsets.all(8.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        shape: BoxShape.circle,
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Icon(icon, color: color, size: 20.sp),
+      child: Icon(iconData, color: iconColor, size: 24.sp),
     );
   }
 }

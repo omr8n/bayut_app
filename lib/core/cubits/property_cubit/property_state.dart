@@ -15,14 +15,16 @@ class PropertyLoading extends PropertyState {}
 class PropertySuccess extends PropertyState {
   final List<PropertyEntity> properties;
   final List<PropertyEntity> featuredProperties;
+  final List<PropertyEntity> trendingProperties; // 🔥 قائمة التريند الجديدة
   final List<PropertyEntity> recentProperties;
   final List<PropertyEntity> saleProperties;
   final List<PropertyEntity> rentProperties;
-  final bool isOffline; // ✅ إضافة متغير لمعرفة إذا كانت البيانات "أوفلاين"
+  final bool isOffline;
 
   const PropertySuccess({
     required this.properties,
     required this.featuredProperties,
+    required this.trendingProperties,
     required this.recentProperties,
     required this.saleProperties,
     required this.rentProperties,
@@ -33,6 +35,7 @@ class PropertySuccess extends PropertyState {
   List<Object> get props => [
         properties,
         featuredProperties,
+        trendingProperties,
         recentProperties,
         saleProperties,
         rentProperties,

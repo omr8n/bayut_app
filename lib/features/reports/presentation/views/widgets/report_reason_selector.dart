@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/models/report_model.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/reports/domain/entities/report_entity.dart';
@@ -15,12 +17,13 @@ class ReportReasonSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'لماذا تبلغ عن هذا الإعلان؟*',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          locale.translate(LangKeys.whyReportingQuestion),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -53,7 +56,7 @@ class ReportReasonSelector extends StatelessWidget {
                       : [],
                 ),
                 child: Text(
-                  reason.arabicName,
+                  reason.localizedName(context),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: isSelected

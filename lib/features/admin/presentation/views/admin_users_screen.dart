@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_state.dart';
@@ -47,9 +48,12 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.primary,
-        title: const Text(
-          'إدارة المستخدمين',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.manage_users,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -83,7 +87,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
               ),
               Expanded(
                 child: filteredUsers.isEmpty
-                    ? _buildEmptyState()
+                    ? _buildEmptyState(context)
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -95,7 +99,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                           return UserItemCard(
                             user: user,
                             adminCubit: context
-                                .read<AdminCubit>(), // تمرير الكيوبيت هنا
+                                .read<AdminCubit>(), // Pass cubit here
                           );
                         },
                       ),
@@ -127,7 +131,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
     }
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +143,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'لا يوجد مستخدمين مطابقين للبحث',
+            AppLocalizations.of(context)!.no_matching_users,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[500],

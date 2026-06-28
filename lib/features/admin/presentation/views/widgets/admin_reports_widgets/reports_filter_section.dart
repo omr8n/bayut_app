@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/reports/domain/entities/report_entity.dart';
 
@@ -16,6 +17,7 @@ class ReportsFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: const BoxDecoration(
@@ -31,14 +33,14 @@ class ReportsFilterSection extends StatelessWidget {
         child: Row(
           children: [
             _FilterChip(
-              label: 'الكل',
+              label: local.all,
               isSelected: selectedStatus == null,
               onTap: () => onStatusChanged(null),
               count: allReports.length,
             ),
             const SizedBox(width: 8),
             _FilterChip(
-              label: 'جديد',
+              label: local.status_pending,
               isSelected: selectedStatus == ReportStatus.pending,
               onTap: () => onStatusChanged(ReportStatus.pending),
               color: AppColors.warning,
@@ -48,7 +50,7 @@ class ReportsFilterSection extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             _FilterChip(
-              label: 'قيد المراجعة',
+              label: local.status_under_review,
               isSelected: selectedStatus == ReportStatus.underReview,
               onTap: () => onStatusChanged(ReportStatus.underReview),
               color: AppColors.info,
@@ -58,7 +60,7 @@ class ReportsFilterSection extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             _FilterChip(
-              label: 'تم الحل',
+              label: local.status_resolved,
               isSelected: selectedStatus == ReportStatus.resolved,
               onTap: () => onStatusChanged(ReportStatus.resolved),
               color: AppColors.success,
@@ -68,7 +70,7 @@ class ReportsFilterSection extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             _FilterChip(
-              label: 'مرفوض',
+              label: local.status_rejected,
               isSelected: selectedStatus == ReportStatus.rejected,
               onTap: () => onStatusChanged(ReportStatus.rejected),
               color: AppColors.error,

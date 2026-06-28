@@ -25,6 +25,8 @@ enum ListingType { sale, rent }
 
 enum PropertyStatus { active, sold, rented, underInstallment }
 
+enum PremiumStatus { none, pending, active, rejected } // 🔥 حالات التميز الجديدة
+
 extension PropertyStatusExtension on PropertyStatus {
   String localizedName(BuildContext context) {
     final localizations = AppLocalizations.of(context);
@@ -36,7 +38,7 @@ extension PropertyStatusExtension on PropertyStatus {
       case PropertyStatus.sold:
         return localizations.translate(LangKeys.sold);
       case PropertyStatus.rented:
-        return "مؤجر"; // سأضيفها كنص مباشر حالياً لضمان العمل فوراً
+        return localizations.translate(LangKeys.rented);
       case PropertyStatus.underInstallment:
         return localizations.translate(LangKeys.underInstallment);
     }

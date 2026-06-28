@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
@@ -33,10 +34,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FD),
       appBar: AppBar(
-        title: const Text('مركز إدارة المنصة'),
+        title: Text(local.admin_platform_center),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -62,7 +64,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 children: [
                   const SummaryHeader(),
                   const SizedBox(height: 24),
-                  _buildSectionTitle("المؤشرات الحيوية"),
+                  _buildSectionTitle(local.vital_indicators),
                   const SizedBox(height: 16),
                   ModernStatGrid(stats: stats),
                   const SizedBox(height: 24),
@@ -72,30 +74,32 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   const SizedBox(height: 24),
                   MainComparisonChart(stats: stats),
                   const SizedBox(height: 32),
-                  _buildSectionTitle("تحليل تكوين السوق"),
+                  _buildSectionTitle(local.market_composition_analysis),
                   const SizedBox(height: 16),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
                         DonutChartCard(
-                          title: "العقارات المميزة",
+                          title: local.featured_properties,
                           data: {
-                            "مميزة": stats.featuredProperties,
-                            "عادية": stats.totalProperties - stats.featuredProperties,
+                            local.featured_label: stats.featuredProperties,
+                            local.normal_label:
+                                stats.totalProperties -
+                                stats.featuredProperties,
                           },
                           color: Colors.amber,
                         ),
                         DonutChartCard(
-                          title: "نوع الإدراج",
+                          title: local.listing_type,
                           data: {
-                            "بيع": stats.propertiesForSale,
-                            "إيجار": stats.propertiesForRent,
+                            local.sale: stats.propertiesForSale,
+                            local.rent: stats.propertiesForRent,
                           },
                           color: Colors.blueAccent,
                         ),
                         DonutChartCard(
-                          title: "حالة السوق",
+                          title: local.market_status,
                           data: stats.propertiesByStatus,
                           color: Colors.teal,
                         ),
@@ -103,29 +107,82 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionTitle("ملخص النشاط الأخير"),
+                  _buildSectionTitle(local.recent_activity_summary),
                   const SizedBox(height: 16),
                   RecentActivityTimeline(stats: stats),
                   const SizedBox(height: 32),
-                  _buildSectionTitle("الرقابة والنظام"),
+                  _buildSectionTitle(local.control_and_system),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         child: AdminToolSquare(
-                          label: "سجل العمليات",
+                          label: local.audit_logs,
                           icon: Icons.history_toggle_off_rounded,
                           color: Colors.indigo,
-                          onTap: () => context.pushNamed(AppRoutes.adminAuditLogs),
+                          onTap: () =>
+                              context.pushNamed(AppRoutes.adminAuditLogs),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            AdminToolSquare(
+                              label: local.premium_requests,
+                              icon: Icons.stars_rounded,
+                              color: Colors.amber,
+                              onTap: () => context.push(
+                                AppRoutes.adminProperties,
+                                extra: local.premium_requests,
+                              ),
+                            ),
+                            if (stats.pendingPremiumRequests > 0)
+                              Positioned(
+                                top: -5,
+                                right: -5,
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    '${stats.pendingPremiumRequests}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AdminToolSquare(
+                          label: local.financial_wallet,
+                          icon: Icons.account_balance_wallet_rounded,
+                          color: Colors.green,
+                          onTap: () =>
+                              context.pushNamed(AppRoutes.adminFinancials),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: AdminToolSquare(
-                          label: "الإعدادات",
+                          label: local.settings,
                           icon: Icons.settings_suggest_rounded,
                           color: Colors.blueGrey,
-                          onTap: () => context.pushNamed(AppRoutes.adminSettings),
+                          onTap: () =>
+                              context.pushNamed(AppRoutes.adminSettings),
                         ),
                       ),
                     ],
@@ -143,27 +200,32 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 children: [
                   const Icon(Icons.error_outline, size: 60, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('خطأ في جلب البيانات: ${state.errMessage}'),
+                  Text(
+                    local.error_fetching_data.replaceFirst(
+                      '{error}',
+                      state.errMessage,
+                    ),
+                  ),
                   TextButton(
                     onPressed: () => context.read<AdminCubit>().getStats(),
-                    child: const Text("إعادة المحاولة"),
+                    child: Text(local.retry),
                   ),
                 ],
               ),
             );
           }
-          return const Center(child: Text('جاري تهيئة البيانات...'));
+          return Center(child: Text(local.initializing_data));
         },
       ),
     );
   }
 
   Widget _buildSectionTitle(String title) => Text(
-        title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1A1C1E),
-        ),
-      );
+    title,
+    style: const TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: Color(0xFF1A1C1E),
+    ),
+  );
 }

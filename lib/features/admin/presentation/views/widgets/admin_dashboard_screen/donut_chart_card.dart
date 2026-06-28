@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 
 class DonutChartCard extends StatelessWidget {
   final String title;
@@ -15,6 +16,7 @@ class DonutChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     int total = data.values.fold(0, (sum, item) => sum + item);
 
     final Map<String, Color> statusColors = {
@@ -26,10 +28,10 @@ class DonutChartCard extends StatelessWidget {
       'on_installment': const Color(0xFF06B6D4),
       'oninstallment': const Color(0xFF06B6D4),
       'underinstallment': const Color(0xFF06B6D4),
-      'مميزة': color,
-      'عادية': color.withOpacity(0.12),
-      'بيع': color,
-      'إيجار': color.withOpacity(0.12),
+      local.featured_label: color,
+      local.normal_label: color.withOpacity(0.12),
+      local.sale: color,
+      local.rent: color.withOpacity(0.12),
     };
 
     return Container(
@@ -86,9 +88,9 @@ class DonutChartCard extends StatelessWidget {
                         color: Color(0xFF1E293B),
                       ),
                     ),
-                    const Text(
-                      "إجمالي",
-                      style: TextStyle(
+                    Text(
+                      local.total_label,
+                      style: const TextStyle(
                         fontSize: 8,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
@@ -125,7 +127,7 @@ class DonutChartCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            _translateKey(e.key),
+                            _translateKey(e.key, local),
                             style: const TextStyle(
                               fontSize: 10,
                               color: Colors.blueGrey,
@@ -154,40 +156,64 @@ class DonutChartCard extends StatelessWidget {
     );
   }
 
-  String _translateKey(String key) {
+  String _translateKey(String key, AppLocalizations local) {
     final k = key.toLowerCase().trim();
     switch (k) {
       case 'active':
-        return 'نشط';
+        return local.active;
       case 'sold':
-        return 'تم البيع';
+        return local.sold;
       case 'pending':
-        return 'قيد الانتظار';
+        return local.status_pending;
       case 'installment':
       case 'on_installment':
       case 'oninstallment':
       case 'underinstallment':
-        return 'قيد التقسيط';
+        return local.under_installment;
       case 'rented':
-        return 'مؤجر';
+        return local.rented;
       case 'villas':
-        return 'فيلات';
+        return local.villas;
       case 'buildings':
-        return 'عمارات';
+        return local.buildings;
+      case 'houses_and_apartments':
       case 'housesandapartments':
-        return 'بيوت وشقق';
+        return local.houses_and_apartments;
+      case 'under_construction':
+      case 'underconstruction':
+        return local.under_construction;
+      case 'shops':
+        return local.shops;
+      case 'mall_shops':
+        return local.mall_shops;
+      case 'lands':
+        return local.lands;
+      case 'farms':
+        return local.farms;
+      case 'pools':
+        return local.pools;
+      case 'clinics':
+        return local.clinics;
+      case 'warehouses':
+        return local.warehouses;
+      case 'halls':
+        return local.halls;
+      case 'offices':
+        return local.offices;
+      case 'workshops':
+        return local.workshops;
       case 'user':
-        return 'مستخدم';
+        return local.user_label;
       case 'admin':
-        return 'مسؤول';
-      case 'مميزة':
-        return 'مميزة';
-      case 'عادية':
-        return 'عادية';
-      case 'بيع':
-        return 'بيع';
-      case 'إيجار':
-        return 'إيجار';
+        return local.admins;
+      case 'featured':
+        return local.featured_label;
+      case 'normal':
+        return local.normal_label;
+      case 'sale':
+        return local.sale;
+      case 'rent':
+        return local.rent;
       default:
         return key;
     }

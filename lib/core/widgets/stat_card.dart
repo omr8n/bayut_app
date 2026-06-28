@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/utils/colors.dart';
 
 class StatCard extends StatelessWidget {
   final String title;
@@ -38,11 +37,7 @@ class StatCard extends StatelessWidget {
             Positioned(
               right: -10,
               bottom: -10,
-              child: Icon(
-                icon,
-                size: 80,
-                color: color.withOpacity(0.05),
-              ),
+              child: Icon(icon, size: 80, color: color.withOpacity(0.05)),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

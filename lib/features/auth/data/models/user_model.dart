@@ -18,6 +18,9 @@ class UserModel extends UserEntity {
     super.isVerified = false,
     super.propertiesCount = 0,
     super.reportsCount = 0,
+    super.dailyListingsCount = 0,
+    super.lastListingTimestamp,
+    super.fcmToken,
   });
 
   factory UserModel.fromFirebaseUser(firebase_auth.User user) {
@@ -45,9 +48,16 @@ class UserModel extends UserEntity {
       profilePic: json['profilePic'] ?? json['photoUrl'],
       phoneNumber: json['phoneNumber'] ?? json['phone'],
       adminNotes: json['adminNotes'],
+      fcmToken: json['fcmToken'],
       isVerified: json['isVerified'] ?? false,
       propertiesCount: json['propertiesCount'] ?? 0,
       reportsCount: json['reportsCount'] ?? 0,
+      dailyListingsCount: json['dailyListingsCount'] ?? 0,
+      lastListingTimestamp: json['lastListingTimestamp'] is Timestamp
+          ? json['lastListingTimestamp'] as Timestamp
+          : (json['lastListingTimestamp'] is String
+              ? Timestamp.fromDate(DateTime.parse(json['lastListingTimestamp']))
+              : null),
       createdAt: json['createdAt'] == null
           ? null
           : (json['createdAt'] is String
@@ -76,6 +86,9 @@ class UserModel extends UserEntity {
       isVerified: user.isVerified,
       propertiesCount: user.propertiesCount,
       reportsCount: user.reportsCount,
+      dailyListingsCount: user.dailyListingsCount,
+      lastListingTimestamp: user.lastListingTimestamp,
+      fcmToken: user.fcmToken,
     );
   }
 
@@ -92,6 +105,11 @@ class UserModel extends UserEntity {
       'isVerified': isVerified,
       'propertiesCount': propertiesCount,
       'reportsCount': reportsCount,
+      'dailyListingsCount': dailyListingsCount,
+      'lastListingTimestamp': forFirestore
+          ? lastListingTimestamp
+          : lastListingTimestamp?.toDate().toIso8601String(),
+      'fcmToken': fcmToken,
       'createdAt': forFirestore
           ? (createdAt ?? FieldValue.serverTimestamp())
           : createdAt?.toDate().toIso8601String(),

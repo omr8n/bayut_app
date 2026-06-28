@@ -33,6 +33,7 @@ class PropertyCubit extends Cubit<PropertyState> {
           emit(PropertySuccess(
             properties: successState.properties,
             featuredProperties: successState.featuredProperties,
+            trendingProperties: successState.trendingProperties,
             recentProperties: successState.recentProperties,
             saleProperties: successState.saleProperties,
             rentProperties: successState.rentProperties,
@@ -95,10 +96,16 @@ class PropertyCubit extends Cubit<PropertyState> {
     final sortedProperties = List<PropertyEntity>.from(activeProperties)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
+    // 🔥 منطق التريند: أعلى 5 مشاهدات (مؤقتاً نعتمد على views، وسنقوم بتطويرها لاحقاً لتعتمد على آخر 30 يوم)
+    final trendingProperties = List<PropertyEntity>.from(activeProperties)
+      ..sort((a, b) => b.views.compareTo(a.views));
+    final top5Trending = trendingProperties.take(5).toList();
+
     emit(
       PropertySuccess(
         properties: sortedProperties,
         featuredProperties: sortedProperties.where((p) => p.isFeatured).toList(),
+        trendingProperties: top5Trending,
         recentProperties: sortedProperties,
         saleProperties: sortedProperties.where((p) => p.listingType == ListingType.sale).toList(),
         rentProperties: sortedProperties.where((p) => p.listingType == ListingType.rent).toList(),

@@ -1,18 +1,23 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+
 enum ReportStatus { pending, underReview, resolved, rejected }
 
 extension ReportStatusX on ReportStatus {
-  String get arabicName {
+  String localizedName(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     switch (this) {
       case ReportStatus.pending:
-        return 'جديد';
+        return locale.translate(LangKeys.statusPending);
       case ReportStatus.underReview:
-        return 'قيد المراجعة';
+        return locale.translate(LangKeys.statusUnderReview);
       case ReportStatus.resolved:
-        return 'تم الحل';
+        return locale.translate(LangKeys.statusResolved);
       case ReportStatus.rejected:
-        return 'مرفوض';
+        return locale.translate(LangKeys.statusRejected);
     }
   }
 }
@@ -31,28 +36,29 @@ enum ReportReason {
 }
 
 extension ReportReasonX on ReportReason {
-  String get arabicName {
+  String localizedName(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     switch (this) {
       case ReportReason.wrongInfo:
-        return 'معلومات خاطئة';
+        return locale.translate(LangKeys.reasonWrongInfo);
       case ReportReason.fake:
-        return 'إعلان وهمي';
+        return locale.translate(LangKeys.reasonFake);
       case ReportReason.duplicate:
-        return 'إعلان متكرر';
+        return locale.translate(LangKeys.reasonDuplicate);
       case ReportReason.scam:
-        return 'احتيال';
+        return locale.translate(LangKeys.reasonScam);
       case ReportReason.fraud:
-        return 'تلاعب بالسعر';
+        return locale.translate(LangKeys.reasonFraud);
       case ReportReason.inappropriate:
-        return 'محتوى غير لائق';
+        return locale.translate(LangKeys.reasonInappropriate);
       case ReportReason.unavailable:
-        return 'غير متاح';
+        return locale.translate(LangKeys.reasonUnavailable);
       case ReportReason.incorrectLocation:
-        return 'موقع خاطئ';
+        return locale.translate(LangKeys.reasonIncorrectLocation);
       case ReportReason.inaccuratePhotos:
-        return 'صور غير دقيقة';
+        return locale.translate(LangKeys.reasonInaccuratePhotos);
       case ReportReason.other:
-        return 'أسباب أخرى';
+        return locale.translate(LangKeys.reasonOther);
     }
   }
 }

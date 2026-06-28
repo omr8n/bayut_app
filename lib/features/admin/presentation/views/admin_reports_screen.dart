@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/report_item.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
@@ -32,9 +33,10 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF0F2F5),
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(context, local),
       body: BlocConsumer<AdminCubit, AdminState>(
         listener: _adminListener,
         builder: (context, state) {
@@ -61,7 +63,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
               ),
               Expanded(
                 child: filteredReports.isEmpty
-                    ? _buildEmptyState()
+                    ? _buildEmptyState(local)
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         itemCount: filteredReports.length,
@@ -84,13 +86,16 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar(BuildContext context, AppLocalizations local) {
     return AppBar(
       elevation: 0,
-      backgroundColor: Color(0xFF1E293B),
-      title: const Text(
-        'مركز إدارة الإبلاغات',
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      backgroundColor: const Color(0xFF1E293B),
+      title: Text(
+        local.reports_management_center,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
       centerTitle: true,
       leading: IconButton(
@@ -120,7 +125,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     }
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations local) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +137,7 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'لا توجد بلاغات في هذا القسم',
+            local.no_reports_in_section,
             style: TextStyle(
               fontSize: 18,
               color: Colors.grey[500],

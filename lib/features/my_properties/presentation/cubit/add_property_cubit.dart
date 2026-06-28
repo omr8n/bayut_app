@@ -13,9 +13,14 @@ import '../../domain/entities/property_entity.dart';
 import '../../domain/repos/add_property_repo.dart';
 import 'add_property_state.dart';
 
+import 'package:test_graduation/core/services/listing_limit_service.dart';
+import 'package:test_graduation/core/services/payment_service.dart';
+
 class AddPropertyCubit extends Cubit<AddPropertyState> {
   final MediaRepo mediaRepo;
   final AddPropertyRepo addPropertiesRepo;
+  final ListingLimitService limitService = ListingLimitService();
+  final PaymentService paymentService = PaymentService();
 
   AddPropertyCubit({required this.mediaRepo, required this.addPropertiesRepo})
     : super(AddPropertyInitial());
@@ -36,6 +41,11 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
       params.mediaFiles.length,
       isUpdate: false,
     );
+
+    // 🔥 زيادة عداد النشر للمستخدم
+    final user = await getUser();
+    await limitService.incrementListingCount(user.uId);
+
     _processPropertyUpload(notificationId, params, isUpdate: false);
   }
 

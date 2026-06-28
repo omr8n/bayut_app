@@ -6,6 +6,8 @@ import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.
 import 'package:test_graduation/features/admin/presentation/manager/admin_state.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+
 class AdminAnalyticsScreen extends StatefulWidget {
   const AdminAnalyticsScreen({super.key});
 
@@ -26,6 +28,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FD),
       body: BlocBuilder<AdminCubit, AdminState>(
@@ -33,9 +36,9 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
           if (state is AdminLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is AdminStatsSuccess) {
-            return _buildBody(state.stats);
+            return _buildBody(state.stats, local);
           } else if (state is AdminFailure) {
-            return Center(child: Text('خطأ: ${state.errMessage}'));
+            return Center(child: Text('${local.error_label}${state.errMessage}'));
           }
           return const SizedBox();
         },
@@ -43,23 +46,23 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
     );
   }
 
-  Widget _buildBody(AdminStats stats) {
+  Widget _buildBody(AdminStats stats, AppLocalizations local) {
     return CustomScrollView(
       slivers: [
-        _buildSliverAppBar(),
+        _buildSliverAppBar(local),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSummarySection(stats),
+                _buildSummarySection(stats, local),
                 const SizedBox(height: 24),
-                _buildGrowthSection(stats),
+                _buildGrowthSection(stats, local),
                 const SizedBox(height: 24),
-                _buildActivitySection(stats),
+                _buildActivitySection(stats, local),
                 const SizedBox(height: 24),
-                _buildMarketSection(stats),
+                _buildMarketSection(stats, local),
                 const SizedBox(height: 100),
               ],
             ),
@@ -69,7 +72,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
     );
   }
 
-  Widget _buildSliverAppBar() {
+  Widget _buildSliverAppBar(AppLocalizations local) {
     return SliverAppBar(
       expandedHeight: 180.0,
       floating: false,
@@ -78,9 +81,9 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
-        title: const Text(
-          "مركز ذكاء البيانات",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          local.data_intelligence_center,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         background: Container(
           decoration: const BoxDecoration(
@@ -95,20 +98,20 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
     );
   }
 
-  Widget _buildSummarySection(AdminStats stats) {
+  Widget _buildSummarySection(AdminStats stats, AppLocalizations local) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "ملخص اليوم",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          local.today_summary,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: _buildMiniStatCard(
-                "مستخدمين",
+                local.users_label,
                 stats.daily.newUsers.toString(),
                 Icons.person_add,
                 Colors.blue,
@@ -117,7 +120,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
             const SizedBox(width: 12),
             Expanded(
               child: _buildMiniStatCard(
-                "عقارات",
+                local.properties_label,
                 stats.daily.newProperties.toString(),
                 Icons.home_work,
                 Colors.orange,
@@ -130,7 +133,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
           children: [
             Expanded(
               child: _buildMiniStatCard(
-                "مبيعات",
+                local.sales_label,
                 stats.daily.soldProperties.toString(),
                 Icons.shopping_bag,
                 Colors.green,
@@ -139,7 +142,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
             const SizedBox(width: 12),
             Expanded(
               child: _buildMiniStatCard(
-                "إيجارات",
+                local.rentals_label,
                 stats.daily.rentedProperties.toString(),
                 Icons.key,
                 Colors.purple,
@@ -198,9 +201,9 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
     );
   }
 
-  Widget _buildGrowthSection(AdminStats stats) {
+  Widget _buildGrowthSection(AdminStats stats, AppLocalizations local) {
     return _buildChartContainer(
-      title: "نمو المنصة (آخر 7 أيام)",
+      title: local.platform_growth_7_days,
       child: SizedBox(
         height: 200,
         child: LineChart(
@@ -209,8 +212,8 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
             titlesData: _buildChartTitles(stats.userGrowth),
             borderData: FlBorderData(show: false),
             lineBarsData: [
-              _buildLineSeries(stats.userGrowth, Colors.blue, "المستخدمين"),
-              _buildLineSeries(stats.propertyGrowth, Colors.orange, "العقارات"),
+              _buildLineSeries(stats.userGrowth, Colors.blue, local.users_label),
+              _buildLineSeries(stats.propertyGrowth, Colors.orange, local.properties_label),
             ],
           ),
         ),
@@ -218,9 +221,9 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
     );
   }
 
-  Widget _buildActivitySection(AdminStats stats) {
+  Widget _buildActivitySection(AdminStats stats, AppLocalizations local) {
     return _buildChartContainer(
-      title: "تحليل النشاط اليومي",
+      title: local.daily_activity_analysis,
       child: SizedBox(
         height: 250,
         child: BarChart(
@@ -235,9 +238,9 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
     );
   }
 
-  Widget _buildMarketSection(AdminStats stats) {
+  Widget _buildMarketSection(AdminStats stats, AppLocalizations local) {
     return _buildChartContainer(
-      title: "توزيع سوق العقارات",
+      title: local.real_estate_market_distribution,
       child: SizedBox(
         height: 200,
         child: PieChart(
@@ -245,7 +248,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
             sections: [
               PieChartSectionData(
                 value: stats.propertiesForSale.toDouble(),
-                title: 'بيع',
+                title: local.sale,
                 color: Colors.blue,
                 radius: 50,
                 titleStyle: const TextStyle(
@@ -255,7 +258,7 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
               ),
               PieChartSectionData(
                 value: stats.propertiesForRent.toDouble(),
-                title: 'إيجار',
+                title: local.rent,
                 color: Colors.orange,
                 radius: 50,
                 titleStyle: const TextStyle(

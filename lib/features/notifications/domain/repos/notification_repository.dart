@@ -9,6 +9,9 @@ abstract class NotificationRepository {
   /// Streams user notifications from Firestore
   Stream<Either<Failure, List<AppNotification>>> getNotificationsStream(String userId);
 
+  /// Streams all notifications for admin view
+  Stream<Either<Failure, List<AppNotification>>> getAllNotificationsStream();
+
   /// Streams global notifications
   Stream<Either<Failure, List<AppNotification>>> getGlobalNotificationsStream();
 

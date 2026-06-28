@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'widgets/admin_properties_widgets/admin_properties_view_body.dart';
 
@@ -16,10 +17,10 @@ class AdminPropertiesView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: const Color(0xFF1E4C9A), // اللون الأزرق الملكي
-          title: const Text(
-            'إدارة العقارات',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          backgroundColor: const Color(0xFF1E4C9A), // Royal Blue
+          title: Text(
+            AppLocalizations.of(context)!.manage_properties,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           leading: IconButton(

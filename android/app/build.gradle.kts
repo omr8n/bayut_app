@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
-    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -46,4 +45,18 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.24") {
+            because("2.3.10 is not a real version")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24") {
+            because("2.3.10 is not a real version")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24") {
+            because("2.3.10 is not a real version")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-common:1.9.24") {
+            because("2.3.10 is not a real version")
+        }
+    }
 }

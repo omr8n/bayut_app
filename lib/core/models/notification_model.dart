@@ -7,6 +7,9 @@ enum NotificationType {
   promotion, // ترويج
   update, // تحديث
   adminAction, // إجراء إداري
+  report, // بلاغ
+  propertyFeatured, // تميز العقار
+  accountStatus, // حالة الحساب
 }
 
 extension NotificationTypeExtension on NotificationType {
@@ -22,6 +25,12 @@ extension NotificationTypeExtension on NotificationType {
         return 'تحديث';
       case NotificationType.adminAction:
         return 'إجراء إداري';
+      case NotificationType.report:
+        return 'بلاغ';
+      case NotificationType.propertyFeatured:
+        return 'تميز العقار';
+      case NotificationType.accountStatus:
+        return 'حالة الحساب';
     }
   }
 }
@@ -33,10 +42,13 @@ class AppNotification extends Equatable {
   final String body;
   final NotificationType type;
   final String? targetUserId; // إذا كان لمستخدم معين
+  final String? targetUserName; // اسم المستخدم المستهدف للواجهة
+  final String? targetId; // 🔥 معرف الكائن المرتبط (مثل معرف العقار)
   final bool sentToAll; // إذا كان لجميع المستخدمين
   final DateTime sentAt;
   final int recipientsCount; // عدد المستلمين
   final bool isRead; // حالة القراءة
+  final String? fcmToken; // 🔥 حقل إضافي لعمل Trigger لفايربيز
 
   const AppNotification({
     required this.id,
@@ -44,10 +56,13 @@ class AppNotification extends Equatable {
     required this.body,
     required this.type,
     this.targetUserId,
+    this.targetUserName,
+    this.targetId,
     required this.sentToAll,
     required this.sentAt,
     required this.recipientsCount,
     this.isRead = false,
+    this.fcmToken,
   });
 
   AppNotification copyWith({
@@ -56,10 +71,13 @@ class AppNotification extends Equatable {
     String? body,
     NotificationType? type,
     String? targetUserId,
+    String? targetUserName,
+    String? targetId,
     bool? sentToAll,
     DateTime? sentAt,
     int? recipientsCount,
     bool? isRead,
+    String? fcmToken,
   }) {
     return AppNotification(
       id: id ?? this.id,
@@ -67,10 +85,13 @@ class AppNotification extends Equatable {
       body: body ?? this.body,
       type: type ?? this.type,
       targetUserId: targetUserId ?? this.targetUserId,
+      targetUserName: targetUserName ?? this.targetUserName,
+      targetId: targetId ?? this.targetId,
       sentToAll: sentToAll ?? this.sentToAll,
       sentAt: sentAt ?? this.sentAt,
       recipientsCount: recipientsCount ?? this.recipientsCount,
       isRead: isRead ?? this.isRead,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 
@@ -81,9 +102,12 @@ class AppNotification extends Equatable {
         body,
         type,
         targetUserId,
+        targetUserName,
+        targetId,
         sentToAll,
         sentAt,
         recipientsCount,
         isRead,
+        fcmToken,
       ];
 }

@@ -33,4 +33,5 @@ class AppRoutes {
   static const String adminNotifications = '/adminNotifications';
   static const String adminSettings = '/adminSettings';
   static const String adminAuditLogs = '/adminAuditLogs';
+  static const String adminFinancials = '/adminFinancials'; // 🔥 مسار المحفظة الجديد
 }

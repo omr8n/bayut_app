@@ -8,56 +8,60 @@ environment:
   sdk: ^3.10.1
 
 dependencies:
-  awesome_notifications: ^0.12.0
+  awesome_notifications: 
   badges: null
-  cached_network_image: ^3.3.0
+  cached_network_image: 
   carousel_slider: null
   chewie: null
-  cloud_firestore: ^6.1.2
-  cloudinary_flutter: ^1.3.0
-  cloudinary_public: ^0.23.1
-  cloudinary_url_gen: ^1.8.0
-  connectivity_plus: ^7.1.0
-  cupertino_icons: ^1.0.8
+  cloud_firestore: 
+  cloudinary_flutter: 
+  cloudinary_public: 
+  cloudinary_url_gen:
+  connectivity_plus: 
+  cupertino_icons: 
   dartz: null
-  dio: ^5.4.0
-  equatable: ^2.0.5
+  dio: 
+  equatable: 
   fancy_shimmer_image: null
-  firebase_auth: ^6.1.4
-  firebase_core: ^4.4.0
-  firebase_messaging: ^16.2.0
-  fl_chart: ^1.2.0
+  firebase_auth: 
+  firebase_core: 
+  firebase_dynamic_links: 
+  firebase_messaging: 
+  fl_chart: 
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.1.1
-  flutter_localization: ^0.4.0
+  flutter_bloc: 
+  flutter_image_compress: 
+  flutter_localization: 
   flutter_localizations:
     sdk: flutter
-  flutter_screenutil: ^5.9.3
-  flutter_secure_storage: null
-  flutter_spinkit: ^5.2.2
-  flutter_svg: ^2.0.9
-  get_it: null
-  go_router: ^17.0.0
-  google_fonts: ^8.0.2
-  google_sign_in: null
-  iconly: ^1.0.1
-  image_picker: null
-  intl: ^0.20.2
-  modal_progress_hud_nsn: null
-  path: ^1.9.1
-  pin_code_fields: ^9.3.0
-  share_plus: ^13.0.0
-  shared_preferences: null
-  shimmer: ^3.0.0
-  skeletonizer: null
-  sliver_tools: ^0.2.12
-  url_launcher: ^6.3.2
-  uuid: ^4.3.3
-  very_good_analysis: ^10.2.0
-  video_player: null
+  flutter_screenutil: 
+  flutter_secure_storage: 
+  flutter_spinkit: 
+  flutter_svg: 
+  geolocator: 
+  get_it: 
+  go_router:
+  google_fonts: 
+  google_maps_flutter: 
+  google_sign_in: 
+  iconly: 
+  image_picker: 
+  intl: 
+  lottie: ^3.1.0
+  modal_progress_hud_nsn: 
+  path:
+  pin_code_fields: 
+  share_plus: 
+  shared_preferences: 
+  shimmer: 
+  skeletonizer: 
+  sliver_tools: 
+  url_launcher:
+  uuid: 
+  very_good_analysis: 
+  video_player: 
 dev_dependencies:
-
   flutter_lints: ^6.0.0
   # 🔥 إضافة مكتبة الشاشة الافتتاحية
   flutter_native_splash: ^2.3.11
@@ -82,5 +86,6 @@ flutter:
     - assets/images/banners/
     - assets/images/categories/
     - assets/images/dashboard/
+    - assets/lottie/
     - lang/ar.json
     - lang/en.json

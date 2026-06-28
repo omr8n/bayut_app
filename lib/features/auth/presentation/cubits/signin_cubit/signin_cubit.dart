@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import '../../../../../../core/errors/failures.dart';
@@ -27,7 +28,7 @@ class SigninCubit extends Cubit<SigninState> {
     ) async {
       // التحقق من حالة الحظر (Banned)
       if (userEntity.status == 'banned') {
-        emit(SigninFailure(message: "عذراً، هذا الحساب محظور من قبل الإدارة. يرجى التواصل مع الدعم الفني."));
+        emit(SigninFailure(message: LangKeys.bannedErrorMessage));
         return;
       }
 

@@ -65,7 +65,7 @@ class _LogoText extends StatelessWidget {
           ),
         ),
         Text(
-          localizations.isEnLocale ? 'Syrian Real Estate' : 'عقارات سوريا المتكاملة',
+          localizations.translate(LangKeys.syrianRealEstate),
           style: TextStyle(
             fontSize: 10.sp,
             fontWeight: FontWeight.w600,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
-import 'user_item_card.dart'; // استخدام الكارت الاحترافي الجديد
+import 'user_item_card.dart'; // Use the new professional card
 
 class AdminUsersList extends StatelessWidget {
   const AdminUsersList({super.key, required this.users});
@@ -12,8 +13,8 @@ class AdminUsersList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (users.isEmpty) {
-      return const Center(
-        child: Text('لا يوجد مستخدمين يطابقون البحث'),
+      return Center(
+        child: Text(AppLocalizations.of(context)!.no_matching_users),
       );
     }
 
@@ -22,11 +23,8 @@ class AdminUsersList extends StatelessWidget {
       itemCount: users.length,
       itemBuilder: (context, index) {
         final user = users[index];
-        // استخدام UserItemCard بدلاً من الكارت القديم المسبب للمشاكل
-        return UserItemCard(
-          user: user,
-          adminCubit: context.read<AdminCubit>(),
-        );
+        // Use UserItemCard instead of the old problematic card
+        return UserItemCard(user: user, adminCubit: context.read<AdminCubit>());
       },
     );
   }

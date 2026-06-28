@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
@@ -8,6 +9,7 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -16,14 +18,14 @@ class CustomDrawer extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: AppColors.primaryGradient,
             ),
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.admin_panel_settings, size: 60, color: Colors.white),
-                SizedBox(height: 12),
+                const Icon(Icons.admin_panel_settings, size: 60, color: Colors.white),
+                const SizedBox(height: 12),
                 Text(
-                  'لوحة التحكم',
-                  style: TextStyle(
+                  local.admin_dashboard_label,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -34,12 +36,12 @@ class CustomDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.dashboard),
-            title: const Text('الرئيسية'),
+            title: Text(local.home),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: const Icon(Icons.people),
-            title: const Text('إدارة المستخدمين'),
+            title: Text(local.manage_users),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminUsers);
@@ -47,7 +49,7 @@ class CustomDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.home_work),
-            title: const Text('إدارة العقارات'),
+            title: Text(local.manage_properties),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminProperties);
@@ -55,15 +57,23 @@ class CustomDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.warning),
-            title: const Text('الإبلاغات'),
+            title: Text(local.notif_type_report),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminReports);
             },
           ),
           ListTile(
+            leading: const Icon(Icons.account_balance_wallet_rounded),
+            title: Text(local.financial_wallet),
+            onTap: () {
+              Navigator.pop(context);
+              context.pushNamed(AppRoutes.adminFinancials);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.notifications),
-            title: const Text('الإشعارات'),
+            title: Text(local.notifications),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminNotifications);
@@ -72,7 +82,7 @@ class CustomDrawer extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('الإعدادات'),
+            title: Text(local.settings),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminSettings);
@@ -80,9 +90,9 @@ class CustomDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.logout, color: AppColors.error),
-            title: const Text(
-              'تسجيل الخروج',
-              style: TextStyle(color: AppColors.error),
+            title: Text(
+              local.log_out,
+              style: const TextStyle(color: AppColors.error),
             ),
             onTap: () {
               Navigator.of(context).popUntil((route) => route.isFirst);

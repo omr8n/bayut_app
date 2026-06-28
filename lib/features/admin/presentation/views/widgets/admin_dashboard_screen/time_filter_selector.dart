@@ -3,17 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+
 class TimeFilterSelector extends StatelessWidget {
   const TimeFilterSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<AdminCubit>();
+    final local = AppLocalizations.of(context)!;
     final filters = [
-      {'key': 'day', 'label': 'اليوم'},
-      {'key': 'week', 'label': 'الأسبوع'},
-      {'key': 'month', 'label': 'الشهر'},
-      {'key': 'year', 'label': 'السنة'},
+      {'key': 'day', 'label': local.day_filter},
+      {'key': 'week', 'label': local.week_filter},
+      {'key': 'month', 'label': local.month_filter},
+      {'key': 'year', 'label': local.year_filter},
     ];
     return Container(
       height: 45,

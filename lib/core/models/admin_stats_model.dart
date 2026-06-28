@@ -25,6 +25,8 @@ class AdminStats extends Equatable {
   final Map<String, int> propertiesByCity;
   final Map<String, int> propertiesByStatus;
   final Map<String, int> usersByRole;
+  final int pendingPremiumRequests;
+  final int pendingProperties; // 🔥 إضافة العقارات التي بانتظار الاعتماد
 
   const AdminStats({
     required this.totalUsers,
@@ -45,7 +47,15 @@ class AdminStats extends Equatable {
     required this.propertiesByCity,
     required this.propertiesByStatus,
     required this.usersByRole,
+    this.pendingPremiumRequests = 0,
+    this.pendingProperties = 0,
   });
+
+  // 🔥 Getters ذكية لتسهيل الوصول للبيانات اليومية ومنع أخطاء الكود
+  int get newUsersToday => daily.newUsers;
+  int get newPropertiesToday => daily.newProperties;
+  int get soldPropertiesToday => daily.soldProperties;
+  int get rentedPropertiesToday => daily.rentedProperties;
 
   @override
   List<Object?> get props => [
@@ -67,6 +77,8 @@ class AdminStats extends Equatable {
         propertiesByCity,
         propertiesByStatus,
         usersByRole,
+        pendingPremiumRequests,
+        pendingProperties,
       ];
 }
 

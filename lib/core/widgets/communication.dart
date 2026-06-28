@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:test_graduation/core/widgets/action_button.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../utils/colors.dart';
+import '../language/app_localizations.dart';
+import '../language/lang_keys.dart';
+import '../services/communication_service.dart';
+import '../services/dynamic_link.dart';
+import '../utils/service_locator.dart';
+import 'communication_dialogs.dart';
 
 class CommunicationButtons extends StatelessWidget {
   final PropertyEntity property;
@@ -11,78 +16,79 @@ class CommunicationButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final communicationService = getIt<CommunicationService>();
+
     Future<void> makeCall() async {
-      final Uri url = Uri.parse('tel:${property.phone}');
-      if (await canLaunchUrl(url)) await launchUrl(url);
+      await communicationService.makeCall(property.phone);
     }
 
     Future<void> sendWhatsApp() async {
-      // تنظيف الرقم من أي فراغات أو رموز زائدة
-      String phoneNumber = property.whatsapp.trim().replaceAll(
-        RegExp(r'\s+|-'),
-        '',
+      final String deepLink = await getIt<DynamicLinkService>().generatePropertyLink(
+        propertyId: property.id,
+        title: property.title,
+        imageUrl: property.images.isNotEmpty ? property.images.first : null,
       );
 
-      // إذا كان الرقم يبدأ بـ 09، نحوله للصيغة الدولية 9639
-      if (phoneNumber.startsWith('09')) {
-        phoneNumber = '963${phoneNumber.substring(1)}';
-      }
+      final String message = localizations.translate(LangKeys.emailBody)
+          .replaceAll('{title}', property.title)
+          .replaceAll('{link}', deepLink);
 
-      // نستخدم رابط api.whatsapp.com لأنه أحياناً wa.me بيفشل ببعض المتصفحات أو الأجهزة
-      final Uri url = Uri.parse(
-        'https://api.whatsapp.com/send?phone=$phoneNumber',
+      final bool success = await communicationService.sendWhatsApp(
+        property.whatsapp,
+        message: message,
       );
 
-      try {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } catch (e) {
-        debugPrint('Could not launch WhatsApp: $e');
+      if (!success && context.mounted) {
+        CommunicationDialogs.showWhatsAppFallback(
+          context,
+          onCallPressed: makeCall,
+        );
       }
     }
 
     Future<void> _sendEmail() async {
-      // 1. نأخذ الإيميل من العقار
-      // 2. إذا كان فارغاً، نستخدم إيميل افتراضي للدعم أو نطلب من المستخدم تحديث بيانات العقار
-      String? email = property.email;
+      final String deepLink = await getIt<DynamicLinkService>().generatePropertyLink(
+        propertyId: property.id,
+        title: property.title,
+        imageUrl: property.images.isNotEmpty ? property.images.first : null,
+      );
 
-      // ملاحظة: بما أن الإيميل أضيف حديثاً للكود، العقارات القديمة ستحتاج لإيميل افتراضي
+      final String subject = localizations.translate(LangKeys.emailSubject)
+          .replaceAll('{title}', property.title);
+
+      final String body = localizations.translate(LangKeys.emailBody)
+          .replaceAll('{title}', property.title)
+          .replaceAll('{link}', deepLink);
+
+      String? email = property.email;
       if (email == null || email.isEmpty) {
-        // يمكنك وضع إيميل الشركة هنا كخيار بديل للعقارات القديمة
         email = "support@syria-realestate.com";
       }
 
-      final String subject = Uri.encodeComponent(
-        'استفسار عن عقار: ${property.title}',
+      await communicationService.sendEmail(
+        email,
+        subject: subject,
+        body: body,
       );
-      final Uri url = Uri.parse('mailto:$email?subject=$subject');
-
-      try {
-        if (await canLaunchUrl(url)) {
-          await launchUrl(url, mode: LaunchMode.externalApplication);
-        } else {
-          await launchUrl(url);
-        }
-      } catch (e) {
-        debugPrint('Could not launch Email: $e');
-      }
     }
 
     return Row(
       children: [
         ActionButton(
-          label: 'واتساب',
+          label: localizations.translate(LangKeys.contactWhatsapp),
           icon: Icons.chat_bubble_outline,
           color: const Color(0xFF25D366),
           onTap: sendWhatsApp,
         ),
         ActionButton(
-          label: 'اتصال',
+          label: localizations.translate(LangKeys.contactCall),
           icon: Icons.phone_outlined,
           color: AppColors.success,
           onTap: makeCall,
         ),
         ActionButton(
-          label: 'الإيميل',
+          label: localizations.translate(LangKeys.contactEmail),
           icon: Icons.email_outlined,
           color: Colors.blue,
           onTap: _sendEmail,

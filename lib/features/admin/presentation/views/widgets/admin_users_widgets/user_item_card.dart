@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
@@ -15,6 +16,7 @@ class UserItemCard extends StatelessWidget {
     final bool isBanned = user.status == 'banned';
     final bool isFrozen = user.status == 'frozen';
     final bool isAdmin = user.role == 'admin';
+    final local = AppLocalizations.of(context)!;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -69,7 +71,7 @@ class UserItemCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
-                    _buildMiniStats(isBanned, isFrozen),
+                    _buildMiniStats(isBanned, isFrozen, local),
                   ],
                 ),
               ),
@@ -110,7 +112,7 @@ class UserItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMiniStats(bool isBanned, bool isFrozen) {
+  Widget _buildMiniStats(bool isBanned, bool isFrozen, AppLocalizations local) {
     return Row(
       children: [
         _statChip(Icons.home_work_outlined, "${user.propertiesCount}", Colors.blue),
@@ -118,11 +120,11 @@ class UserItemCard extends StatelessWidget {
         _statChip(Icons.report_gmailerrorred_outlined, "${user.reportsCount}", Colors.orange),
         const SizedBox(width: 8),
         if (isBanned)
-          _statusLabel("محظور", Colors.red)
+          _statusLabel(local.banned_user, Colors.red)
         else if (isFrozen)
-          _statusLabel("مجمد", Colors.orange)
+          _statusLabel(local.frozen_label, Colors.orange)
         else
-          _statusLabel("نشط", Colors.green),
+          _statusLabel(local.active, Colors.green),
       ],
     );
   }

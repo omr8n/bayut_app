@@ -66,7 +66,7 @@ class _AdminUsersViewBodyState extends State<AdminUsersViewBody> {
           );
         }
 
-        return const Center(child: Text("جاري تحميل المستخدمين..."));
+        return Center(child: Text(AppLocalizations.of(context)!.loading_users));
       },
     );
   }

@@ -29,6 +29,13 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
+  Stream<Either<Failure, List<AppNotification>>> getAllNotificationsStream() {
+    return _notificationService.getNotificationsStream(null, isAdmin: true).map(
+      (list) => right<Failure, List<AppNotification>>(list),
+    );
+  }
+
+  @override
   Stream<Either<Failure, List<AppNotification>>> getGlobalNotificationsStream() {
     return _notificationService.getNotificationsStream(null).map(
       (list) => right<Failure, List<AppNotification>>(list),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/reports/domain/entities/report_entity.dart';
 
@@ -14,13 +15,14 @@ class AdminActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Column(
       children: [
         if (report.status == ReportStatus.pending) ...[
           SizedBox(
             width: double.infinity,
             child: _MainButton(
-              label: 'بدء المراجعة (قيد المراجعة الآن)',
+              label: local.start_review,
               icon: Icons.hourglass_top_rounded,
               color: AppColors.info,
               onPressed: () => onUpdateStatus(ReportStatus.underReview),
@@ -32,7 +34,7 @@ class AdminActionButtons extends StatelessWidget {
           children: [
             Expanded(
               child: _MainButton(
-                label: 'تم الحل',
+                label: local.status_resolved,
                 icon: Icons.check_circle,
                 color: AppColors.success,
                 onPressed: () => onUpdateStatus(ReportStatus.resolved),
@@ -41,7 +43,7 @@ class AdminActionButtons extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _MainButton(
-                label: 'مرفوض',
+                label: local.status_rejected,
                 icon: Icons.cancel,
                 color: AppColors.error,
                 onPressed: () => onUpdateStatus(ReportStatus.rejected),

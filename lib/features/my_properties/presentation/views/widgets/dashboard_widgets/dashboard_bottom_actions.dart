@@ -198,7 +198,7 @@ class _StatusUpdateSheet extends StatelessWidget {
           _buildOption(
             context,
             PropertyStatus.rented,
-            "تم التأجير", // سيتم ربطها بـ LangKeys لاحقاً
+            locale.translate(LangKeys.rentedStatusDesc),
             Icons.key_rounded,
           ),
         ],

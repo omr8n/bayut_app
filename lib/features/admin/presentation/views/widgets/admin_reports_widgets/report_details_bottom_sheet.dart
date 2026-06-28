@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
@@ -21,7 +22,8 @@ class ReportDetailsBottomSheet extends StatefulWidget {
   final AdminCubit adminCubit;
 
   @override
-  State<ReportDetailsBottomSheet> createState() => _ReportDetailsBottomSheetState();
+  State<ReportDetailsBottomSheet> createState() =>
+      _ReportDetailsBottomSheetState();
 }
 
 class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
@@ -41,6 +43,7 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return BlocProvider.value(
       value: widget.adminCubit,
       child: DraggableScrollableSheet(
@@ -60,16 +63,16 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                   controller: controller,
                   padding: const EdgeInsets.all(24),
                   children: [
-                    _buildModalHeader(context),
+                    _buildModalHeader(context, local),
                     const SizedBox(height: 24),
                     _buildStatusBadge(widget.report.status),
                     const SizedBox(height: 24),
-                    _buildSectionTitle('معلومات العقار والمُبلغ'),
+                    _buildSectionTitle(local.property_and_reporter_info),
                     ReportDetailCard(
                       children: [
                         ReportDetailRow(
                           icon: Icons.home_work_rounded,
-                          label: 'العقار',
+                          label: local.property_title,
                           value: widget.report.propertyTitle,
                           color: AppColors.primary,
                           trailing: TextButton(
@@ -77,15 +80,17 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                               AppRoutes.propertyDetailsById,
                               pathParameters: {'id': widget.report.propertyId},
                             ),
-                            child: const Text(
-                              'معاينة',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            child: Text(
+                              local.preview,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                         ReportDetailRow(
                           icon: Icons.person_rounded,
-                          label: 'المُبلغ',
+                          label: local.reporter,
                           value: widget.report.reporterName,
                           trailing: IconButton(
                             icon: const Icon(
@@ -95,32 +100,32 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                             ),
                             onPressed: () => _launchEmail(
                               widget.report.reporterEmail,
-                              'بخصوص بلاغك',
+                              local.regarding_your_report,
                             ),
                           ),
                         ),
                         ReportDetailRow(
                           icon: Icons.person_pin_circle_rounded,
-                          label: 'المُبلغ عنه',
+                          label: local.reported_user,
                           value: widget.report.reportedUserName,
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
-                    _buildSectionTitle('تفاصيل البلاغ'),
+                    _buildSectionTitle(local.report_details),
                     ReportDetailCard(
                       children: [
                         ReportDetailRow(
                           icon: Icons.report_problem_rounded,
-                          label: 'السبب',
-                          value: widget.report.reason.arabicName,
+                          label: local.reason_label,
+                          value: widget.report.reason.localizedName(context),
                           color: AppColors.error,
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            'وصف المخالفة:',
-                            style: TextStyle(
+                            local.violation_description,
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                               color: Colors.grey,
@@ -143,12 +148,12 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    _buildSectionTitle('إجراءات الإدارة والملاحظات'),
+                    _buildSectionTitle(local.admin_actions_and_notes),
                     TextField(
                       controller: noteController,
                       maxLines: 3,
                       decoration: InputDecoration(
-                        hintText: 'اكتب ملاحظاتك الإدارية هنا...',
+                        hintText: local.write_admin_notes_hint,
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -164,7 +169,8 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                     const SizedBox(height: 24),
                     AdminActionButtons(
                       report: widget.report,
-                      onUpdateStatus: (status) => _updateStatus(context, status),
+                      onUpdateStatus: (status) =>
+                          _updateStatus(context, status),
                     ),
                     const SizedBox(height: 32),
                     AdminPowerSection(
@@ -196,13 +202,13 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
     );
   }
 
-  Widget _buildModalHeader(BuildContext context) {
+  Widget _buildModalHeader(BuildContext context, AppLocalizations local) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          'تفاصيل البلاغ الكاملة',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+        Text(
+          local.full_report_details,
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
         ),
         IconButton(
           onPressed: () => Navigator.pop(context),
@@ -248,7 +254,7 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
           Icon(Icons.info_outline, size: 18, color: color),
           const SizedBox(width: 8),
           Text(
-            status.arabicName,
+            status.localizedName(context),
             style: TextStyle(color: color, fontWeight: FontWeight.bold),
           ),
         ],
@@ -275,42 +281,57 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
       widget.report.id,
       status.name,
       adminNote: noteController.text,
+      reporterId: widget.report.reporterId,
     );
   }
 
   void _showBlockUserDialog(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => BlocProvider.value(
         value: widget.adminCubit,
         child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Row(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.red),
-              SizedBox(width: 8),
-              Text('تأكيد الحظر النهائي'),
+              const Icon(Icons.warning_amber_rounded, color: Colors.red),
+              const SizedBox(width: 8),
+              Text(local.confirm_final_block),
             ],
           ),
           content: Text(
-            'هل أنت متأكد من حظر المستخدم "${widget.report.reportedUserName}"؟ هذا سيمنعه من دخول المنصة تماماً.',
+            local.block_user_confirm_msg.replaceFirst(
+              '{name}',
+              widget.report.reportedUserName,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('تراجع'),
+              child: Text(local.go_back),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(ctx);
                 Navigator.pop(context);
-                widget.adminCubit.toggleUserBlock(widget.report.reportedUserId, true);
+                widget.adminCubit.toggleUserBlock(
+                  widget.report.reportedUserId,
+                  true,
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text('تأكيد الحظر', style: TextStyle(color: Colors.white)),
+              child: Text(
+                local.confirm_block,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -319,21 +340,24 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
   }
 
   void _showResolveOptions(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => BlocProvider.value(
         value: widget.adminCubit,
         child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('اتخاذ قرار الحل'),
-          content: const Text('هل تريد حل البلاغ بشكل ودي أم بحذف العقار المخالف نهائياً؟'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(local.make_resolution_decision),
+          content: Text(local.resolution_decision_msg),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(ctx);
                 _updateStatus(context, ReportStatus.resolved);
               },
-              child: const Text('إغلاق البلاغ فقط'),
+              child: Text(local.close_report_only),
             ),
             ElevatedButton(
               onPressed: () {
@@ -347,15 +371,20 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                   widget.report.id,
                   'resolved',
                   adminNote: noteController.text.isEmpty
-                      ? 'تم حذف العقار المخالف'
+                      ? local.property_deleted_msg
                       : noteController.text,
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.error,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text('حذف العقار الآن', style: TextStyle(color: Colors.white)),
+              child: Text(
+                local.delete_property_now,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),

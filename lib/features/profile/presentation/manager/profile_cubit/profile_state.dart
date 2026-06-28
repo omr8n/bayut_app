@@ -33,6 +33,8 @@ class ProfileLogoutLoading extends ProfileState {}
 
 class ProfileLogoutSuccess extends ProfileState {}
 
+class ProfileUserBanned extends ProfileState {}
+
 class ProfileLogoutFailure extends ProfileState {
   final String errMessage;
   const ProfileLogoutFailure(this.errMessage);

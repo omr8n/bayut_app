@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/models/report_model.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
@@ -102,9 +104,11 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                     ),
                     const SizedBox(height: 20),
 
-                    const Text(
-                      'تفاصيل إضافية (اختياري)',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.translate(LangKeys.additionalDetailsOptional),
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -114,7 +118,9 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                       controller: _descriptionController,
                       maxLines: 3,
                       decoration: _inputDecoration(
-                        hint: 'اشرح لنا المشكلة بوضوح...',
+                        hint: AppLocalizations.of(
+                          context,
+                        )!.translate(LangKeys.explainProblemHint),
                       ),
                     ),
                     const SizedBox(height: 35),
@@ -142,27 +148,31 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
     ),
   );
 
-  Widget _buildTitle() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'إرسال إبلاغ للأدمن',
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w900,
-          color: AppColors.textPrimary,
+  Widget _buildTitle() {
+    final locale = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          locale.translate(LangKeys.sendReportToAdmin),
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: AppColors.textPrimary,
+          ),
         ),
-      ),
-      const SizedBox(height: 8),
-      Text(
-        'مساعدتك لنا تساهم في بناء مجتمع عقاري موثوق.',
-        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-      ),
-    ],
-  );
+        const SizedBox(height: 8),
+        Text(
+          locale.translate(LangKeys.helpUsBuildCommunity),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        ),
+      ],
+    );
+  }
 
   Widget _buildSubmitButton(BuildContext context, ReportState state) {
     final isLoading = state is ReportLoading;
+    final locale = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -185,9 +195,9 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                   strokeWidth: 2,
                 ),
               )
-            : const Text(
-                'إرسال البلاغ الآن',
-                style: TextStyle(
+            : Text(
+                locale.translate(LangKeys.sendReportNow),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -219,6 +229,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
   }
 
   void _showSuccessDialog(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -228,15 +239,19 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 60),
             const SizedBox(height: 20),
-            const Text(
-              'تم الإبلاغ بنجاح',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              locale.translate(LangKeys.reportSubmittedSuccessfully),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'شكراً لتعاونك. سيقوم فريق الإدارة بمراجعة البلاغ واتخاذ الإجراء اللازم.',
+            Text(
+              locale.translate(LangKeys.reportSuccessDesc),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 30),
             SizedBox(
@@ -249,9 +264,9 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: const Text(
-                  'موافق',
-                  style: TextStyle(color: Colors.white),
+                child: Text(
+                  locale.translate(LangKeys.ok),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),

@@ -4,6 +4,8 @@ import 'package:test_graduation/core/models/admin_stats_model.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'modern_stat_card.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+
 class ModernStatGrid extends StatelessWidget {
   final AdminStats stats;
 
@@ -11,6 +13,7 @@ class ModernStatGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     double calculateTrend(List<ChartDataPoint> growth) {
       if (growth.length < 2) return 0;
       return growth.last.value - growth[growth.length - 2].value;
@@ -29,7 +32,7 @@ class ModernStatGrid extends StatelessWidget {
       childAspectRatio: 1.05,
       children: [
         ModernStatCard(
-          title: "إجمالي المستخدمين",
+          title: local.total_users_label,
           value: stats.totalUsers.toString(),
           trend: userTrend >= 0 ? "+${userTrend.toInt()}" : "${userTrend.toInt()}",
           isUp: userTrend >= 0,
@@ -39,7 +42,7 @@ class ModernStatGrid extends StatelessWidget {
           onTap: () => context.pushNamed(AppRoutes.adminUsers),
         ),
         ModernStatCard(
-          title: "إجمالي العقارات",
+          title: local.total_properties_label,
           value: stats.totalProperties.toString(),
           trend: propTrend >= 0 ? "+${propTrend.toInt()}" : "${propTrend.toInt()}",
           isUp: propTrend >= 0,
@@ -49,16 +52,16 @@ class ModernStatGrid extends StatelessWidget {
           onTap: () => context.pushNamed(AppRoutes.adminProperties),
         ),
         ModernStatCard(
-          title: "البلاغات النشطة",
+          title: local.active_reports,
           value: stats.pendingReports.toString(),
-          trend: stats.pendingReports > 0 ? "هام" : "مستقر",
+          trend: stats.pendingReports > 0 ? local.urgent : local.stable,
           isUp: stats.pendingReports == 0,
           icon: Icons.warning_amber_rounded,
           color: const Color(0xFFEF4444),
           onTap: () => context.pushNamed(AppRoutes.adminReports),
         ),
         ModernStatCard(
-          title: "إيرادات تقديرية",
+          title: local.estimated_revenue,
           value: "${(stats.yearly.totalRevenue / 1000).toStringAsFixed(1)}K",
           trend: salesTrend >= 0 ? "+${salesTrend.toInt()}" : "${salesTrend.toInt()}",
           isUp: salesTrend >= 0,

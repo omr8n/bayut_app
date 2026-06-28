@@ -1,3 +1,5 @@
+import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
@@ -13,21 +15,22 @@ class ReporterContactFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'الاسم الكامل*',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              Text(
+                locale.translate(LangKeys.fullNameLabel),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: nameController,
-                decoration: _inputDecoration(hint: 'اسمك'),
-                validator: (val) => val!.isEmpty ? 'مطلوب' : null,
+                decoration: _inputDecoration(hint: locale.translate(LangKeys.yourNameHint)),
+                validator: (val) => val!.isEmpty ? locale.translate(LangKeys.requiredField) : null,
               ),
             ],
           ),
@@ -37,16 +40,16 @@ class ReporterContactFields extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'البريد الإلكتروني*',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              Text(
+                locale.translate(LangKeys.emailLabel),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: emailController,
-                decoration: _inputDecoration(hint: 'إيميلك'),
+                decoration: _inputDecoration(hint: locale.translate(LangKeys.yourEmailHint)),
                 validator: (val) =>
-                    (val!.isEmpty || !val.contains('@')) ? 'غير صالح' : null,
+                    (val!.isEmpty || !val.contains('@')) ? locale.translate(LangKeys.invalidEmailField) : null,
               ),
             ],
           ),

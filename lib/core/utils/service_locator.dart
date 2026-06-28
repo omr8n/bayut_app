@@ -2,6 +2,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/services/connectivity_service.dart';
+import 'package:test_graduation/core/services/communication_service.dart';
+import 'package:test_graduation/core/services/dynamic_link.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/repos/media_repo/media_repo.dart';
 import 'package:test_graduation/core/repos/media_repo/media_repo_impl.dart';
@@ -49,12 +51,16 @@ import 'package:test_graduation/features/admin/domain/repos/admin_repo.dart';
 import 'package:test_graduation/features/admin/data/repos/admin_repo_impl.dart';
 import 'package:test_graduation/features/admin/domain/repos/admin_action_repo.dart';
 import 'package:test_graduation/features/admin/data/repos/admin_action_repo_impl.dart';
+
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_action_cubit/admin_action_cubit.dart';
 
 import 'package:test_graduation/features/admin/domain/repos/app_config_repo.dart';
 import 'package:test_graduation/features/admin/data/repos/app_config_repo_impl.dart';
 import 'package:test_graduation/features/admin/presentation/manager/app_config_cubit/app_config_cubit.dart';
+
+import 'package:test_graduation/features/notifications/domain/use_cases/get_all_notifications_use_case.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_notification_cubit/admin_notification_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -67,6 +73,8 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<StorageService>(() => CloudinaryStorageService());
   getIt.registerLazySingleton<DatabaseService>(() => FireStoreService());
   getIt.registerLazySingleton<FirebaseAuthService>(() => FirebaseAuthService());
+  getIt.registerLazySingleton<CommunicationService>(() => CommunicationServiceImpl());
+  getIt.registerLazySingleton<DynamicLinkService>(() => DynamicLinkService());
 
   // Repositories
   getIt.registerLazySingleton<MediaRepo>(
@@ -144,17 +152,14 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<AdminRepo>(
     () => AdminRepoImpl(getIt<DatabaseService>()),
   );
-  getIt.registerLazySingleton<AdminActionRepo>(
-    () => AdminActionRepoImpl(),
-  );
-  getIt.registerLazySingleton<AppConfigRepo>(
-    () => AppConfigRepoImpl(),
-  );
+  getIt.registerLazySingleton<AdminActionRepo>(() => AdminActionRepoImpl());
+  getIt.registerLazySingleton<AppConfigRepo>(() => AppConfigRepoImpl());
   getIt.registerFactory<AdminCubit>(
     () => AdminCubit(
       getIt<AdminRepo>(),
       getIt<AdminActionRepo>(),
       getIt<SendNotificationUseCase>(),
+      getIt<ProfileCubit>(),
     ),
   );
   getIt.registerFactory<AdminActionCubit>(
@@ -175,10 +180,19 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<SendNotificationUseCase>(
     () => SendNotificationUseCase(getIt<NotificationRepository>()),
   );
+  getIt.registerLazySingleton<GetAllNotificationsUseCase>(
+    () => GetAllNotificationsUseCase(getIt<NotificationRepository>()),
+  );
   getIt.registerFactory<UserNotificationCubit>(
     () => UserNotificationCubit(
       getIt<GetCombinedNotificationsUseCase>(),
       getIt<NotificationRepository>(),
+    ),
+  );
+  getIt.registerFactory<AdminNotificationCubit>(
+    () => AdminNotificationCubit(
+      getIt<GetAllNotificationsUseCase>(),
+      getIt<AdminCubit>(),
     ),
   );
 }

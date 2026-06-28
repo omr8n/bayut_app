@@ -19,15 +19,19 @@ class AdminPropertiesViewBody extends StatefulWidget {
 class _AdminPropertiesViewBodyState extends State<AdminPropertiesViewBody> {
   String searchQuery = '';
   ListingType? selectedType;
+  String? extraFilter;
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
+    final currentExtraFilter = extraFilter ?? local.all;
+
     return BlocConsumer<AdminCubit, AdminState>(
       listener: (context, state) {
         if (state is AdminFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.translate(state.errMessage)),
+              content: Text(local.translate(state.errMessage)),
               backgroundColor: Colors.red,
             ),
           );
@@ -47,33 +51,48 @@ class _AdminPropertiesViewBodyState extends State<AdminPropertiesViewBody> {
         }
 
         if (state is AdminPropertiesSuccess) {
-          // نفس منطق الفلترة الأصلي الخاص بك (بيع / إيجار)
           List<PropertyEntity> filteredList = state.properties.where((property) {
             final matchesSearch = property.title.toLowerCase().contains(searchQuery.toLowerCase()) || 
                                 property.location.toLowerCase().contains(searchQuery.toLowerCase());
             final matchesType = selectedType == null || property.listingType == selectedType;
-            return matchesSearch && matchesType;
+
+            bool matchesExtra = true;
+            if (currentExtraFilter == local.premium_requests) {
+              matchesExtra = property.premiumStatus == PremiumStatus.pending;
+            } else if (currentExtraFilter == local.currently_featured) {
+              matchesExtra = property.premiumStatus == PremiumStatus.active;
+            } else if (currentExtraFilter == local.trend_leaders) {
+              // Assume top 5 views for now
+              matchesExtra = true;
+            }
+
+            return matchesSearch && matchesType && matchesExtra;
           }).toList();
+
+          if (currentExtraFilter == local.trend_leaders) {
+            filteredList.sort((a, b) => b.views.compareTo(a.views));
+            filteredList = filteredList.take(5).toList();
+          }
 
           return Column(
             children: [
-              // الهيدر الأزرق المنحني (الجديد في الشكل، القديم في الكبسات)
               AdminPropertiesHeader(
                 onSearchChanged: (val) => setState(() => searchQuery = val),
                 onFilterChanged: (type) => setState(() => selectedType = type),
+                onExtraFilterChanged: (val) => setState(() => extraFilter = val),
               ),
               
-              // الإحصائيات الأربعة الأصلية (لم تُحذف وبقيت في مكانها)
+              // Original 4 stats
               AdminPropertiesStats(properties: state.properties),
 
               Expanded(
-                child: AdminPropertiesList(properties: filteredList),
+                child: AdminPropertiesList(properties: filteredList, extraFilter: currentExtraFilter),
               ),
             ],
           );
         }
 
-        return const Center(child: Text("جاري تحميل البيانات..."));
+        return Center(child: Text(local.loading));
       },
     );
   }

@@ -26,7 +26,8 @@ class PropertyDetailsContactButtons extends StatelessWidget {
                 onPressed: () => PropertyActions.makeCall(property.phone),
                 icon: const Icon(Icons.phone),
                 label: Text(
-                  AppLocalizations.of(context)!.translate(LangKeys.call),
+                  AppLocalizations.of(context)!
+                      .translate(LangKeys.contactCall),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.success,
@@ -41,7 +42,8 @@ class PropertyDetailsContactButtons extends StatelessWidget {
                     PropertyActions.sendWhatsApp(property.whatsapp),
                 icon: const Icon(Icons.chat),
                 label: Text(
-                  AppLocalizations.of(context)!.translate(LangKeys.whatsapp),
+                  AppLocalizations.of(context)!
+                      .translate(LangKeys.contactWhatsapp),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF25D366),

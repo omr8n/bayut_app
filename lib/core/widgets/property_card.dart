@@ -233,41 +233,84 @@ class _PropertyCardState extends State<PropertyCard> {
                     },
                   ),
 
-                  // شارة الحالة (للبيع / للايجار)
+                  // شارة الحالة (للبيع / للايجار + تريند)
                   Positioned(
                     top: 12.h,
                     right: 12.w,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 5.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: widget.property.listingType == ListingType.sale
-                            ? AppColors.forSale
-                            : AppColors.forRent,
-                        borderRadius: BorderRadius.circular(8.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.property.views >= 5) // شارة التريند تظهر دائماً إذا حقق الشرط
+                          Container(
+                            margin: EdgeInsets.only(left: 8.w),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 5.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange,
+                              borderRadius: BorderRadius.circular(8.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.trending_up_rounded,
+                                  color: Colors.white,
+                                  size: 14.sp,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  localizations.isEnLocale ? 'Trend' : 'تريند',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        widget.property.listingType.localizedName(context),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.bold,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 5.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.property.listingType == ListingType.sale
+                                ? AppColors.forSale
+                                : AppColors.forRent,
+                            borderRadius: BorderRadius.circular(8.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            widget.property.listingType.localizedName(context),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
 
-                  // شارة "مميز" (Featured Badge) - تم إعادتها
-                  if (widget.property.isFeatured)
+                  // شارة "مميز" (تظهر بجانب التريند أو لحالها إذا كان العقار مدفوع)
+                  if (widget.property.premiumStatus == PremiumStatus.active)
                     Positioned(
                       top: 12.h,
                       left: 12.w,

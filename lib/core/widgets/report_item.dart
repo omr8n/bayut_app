@@ -85,7 +85,7 @@ class ReportItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      report.status.arabicName,
+                      report.status.localizedName(context),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -104,7 +104,7 @@ class ReportItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      report.reason.arabicName,
+                      report.reason.localizedName(context),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

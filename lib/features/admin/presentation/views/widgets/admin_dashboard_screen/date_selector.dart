@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 
+import 'package:test_graduation/core/language/app_localizations.dart';
+
 class DateSelector extends StatelessWidget {
   const DateSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<AdminCubit>();
+    final local = AppLocalizations.of(context)!;
     return InkWell(
       onTap: () async {
         final DateTime? picked = await showDatePicker(
@@ -16,7 +19,7 @@ class DateSelector extends StatelessWidget {
           initialDate: cubit.selectedDate,
           firstDate: DateTime(2020),
           lastDate: DateTime.now(),
-          locale: const Locale('ar'),
+          locale: Locale(local.locale.languageCode),
         );
         if (picked != null) cubit.getStats(date: picked);
       },
@@ -31,7 +34,7 @@ class DateSelector extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "عرض بيانات: ${cubit.selectedDate.day}/${cubit.selectedDate.month}/${cubit.selectedDate.year}",
+              "${local.view_data_for}${cubit.selectedDate.day}/${cubit.selectedDate.month}/${cubit.selectedDate.year}",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const Icon(Icons.calendar_month, color: AppColors.primary),

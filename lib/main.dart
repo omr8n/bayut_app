@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +18,14 @@ import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
+import 'package:test_graduation/features/admin/presentation/manager/app_config_cubit/app_config_state.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
+import 'package:test_graduation/core/widgets/banned_dialog.dart';
+import 'package:test_graduation/features/admin/presentation/manager/app_config_cubit/app_config_cubit.dart';
 import 'package:test_graduation/features/root/presentation/manager/navigation_cubit.dart';
 import 'package:test_graduation/features/search/presentation/manager/search_cubit/search_cubit.dart';
 import 'firebase_options.dart';
@@ -36,6 +40,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // 🔥 تفعيل دعم العمل دون إنترنت مع تحديد سقف للكاش (Anti-Bloat)
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: 30 * 1024 * 1024, // 30 ميجابايت كحد أقصى للبيانات النصية
+  );
 
   // تعيين معالج الخلفية
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -90,18 +100,12 @@ void main() async {
 
   // 🔔 الاستماع للإشعارات والتطبيق مفتوح (Foreground)
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    if (message.notification != null) {
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: DateTime.now().millisecond, // استخدام ID متغير لمنع تداخل الإشعارات
-          channelKey: 'general_channel', // استخدام القناة العامة للإشعارات من الأدمن
-          title: message.notification!.title,
-          body: message.notification!.body,
-          notificationLayout: NotificationLayout.Default,
-          payload: message.data.map((key, value) => MapEntry(key, value.toString())),
-        ),
-      );
-    }
+    _showLocalNotification(message);
+  });
+
+  // 🔔 التعامل مع النقر على الإشعار والتطبيق في الخلفية أو مغلق
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    // يمكنك هنا توجيه المستخدم لصفحة معينة عند النقر
   });
 
   log(
@@ -111,6 +115,21 @@ void main() async {
     // DevicePreview(enabled: true, builder: (context) => const BayutApp()),
     const BayutApp(),
   );
+}
+
+void _showLocalNotification(RemoteMessage message) {
+  if (message.notification != null) {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: DateTime.now().millisecond,
+        channelKey: 'general_channel',
+        title: message.notification!.title,
+        body: message.notification!.body,
+        notificationLayout: NotificationLayout.Default,
+        payload: message.data.map((key, value) => MapEntry(key, value.toString())),
+      ),
+    );
+  }
 }
 
 class BayutApp extends StatelessWidget {
@@ -156,6 +175,10 @@ class BayutApp extends StatelessWidget {
                 BlocProvider.value(
                   value: getIt.get<ProfileCubit>()..getUserInfo(),
                 ),
+                BlocProvider<AppConfigCubit>(
+                  create: (context) =>
+                      getIt.get<AppConfigCubit>()..fetchConfig(),
+                ),
                 BlocProvider<UserNotificationCubit>(
                   create: (context) {
                     final cubit = getIt.get<UserNotificationCubit>();
@@ -192,12 +215,26 @@ class BayutApp extends StatelessWidget {
                   useMaterial3: true,
                 ),
                 builder: (context, child) {
-                  return BlocListener<ProfileCubit, ProfileState>(
-                    listener: (context, state) {
-                      if (state is ProfileUserLoaded) {
-                        context.read<UserNotificationCubit>().getNotifications(state.user.uId);
-                      }
-                    },
+                  return MultiBlocListener(
+                    listeners: [
+                      BlocListener<ProfileCubit, ProfileState>(
+                        listener: (context, state) {
+                          if (state is ProfileUserLoaded) {
+                            context
+                                .read<UserNotificationCubit>()
+                                .getNotifications(state.user.uId);
+                          }
+
+                          if (state is ProfileUserBanned) {
+                            // 🔥 نظهر التنبيه فقط إذا كان المستخدم مسجلاً دخوله حالياً
+                            // لمنع ظهوره للمستخدمين الذين تم طردهم مسبقاً ويتصفحون كزوار
+                            if (SecureStorage.isLoggedIn) {
+                              _showBannedDialog(context);
+                            }
+                          }
+                        },
+                      ),
+                    ],
                     child: child!,
                   );
                 },
@@ -206,6 +243,31 @@ class BayutApp extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  void _showBannedDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return BlocBuilder<AppConfigCubit, AppConfigState>(
+          builder: (context, configState) {
+            String adminPhone = '';
+            if (configState is AppConfigSuccess) {
+              adminPhone = configState.config.contactPhone;
+            }
+
+            return BannedDialog(
+              adminPhone: adminPhone,
+              onContinueAsGuest: () {
+                context.read<ProfileCubit>().logout();
+                Navigator.of(dialogContext).pop();
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

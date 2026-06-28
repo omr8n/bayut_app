@@ -44,11 +44,13 @@ import 'package:test_graduation/features/admin/presentation/views/admin_users_sc
 import 'package:test_graduation/features/admin/presentation/views/admin_reports_screen.dart';
 import 'package:test_graduation/features/admin/presentation/views/admin_notifications_screen.dart';
 import 'package:test_graduation/features/admin/presentation/views/admin_settings_screen.dart';
+import 'package:test_graduation/features/admin/presentation/views/audit_logs_screen.dart';
+import 'package:test_graduation/features/admin/presentation/views/financial_transfers_view.dart'; // 🔥 إضافة المحفظة
 
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 
-import 'package:test_graduation/features/admin/presentation/views/widgets/audit_logs/audit_logs_screen.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_action_cubit/admin_action_cubit.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_notification_cubit/admin_notification_cubit.dart';
 import 'app_routes.dart';
 
 class RouterGenerationConfig {
@@ -392,12 +394,24 @@ class RouterGenerationConfig {
           }
           return null;
         },
-        pageBuilder: (context, state) => BaseRoute(
-          child: BlocProvider(
-            create: (context) => getIt<AdminCubit>(),
-            child: const AdminNotificationsScreen(),
-          ),
-        ),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return BaseRoute(
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (context) => getIt<AdminCubit>()),
+                BlocProvider(
+                  create: (context) =>
+                      getIt<AdminNotificationCubit>()..fetchNotificationsHistory(),
+                ),
+              ],
+              child: AdminNotificationsScreen(
+                targetUserId: extra?['uId'],
+                targetUserName: extra?['name'],
+              ),
+            ),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.adminSettings,
@@ -431,6 +445,20 @@ class RouterGenerationConfig {
             create: (context) => getIt<AdminActionCubit>(),
             child: const AuditLogsScreen(),
           ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.adminFinancials,
+        name: AppRoutes.adminFinancials,
+        redirect: (context, state) {
+          final user = context.read<ProfileCubit>().user;
+          if (user == null || !user.isAdmin) {
+            return AppRoutes.mainScreen;
+          }
+          return null;
+        },
+        pageBuilder: (context, state) => BaseRoute(
+          child: const FinancialTransfersView(),
         ),
       ),
     ],

@@ -16,6 +16,9 @@ class UserEntity extends Equatable {
   final bool isVerified;
   final int propertiesCount;
   final int reportsCount;
+  final int dailyListingsCount; // 🔥 عدد العقارات المنشورة اليوم
+  final Timestamp? lastListingTimestamp; // 🔥 توقيت آخر عملية نشر
+  final String? fcmToken; // 🔥 حقل التوكن للإشعارات
 
   const UserEntity({
     required this.name,
@@ -32,6 +35,9 @@ class UserEntity extends Equatable {
     this.isVerified = false,
     this.propertiesCount = 0,
     this.reportsCount = 0,
+    this.dailyListingsCount = 0,
+    this.lastListingTimestamp,
+    this.fcmToken,
   });
 
   // Getters ذكية
@@ -56,6 +62,9 @@ class UserEntity extends Equatable {
     bool? isVerified,
     int? propertiesCount,
     int? reportsCount,
+    int? dailyListingsCount,
+    Timestamp? lastListingTimestamp,
+    String? fcmToken,
   }) {
     return UserEntity(
       name: name ?? this.name,
@@ -72,6 +81,9 @@ class UserEntity extends Equatable {
       isVerified: isVerified ?? this.isVerified,
       propertiesCount: propertiesCount ?? this.propertiesCount,
       reportsCount: reportsCount ?? this.reportsCount,
+      dailyListingsCount: dailyListingsCount ?? this.dailyListingsCount,
+      lastListingTimestamp: lastListingTimestamp ?? this.lastListingTimestamp,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 
@@ -87,5 +99,6 @@ class UserEntity extends Equatable {
         isVerified,
         userWish,
         userCart,
+        fcmToken,
       ];
 }

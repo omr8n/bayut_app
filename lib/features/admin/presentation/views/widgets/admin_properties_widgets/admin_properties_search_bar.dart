@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class AdminPropertiesSearchBar extends StatelessWidget {
@@ -6,16 +7,16 @@ class AdminPropertiesSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       color: AppColors.background,
       child: TextField(
-        textAlign: TextAlign.right,
         onChanged: (value) {
           // TODO: Implement search logic in Cubit
         },
         decoration: InputDecoration(
-          hintText: 'ابحث عن عقار...',
+          hintText: local.search_property_hint,
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

@@ -15,6 +15,7 @@ abstract class AdminRepo {
 
   // User Management
   Future<Either<Failure, List<UserEntity>>> getAllUsers();
+  Future<Either<Failure, UserEntity>> getUserById(String uId);
   Future<Either<Failure, void>> blockUser({required String uId, required bool block});
   Future<Either<Failure, void>> deleteUser({required String uId});
   Future<Either<Failure, void>> updateUserRole({required String uId, required String role});
