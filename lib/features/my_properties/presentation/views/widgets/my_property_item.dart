@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/promotion_sheet.dart';
 
 class MyPropertyItem extends StatelessWidget {
   const MyPropertyItem({super.key, required this.property, this.onSold});
@@ -21,203 +23,295 @@ class MyPropertyItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final numberFormat = NumberFormat('#,###');
+    final locale = AppLocalizations.of(context)!;
     final String displayImage = property.media.isNotEmpty
         ? property.media[0]
         : (property.images.isNotEmpty ? property.images[0] : '');
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          InkWell(
-            onTap: () => GoRouter.of(context).push(AppRoutes.propertyDashboard, extra: property),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 1. الجزء الأيسر (البيانات)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+    return Directionality(
+      textDirection: locale.isEnLocale
+          ? ui.TextDirection.ltr
+          : ui.TextDirection.rtl,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 20.h, left: 16.w, right: 16.w),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            InkWell(
+              onTap: () => GoRouter.of(
+                context,
+              ).push(AppRoutes.propertyDashboard, extra: property),
+              borderRadius: BorderRadius.circular(24.r),
+              child: Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 1. Property Image
+                        Stack(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _buildOldViewsBadge(), // المشاهدات في أقصى اليسار
-                                Text(
-                                  property.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp,
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              '${numberFormat.format(property.price)} ${AppLocalizations.of(context)!.translate(property.currency.trim().toLowerCase())}',
-                              style: TextStyle(
-                                color: const Color(0xFF1E4C9A), // أزرق ملكي
-                                fontWeight: FontWeight.w900,
-                                fontSize: 16.sp,
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(18.r),
+                                child: displayImage.isNotEmpty
+                                    ? Image.network(
+                                        displayImage,
+                                        width: 115.w,
+                                        height: 115.w,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            _buildPlaceholder(),
+                                      )
+                                    : _buildPlaceholder(),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Icon(Icons.location_on, size: 14, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${AppLocalizations.of(context)!.translate(property.governorate)} - ${property.city}',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Icon(Icons.access_time_rounded, size: 14, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Text(
-                                  DateFormat('yyyy/MM/dd').format(property.createdAt),
-                                  style: TextStyle(color: Colors.grey, fontSize: 11.sp),
-                                ),
-                              ],
+                            Positioned(
+                              top: 6.h,
+                              right: 6.w,
+                              child: _buildStatusChip(context),
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      // 2. الجزء الأيمن (الصورة)
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15.r),
-                            child: displayImage.isNotEmpty
-                                ? Image.network(
-                                    displayImage,
-                                    width: 100.w,
-                                    height: 100.w,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                                  )
-                                : _buildPlaceholder(),
+                        SizedBox(width: 16.w),
+                        // 2. Property Info
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                property.title,
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17.sp,
+                                  color: Colors.black87,
+                                  letterSpacing: -0.5,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                '${numberFormat.format(property.price)} ${locale.translate(property.currency.trim().toLowerCase())}',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 18.sp,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on_rounded,
+                                    size: 14.sp,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  Expanded(
+                                    child: Text(
+                                      '${locale.translate(property.governorate)} - ${property.city}',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade500,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 6.h),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today_rounded,
+                                        size: 13.sp,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        DateFormat(
+                                          'yyyy/MM/dd',
+                                        ).format(property.createdAt),
+                                        style: TextStyle(
+                                          color: Colors.grey.shade500,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  _buildViewsBadge(context),
+                                ],
+                              ),
+                            ],
                           ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: _buildStatusChip(context),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.h),
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.grey.withOpacity(0.0),
+                            Colors.grey.withOpacity(0.2),
+                            Colors.grey.withOpacity(0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    // 3. Action Buttons
+                    SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildActionItem(
+                            context,
+                            Icons.edit_note_rounded,
+                            locale.translate(LangKeys.editAction),
+                            const Color(0xFF2196F3),
+                            () => GoRouter.of(context).push(
+                              AppRoutes.addPropertyScreen,
+                              extra: property,
+                            ),
+                          ),
+                          _buildPremiumActionStatus(context),
+                          _buildActionItem(
+                            context,
+                            Icons.check_circle_outline_rounded,
+                            locale.translate(LangKeys.sold),
+                            const Color(0xFF00BFA5),
+                            () => _showSoldConfirmDialog(
+                              context,
+                              context.read<MyPropertiesCubit>(),
+                            ),
+                          ),
+                          _buildActionItem(
+                            context,
+                            Icons.insights_rounded,
+                            locale.translate(LangKeys.activityHistory),
+                            Colors.grey.shade700,
+                            () => GoRouter.of(context).push(
+                              AppRoutes.propertyDashboard,
+                              extra: property,
+                            ),
+                          ),
+                          _buildActionItem(
+                            context,
+                            Icons.hourglass_top_rounded,
+                            locale.translate(LangKeys.underInstallment),
+                            const Color(0xFFFF9100),
+                            () => context
+                                .read<MyPropertiesCubit>()
+                                .updatePropertyStatus(
+                                  property,
+                                  property.status ==
+                                          PropertyStatus.underInstallment
+                                      ? PropertyStatus.active
+                                      : PropertyStatus.underInstallment,
+                                ),
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Delete Button
+            Positioned(
+              top: -6.h,
+              right: locale.isEnLocale ? -6.w : null,
+              left: locale.isEnLocale ? null : -6.w,
+              child: GestureDetector(
+                onTap: () => _showDeleteConfirmDialog(
+                  context,
+                  context.read<MyPropertiesCubit>(),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF5252),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.red.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
-                  const Divider(height: 24, thickness: 0.5),
-                  // 3. الأزرار السفلية بالفواصل
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildExactActionItem(
-                          context,
-                          Icons.edit_rounded,
-                          'تعديل',
-                          Colors.blue,
-                          () => GoRouter.of(context).push(AppRoutes.addPropertyScreen, extra: property),
-                        ),
-                        _buildSeparator(),
-                        _buildPremiumActionStatus(context),
-                        _buildSeparator(),
-                        _buildExactActionItem(
-                          context,
-                          Icons.hourglass_bottom_rounded,
-                          'قيد التقسيط',
-                          Colors.orange.shade700,
-                          () => context.read<MyPropertiesCubit>().updatePropertyStatus(
-                            property,
-                            property.status == PropertyStatus.underInstallment
-                                ? PropertyStatus.active
-                                : PropertyStatus.underInstallment,
-                          ),
-                        ),
-                        if (property.status == PropertyStatus.sold) ...[
-                          _buildSeparator(),
-                          _buildExactActionItem(
-                            context,
-                            Icons.local_offer_rounded,
-                            'مباع',
-                            Colors.teal,
-                            () {},
-                          ),
-                        ],
-                      ],
-                    ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: Colors.white,
+                    size: 16,
                   ),
-                ],
-              ),
-            ),
-          ),
-          // زر الحذف في أعلى اليسار
-          Positioned(
-            top: -10,
-            left: -10,
-            child: GestureDetector(
-              onTap: () => _showDeleteConfirmDialog(context, context.read<MyPropertiesCubit>()),
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
                 ),
-                child: const Icon(Icons.close_rounded, color: Colors.white, size: 18),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildOldViewsBadge() {
+  Widget _buildViewsBadge(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(15),
+        color: AppColors.primary.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Icon(
+            Icons.remove_red_eye_rounded,
+            size: 14.sp,
+            color: AppColors.primary,
+          ),
+          SizedBox(width: 5.w),
           Text(
             '${property.views}',
-            style: const TextStyle(color: Color(0xFF1E4C9A), fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: AppColors.primary,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(width: 4),
-          const Icon(Icons.visibility_rounded, size: 16, color: Color(0xFF1E4C9A)),
         ],
       ),
     );
@@ -225,49 +319,117 @@ class MyPropertyItem extends StatelessWidget {
 
   Widget _buildStatusChip(BuildContext context) {
     String label = property.status.localizedName(context);
-    Color color = const Color(0xFF1E4C9A); // Blue for active
-    if (property.status == PropertyStatus.sold) color = Colors.redAccent;
-    if (property.status == PropertyStatus.underInstallment) color = Colors.orange;
+    Color color = AppColors.primary;
+    if (property.status == PropertyStatus.sold) color = const Color(0xFFFF5252);
+    if (property.status == PropertyStatus.underInstallment) {
+      color = const Color(0xFFFF9100);
+    }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8.r)),
-      child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  Widget _buildPremiumActionStatus(BuildContext context) {
-    switch (property.premiumStatus) {
-      case PremiumStatus.pending:
-        return _buildExactActionItem(context, Icons.watch_later, 'طلب التميز قيد الانتظار', const Color(0xFF42A5F5), () {});
-      case PremiumStatus.active:
-        return _buildExactActionItem(context, Icons.emoji_events_rounded, 'عقار مميز', Colors.orange.shade700, () {});
-      case PremiumStatus.rejected:
-        return _buildExactActionItem(context, Icons.error, 'طلب التميز مرفوض', Colors.redAccent, () => _showPromotionDialog(context));
-      default:
-        return _buildExactActionItem(context, Icons.rocket_launch_rounded, 'طلب تميز', Colors.orange.shade800, () => _showPromotionDialog(context));
-    }
-  }
-
-  Widget _buildExactActionItem(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.w),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 16.sp),
-            SizedBox(width: 4.w),
-            Text(label, style: TextStyle(color: color, fontSize: 12.sp, fontWeight: FontWeight.bold)),
-          ],
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(10.r),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
   }
 
-  Widget _buildSeparator() {
-    return Text('|', style: TextStyle(color: Colors.grey.shade300, fontSize: 18.sp));
+  Widget _buildPremiumActionStatus(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
+    switch (property.premiumStatus) {
+      case PremiumStatus.pending:
+        return _buildActionItem(
+          context,
+          Icons.pending_actions_rounded,
+          locale.translate(LangKeys.promotionPending),
+          const Color(0xFF1565C0),
+          () {},
+        );
+      case PremiumStatus.active:
+        return _buildActionItem(
+          context,
+          Icons.stars_rounded,
+          locale.translate(LangKeys.featuredPropertyLabel),
+          const Color(0xFFFFB300),
+          null,
+        );
+      case PremiumStatus.rejected:
+        return _buildActionItem(
+          context,
+          Icons.new_releases_rounded,
+          locale.translate(LangKeys.promotionRejected),
+          Colors.redAccent,
+          () => _showPromotionDialog(context),
+        );
+      default:
+        return _buildActionItem(
+          context,
+          Icons.auto_awesome_rounded,
+          locale.translate(LangKeys.promotionRequest),
+          const Color(0xFF673AB7),
+          () => _showPromotionDialog(context),
+        );
+    }
+  }
+
+  Widget _buildActionItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Color color,
+    VoidCallback? onTap,
+  ) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              border: Border.all(color: color.withOpacity(0.15)),
+              borderRadius: BorderRadius.circular(12.r),
+              color: color.withOpacity(0.05),
+            ),
+            child: Opacity(
+              opacity: onTap == null ? 0.6 : 1.0,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, color: color, size: 16.sp),
+                  SizedBox(width: 6.w),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showPromotionDialog(BuildContext context) {
@@ -275,25 +437,96 @@ class MyPropertyItem extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _PaymentSelectionSheet(property: property),
+      builder: (context) => PromotionSheet(property: property),
+    );
+  }
+
+  void _showSoldConfirmDialog(BuildContext context, MyPropertiesCubit cubit) {
+    final locale = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        title: Text(
+          locale.translate(LangKeys.updateStatusTitle),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(locale.translate(LangKeys.soldStatusDesc)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              locale.translate(LangKeys.cancelAction),
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF00BFA5),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: TextButton(
+              onPressed: () {
+                cubit.updatePropertyStatus(property, PropertyStatus.sold);
+                if (onSold != null) onSold!();
+                Navigator.pop(dialogContext);
+              },
+              child: Text(
+                locale.translate(LangKeys.confirmAction),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   void _showDeleteConfirmDialog(BuildContext context, MyPropertiesCubit cubit) {
+    final locale = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('حذف العقار'),
-        content: const Text('هل أنت متأكد من حذف هذا العقار نهائياً؟'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        title: Text(
+          locale.translate(LangKeys.deleteProperty),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(locale.translate(LangKeys.deleteConfirmation)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('إلغاء')),
           TextButton(
-            onPressed: () {
-              final user = FirebaseAuth.instance.currentUser;
-              if (user != null) cubit.deleteProperty(property.id, user.uid);
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('حذف', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              locale.translate(LangKeys.cancelAction),
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF5252),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: TextButton(
+              onPressed: () {
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) cubit.deleteProperty(property.id, user.uid);
+                Navigator.pop(dialogContext);
+              },
+              child: Text(
+                locale.translate(LangKeys.delete),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -301,94 +534,20 @@ class MyPropertyItem extends StatelessWidget {
   }
 
   Widget _buildPlaceholder() {
-    return Container(width: 100.w, height: 100.w, color: Colors.grey.shade100, child: const Icon(Icons.image_not_supported_outlined, color: Colors.grey));
-  }
-}
-
-// تم نقل الـ Sheets والـ Dialogs لأسفل الملف للحفاظ على الترتيب
-class _PaymentSelectionSheet extends StatefulWidget {
-  final PropertyEntity property;
-  const _PaymentSelectionSheet({required this.property});
-
-  @override
-  State<_PaymentSelectionSheet> createState() => _PaymentSelectionSheetState();
-}
-
-class _PaymentSelectionSheetState extends State<_PaymentSelectionSheet> {
-  int _selectedPackage = 1;
-  @override
-  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
-      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+      width: 115.w,
+      height: 115.w,
+      color: Colors.grey.shade50,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(10))),
-          SizedBox(height: 24.h),
-          const Text('ميز عقارك الآن 🚀', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          SizedBox(height: 32.h),
-          _buildPackageItem(0, 'باقة الأسبوع المميزة', '250,000', Icons.bolt_rounded, Colors.blue),
-          SizedBox(height: 16.h),
-          _buildPackageItem(1, 'الباقة الشهرية الاحترافية', '750,000', Icons.stars_rounded, Colors.amber.shade700),
-          SizedBox(height: 32.h),
-          ElevatedButton(
-            onPressed: () { Navigator.pop(context); _showConfirmPaymentDialog(context); },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, minimumSize: Size(double.infinity, 55.h), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r))),
-            child: const Text('الانتقال للدفع الآمن', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          Icon(
+            Icons.image_not_supported_rounded,
+            color: Colors.grey.shade300,
+            size: 32.sp,
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildPackageItem(int index, String title, String price, IconData icon, Color color) {
-    bool isSelected = _selectedPackage == index;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedPackage = index),
-      child: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(color: isSelected ? color.withOpacity(0.05) : Colors.white, borderRadius: BorderRadius.circular(20.r), border: Border.all(color: isSelected ? color : Colors.grey.shade200, width: 2)),
-        child: Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(price, style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 18)), Text('ل.س', style: TextStyle(color: color, fontSize: 12)), SizedBox(height: 8.h), Text(title, style: const TextStyle(fontWeight: FontWeight.bold))])), Icon(icon, color: color)]),
-      ),
-    );
-  }
-
-  void _showConfirmPaymentDialog(BuildContext context) {
-    showDialog(context: context, builder: (context) => _ConfirmPaymentDialog(property: widget.property, amount: _selectedPackage == 0 ? 250000 : 750000));
-  }
-}
-
-class _ConfirmPaymentDialog extends StatefulWidget {
-  final PropertyEntity property;
-  final double amount;
-  const _ConfirmPaymentDialog({required this.property, required this.amount});
-
-  @override
-  State<_ConfirmPaymentDialog> createState() => _ConfirmPaymentDialogState();
-}
-
-class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
-  int _selectedMethod = 0;
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('تأكيد الدفع 💳', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 24.h),
-          _buildMethodTile(0, 'البطاقة المصرفية السورية'),
-          _buildMethodTile(1, 'سيريتل كاش / إم تي إن كاش'),
-          SizedBox(height: 24.h),
-          Row(children: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')), Expanded(child: ElevatedButton(onPressed: () { context.read<MyPropertiesCubit>().requestPromotion(widget.property); Navigator.pop(context); }, style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary), child: const Text('دفع الآن', style: TextStyle(color: Colors.white))))]),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMethodTile(int index, String title) {
-    return RadioListTile(value: index, groupValue: _selectedMethod, onChanged: (val) => setState(() => _selectedMethod = val as int), title: Text(title, style: const TextStyle(fontSize: 13)));
   }
 }

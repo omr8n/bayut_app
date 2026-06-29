@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -13,10 +14,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
         isCoreLibraryDesugaringEnabled = true
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     defaultConfig {
@@ -45,18 +42,10 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
-    constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.24") {
-            because("2.3.10 is not a real version")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24") {
-            because("2.3.10 is not a real version")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24") {
-            because("2.3.10 is not a real version")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-common:1.9.24") {
-            because("2.3.10 is not a real version")
-        }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
     }
 }

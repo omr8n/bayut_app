@@ -17,28 +17,9 @@ class AddPropertyViewBodyBlocBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AddPropertyCubit, AddPropertyState>(
       listener: (context, state) {
-        // 🔥 التعامل مع حالات النجاح (إضافة أو تعديل)
-        if (state is AddPropertySuccess || state is UpdatePropertySuccess) {
-          final bool isUpdate = state is UpdatePropertySuccess;
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                isUpdate
-                    ? AppLocalizations.of(
-                        context,
-                      )!.translate(LangKeys.editSuccess)
-                    : AppLocalizations.of(
-                        context,
-                      )!.translate(LangKeys.uploadSuccess),
-              ),
-              backgroundColor: AppColors.success,
-            ),
-          );
-
-          // 🔥 طلبك: العودة لصفحة الـ Main مباشرة بعد النجاح
-          // نستخدم pushReplacement لضمان عدم العودة لصفحة الإضافة عند الضغط على زر الرجوع
-          GoRouter.of(context).pushReplacement(AppRoutes.mainScreen);
+        // 🔥 العودة للخلف فوراً عند بدء الرفع
+        if (state is AddPropertyInProgress) {
+          GoRouter.of(context).pop();
         } else if (state is AddPropertyFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

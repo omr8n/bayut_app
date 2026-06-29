@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_graduation/core/constants/app_constants.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'package:test_graduation/core/utils/colors.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_cubit.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/add_property_params.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
@@ -188,6 +190,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
       text: p?.workshopHeight?.toString() ?? '',
     );
 
+    final config = context.read<AdminSettingsCubit>().currentConfig;
     _selectedPropertyType = p?.type ?? PropertyType.housesAndApartments;
     _selectedListingType = p?.listingType ?? ListingType.sale;
     _hasInstallment = p?.hasInstallment ?? false;
@@ -201,7 +204,7 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
     _selectedDirection = p?.direction ?? AppConstants.directions.first;
     _selectedHeatingType = p?.heatingType ?? AppConstants.heatingTypes.first;
     _selectedGovernorate = p?.governorate ?? AppConstants.governorates.first;
-    _selectedCurrency = p?.currency ?? AppConstants.currencies.first;
+    _selectedCurrency = config?.baseCurrency ?? AppConstants.currencies.first;
     _selectedShopLocation =
         p?.shopLocation ?? AppConstants.shopLocationTypes.first;
     _selectedLandType = p?.landType ?? AppConstants.landType.first;
@@ -300,8 +303,89 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   }
 
   Future<void> _pickMedia() async {
+    final context = RouterGenerationConfig
+        .goRouter
+        .configuration
+        .navigatorKey
+        .currentContext!;
+    final config = context.read<AdminSettingsCubit>().currentConfig;
+    final int maxImages = config?.maxImagesPerProperty ?? 10;
+    final int maxVideos = config?.maxVideosPerProperty ?? 1;
+    final locale = AppLocalizations.of(context)!;
+
     final List<XFile> pickedFiles = await _picker.pickMultipleMedia();
-    if (pickedFiles.isNotEmpty) setState(() => _mediaFiles.addAll(pickedFiles));
+
+    if (pickedFiles.isNotEmpty) {
+      int newImagesCount = 0;
+      int newVideosCount = 0;
+
+      // حساب الملفات الحالية
+      int currentImagesCount =
+          _existingMedia.where((path) => _isImagePath(path)).length +
+          _mediaFiles.where((file) => _isImageFile(file)).length;
+      int currentVideosCount =
+          _existingMedia.where((path) => _isVideoPath(path)).length +
+          _mediaFiles.where((file) => _isVideoFile(file)).length;
+
+      List<XFile> allowedFiles = [];
+
+      for (var file in pickedFiles) {
+        if (_isImageFile(file)) {
+          if (currentImagesCount + newImagesCount < maxImages) {
+            allowedFiles.add(file);
+            newImagesCount++;
+          } else {
+            _showLimitSnackBar(
+              locale
+                  .translate(LangKeys.limitExceededImages)
+                  .replaceFirst('{count}', maxImages.toString()),
+            );
+            break;
+          }
+        } else if (_isVideoFile(file)) {
+          if (currentVideosCount + newVideosCount < maxVideos) {
+            allowedFiles.add(file);
+            newVideosCount++;
+          } else {
+            _showLimitSnackBar(
+              locale
+                  .translate(LangKeys.limitExceededVideos)
+                  .replaceFirst('{count}', maxVideos.toString()),
+            );
+            break;
+          }
+        }
+      }
+
+      if (allowedFiles.isNotEmpty) {
+        setState(() => _mediaFiles.addAll(allowedFiles));
+      }
+    }
+  }
+
+  bool _isImagePath(String path) =>
+      path.toLowerCase().contains('.jpg') ||
+      path.toLowerCase().contains('.jpeg') ||
+      path.toLowerCase().contains('.png');
+  bool _isVideoPath(String path) =>
+      path.toLowerCase().contains('.mp4') ||
+      path.toLowerCase().contains('.mov');
+  bool _isImageFile(XFile file) =>
+      file.path.toLowerCase().contains('.jpg') ||
+      file.path.toLowerCase().contains('.jpeg') ||
+      file.path.toLowerCase().contains('.png');
+  bool _isVideoFile(XFile file) =>
+      file.path.toLowerCase().contains('.mp4') ||
+      file.path.toLowerCase().contains('.mov');
+
+  void _showLimitSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _removeMedia(int index) => setState(() => _mediaFiles.removeAt(index));
@@ -676,6 +760,10 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
   }
 
   void _showLimitReachedSheet(dynamic user) {
+    final config = context.read<AdminSettingsCubit>().currentConfig;
+    final double extraPrice = config?.extraPropertyPrice ?? 5000.0;
+    final String currency = config?.baseCurrency ?? 'ل.س';
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -690,19 +778,30 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
 
             // إظهار تنبيه جاري المعالجة
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(AppLocalizations.of(context)!.translate(LangKeys.waitingForPayment))),
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.translate(LangKeys.waitingForPayment),
+                ),
+              ),
             );
 
-            final success = await cubit.paymentService.processExtraListingPayment(
-              user: user,
-              amount: 5000,
-              propertyTitle: _titleController.text.trim(),
-            );
+            final success = await cubit.paymentService
+                .processExtraListingPayment(
+                  user: user,
+                  amount: extraPrice,
+                  propertyTitle: _titleController.text.trim(),
+                );
 
             if (success) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.translate(LangKeys.paymentSuccess)),
+                  content: Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.translate(LangKeys.paymentSuccess),
+                  ),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -711,7 +810,11 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.translate(LangKeys.paymentFailed)),
+                  content: Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.translate(LangKeys.paymentFailed),
+                  ),
                   backgroundColor: Colors.red,
                 ),
               );

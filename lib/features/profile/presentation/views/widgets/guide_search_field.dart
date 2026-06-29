@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/language/app_localizations.dart';
+import '../../../../../core/language/lang_keys.dart';
 import '../../../../../core/utils/colors.dart';
 
 class GuideSearchField extends StatelessWidget {
@@ -31,11 +33,12 @@ class GuideSearchField extends StatelessWidget {
           child: TextField(
             controller: controller,
             onChanged: onChanged,
-            decoration: const InputDecoration(
-              hintText: 'ابحث عن سؤالك هنا...',
-              prefixIcon: Icon(Icons.search, color: AppColors.primary),
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!
+                  .translate(LangKeys.searchYourQuestion),
+              prefixIcon: const Icon(Icons.search, color: AppColors.primary),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 15),
+              contentPadding: const EdgeInsets.symmetric(vertical: 15),
             ),
           ),
         ),

@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/language/app_localizations_setup.dart';
@@ -18,15 +18,16 @@ import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
-import 'package:test_graduation/features/admin/presentation/manager/app_config_cubit/app_config_state.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_state.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
 import 'package:test_graduation/core/widgets/banned_dialog.dart';
-import 'package:test_graduation/features/admin/presentation/manager/app_config_cubit/app_config_cubit.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_cubit.dart';
 import 'package:test_graduation/features/root/presentation/manager/navigation_cubit.dart';
+import 'package:test_graduation/features/root/presentation/views/widgets/maintenance_guard.dart';
 import 'package:test_graduation/features/search/presentation/manager/search_cubit/search_cubit.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -126,7 +127,9 @@ void _showLocalNotification(RemoteMessage message) {
         title: message.notification!.title,
         body: message.notification!.body,
         notificationLayout: NotificationLayout.Default,
-        payload: message.data.map((key, value) => MapEntry(key, value.toString())),
+        payload: message.data.map(
+          (key, value) => MapEntry(key, value.toString()),
+        ),
       ),
     );
   }
@@ -175,9 +178,9 @@ class BayutApp extends StatelessWidget {
                 BlocProvider.value(
                   value: getIt.get<ProfileCubit>()..getUserInfo(),
                 ),
-                BlocProvider<AppConfigCubit>(
+                BlocProvider<AdminSettingsCubit>(
                   create: (context) =>
-                      getIt.get<AppConfigCubit>()..fetchConfig(),
+                      getIt.get<AdminSettingsCubit>()..getSettings(),
                 ),
                 BlocProvider<UserNotificationCubit>(
                   create: (context) {
@@ -206,7 +209,9 @@ class BayutApp extends StatelessWidget {
                 theme: ThemeData(
                   primaryColor: AppColors.primary,
                   scaffoldBackgroundColor: AppColors.background,
-                  fontFamily: locale.languageCode == 'ar' ? 'Dubai' : 'Poppins',
+                  textTheme: locale.languageCode == 'ar'
+                      ? GoogleFonts.cairoTextTheme()
+                      : GoogleFonts.poppinsTextTheme(),
                   colorScheme: ColorScheme.fromSeed(
                     seedColor: AppColors.primary,
                     primary: AppColors.primary,
@@ -215,27 +220,29 @@ class BayutApp extends StatelessWidget {
                   useMaterial3: true,
                 ),
                 builder: (context, child) {
-                  return MultiBlocListener(
-                    listeners: [
-                      BlocListener<ProfileCubit, ProfileState>(
-                        listener: (context, state) {
-                          if (state is ProfileUserLoaded) {
-                            context
-                                .read<UserNotificationCubit>()
-                                .getNotifications(state.user.uId);
-                          }
-
-                          if (state is ProfileUserBanned) {
-                            // 🔥 نظهر التنبيه فقط إذا كان المستخدم مسجلاً دخوله حالياً
-                            // لمنع ظهوره للمستخدمين الذين تم طردهم مسبقاً ويتصفحون كزوار
-                            if (SecureStorage.isLoggedIn) {
-                              _showBannedDialog(context);
+                  return MaintenanceGuard(
+                    child: MultiBlocListener(
+                      listeners: [
+                        BlocListener<ProfileCubit, ProfileState>(
+                          listener: (context, state) {
+                            if (state is ProfileUserLoaded) {
+                              context
+                                  .read<UserNotificationCubit>()
+                                  .getNotifications(state.user.uId);
                             }
-                          }
-                        },
-                      ),
-                    ],
-                    child: child!,
+
+                            if (state is ProfileUserBanned) {
+                              // 🔥 نظهر التنبيه فقط إذا كان المستخدم مسجلاً دخوله حالياً
+                              // لمنع ظهوره للمستخدمين الذين تم طردهم مسبقاً ويتصفحون كزوار
+                              if (SecureStorage.isLoggedIn) {
+                                _showBannedDialog(context);
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                      child: child!,
+                    ),
                   );
                 },
               ),
@@ -251,10 +258,10 @@ class BayutApp extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return BlocBuilder<AppConfigCubit, AppConfigState>(
+        return BlocBuilder<AdminSettingsCubit, AdminSettingsState>(
           builder: (context, configState) {
             String adminPhone = '';
-            if (configState is AppConfigSuccess) {
+            if (configState is AdminSettingsLoaded) {
               adminPhone = configState.config.contactPhone;
             }
 

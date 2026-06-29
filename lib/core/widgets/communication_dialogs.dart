@@ -2,68 +2,97 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../language/app_localizations.dart';
 import '../language/lang_keys.dart';
-import '../utils/colors.dart';
 
 class CommunicationDialogs {
-  static void showWhatsAppFallback(BuildContext context, {required VoidCallback onCallPressed}) {
+  static void showWhatsAppFallback(BuildContext context,
+      {required VoidCallback onCallPressed}) {
     final loc = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r)),
         child: Padding(
-          padding: EdgeInsets.all(24.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Header with Title and Icon
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   Icon(Icons.info_outline, color: Colors.orange, size: 28.sp),
-                   SizedBox(width: 12.w),
-                   Text(
+                  if (loc.isEnLocale)
+                    Icon(Icons.info_outline,
+                        color: Colors.orange, size: 28.sp),
+                  if (loc.isEnLocale) SizedBox(width: 10.w),
+                  Text(
                     loc.translate(LangKeys.whatsappFallbackTitle),
                     style: TextStyle(
-                      fontSize: 18.sp,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
+                      color: const Color(0xFF333333),
                     ),
                   ),
+                  if (!loc.isEnLocale) SizedBox(width: 10.w),
+                  if (!loc.isEnLocale)
+                    Icon(Icons.info_outline,
+                        color: Colors.orange, size: 28.sp),
                 ],
               ),
               SizedBox(height: 16.h),
+              // Message
               Text(
                 loc.translate(LangKeys.whatsappFallbackMessage),
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey[700],
-                  height: 1.5,
+                  fontSize: 15.sp,
+                  color: Colors.grey[600],
+                  height: 1.6,
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 30.h),
+              // Actions
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      loc.translate(LangKeys.cancel),
-                      style: TextStyle(color: Colors.grey[600]),
+                  // Cancel Button
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        loc.translate(LangKeys.cancel),
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 16.sp,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(width: 12.w),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onCallPressed();
-                    },
-                    icon: Icon(Icons.phone, size: 18.sp),
-                    label: Text(loc.translate(LangKeys.callNow)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.success,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
+                  // Call Now Button
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onCallPressed();
+                      },
+                      icon: Icon(Icons.phone, size: 20.sp),
+                      label: Text(
+                        loc.translate(LangKeys.callNow),
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1ABC9C),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                       ),
                     ),
                   ),

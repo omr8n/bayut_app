@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/language/app_localizations.dart';
+import '../../../../../core/language/lang_keys.dart';
 import '../../../../../core/utils/colors.dart';
 
 class GuideFooter extends StatelessWidget {
@@ -6,19 +8,20 @@ class GuideFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
+    final localizations = AppLocalizations.of(context)!;
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 32),
+        padding: const EdgeInsets.symmetric(vertical: 32),
         child: Column(
           children: [
             Text(
-              'هل لديك أسئلة أخرى؟',
-              style: TextStyle(color: AppColors.textSecondary),
+              localizations.translate(LangKeys.haveMoreQuestions),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'تواصل مع الدعم الفني',
-              style: TextStyle(
+              localizations.translate(LangKeys.contactTechnicalSupport),
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline,

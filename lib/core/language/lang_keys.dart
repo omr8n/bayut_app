@@ -572,7 +572,8 @@ class LangKeys {
   static const String notifTypePromotion = 'notif_type_promotion';
   static const String notifTypeUpdate = 'notif_type_update';
   static const String notifTypeReport = 'notif_type_report';
-  static const String notifTypePropertyFeatured = 'notif_type_property_featured';
+  static const String notifTypePropertyFeatured =
+      'notif_type_property_featured';
   static const String notifTypeAccountStatus = 'notif_type_account_status';
   static const String notifTypeAdminAction = 'notif_type_admin_action';
   static const String userDetails = 'user_details';
@@ -591,7 +592,8 @@ class LangKeys {
   static const String dangerZone = 'danger_zone';
   static const String deleteUserForever = 'delete_user_forever';
   static const String deleteUserConfirm = 'delete_user_confirm';
-  static const String reviewPremiumRequestTooltip = 'review_premium_request_tooltip';
+  static const String reviewPremiumRequestTooltip =
+      'review_premium_request_tooltip';
   static const String contactOwnerTooltip = 'contact_owner_tooltip';
   static const String unfeaturePropertyTooltip = 'unfeature_property_tooltip';
   static const String featurePropertyTooltip = 'feature_property_tooltip';
@@ -710,6 +712,43 @@ class LangKeys {
   static const String geography = 'geography';
   static const String market = 'market';
   static const String platform = 'platform';
+  static const String contactAndSupport = 'contact_and_support';
+  static const String legalPolicies = 'legal_policies';
+  static const String basicControl = 'basic_control';
+  static const String maintenanceMode = 'maintenance_mode';
+  static const String maintenanceModeDesc = 'maintenance_mode_desc';
+  static const String manualApproval = 'manual_approval';
+  static const String manualApprovalDesc = 'manual_approval_desc';
+  static const String generalNotifications = 'general_notifications';
+  static const String generalNotificationsDesc = 'general_notifications_desc';
+  static const String platformIdentity = 'platform_identity';
+  static const String appNameLabel = 'app_name_label';
+  static const String systemVersion = 'system_version';
+  static const String marketPricingEngine = 'market_pricing_engine';
+  static const String baseCurrency = 'base_currency';
+  static const String weeklyFeaturedPrice = 'weekly_featured_price';
+  static const String monthlyFeaturedPrice = 'monthly_featured_price';
+  static const String freePropertyLimit = 'free_property_limit';
+  static const String extraPropertyPrice = 'extra_property_price';
+  static const String mediaLimits = 'media_limits';
+  static const String maxImages = 'max_images';
+  static const String maxVideos = 'max_videos';
+  static const String imagesCount = 'images_count';
+  static const String videosCount = 'videos_count';
+  static const String limitExceededImages = 'limit_exceeded_images';
+  static const String limitExceededVideos = 'limit_exceeded_videos';
+  static const String supportEmailLabel = 'support_email_label';
+  static const String supportPhoneLabel = 'support_phone_label';
+  static const String socialLinks = 'social_links';
+  static const String socialLinksDesc = 'social_links_desc';
+  static const String termsOfUseEdit = 'terms_of_use_edit';
+  static const String termsOfUseEditDesc = 'terms_of_use_edit_desc';
+  static const String privacyPolicyEdit = 'privacy_policy_edit';
+  static const String privacyPolicyEditDesc = 'privacy_policy_edit_desc';
+  static const String adminSettingsTitle = 'admin_settings_title';
+  static const String sectionWillBeActivated = 'section_will_be_activated';
+  static const String sectionDevelopmentDesc = 'section_development_desc';
+  static const String legalPoliciesDesc = 'legal_policies_desc';
   static const String adminSystemEngine = 'admin_system_engine';
   static const String manageUsers = 'manage_users';
   static const String noMatchingUsers = 'no_matching_users';
@@ -763,7 +802,8 @@ class LangKeys {
   static const String rentalsLabel = 'rentals_label';
   static const String platformGrowth7Days = 'platform_growth_7_days';
   static const String dailyActivityAnalysis = 'daily_activity_analysis';
-  static const String realEstateMarketDistribution = 'real_estate_market_distribution';
+  static const String realEstateMarketDistribution =
+      'real_estate_market_distribution';
   static const String smartControlCenter = 'smart_control_center';
   static const String welcomeLeader = 'welcome_leader';
   static const String onlineNow = 'online_now';
@@ -804,4 +844,30 @@ class LangKeys {
   static const String paymentFailed = 'payment_failed';
   static const String extraListingPrice = 'extra_listing_price';
   static const String extraListingFee = 'extra_listing_fee';
+
+  // My Properties - Not Logged In
+  static const String notLoggedIn = 'not_logged_in';
+  static const String loginToManageProperties = 'login_to_manage_properties';
+  static const String loginNow = 'login_now';
+
+  // User Guide
+  static const String searchYourQuestion = 'search_your_question';
+  static const String haveMoreQuestions = 'have_more_questions';
+  static const String contactTechnicalSupport = 'contact_technical_support';
+
+  // Add Property
+  static const String mediaTitle = 'media_title';
+  static const String mediaSubtitle = 'media_subtitle';
+
+  static const String usd = 'usd';
+  static const String tryCurrency = 'try';
+
+  // My Properties Promotion
+  static const String promotionRequest = 'promotion_request';
+  static const String promotionPending = 'promotion_pending';
+  static const String promotionRejected = 'promotion_rejected';
+  static const String featuredPropertyLabel = 'featured_property_label';
+  static const String editAction = 'edit_action';
+  static const String views = 'views';
+  static const String enterValue = 'enter_value';
 }

@@ -18,22 +18,15 @@ class PropertiesListView extends StatelessWidget {
       return const Center(child: Text('لا توجد عقارات في هذا القسم.'));
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 50),
-      child: ListView.builder(
-        reverse: true,
-        padding: EdgeInsets.zero,
-        itemCount: properties.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: MyPropertyItem(
-              property: properties[index],
-              onSold: onSoldAction, // تمرير الوظيفة للبطاقة
-            ),
-          );
-        },
-      ),
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 10, bottom: 50),
+      itemCount: properties.length,
+      itemBuilder: (context, index) {
+        return MyPropertyItem(
+          property: properties[index],
+          onSold: onSoldAction,
+        );
+      },
     );
   }
 }

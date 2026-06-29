@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/router_generation_config.dart';
@@ -5,6 +6,7 @@ import 'dart:developer';
 import 'dart:math' hide log;
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:uuid/uuid.dart';
 import 'package:test_graduation/core/helper/functions/get_user.dart';
 import '../../../../core/repos/media_repo/media_repo.dart';
@@ -31,7 +33,8 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     final int notificationId = Random().nextInt(100000);
     _activeUploads[notificationId] = true;
 
-    if (!isClosed) emit(AddPropertySuccess());
+    // 🔥 إرسال حالة "قيد التنفيذ" للسماح للمستخدم بالتنقل فوراً
+    if (!isClosed) emit(AddPropertyInProgress());
     if (!isClosed) emit(AddPropertyInitial());
 
     _showProgressNotification(
@@ -56,8 +59,8 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     final int notificationId = Random().nextInt(100000);
     _activeUploads[notificationId] = true;
 
-    // 🔥 إصدار حالة التعديل بدلاً من النجاح العام
-    if (!isClosed) emit(UpdatePropertySuccess());
+    // 🔥 إرسال حالة "قيد التنفيذ" للسماح للمستخدم بالتنقل فوراً
+    if (!isClosed) emit(AddPropertyInProgress());
     if (!isClosed) emit(AddPropertyInitial());
 
     _showProgressNotification(
@@ -129,7 +132,10 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
             failure.message,
             isUpdate: isUpdate,
           ),
-          (_) => _showSuccessNotification(id, params.title, isUpdate: isUpdate),
+          (_) {
+            _showSuccessNotification(id, params.title, isUpdate: isUpdate);
+            _showGlobalSuccessSnackBar(isUpdate);
+          },
         );
       }
     } catch (e) {
@@ -247,6 +253,29 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
         body: error,
       ),
     );
+  }
+
+  void _showGlobalSuccessSnackBar(bool isUpdate) {
+    final context = RouterGenerationConfig
+        .goRouter
+        .configuration
+        .navigatorKey
+        .currentContext;
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            isUpdate
+                ? AppLocalizations.of(context)!.translate(LangKeys.editSuccess)
+                : AppLocalizations.of(
+                    context,
+                  )!.translate(LangKeys.uploadSuccess),
+          ),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   PropertyEntity _mapParamsToEntity(

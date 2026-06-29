@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
@@ -35,12 +36,10 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
     }
   }
 
-  // 🔥 دالة التحديث عند السحب
   Future<void> _onRefresh() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       context.read<MyPropertiesCubit>().fetchMyProperties(user.uid);
-      // ننتظر قليلاً لضمان ظهور مؤشر التحميل بشكل مريح للمستخدم
       await Future.delayed(const Duration(milliseconds: 1000));
     }
   }
@@ -61,49 +60,100 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
         .where((p) => p.status == PropertyStatus.sold)
         .toList();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF3F5F9),
-      appBar: AppBar(
-        title: Text(locale.translate(LangKeys.myProperties)),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.primary,
-          tabs: [
-            Tab(text: locale.translate(LangKeys.activeProperties)),
-            Tab(text: locale.translate(LangKeys.soldProperties)),
-          ],
-        ),
-      ),
-      // 🔥 إضافة ميزة السحب للتحديث
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        color: AppColors.primary,
-        backgroundColor: Colors.white,
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            PropertiesListView(
-              properties: active,
-              onSoldAction: navigateToSoldTab,
+    return Directionality(
+      textDirection: locale.isEnLocale ? TextDirection.ltr : TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF8FAFC),
+        appBar: AppBar(
+          title: Text(
+            locale.translate(LangKeys.myProperties),
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 22.sp,
+              color: const Color(0xFF1E293B),
+              letterSpacing: -0.5,
             ),
-            PropertiesListView(properties: sold),
-          ],
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(60.h),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.white,
+                unselectedLabelColor: const Color(0xFF64748B),
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  color: AppColors.primary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                labelStyle: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w800,
+                ),
+                unselectedLabelStyle: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+                tabs: [
+                  Tab(text: locale.translate(LangKeys.activeProperties)),
+                  Tab(text: locale.translate(LangKeys.soldProperties)),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => GoRouter.of(context).push(AppRoutes.addPropertyScreen),
-        backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: Text(
-          locale.translate(LangKeys.addProperty),
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,
+          color: AppColors.primary,
+          strokeWidth: 3,
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              PropertiesListView(
+                properties: active,
+                onSoldAction: navigateToSoldTab,
+              ),
+              PropertiesListView(properties: sold),
+            ],
+          ),
+        ),
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(bottom: 12.h),
+          child: FloatingActionButton.extended(
+            onPressed: () =>
+                GoRouter.of(context).push(AppRoutes.addPropertyScreen),
+            backgroundColor: AppColors.primary,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            icon: Icon(Icons.add_rounded, color: Colors.white, size: 28.sp),
+            label: Text(
+              locale.translate(LangKeys.addProperty),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
         ),
       ),

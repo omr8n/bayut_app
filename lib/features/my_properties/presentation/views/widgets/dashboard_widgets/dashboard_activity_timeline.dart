@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
@@ -15,22 +16,30 @@ class DashboardActivityTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final history = property.statusHistory.reversed.toList();
-    
+    final locale = AppLocalizations.of(context)!;
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Colors.grey.shade100),
       ),
       child: history.isEmpty
           ? Center(
-            child: Text(AppLocalizations.of(context)!.translate(LangKeys.noResults)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              child: Text(
+                locale.translate(LangKeys.noResults),
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
           )
           : ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: history.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 20),
+              separatorBuilder: (_, __) => SizedBox(height: 16.h),
               itemBuilder: (context, index) {
                 final item = history[index];
                 final status = PropertyStatus.values.firstWhere(
@@ -38,7 +47,6 @@ class DashboardActivityTimeline extends StatelessWidget {
                   orElse: () => PropertyStatus.active,
                 );
                 
-                // معالجة التاريخ بمرونة (String أو Timestamp)
                 DateTime date;
                 final ts = item['timestamp'];
                 if (ts is Timestamp) {
@@ -49,49 +57,53 @@ class DashboardActivityTimeline extends StatelessWidget {
                   date = DateTime.now();
                 }
 
-                final reason = item['reason'] as String?;
-
                 return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(status),
-                            shape: BoxShape.circle,
+                    Container(
+                      width: 8.w,
+                      height: 8.w,
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(status),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: _getStatusColor(status).withOpacity(0.4),
+                            blurRadius: 6,
+                            spreadRadius: 1,
                           ),
-                        ),
-                        if (index != history.length - 1)
-                          Container(width: 2, height: 40, color: Colors.grey.shade200),
-                      ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 14.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                status.localizedName(context),
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                              ),
-                              Text(
-                                DateFormat('yyyy/MM/dd HH:mm').format(date),
-                                style: const TextStyle(color: Colors.grey, fontSize: 11),
-                              ),
-                            ],
+                          Text(
+                            status.localizedName(context),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                              color: Colors.black87,
+                            ),
                           ),
-                          if (reason != null && reason.isNotEmpty)
+                          if (item['reason'] != null && item['reason'].toString().isNotEmpty)
                             Text(
-                              reason,
-                              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                              item['reason'].toString(),
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
                         ],
+                      ),
+                    ),
+                    Text(
+                      DateFormat('HH:mm  yyyy/MM/dd').format(date),
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -103,10 +115,10 @@ class DashboardActivityTimeline extends StatelessWidget {
 
   Color _getStatusColor(PropertyStatus status) {
     switch (status) {
-      case PropertyStatus.active: return AppColors.primary;
+      case PropertyStatus.active: return const Color(0xFF1E4C9A);
       case PropertyStatus.sold: return Colors.redAccent;
       case PropertyStatus.rented: return Colors.purple;
-      case PropertyStatus.underInstallment: return Colors.orange;
+      case PropertyStatus.underInstallment: return Colors.orange.shade800;
     }
   }
 }

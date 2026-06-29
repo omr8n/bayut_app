@@ -60,8 +60,9 @@ class _LogoText extends StatelessWidget {
           style: TextStyle(
             fontSize: 24.sp,
             fontWeight: FontWeight.w900,
-            letterSpacing: 1.5,
+            letterSpacing: localizations.isEnLocale ? 1.5 : 0,
             color: AppColors.primary,
+            height: 1.2,
           ),
         ),
         Text(
@@ -70,7 +71,8 @@ class _LogoText extends StatelessWidget {
             fontSize: 10.sp,
             fontWeight: FontWeight.w600,
             color: Colors.grey,
-            letterSpacing: 1,
+            letterSpacing: localizations.isEnLocale ? 1 : 0,
+            height: 1.2,
           ),
         ),
       ],

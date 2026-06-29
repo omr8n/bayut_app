@@ -55,12 +55,11 @@ import 'package:test_graduation/features/admin/data/repos/admin_action_repo_impl
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_action_cubit/admin_action_cubit.dart';
 
-import 'package:test_graduation/features/admin/domain/repos/app_config_repo.dart';
-import 'package:test_graduation/features/admin/data/repos/app_config_repo_impl.dart';
-import 'package:test_graduation/features/admin/presentation/manager/app_config_cubit/app_config_cubit.dart';
-
 import 'package:test_graduation/features/notifications/domain/use_cases/get_all_notifications_use_case.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_notification_cubit/admin_notification_cubit.dart';
+import 'package:test_graduation/features/admin/domain/repos/app_settings_repo.dart';
+import 'package:test_graduation/features/admin/data/repos/app_settings_repo_impl.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -73,7 +72,9 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<StorageService>(() => CloudinaryStorageService());
   getIt.registerLazySingleton<DatabaseService>(() => FireStoreService());
   getIt.registerLazySingleton<FirebaseAuthService>(() => FirebaseAuthService());
-  getIt.registerLazySingleton<CommunicationService>(() => CommunicationServiceImpl());
+  getIt.registerLazySingleton<CommunicationService>(
+    () => CommunicationServiceImpl(),
+  );
   getIt.registerLazySingleton<DynamicLinkService>(() => DynamicLinkService());
 
   // Repositories
@@ -153,7 +154,9 @@ void setupServiceLocator() {
     () => AdminRepoImpl(getIt<DatabaseService>()),
   );
   getIt.registerLazySingleton<AdminActionRepo>(() => AdminActionRepoImpl());
-  getIt.registerLazySingleton<AppConfigRepo>(() => AppConfigRepoImpl());
+  getIt.registerLazySingleton<AppSettingsRepo>(
+    () => AppSettingsRepoImpl(getIt<DatabaseService>()),
+  );
   getIt.registerFactory<AdminCubit>(
     () => AdminCubit(
       getIt<AdminRepo>(),
@@ -165,8 +168,8 @@ void setupServiceLocator() {
   getIt.registerFactory<AdminActionCubit>(
     () => AdminActionCubit(getIt<AdminActionRepo>()),
   );
-  getIt.registerFactory<AppConfigCubit>(
-    () => AppConfigCubit(getIt<AppConfigRepo>()),
+  getIt.registerLazySingleton<AdminSettingsCubit>(
+    () => AdminSettingsCubit(getIt<AppSettingsRepo>()),
   );
 
   // Notifications

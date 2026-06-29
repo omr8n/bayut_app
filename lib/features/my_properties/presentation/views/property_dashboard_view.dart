@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -33,7 +34,7 @@ class PropertyDashboardView extends StatefulWidget {
 
 class _PropertyDashboardViewState extends State<PropertyDashboardView> {
   StreamSubscription? _connectivitySubscription;
-  Timer? _countdownTimer; // 🔥 إضافة مؤقت للعداد التنازلي
+  Timer? _countdownTimer;
   Duration _remainingTime = Duration.zero;
 
   @override
@@ -80,21 +81,19 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
-    _countdownTimer
-        ?.cancel(); // 🔥 إغلاق المؤقت لمنع تسريب الذاكرة (Memory Leak)
+    _countdownTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return BlocConsumer<MyPropertiesCubit, MyPropertiesState>(
       listener: (context, state) {
         if (state is MyPropertiesFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                AppLocalizations.of(context)!.translate(state.errMessage),
-              ),
+              content: Text(locale.translate(state.errMessage)),
               backgroundColor: Colors.red,
             ),
           );
@@ -114,92 +113,102 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
             ? currentProperty.media
             : currentProperty.images;
 
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: MediaGallery(
-                    mediaUrls: mediaList,
-                    propertyImages: currentProperty.images,
-                    property: currentProperty,
+        return Directionality(
+          textDirection: locale.isEnLocale
+              ? ui.TextDirection.ltr
+              : ui.TextDirection.rtl,
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Stack(
+              children: [
+                Positioned.fill(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: MediaGallery(
+                      mediaUrls: mediaList,
+                      propertyImages: currentProperty.images,
+                      property: currentProperty,
+                    ),
                   ),
                 ),
-              ),
-              CustomDraggableSheet(
-                initialChildSize: 0.4,
-                minChildSize: 0.4,
-                maxChildSize: 0.9,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          currentProperty.title,
-                          style: TextStyle(
-                            fontSize: 22.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 20.h),
-                        if (currentProperty.premiumStatus ==
-                            PremiumStatus.active)
-                          _buildPremiumStatusBanner(currentProperty)
-                        else if (currentProperty.views >
-                            5) // مثال للمؤهل للتريند
-                          _buildTrendBanner(),
-                        SizedBox(height: 16.h),
-                        DashboardStatsGrid(property: currentProperty),
-                        SizedBox(height: 30.h),
-                        Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.translate(LangKeys.activityHistory),
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        DashboardActivityTimeline(property: currentProperty),
-                        SizedBox(height: 120.h),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: 40.h,
-                left: 16.w,
-                right: 16.w,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                CustomDraggableSheet(
+                  initialChildSize: 0.4,
+                  minChildSize: 0.4,
+                  maxChildSize: 0.9,
                   children: [
-                    CustomCircleButton(
-                      icon: Icons.arrow_back_ios_new,
-                      onTap: () => context.pop(),
-                    ),
-                    CustomCircleButton(
-                      icon: Icons.share_outlined,
-                      onTap: () {
-                        ShareService.shareProperty(context, currentProperty);
-                      },
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            currentProperty.title,
+                            style: TextStyle(
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                          // 🔥 عرض بانر التريند إذا كان العقار ضمن التريند
+                          if (currentProperty.views > 5) _buildTrendBanner(),
+                          if (currentProperty.views > 5 &&
+                              currentProperty.premiumStatus ==
+                                  PremiumStatus.active)
+                            SizedBox(height: 12.h),
+                          // 🔥 عرض بانر التميز إذا كان العقار مميزاً
+                          if (currentProperty.premiumStatus ==
+                              PremiumStatus.active)
+                            _buildPremiumStatusBanner(currentProperty),
+
+                          SizedBox(height: 16.h),
+                          DashboardStatsGrid(property: currentProperty),
+                          SizedBox(height: 30.h),
+                          Text(
+                            locale.translate(LangKeys.activityHistory),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          DashboardActivityTimeline(property: currentProperty),
+                          SizedBox(height: 120.h),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: DashboardBottomActions(property: currentProperty),
-              ),
-            ],
+                Positioned(
+                  top: 40.h,
+                  left: 16.w,
+                  right: 16.w,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomCircleButton(
+                        icon: locale.isEnLocale
+                            ? Icons.arrow_back_ios_new
+                            : Icons.arrow_forward_ios,
+                        onTap: () => context.pop(),
+                      ),
+                      CustomCircleButton(
+                        icon: Icons.share_outlined,
+                        onTap: () {
+                          ShareService.shareProperty(context, currentProperty);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: DashboardBottomActions(property: currentProperty),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -208,51 +217,43 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
 
   Widget _buildTrendBanner() {
     final locale = AppLocalizations.of(context)!;
-    // 🔥 حساب تاريخ انتهاء التريند ديناميكياً (7 أيام من تاريخ اليوم)
     final trendExpiry = DateTime.now().add(const Duration(days: 7));
     final expiryString = DateFormat('yyyy/MM/dd').format(trendExpiry);
 
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.05),
+        color: const Color(0xFFFFF9F0),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.orange.withOpacity(0.1)),
+        border: Border.all(color: Colors.orange.withOpacity(0.2)),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.trending_up_rounded,
-                  color: Colors.orange.shade300,
-                  size: 20,
-                ),
+              const Icon(
+                Icons.local_fire_department_rounded,
+                color: Colors.orange,
+                size: 24,
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Text(
                 locale.translate(LangKeys.congratulationsTrend),
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
-                  color: Colors.orange.shade700,
+                  color: Colors.orange.shade800,
                 ),
+              ),
+              const Spacer(),
+              const Icon(
+                Icons.trending_up_rounded,
+                color: Colors.orange,
+                size: 20,
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
@@ -269,22 +270,34 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                       style: TextStyle(fontSize: 10.sp, color: Colors.grey),
                     ),
                     Text(
-                      locale.translate(LangKeys.trendExpiryUntil).replaceFirst('{date}', expiryString),
+                      locale
+                          .translate(LangKeys.currentRank)
+                          .replaceFirst('{rank}', '1'),
                       style: TextStyle(
-                        fontSize: 10.sp,
-                        color: Colors.orange.shade300,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange.shade800,
                       ),
                     ),
                   ],
                 ),
                 const Spacer(),
-                Text(
-                  locale.translate(LangKeys.currentRank).replaceFirst('{rank}', '1'),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange.shade700,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      locale.translate(LangKeys.trendExpiryUntil),
+                      style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                    ),
+                    Text(
+                      expiryString,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -300,6 +313,11 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
 
     final days = _remainingTime.inDays;
     final hours = _remainingTime.inHours % 24;
+
+    // Calculate total duration (assuming 30 days for month or based on creation)
+    // For demo purposes, we use 30 days as total.
+    const totalDurationSeconds = 30 * 24 * 60 * 60;
+    final progress = (1 - (_remainingTime.inSeconds / totalDurationSeconds)).clamp(0.0, 1.0);
 
     return Container(
       padding: EdgeInsets.all(20.w),
@@ -319,18 +337,18 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: const Color(0xFF1E4C9A).withOpacity(0.1),
                       blurRadius: 10,
                     ),
                   ],
                 ),
                 child: const Icon(
-                  Icons.verified_user_rounded,
+                  Icons.stars_rounded,
                   color: Color(0xFF1E4C9A),
                   size: 20,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 10),
               Text(
                 locale.translate(LangKeys.premiumStatusActiveLabel),
                 style: TextStyle(
@@ -338,6 +356,12 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF1E4C9A),
                 ),
+              ),
+              const Spacer(),
+              const Icon(
+                Icons.emoji_events_rounded,
+                color: Color(0xFF1E4C9A),
+                size: 20,
               ),
             ],
           ),
@@ -351,7 +375,8 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Text(
-                  locale.translate(LangKeys.remainingTime)
+                  locale
+                      .translate(LangKeys.remainingTime)
                       .replaceFirst('{days}', days.toString())
                       .replaceFirst('{hours}', hours.toString()),
                   style: TextStyle(
@@ -377,6 +402,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade800,
                     ),
                   ),
                 ],
@@ -384,21 +410,26 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
             ],
           ),
           SizedBox(height: 12.h),
-          LinearProgressIndicator(
-            value: (_remainingTime.inSeconds / (30 * 24 * 60 * 60)).clamp(0, 1),
-            backgroundColor: Colors.white,
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFD3E3F0)),
-            minHeight: 6.h,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.white,
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFF1E4C9A),
+              ),
+              minHeight: 8.h,
+            ),
           ),
           SizedBox(height: 8.h),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(Icons.info_outline_rounded, size: 12.sp, color: Colors.grey),
-              SizedBox(width: 4.w),
               Text(
                 locale.translate(LangKeys.planProMonth),
                 style: const TextStyle(fontSize: 10, color: Colors.grey),
               ),
+              Icon(Icons.info_outline_rounded, size: 14.sp, color: Colors.grey),
             ],
           ),
         ],

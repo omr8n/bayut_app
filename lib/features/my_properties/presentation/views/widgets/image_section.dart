@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../core/language/app_localizations.dart';
+import '../../../../../core/language/lang_keys.dart';
 
 class ImageSection extends StatefulWidget {
   final List<XFile> mediaFiles;
@@ -26,17 +28,18 @@ class _ImageSectionState extends State<ImageSection> {
   @override
   Widget build(BuildContext context) {
     final int existingCount = widget.existingMedia?.length ?? 0;
+    final locale = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'الوسائط (صور وفيديو)',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          locale.translate(LangKeys.mediaTitle),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        const Text(
-          'يمكنك اختيار الصور الجديدة مع الحفاظ على القديمة',
-          style: TextStyle(color: Colors.grey, fontSize: 13),
+        Text(
+          locale.translate(LangKeys.mediaSubtitle),
+          style: const TextStyle(color: Colors.grey, fontSize: 13),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -46,7 +49,7 @@ class _ImageSectionState extends State<ImageSection> {
             // عدد العناصر = زر الإضافة + الصور القديمة + الصور الجديدة
             itemCount: existingCount + widget.mediaFiles.length + 1,
             itemBuilder: (context, index) {
-              if (index == 0) return _buildAddButton();
+              if (index == 0) return _buildAddButton(context);
 
               // عرض الصور القديمة (من السيرفر)
               if (index <= existingCount) {
@@ -67,23 +70,32 @@ class _ImageSectionState extends State<ImageSection> {
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _buildAddButton(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: widget.onAddMedia,
       child: Container(
-        width: 100, height: 100,
+        width: 100,
+        height: 100,
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300, width: 1.5),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_photo_alternate_outlined, color: Colors.blue, size: 32),
-            SizedBox(height: 4),
-            Text('إضافة وسائط', style: TextStyle(color: Colors.grey, fontSize: 11)),
+            const Icon(
+              Icons.add_photo_alternate_outlined,
+              color: Colors.blue,
+              size: 32,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              locale.translate(LangKeys.addMedia),
+              style: const TextStyle(color: Colors.grey, fontSize: 11),
+            ),
           ],
         ),
       ),

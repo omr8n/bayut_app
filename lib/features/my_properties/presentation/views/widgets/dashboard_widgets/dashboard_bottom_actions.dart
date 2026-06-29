@@ -216,17 +216,53 @@ class _StatusUpdateSheet extends StatelessWidget {
       leading: Icon(icon, color: _getStatusColor(status)),
       title: Text(title),
       onTap: () {
-        Navigator.pop(context);
-        if (status == PropertyStatus.active &&
+        if (status == PropertyStatus.sold) {
+          Navigator.pop(context);
+          _showSoldConfirmation(context);
+        } else if (status == PropertyStatus.active &&
             property.status == PropertyStatus.sold) {
+          Navigator.pop(context);
           _showReasonDialog(context, status);
         } else {
+          Navigator.pop(context);
           context.read<MyPropertiesCubit>().updatePropertyStatus(
             property,
             status,
           );
         }
       },
+    );
+  }
+
+  void _showSoldConfirmation(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        title: Text(locale.translate(LangKeys.updateStatusTitle)),
+        content: Text(locale.translate(LangKeys.soldStatusDesc)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dContext),
+            child: Text(locale.translate(LangKeys.cancelAction)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.read<MyPropertiesCubit>().updatePropertyStatus(
+                property,
+                PropertyStatus.sold,
+              );
+              Navigator.pop(dContext);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+            child: Text(
+              locale.translate(LangKeys.confirmAction),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -14,16 +14,18 @@ class SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(right: 20.w, bottom: 8.h, top: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h).copyWith(top: 20.h),
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 13.sp,
-              color: const Color(0xFF9EA3AE),
-              fontWeight: FontWeight.w500,
+              fontSize: 14.sp,
+              color: const Color(0xFF7F8C8D),
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Cairo',
+              letterSpacing: 0.5,
             ),
           ),
         ),
@@ -31,17 +33,24 @@ class SettingsSection extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(24.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
             ],
+            border: Border.all(
+              color: Colors.black.withOpacity(0.02),
+              width: 1,
+            ),
           ),
-          child: Column(
-            children: children,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24.r),
+            child: Column(
+              children: children,
+            ),
           ),
         ),
       ],

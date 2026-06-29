@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:test_graduation/core/utils/colors.dart';
+
 import 'package:test_graduation/core/enums/property_enums.dart';
 
 import 'package:test_graduation/core/language/app_localizations.dart';
 
 class AdminPropertiesHeader extends StatefulWidget {
-  const AdminPropertiesHeader({super.key, required this.onFilterChanged, required this.onSearchChanged, required this.onExtraFilterChanged});
-  
+  const AdminPropertiesHeader({
+    super.key,
+    required this.onFilterChanged,
+    required this.onSearchChanged,
+    required this.onExtraFilterChanged,
+  });
+
   final Function(ListingType?) onFilterChanged;
   final Function(String) onSearchChanged;
-  final Function(String) onExtraFilterChanged; // 🔥 Premium requests and trend filter
+  final Function(String)
+  onExtraFilterChanged; // 🔥 Premium requests and trend filter
 
   @override
   State<AdminPropertiesHeader> createState() => _AdminPropertiesHeaderState();
@@ -24,7 +30,12 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
     return Container(
-      padding: EdgeInsets.only(bottom: 20.h, left: 16.w, right: 16.w, top: 10.h),
+      padding: EdgeInsets.only(
+        bottom: 20.h,
+        left: 16.w,
+        right: 16.w,
+        top: 10.h,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFF1E4C9A), // Standard Royal Blue
         borderRadius: BorderRadius.only(
@@ -36,9 +47,20 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
         children: [
           Row(
             children: [
-              const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+              const Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20,
+              ),
               const Spacer(),
-              Text(local.manage_properties, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                local.manage_properties,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const Spacer(),
               const SizedBox(width: 20),
             ],
@@ -62,15 +84,19 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
             ),
           ),
           SizedBox(height: 15.h),
-          
+
           // Original filters (All, For Sale, For Rent)
           Row(
             children: [
               Expanded(child: _buildFilterChip(local.all, null)),
               SizedBox(width: 8.w),
-              Expanded(child: _buildFilterChip(local.for_sale, ListingType.sale)),
+              Expanded(
+                child: _buildFilterChip(local.for_sale, ListingType.sale),
+              ),
               SizedBox(width: 8.w),
-              Expanded(child: _buildFilterChip(local.for_rent, ListingType.rent)),
+              Expanded(
+                child: _buildFilterChip(local.for_rent, ListingType.rent),
+              ),
             ],
           ),
           SizedBox(height: 12.h),
@@ -81,9 +107,15 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
               children: [
                 _buildExtraFilterChip(local.all, local.all),
                 SizedBox(width: 8.w),
-                _buildExtraFilterChip(local.premium_requests, local.premium_requests),
+                _buildExtraFilterChip(
+                  local.premium_requests,
+                  local.premium_requests,
+                ),
                 SizedBox(width: 8.w),
-                _buildExtraFilterChip(local.currently_featured, local.currently_featured),
+                _buildExtraFilterChip(
+                  local.currently_featured,
+                  local.currently_featured,
+                ),
                 SizedBox(width: 8.w),
                 _buildExtraFilterChip(local.trend_leaders, local.trend_leaders),
               ],
@@ -122,7 +154,8 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
   }
 
   Widget _buildExtraFilterChip(String label, String value) {
-    bool isSelected = (selectedExtraFilter ?? AppLocalizations.of(context)!.all) == value;
+    bool isSelected =
+        (selectedExtraFilter ?? AppLocalizations.of(context)!.all) == value;
     return GestureDetector(
       onTap: () {
         setState(() => selectedExtraFilter = value);

@@ -26,6 +26,7 @@ import 'package:test_graduation/core/utils/viewed_properties_manager.dart';
 import 'package:test_graduation/core/repos/property_repo/property_repo.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/core/utils/share_service.dart';
+import 'package:test_graduation/core/services/firebase_auth_service.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -44,6 +45,11 @@ class PropertyDetailsScreen extends StatefulWidget {
 
 class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   final ScrollController _backgroundScrollController = ScrollController();
+
+  bool get isOwner {
+    final currentUser = getIt<FirebaseAuthService>().currentUser;
+    return currentUser != null && currentUser.uid == widget.property.sellerId;
+  }
 
   @override
   void initState() {
@@ -132,15 +138,17 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             maxChildSize: 0.9,
             padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 60.h),
             children: [
-              if (widget.property.premiumStatus == PremiumStatus.active)
+              if (isOwner &&
+                  widget.property.premiumStatus == PremiumStatus.active)
                 PremiumCountdownTimer(property: widget.property),
-              if (widget.property.views >= 5) // مثال: إذا كان ضمن التريند
+              if (isOwner && widget.property.views >= 5) // مثال: إذا كان ضمن التريند
                 TrendingStatusCard(
                   property: widget.property,
                   rank: 2,
                 ), // استخدام rank=2 كما في الصورة
-              if (widget.property.premiumStatus == PremiumStatus.none ||
-                  widget.property.premiumStatus == PremiumStatus.rejected)
+              if (isOwner &&
+                  (widget.property.premiumStatus == PremiumStatus.none ||
+                      widget.property.premiumStatus == PremiumStatus.rejected))
                 _buildDetailsPromotionCard(context),
               PropertyDetailsHeader(
                 format: numberFormat,

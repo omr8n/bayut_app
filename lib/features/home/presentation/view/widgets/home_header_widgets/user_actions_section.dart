@@ -67,6 +67,7 @@ class _WelcomeText extends StatelessWidget {
             fontSize: 11.sp,
             color: Colors.grey.shade600,
             fontWeight: FontWeight.w500,
+            height: 1.1,
           ),
         ),
         Text(
@@ -75,6 +76,7 @@ class _WelcomeText extends StatelessWidget {
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
             color: Colors.black,
+            height: 1.1,
           ),
         ),
       ],

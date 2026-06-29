@@ -3,12 +3,20 @@ class AppConfigModel {
   final String appVersion;
   final String contactEmail;
   final String contactPhone;
-  final double featuredPropertyPrice;
+  final String whatsappNumber;
+  final String facebookUrl;
+  final String instagramUrl;
+  final double weeklyFeaturedPrice;
+  final double monthlyFeaturedPrice;
+  final int freePropertyLimitPerDay;
+  final double extraPropertyPrice;
   final int maxImagesPerProperty;
+  final int maxVideosPerProperty;
+  final String baseCurrency;
   final List<String> allowedCities;
   final List<String> allowedPropertyTypes;
-  final bool requireAdminApproval;
   final bool maintenanceMode;
+  final bool requireAdminApproval;
   final String termsOfService;
   final String privacyPolicy;
 
@@ -17,12 +25,20 @@ class AppConfigModel {
     required this.appVersion,
     required this.contactEmail,
     required this.contactPhone,
-    required this.featuredPropertyPrice,
+    required this.whatsappNumber,
+    required this.facebookUrl,
+    required this.instagramUrl,
+    required this.weeklyFeaturedPrice,
+    required this.monthlyFeaturedPrice,
+    required this.freePropertyLimitPerDay,
+    required this.extraPropertyPrice,
     required this.maxImagesPerProperty,
+    required this.maxVideosPerProperty,
+    required this.baseCurrency,
     required this.allowedCities,
     required this.allowedPropertyTypes,
-    required this.requireAdminApproval,
     required this.maintenanceMode,
+    required this.requireAdminApproval,
     required this.termsOfService,
     required this.privacyPolicy,
   });
@@ -32,12 +48,20 @@ class AppConfigModel {
         'appVersion': appVersion,
         'contactEmail': contactEmail,
         'contactPhone': contactPhone,
-        'featuredPropertyPrice': featuredPropertyPrice,
+        'whatsappNumber': whatsappNumber,
+        'facebookUrl': facebookUrl,
+        'instagramUrl': instagramUrl,
+        'weeklyFeaturedPrice': weeklyFeaturedPrice,
+        'monthlyFeaturedPrice': monthlyFeaturedPrice,
+        'freePropertyLimitPerDay': freePropertyLimitPerDay,
+        'extraPropertyPrice': extraPropertyPrice,
         'maxImagesPerProperty': maxImagesPerProperty,
+        'maxVideosPerProperty': maxVideosPerProperty,
+        'baseCurrency': baseCurrency,
         'allowedCities': allowedCities,
         'allowedPropertyTypes': allowedPropertyTypes,
-        'requireAdminApproval': requireAdminApproval,
         'maintenanceMode': maintenanceMode,
+        'requireAdminApproval': requireAdminApproval,
         'termsOfService': termsOfService,
         'privacyPolicy': privacyPolicy,
       };
@@ -45,14 +69,22 @@ class AppConfigModel {
   factory AppConfigModel.fromJson(Map<String, dynamic> json) => AppConfigModel(
         appName: json['appName'] ?? 'بيوت سوريا',
         appVersion: json['appVersion'] ?? '1.0.0',
-        contactEmail: json['contactEmail'] ?? '',
-        contactPhone: json['contactPhone'] ?? '',
-        featuredPropertyPrice: (json['featuredPropertyPrice'] as num?)?.toDouble() ?? 50.0,
+        contactEmail: json['contactEmail'] ?? 'support@baytesy.com',
+        contactPhone: json['contactPhone'] ?? '+963 935 922 621',
+        whatsappNumber: json['whatsappNumber'] ?? '+963935922621',
+        facebookUrl: json['facebookUrl'] ?? 'https://facebook.com/baytesy',
+        instagramUrl: json['instagramUrl'] ?? 'https://instagram.com/baytesy',
+        weeklyFeaturedPrice: (json['weeklyFeaturedPrice'] as num?)?.toDouble() ?? 5000.0,
+        monthlyFeaturedPrice: (json['monthlyFeaturedPrice'] as num?)?.toDouble() ?? 15000.0,
+        freePropertyLimitPerDay: json['freePropertyLimitPerDay'] ?? 3,
+        extraPropertyPrice: (json['extraPropertyPrice'] as num?)?.toDouble() ?? 5000.0,
         maxImagesPerProperty: json['maxImagesPerProperty'] ?? 10,
+        maxVideosPerProperty: json['maxVideosPerProperty'] ?? 1,
+        baseCurrency: json['baseCurrency'] ?? 'ل.س',
         allowedCities: List<String>.from(json['allowedCities'] ?? ['دمشق', 'حلب', 'حمص', 'اللاذقية', 'طرطوس', 'حماة']),
         allowedPropertyTypes: List<String>.from(json['allowedPropertyTypes'] ?? ['شقة', 'فيلا', 'مكتب', 'محل تجاري', 'أرض']),
-        requireAdminApproval: json['requireAdminApproval'] ?? false,
         maintenanceMode: json['maintenanceMode'] ?? false,
+        requireAdminApproval: json['requireAdminApproval'] ?? false,
         termsOfService: json['termsOfService'] ?? '',
         privacyPolicy: json['privacyPolicy'] ?? '',
       );
@@ -62,12 +94,20 @@ class AppConfigModel {
     String? appVersion,
     String? contactEmail,
     String? contactPhone,
-    double? featuredPropertyPrice,
+    String? whatsappNumber,
+    String? facebookUrl,
+    String? instagramUrl,
+    double? weeklyFeaturedPrice,
+    double? monthlyFeaturedPrice,
+    int? freePropertyLimitPerDay,
+    double? extraPropertyPrice,
     int? maxImagesPerProperty,
+    int? maxVideosPerProperty,
+    String? baseCurrency,
     List<String>? allowedCities,
     List<String>? allowedPropertyTypes,
-    bool? requireAdminApproval,
     bool? maintenanceMode,
+    bool? requireAdminApproval,
     String? termsOfService,
     String? privacyPolicy,
   }) {
@@ -76,12 +116,20 @@ class AppConfigModel {
       appVersion: appVersion ?? this.appVersion,
       contactEmail: contactEmail ?? this.contactEmail,
       contactPhone: contactPhone ?? this.contactPhone,
-      featuredPropertyPrice: featuredPropertyPrice ?? this.featuredPropertyPrice,
+      whatsappNumber: whatsappNumber ?? this.whatsappNumber,
+      facebookUrl: facebookUrl ?? this.facebookUrl,
+      instagramUrl: instagramUrl ?? this.instagramUrl,
+      weeklyFeaturedPrice: weeklyFeaturedPrice ?? this.weeklyFeaturedPrice,
+      monthlyFeaturedPrice: monthlyFeaturedPrice ?? this.monthlyFeaturedPrice,
+      freePropertyLimitPerDay: freePropertyLimitPerDay ?? this.freePropertyLimitPerDay,
+      extraPropertyPrice: extraPropertyPrice ?? this.extraPropertyPrice,
       maxImagesPerProperty: maxImagesPerProperty ?? this.maxImagesPerProperty,
+      maxVideosPerProperty: maxVideosPerProperty ?? this.maxVideosPerProperty,
+      baseCurrency: baseCurrency ?? this.baseCurrency,
       allowedCities: allowedCities ?? this.allowedCities,
       allowedPropertyTypes: allowedPropertyTypes ?? this.allowedPropertyTypes,
-      requireAdminApproval: requireAdminApproval ?? this.requireAdminApproval,
       maintenanceMode: maintenanceMode ?? this.maintenanceMode,
+      requireAdminApproval: requireAdminApproval ?? this.requireAdminApproval,
       termsOfService: termsOfService ?? this.termsOfService,
       privacyPolicy: privacyPolicy ?? this.privacyPolicy,
     );

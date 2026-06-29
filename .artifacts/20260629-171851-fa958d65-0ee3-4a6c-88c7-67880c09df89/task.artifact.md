@@ -1,0 +1,4 @@
+- [x] Research existing real estate upload implementation
+- [x] Create implementation plan
+- [x] Refactor `AddPropertyCubit` to await upload completion
+- [x] Verify changes manually or with tests

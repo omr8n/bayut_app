@@ -44,6 +44,16 @@ class FireStoreService implements DatabaseService {
   }
 
   @override
+  Stream<Map<String, dynamic>?> streamDocument({
+    required String path,
+    required String documentId,
+  }) {
+    return firestore.collection(path).doc(documentId).snapshots().map(
+          (snapshot) => snapshot.data(),
+        );
+  }
+
+  @override
   Future<dynamic> getData({
     required String path,
     String? documentId,

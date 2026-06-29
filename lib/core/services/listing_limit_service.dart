@@ -3,13 +3,19 @@ import 'package:test_graduation/core/services/data_service.dart';
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
+import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/routing/router_generation_config.dart';
 
 class ListingLimitService {
-  static const int dailyFreeLimit = 3;
-
   /// للتحقق مما إذا كان بإمكان المستخدم النشر مجاناً
   Future<Map<String, dynamic>> checkListingLimit(UserEntity user) async {
     final now = DateTime.now();
+
+    // جلب الإعدادات الحالية من الـ Cubit
+    final context = RouterGenerationConfig.goRouter.configuration.navigatorKey.currentContext!;
+    final config = context.read<AdminSettingsCubit>().currentConfig;
+    final int dailyFreeLimit = config?.freePropertyLimitPerDay ?? 3;
 
     // إذا لم ينشر أبداً من قبل، فهو مسموح له
     if (user.lastListingTimestamp == null) {

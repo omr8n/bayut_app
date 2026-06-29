@@ -24,6 +24,15 @@ class CommunicationButtons extends StatelessWidget {
     }
 
     Future<void> sendWhatsApp() async {
+      // Check if whatsapp number is provided
+      if (property.whatsapp.isEmpty || property.whatsapp == "0") {
+        CommunicationDialogs.showWhatsAppFallback(
+          context,
+          onCallPressed: makeCall,
+        );
+        return;
+      }
+
       final String deepLink = await getIt<DynamicLinkService>().generatePropertyLink(
         propertyId: property.id,
         title: property.title,
@@ -48,6 +57,13 @@ class CommunicationButtons extends StatelessWidget {
     }
 
     Future<void> _sendEmail() async {
+      String? email = property.email;
+      if (email == null || email.isEmpty) {
+        // Fallback to seller email if property email is missing,
+        // but for now we use a default support email if nothing found
+        email = "support@syria-realestate.com";
+      }
+
       final String deepLink = await getIt<DynamicLinkService>().generatePropertyLink(
         propertyId: property.id,
         title: property.title,
@@ -60,11 +76,6 @@ class CommunicationButtons extends StatelessWidget {
       final String body = localizations.translate(LangKeys.emailBody)
           .replaceAll('{title}', property.title)
           .replaceAll('{link}', deepLink);
-
-      String? email = property.email;
-      if (email == null || email.isEmpty) {
-        email = "support@syria-realestate.com";
-      }
 
       await communicationService.sendEmail(
         email,
@@ -84,13 +95,13 @@ class CommunicationButtons extends StatelessWidget {
         ActionButton(
           label: localizations.translate(LangKeys.contactCall),
           icon: Icons.phone_outlined,
-          color: AppColors.success,
+          color: const Color(0xFF455A64), // Dark blue-grey for call
           onTap: makeCall,
         ),
         ActionButton(
           label: localizations.translate(LangKeys.contactEmail),
           icon: Icons.email_outlined,
-          color: Colors.blue,
+          color: AppColors.info, // Sky blue for email
           onTap: _sendEmail,
         ),
       ],

@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: 
-  flutter_image_compress: 
   flutter_localization: 
   flutter_localizations:
     sdk: flutter
@@ -39,11 +38,10 @@ dependencies:
   flutter_secure_storage: 
   flutter_spinkit: 
   flutter_svg: 
-  geolocator: 
   get_it: 
   go_router:
   google_fonts: 
-  google_maps_flutter: 
+ 
   google_sign_in: 
   iconly: 
   image_picker: 

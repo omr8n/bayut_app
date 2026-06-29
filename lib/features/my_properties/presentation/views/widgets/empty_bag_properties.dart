@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class EmptyBagProperties extends StatelessWidget {
@@ -6,6 +8,7 @@ class EmptyBagProperties extends StatelessWidget {
   final void Function() onPressed;
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -28,19 +31,19 @@ class EmptyBagProperties extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'أنت غير مسجل دخول',
-                style: TextStyle(
+              Text(
+                locale.translate(LangKeys.notLoggedIn),
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
-                'قم بتسجيل الدخول لتتمكن من إضافة عقاراتك وإدارتها بكل سهولة من هنا',
+              Text(
+                locale.translate(LangKeys.loginToManageProperties),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   color: AppColors.textSecondary,
                   height: 1.5,
@@ -65,9 +68,9 @@ class EmptyBagProperties extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'تسجيل الدخول الآن',
-                    style: TextStyle(
+                  child: Text(
+                    locale.translate(LangKeys.loginNow),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

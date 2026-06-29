@@ -11,15 +11,15 @@ class RecentActivityTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(25.r),
+        borderRadius: BorderRadius.circular(32.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 25,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -34,13 +34,6 @@ class RecentActivityTimeline extends StatelessWidget {
             isFirst: true,
           ),
           _buildActivityItem(
-            icon: Icons.pending_actions_rounded,
-            color: Colors.deepPurpleAccent, // Distinct color for pending tasks
-            title: local.pending_approval,
-            desc: local.properties_need_review,
-            count: stats.pendingProperties,
-          ),
-          _buildActivityItem(
             icon: Icons.add_home_work_rounded,
             color: const Color(0xFF64B5F6), // Blue
             title: local.added_properties,
@@ -53,13 +46,6 @@ class RecentActivityTimeline extends StatelessWidget {
             title: local.sales_transactions,
             desc: local.sold_properties,
             count: stats.soldPropertiesToday,
-          ),
-          _buildActivityItem(
-            icon: Icons.vpn_key_rounded,
-            color: Colors.cyan, // Distinct color for rent
-            title: local.rent_transactions,
-            desc: local.rented_status_desc,
-            count: stats.rentedPropertiesToday,
             isLast: true,
           ),
         ],
@@ -81,23 +67,22 @@ class RecentActivityTimeline extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // 1. Circle with Number (on the left)
-          Center(
-            child: Container(
-              width: 32.w,
-              height: 32.w,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.05),
-                shape: BoxShape.circle,
-                border: Border.all(color: color.withOpacity(0.2)),
-              ),
-              child: Center(
-                child: Text(
-                  '$count',
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11.sp,
-                  ),
+          Container(
+            width: 38.w,
+            height: 38.w,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.03),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withOpacity(0.08)),
+            ),
+            child: Center(
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.sp,
+                  fontFamily: 'Cairo',
                 ),
               ),
             ),
@@ -112,37 +97,42 @@ class RecentActivityTimeline extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
-                  color: Colors.black87,
+                  fontSize: 15.sp,
+                  color: const Color(0xFF1A1C1E),
+                  fontFamily: 'Cairo',
                 ),
               ),
               Text(
                 desc,
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 11.sp),
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 11.sp,
+                  fontFamily: 'Cairo',
+                ),
               ),
             ],
           ),
-          SizedBox(width: 16.w),
+          SizedBox(width: 20.w),
           // 3. Line and Icon (on the right)
           Column(
             children: [
               if (!isFirst)
                 Container(
-                  width: 1.5,
-                  height: 15.h,
-                  color: Colors.grey.shade100,
+                  width: 1.2,
+                  height: 12.h,
+                  color: const Color(0xFFF0F0F0),
                 ),
               Container(
-                padding: EdgeInsets.all(8.w),
+                padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withOpacity(0.08),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 18.sp),
+                child: Icon(icon, color: color, size: 20.sp),
               ),
               if (!isLast)
                 Expanded(
-                  child: Container(width: 1.5, color: Colors.grey.shade100),
+                  child: Container(width: 1.2, color: const Color(0xFFF0F0F0)),
                 ),
             ],
           ),

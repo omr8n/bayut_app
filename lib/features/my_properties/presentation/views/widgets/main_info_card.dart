@@ -124,33 +124,19 @@ class MainInfoCard extends StatelessWidget {
   Widget _buildCurrencySelector(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
+        color: Colors.grey.shade100,
         border: Border.all(color: Colors.blue.shade200),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        children: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value:
-                  AppConstants.currencies.contains(selectedCurrency)
-                      ? selectedCurrency
-                      : AppConstants.currencies.first,
-              items:
-                  AppConstants.currencies
-                      .map(
-                        (curr) => DropdownMenuItem(
-                          value: curr,
-                          child: Text(locale.translate(curr)),
-                        ),
-                      )
-                      .toList(),
-              onChanged: onCurrencyChanged,
-            ),
-          ),
-          const Icon(Icons.sync, color: Colors.grey, size: 20),
-        ],
+      child: Text(
+        selectedCurrency,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.blue.shade800,
+          fontSize: 14,
+        ),
       ),
     );
   }

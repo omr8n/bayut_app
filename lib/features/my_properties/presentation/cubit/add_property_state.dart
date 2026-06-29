@@ -19,6 +19,9 @@ class AddPropertyLoading extends AddPropertyState {
 
 class AddPropertySuccess extends AddPropertyState {}
 
+// 🔥 حالة جديدة للإشارة إلى بدء العملية والعودة للشاشة الرئيسية
+class AddPropertyInProgress extends AddPropertyState {}
+
 // 🔥 حالة جديدة لنجاح التعديل
 class UpdatePropertySuccess extends AddPropertyState {}
 

@@ -5,21 +5,30 @@ class BaseRoute extends CustomTransitionPage {
   BaseRoute({required Widget child})
     : super(
         child: child,
-        transitionDuration: const Duration(milliseconds: 300),
+        transitionDuration: const Duration(milliseconds: 400),
+        reverseTransitionDuration: const Duration(milliseconds: 350),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = 0.0;
-          const end = 1.0;
+          // Determine if the direction is RTL (Arabic)
+          final bool isRTL = Directionality.of(context) == TextDirection.rtl;
 
-          final tween = Tween(begin: begin, end: end);
+          // Slide transition: Start from left if RTL, right if LTR
+          final slideTween = Tween<Offset>(
+            begin: Offset(isRTL ? -1.0 : 1.0, 0.0),
+            end: Offset.zero,
+          ).chain(CurveTween(curve: Curves.fastOutSlowIn));
 
-          final curvedAnimation = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutBack, // 🔥 أحلى من linearToEaseOut
-          );
+          // Fade transition for extra smoothness
+          final fadeTween = Tween<double>(
+            begin: 0.0,
+            end: 1.0,
+          ).chain(CurveTween(curve: Curves.easeIn));
 
-          return ScaleTransition(
-            scale: tween.animate(curvedAnimation),
-            child: child,
+          return SlideTransition(
+            position: animation.drive(slideTween),
+            child: FadeTransition(
+              opacity: animation.drive(fadeTween),
+              child: child,
+            ),
           );
         },
       );

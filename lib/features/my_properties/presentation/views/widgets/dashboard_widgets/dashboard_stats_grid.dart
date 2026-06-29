@@ -7,6 +7,7 @@ import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/promotion_sheet.dart';
 
 class DashboardStatsGrid extends StatelessWidget {
   final PropertyEntity property;
@@ -15,65 +16,99 @@ class DashboardStatsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      childAspectRatio: 1.5,
+      childAspectRatio: 1.4,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
       children: [
+        // 1. كرت المشاهدات
         _StatCard(
-          title: 'إجمالي المشاهدات',
+          title: locale.translate(LangKeys.totalViews),
           value: '${property.views}',
           icon: Icons.visibility_rounded,
           color: const Color(0xFF1E4C9A),
         ),
+        // 2. كرت الحالة الحالية
         _StatCard(
-          title: 'الحالة الحالية',
+          title: locale.translate(LangKeys.currentStatus),
           value: property.status.localizedName(context),
           icon: Icons.info_outline_rounded,
           color: _getStatusColor(property.status),
         ),
+        // 3. كرت حالة التميز (متغير الألوان)
+        _buildPremiumStatCard(context),
+        // 4. كرت نوع العقار
         _StatCard(
-          title: 'نوع العقار',
+          title: locale.translate(LangKeys.propertyType),
           value: property.type.localizedName(context),
           icon: Icons.home_work_rounded,
-          color: Colors.blue,
-        ),
-        _StatCard(
-          title: property.premiumStatus == PremiumStatus.active ? 'عقار مميز' : 'حالة التميز',
-          value: _getPremiumLabel(context),
-          icon: property.premiumStatus == PremiumStatus.active ? Icons.stars_rounded : Icons.hourglass_empty_rounded,
-          color: property.premiumStatus == PremiumStatus.active ? Colors.orange : Colors.blue,
+          color: const Color(0xFF1E4C9A),
         ),
       ],
     );
   }
 
-  String _getPremiumLabel(BuildContext context) {
+  Widget _buildPremiumStatCard(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     switch (property.premiumStatus) {
       case PremiumStatus.pending:
-        return 'طلب التميز قيد الانتظار';
+        return _StatCard(
+          title: locale.translate(LangKeys.featuredStatus),
+          value: locale.translate(LangKeys.promotionPending),
+          icon: Icons.access_time_filled_rounded,
+          color: const Color(0xFF1E4C9A),
+        );
       case PremiumStatus.active:
-        return 'نشط';
+        return _StatCard(
+          title: locale.translate(LangKeys.featuredStatus),
+          value: locale.translate(LangKeys.featuredPropertyLabel),
+          icon: Icons.stars_rounded,
+          color: Colors.orange.shade700,
+        );
       case PremiumStatus.rejected:
-        return 'طلب التميز مرفوض';
+        return _StatCard(
+          title: locale.translate(LangKeys.featuredStatus),
+          value: locale.translate(LangKeys.promotionRejected),
+          icon: Icons.error_outline_rounded,
+          color: Colors.redAccent,
+          isError: true,
+          onTap: () => _showPromotionSheet(context),
+        );
       default:
-        return 'غير مفعل';
+        return _StatCard(
+          title: locale.translate(LangKeys.featuredStatus),
+          value: locale.translate(LangKeys.promotionRequest),
+          icon: Icons.rocket_launch_rounded,
+          color: const Color(0xFFD4AF37), // Golden color for request
+          isPremiumAction: true,
+          onTap: () => _showPromotionSheet(context),
+        );
     }
+  }
+
+  void _showPromotionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => PromotionSheet(property: property),
+    );
   }
 
   Color _getStatusColor(PropertyStatus status) {
     switch (status) {
       case PropertyStatus.active:
-        return AppColors.primary;
+        return const Color(0xFF1E4C9A);
       case PropertyStatus.sold:
         return Colors.redAccent;
       case PropertyStatus.rented:
-        return Colors.purple; // لون مميز للمؤجر
+        return Colors.purple;
       case PropertyStatus.underInstallment:
-        return Colors.orange;
+        return Colors.orange.shade800;
     }
   }
 }
@@ -83,6 +118,8 @@ class _StatCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final bool isPremiumAction;
+  final bool isError;
   final VoidCallback? onTap;
 
   const _StatCard({
@@ -90,44 +127,66 @@ class _StatCard extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.color,
+    this.isPremiumAction = false,
+    this.isError = false,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20.r),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: isError ? color.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isError ? color.withOpacity(0.2) : Colors.grey.shade100,
+          ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: Colors.grey.shade100),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 22),
-            SizedBox(height: 8.h),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                value,
-                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(icon, color: color, size: 24.sp),
+                if (isError || isPremiumAction)
+                  Icon(
+                    locale.isEnLocale
+                        ? Icons.arrow_forward_ios_rounded
+                        : Icons.arrow_back_ios_rounded,
+                    size: 14.sp,
+                    color: color,
+                  ),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              value,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: isError || isPremiumAction ? color : Colors.black87,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               title,
+              textAlign: TextAlign.start,
               style: TextStyle(fontSize: 10.sp, color: Colors.grey),
             ),
           ],

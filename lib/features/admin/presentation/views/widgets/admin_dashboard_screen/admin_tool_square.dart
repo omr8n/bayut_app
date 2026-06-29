@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AdminToolSquare extends StatelessWidget {
   final IconData icon;
@@ -18,16 +19,16 @@ class AdminToolSquare extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(24.r),
       child: Container(
-        height: 100, // Standardized height to match the image
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.01),
-              blurRadius: 10,
+              color: Colors.black.withOpacity(0.015),
+              blurRadius: 15,
               offset: const Offset(0, 4),
             ),
           ],
@@ -35,18 +36,19 @@ class AdminToolSquare extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.05),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            const SizedBox(height: 12),
+            Icon(icon, color: color, size: 28.sp),
+            SizedBox(height: 12.h),
             Text(
               label,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+                color: const Color(0xFF1A1C1E),
+                fontFamily: 'Cairo',
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
@@ -38,15 +39,36 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FD),
       appBar: AppBar(
-        title: Text(local.admin_platform_center),
+        title: Text(
+          local.admin_platform_center,
+          style: TextStyle(
+            color: const Color(0xFF1A1C1E),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Cairo',
+          ),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
-        foregroundColor: AppColors.textPrimary,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(
+              Icons.settings_outlined,
+              color: const Color(0xFF1A1C1E),
+              size: 22.sp,
+            ),
+            onPressed: () => context.pushNamed(AppRoutes.adminSettings),
+          ),
+        ),
         actions: [
           IconButton(
-            onPressed: () => context.pushNamed(AppRoutes.adminSettings),
-            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            icon: Icon(
+              Icons.menu_rounded,
+              color: const Color(0xFF1A1C1E),
+              size: 24.sp,
+            ),
           ),
         ],
       ),
@@ -116,16 +138,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: AdminToolSquare(
-                          label: local.audit_logs,
-                          icon: Icons.history_toggle_off_rounded,
-                          color: Colors.indigo,
-                          onTap: () =>
-                              context.pushNamed(AppRoutes.adminAuditLogs),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -140,25 +152,35 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             ),
                             if (stats.pendingPremiumRequests > 0)
                               Positioned(
-                                top: -5,
-                                right: -5,
+                                top: 8.h,
+                                left: 8.w,
                                 child: Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: const EdgeInsets.all(5),
                                   decoration: const BoxDecoration(
                                     color: Colors.red,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Text(
                                     '${stats.pendingPremiumRequests}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 10,
+                                      fontSize: 8.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: AdminToolSquare(
+                          label: local.audit_logs,
+                          icon: Icons.access_time_rounded,
+                          color: const Color(0xFF5C6BC0),
+                          onTap: () =>
+                              context.pushNamed(AppRoutes.adminAuditLogs),
                         ),
                       ),
                     ],
@@ -222,10 +244,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   Widget _buildSectionTitle(String title) => Text(
     title,
-    style: const TextStyle(
-      fontSize: 18,
+    style: TextStyle(
+      fontSize: 17.sp,
       fontWeight: FontWeight.bold,
-      color: Color(0xFF1A1C1E),
+      color: const Color(0xFF1A1C1E),
+      fontFamily: 'Cairo',
     ),
   );
 }

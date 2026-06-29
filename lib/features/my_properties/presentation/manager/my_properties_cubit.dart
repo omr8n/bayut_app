@@ -50,7 +50,11 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
         (failure) {
           emit(MyPropertiesFailure(failure.message));
         },
-        (properties) => emit(MyPropertiesSuccess(properties, isOffline: isOffline)),
+        (properties) {
+          // 🔥 ترتيب العقارات بحيث يظهر الأحدث في الأعلى
+          properties.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          emit(MyPropertiesSuccess(properties, isOffline: isOffline));
+        },
       );
     });
   }

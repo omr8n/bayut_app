@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DonutChartCard extends StatelessWidget {
   final String title;
@@ -35,43 +36,39 @@ class DonutChartCard extends StatelessWidget {
     };
 
     return Container(
-      width: 220,
-      height: 280,
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.only(right: 16),
+      width: 170.w,
+      height: 240.h,
+      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsetsDirectional.only(end: 12.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
-          ),
-          const Spacer(),
           SizedBox(
-            height: 100,
+            height: 110.h,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 PieChart(
                   PieChartData(
-                    sectionsSpace: 4,
-                    centerSpaceRadius: 35,
+                    sectionsSpace: 0,
+                    centerSpaceRadius: 38.r,
+                    startDegreeOffset: -90,
                     sections: data.entries.map((e) {
                       final key = e.key.toLowerCase().trim();
                       return PieChartSectionData(
                         color: statusColors[key] ?? color.withOpacity(0.3),
                         value: e.value.toDouble(),
-                        radius: 12,
+                        radius: 10.r,
                         showTitle: false,
                       );
                     }).toList(),
@@ -82,18 +79,20 @@ class DonutChartCard extends StatelessWidget {
                   children: [
                     Text(
                       "$total",
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: TextStyle(
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
+                        color: const Color(0xFF1E293B),
+                        fontFamily: 'Cairo',
                       ),
                     ),
                     Text(
                       local.total_label,
-                      style: const TextStyle(
-                        fontSize: 8,
-                        color: Colors.grey,
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        color: Colors.grey.shade400,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Cairo',
                       ),
                     ),
                   ],
@@ -102,54 +101,47 @@ class DonutChartCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 80),
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Column(
-                children: data.entries.map((e) {
-                  final key = e.key.toLowerCase().trim();
-                  final percentage = total > 0
-                      ? (e.value / total * 100).toStringAsFixed(0)
-                      : "0";
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 6.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: statusColors[key] ?? color.withOpacity(0.3),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            _translateKey(e.key, local),
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.blueGrey,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Text(
-                          "$percentage%",
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E293B),
-                          ),
-                        ),
-                      ],
+          Column(
+            children: data.entries.map((e) {
+              final key = e.key.toLowerCase().trim();
+              final percentage = total > 0
+                  ? (e.value / total * 100).toStringAsFixed(0)
+                  : "0";
+              return Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 7.w,
+                      height: 7.w,
+                      decoration: BoxDecoration(
+                        color: statusColors[key] ?? color.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      percentage == "0" ? "0%" : "$percentage%",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1E293B),
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      _translateKey(e.key, local),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: Colors.grey.shade400,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
