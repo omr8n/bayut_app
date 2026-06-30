@@ -11,6 +11,7 @@ import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/services/connectivity_service.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/core/widgets/custom_circle_button.dart';
 import 'package:test_graduation/core/widgets/custom_draggable_sheet.dart';
@@ -118,7 +119,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
               ? ui.TextDirection.ltr
               : ui.TextDirection.rtl,
           child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Stack(
               children: [
                 Positioned.fill(
@@ -146,6 +147,11 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                             style: TextStyle(
                               fontSize: 22.sp,
                               fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
                           ),
                           SizedBox(height: 20.h),
@@ -165,10 +171,14 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                           SizedBox(height: 30.h),
                           Text(
                             locale.translate(LangKeys.activityHistory),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black87,
                             ),
                           ),
                           SizedBox(height: 16.h),
@@ -219,13 +229,20 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
     final locale = AppLocalizations.of(context)!;
     final trendExpiry = DateTime.now().add(const Duration(days: 7));
     final expiryString = DateFormat('yyyy/MM/dd').format(trendExpiry);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9F0),
+        color: isDark
+            ? Colors.orange.withOpacity(0.05)
+            : const Color(0xFFFFF9F0),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.orange.withOpacity(0.2)),
+        border: Border.all(
+          color: isDark
+              ? Colors.orange.withOpacity(0.2)
+              : Colors.orange.withOpacity(0.2),
+        ),
       ),
       child: Column(
         children: [
@@ -242,7 +259,9 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
-                  color: Colors.orange.shade800,
+                  color: isDark
+                      ? Colors.orange.shade300
+                      : Colors.orange.shade800,
                 ),
               ),
               const Spacer(),
@@ -257,7 +276,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? AppColors.darkSurface : Colors.white,
               borderRadius: BorderRadius.circular(15.r),
             ),
             child: Row(
@@ -267,7 +286,12 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   children: [
                     Text(
                       locale.translate(LangKeys.mostViewed),
-                      style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey,
+                      ),
                     ),
                     Text(
                       locale
@@ -276,7 +300,9 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange.shade800,
+                        color: isDark
+                            ? Colors.orange.shade300
+                            : Colors.orange.shade800,
                       ),
                     ),
                   ],
@@ -287,14 +313,19 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   children: [
                     Text(
                       locale.translate(LangKeys.trendExpiryUntil),
-                      style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey,
+                      ),
                     ),
                     Text(
                       expiryString,
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade700,
+                        color: isDark ? Colors.white70 : Colors.grey.shade700,
                       ),
                     ),
                   ],
@@ -310,6 +341,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
   Widget _buildPremiumStatusBanner(PropertyEntity property) {
     if (_remainingTime.isNegative) return const SizedBox.shrink();
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final days = _remainingTime.inDays;
     final hours = _remainingTime.inHours % 24;
@@ -317,14 +349,21 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
     // Calculate total duration (assuming 30 days for month or based on creation)
     // For demo purposes, we use 30 days as total.
     const totalDurationSeconds = 30 * 24 * 60 * 60;
-    final progress = (1 - (_remainingTime.inSeconds / totalDurationSeconds)).clamp(0.0, 1.0);
+    final progress = (1 - (_remainingTime.inSeconds / totalDurationSeconds))
+        .clamp(0.0, 1.0);
 
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F7FA),
+        color: isDark
+            ? AppColors.primary.withOpacity(0.1)
+            : const Color(0xFFF3F7FA),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.blue.withOpacity(0.1)),
+        border: Border.all(
+          color: isDark
+              ? AppColors.primary.withOpacity(0.2)
+              : Colors.blue.withOpacity(0.1),
+        ),
       ),
       child: Column(
         children: [
@@ -333,7 +372,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkSurface : Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -354,7 +393,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1E4C9A),
+                  color: isDark ? Colors.white : const Color(0xFF1E4C9A),
                 ),
               ),
               const Spacer(),
@@ -371,7 +410,9 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD3E3F0),
+                  color: isDark
+                      ? AppColors.primary.withOpacity(0.2)
+                      : const Color(0xFFD3E3F0),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Text(
@@ -382,7 +423,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1E4C9A),
+                    color: isDark ? Colors.white : const Color(0xFF1E4C9A),
                   ),
                 ),
               ),
@@ -392,7 +433,10 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                 children: [
                   Text(
                     locale.translate(LangKeys.expiryDateLabel),
-                    style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+                    ),
                   ),
                   Text(
                     DateFormat(
@@ -402,7 +446,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade800,
+                      color: isDark ? Colors.white70 : Colors.grey.shade800,
                     ),
                   ),
                 ],
@@ -414,7 +458,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.white,
+              backgroundColor: isDark ? Colors.white10 : Colors.white,
               valueColor: const AlwaysStoppedAnimation<Color>(
                 Color(0xFF1E4C9A),
               ),
@@ -427,9 +471,16 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
             children: [
               Text(
                 locale.translate(LangKeys.planProMonth),
-                style: const TextStyle(fontSize: 10, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+                ),
               ),
-              Icon(Icons.info_outline_rounded, size: 14.sp, color: Colors.grey),
+              Icon(
+                Icons.info_outline_rounded,
+                size: 14.sp,
+                color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+              ),
             ],
           ),
         ],

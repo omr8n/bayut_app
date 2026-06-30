@@ -10,17 +10,18 @@ class PropertyDetailsLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.location_on, color: Colors.green, size: 20),
+        const Icon(Icons.location_on, color: AppColors.success, size: 20),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             '${localizations.translate(property.governorate)}${localizations.isEnLocale ? ', ' : ' - '}${property.city}\n${property.location}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
-              color: AppColors.textSecondary,
+              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
             ),
           ),
         ),

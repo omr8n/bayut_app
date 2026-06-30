@@ -20,11 +20,11 @@ class TermSection extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.03),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -40,28 +40,28 @@ class TermSection extends StatelessWidget {
                   child: Text(
                     title,
                     textAlign: TextAlign.right,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary,
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
-                Icon(icon, color: AppColors.primary, size: 28),
+                Icon(icon, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.primary, size: 28),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Divider(thickness: 0.5),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Divider(thickness: 0.5, color: Theme.of(context).dividerColor),
             ),
             Text(
               content,
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 height: 1.7,
-                color: AppColors.textSecondary,
+                color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondary,
               ),
             ),
           ],

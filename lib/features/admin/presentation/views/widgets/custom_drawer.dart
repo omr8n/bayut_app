@@ -11,12 +11,13 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
     return Drawer(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: AppColors.primaryGradient,
+            decoration: BoxDecoration(
+              gradient: Theme.of(context).brightness == Brightness.dark ? AppColors.darkGradient : AppColors.primaryGradient,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -35,54 +36,54 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.dashboard),
-            title: Text(local.home),
+            leading: Icon(Icons.dashboard, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.home, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
-            leading: const Icon(Icons.people),
-            title: Text(local.manage_users),
+            leading: Icon(Icons.people, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.manage_users, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminUsers);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.home_work),
-            title: Text(local.manage_properties),
+            leading: Icon(Icons.home_work, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.manage_properties, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminProperties);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.warning),
-            title: Text(local.notif_type_report),
+            leading: Icon(Icons.warning, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.notif_type_report, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminReports);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.account_balance_wallet_rounded),
-            title: Text(local.financial_wallet),
+            leading: Icon(Icons.account_balance_wallet_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.financial_wallet, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminFinancials);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.notifications),
-            title: Text(local.notifications),
+            leading: Icon(Icons.notifications, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.notifications, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminNotifications);
             },
           ),
-          const Divider(),
+          Divider(color: Theme.of(context).dividerColor),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: Text(local.settings),
+            leading: Icon(Icons.settings, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : null),
+            title: Text(local.settings, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null)),
             onTap: () {
               Navigator.pop(context);
               context.pushNamed(AppRoutes.adminSettings);

@@ -16,6 +16,7 @@ class ReporterContactFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Expanded(
@@ -24,12 +25,13 @@ class ReporterContactFields extends StatelessWidget {
             children: [
               Text(
                 locale.translate(LangKeys.fullNameLabel),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: nameController,
-                decoration: _inputDecoration(hint: locale.translate(LangKeys.yourNameHint)),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                decoration: _inputDecoration(context, hint: locale.translate(LangKeys.yourNameHint)),
                 validator: (val) => val!.isEmpty ? locale.translate(LangKeys.requiredField) : null,
               ),
             ],
@@ -42,12 +44,13 @@ class ReporterContactFields extends StatelessWidget {
             children: [
               Text(
                 locale.translate(LangKeys.emailLabel),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: emailController,
-                decoration: _inputDecoration(hint: locale.translate(LangKeys.yourEmailHint)),
+                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                decoration: _inputDecoration(context, hint: locale.translate(LangKeys.yourEmailHint)),
                 validator: (val) =>
                     (val!.isEmpty || !val.contains('@')) ? locale.translate(LangKeys.invalidEmailField) : null,
               ),
@@ -58,20 +61,21 @@ class ReporterContactFields extends StatelessWidget {
     );
   }
 
-  InputDecoration _inputDecoration({required String hint}) {
+  InputDecoration _inputDecoration(BuildContext context, {required String hint}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(fontSize: 13, color: Colors.grey[400]),
+      hintStyle: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey[400]),
       filled: true,
-      fillColor: Colors.grey[50],
+      fillColor: isDark ? AppColors.darkSurface : Colors.grey[50],
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey[200]!),
+        borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey[200]!),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey[200]!),
+        borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey[200]!),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

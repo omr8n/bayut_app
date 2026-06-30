@@ -39,6 +39,8 @@ import 'package:test_graduation/features/reports/domain/repositories/report_repo
 import 'package:test_graduation/features/reports/domain/use_cases/send_report_use_case.dart';
 import 'package:test_graduation/features/reports/presentation/cubit/report_cubit.dart';
 
+import 'package:test_graduation/core/services/fcm_sender_service.dart';
+import 'package:test_graduation/core/services/fcm_service.dart';
 import 'package:test_graduation/core/services/notification_service.dart';
 import 'package:test_graduation/features/notifications/domain/repos/notification_repository.dart';
 import 'package:test_graduation/features/notifications/data/repos/notification_repository_impl.dart';
@@ -76,6 +78,8 @@ void setupServiceLocator() {
     () => CommunicationServiceImpl(),
   );
   getIt.registerLazySingleton<DynamicLinkService>(() => DynamicLinkService());
+  getIt.registerLazySingleton<FCMService>(() => FCMService());
+  getIt.registerLazySingleton<FCMSenderService>(() => FCMSenderService());
 
   // Repositories
   getIt.registerLazySingleton<MediaRepo>(

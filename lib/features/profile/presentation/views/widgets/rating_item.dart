@@ -12,13 +12,14 @@ class RatingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +29,7 @@ class RatingItem extends StatelessWidget {
             children: [
               Text(
                 DateFormat('yyyy/MM/dd').format(rating.createdAt),
-                style: const TextStyle(color: Colors.grey, fontSize: 11),
+                style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey, fontSize: 11),
               ),
               Row(
                 children: List.generate(
@@ -49,19 +50,21 @@ class RatingItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
+                backgroundColor: isDark ? AppColors.primary.withOpacity(0.2) : Colors.grey.shade200,
                 backgroundImage: rating.raterImage != null
                     ? NetworkImage(rating.raterImage!)
                     : null,
                 child: rating.raterImage == null
-                    ? const Icon(Icons.person, size: 20)
+                    ? Icon(Icons.person, size: 20, color: isDark ? Colors.white : Colors.grey)
                     : null,
               ),
               const SizedBox(width: 10),
               Text(
                 rating.raterName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
             ],
@@ -71,8 +74,8 @@ class RatingItem extends StatelessWidget {
             Text(
               rating.comment,
               textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
-              style: const TextStyle(
-                color: Colors.black87,
+              style: TextStyle(
+                color: isDark ? Colors.white70 : Colors.black87,
                 fontSize: 13,
                 height: 1.4,
               ),

@@ -20,6 +20,7 @@ class PropertyDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAr = AppLocalizations.of(context)!.isEnLocale == false;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,8 +38,8 @@ class PropertyDetailsHeader extends StatelessWidget {
                     context,
                     property.listingType.localizedName(context),
                     property.listingType == ListingType.sale
-                        ? Colors.green
-                        : Colors.blue,
+                        ? AppColors.success
+                        : AppColors.primary,
                   ),
                   if (property.isLicensed)
                     _buildBadge(
@@ -47,13 +48,13 @@ class PropertyDetailsHeader extends StatelessWidget {
                             context,
                           )?.translate(LangKeys.licensedProperty) ??
                           'عقار مرخص',
-                      Colors.green,
+                      AppColors.success,
                       icon: Icons.check_circle,
                     ),
                   _buildBadge(
                     context,
                     property.type.localizedName(context),
-                    AppColors.primary,
+                    isDark ? Colors.white : AppColors.primary,
                     isLight: true,
                   ),
                 ],
@@ -76,7 +77,7 @@ class PropertyDetailsHeader extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.1),
+                  color: AppColors.error.withOpacity(isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppColors.error.withOpacity(0.3)),
                 ),
@@ -110,10 +111,10 @@ class PropertyDetailsHeader extends StatelessWidget {
           width: double.infinity,
           child: Text(
             '${format.format(property.price)} ${AppLocalizations.of(context)?.translate(property.currency.trim().toLowerCase()) ?? property.currency}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w900,
-              color: AppColors.primary,
+              color: isDark ? Colors.white : AppColors.primary,
             ),
             textAlign: isAr ? TextAlign.right : TextAlign.left,
           ),
@@ -134,7 +135,7 @@ class PropertyDetailsHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withOpacity(0.2)),
       ),
@@ -142,7 +143,7 @@ class PropertyDetailsHeader extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 14, color: color),
+            Icon(icon, size: 14, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : color),
             const SizedBox(width: 4),
           ],
           Text(
@@ -150,7 +151,7 @@ class PropertyDetailsHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: color,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : color,
             ),
           ),
         ],

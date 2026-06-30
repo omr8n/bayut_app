@@ -52,16 +52,16 @@ class AdminSettingsScreen extends StatelessWidget {
               length: 4,
               initialIndex: 0,
               child: Scaffold(
-                backgroundColor: const Color(0xFFF8F9FB),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 appBar: AppBar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : Colors.white,
                   elevation: 0.5,
                   centerTitle: true,
                   automaticallyImplyLeading: false,
                   leading: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                       size: 20,
                     ),
                     onPressed: () => Navigator.pop(context),
@@ -94,7 +94,7 @@ class AdminSettingsScreen extends StatelessWidget {
                   title: Text(
                     local.translate(LangKeys.adminSettingsTitle),
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -103,7 +103,7 @@ class AdminSettingsScreen extends StatelessWidget {
                     isScrollable: true,
                     indicatorColor: AppColors.primary,
                     indicatorWeight: 3,
-                    labelColor: AppColors.primary,
+                    labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary,
                     unselectedLabelColor: const Color(0xFF9EA3AE),
                     labelStyle: TextStyle(
                       fontSize: 12.sp,

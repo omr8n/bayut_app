@@ -26,7 +26,7 @@ class DateSelector extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.primary.withOpacity(0.2)),
         ),
@@ -35,7 +35,11 @@ class DateSelector extends StatelessWidget {
           children: [
             Text(
               "${local.view_data_for}${cubit.selectedDate.day}/${cubit.selectedDate.month}/${cubit.selectedDate.year}",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+              ),
             ),
             const Icon(Icons.calendar_month, color: AppColors.primary),
           ],

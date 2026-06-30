@@ -8,21 +8,24 @@ class PromotionFallbackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF0D47A1), Color(0xFF1976D2)],
+          gradient: LinearGradient(
+            colors: isDark
+                ? [AppColors.primary.withOpacity(0.4), AppColors.primary.withOpacity(0.2)]
+                : [const Color(0xFF0D47A1), const Color(0xFF1976D2)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.3),
+              color: Colors.blue.withOpacity(isDark ? 0.1 : 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),

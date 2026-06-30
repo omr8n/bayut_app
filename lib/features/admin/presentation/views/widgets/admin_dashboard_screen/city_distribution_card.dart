@@ -13,7 +13,7 @@ class CityDistributionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -21,7 +21,11 @@ class CityDistributionCard extends StatelessWidget {
         children: [
           Text(
             local.activity_by_city,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+            ),
           ),
           const SizedBox(height: 16),
           ...cities.entries.map((e) {
@@ -34,17 +38,25 @@ class CityDistributionCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(e.key),
+                      Text(
+                        e.key,
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.black87,
+                        ),
+                      ),
                       Text(
                         "${e.value} ${local.property_unit}",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   LinearProgressIndicator(
                     value: total > 0 ? e.value / total : 0,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : Colors.grey[200],
                     color: AppColors.primary,
                     minHeight: 6,
                   ),

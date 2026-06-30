@@ -14,17 +14,22 @@ class ForgetPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // 🔥 توفير الكيوبيت للشاشة بالكامل (MVVM)
     return BlocProvider(
       create: (context) => getIt.get<ForgetPasswordCubit>(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          title: Text(localizations.translate(LangKeys.forgotPassword)),
+          title: Text(
+            localizations.translate(LangKeys.forgotPassword),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
             onPressed: () => GoRouter.of(context).pop(),
           ),
         ),

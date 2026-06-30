@@ -27,15 +27,16 @@ class FilterScreen extends StatelessWidget {
         searchCubit.currentGovernorate ??
         Prefs.getString('user_location');
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             textDirection: locale.isEnLocale
                 ? TextDirection.ltr
                 : TextDirection.rtl,
@@ -44,8 +45,8 @@ class FilterScreen extends StatelessWidget {
         ),
         title: Text(
           locale.translate(LangKeys.filterResults),
-          style: const TextStyle(
-            color: Colors.black,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),

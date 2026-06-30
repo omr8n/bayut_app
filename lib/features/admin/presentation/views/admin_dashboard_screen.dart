@@ -36,13 +36,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           local.admin_platform_center,
           style: TextStyle(
-            color: const Color(0xFF1A1C1E),
+            color: isDark ? Colors.white : const Color(0xFF1A1C1E),
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
             fontFamily: 'Cairo',
@@ -50,24 +51,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        surfaceTintColor: Colors.transparent,
         leading: Builder(
           builder: (context) => IconButton(
             icon: Icon(
               Icons.settings_outlined,
-              color: const Color(0xFF1A1C1E),
+              color: isDark ? Colors.white : const Color(0xFF1A1C1E),
               size: 22.sp,
             ),
             onPressed: () => context.pushNamed(AppRoutes.adminSettings),
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () => Scaffold.of(context).openDrawer(),
-            icon: Icon(
-              Icons.menu_rounded,
-              color: const Color(0xFF1A1C1E),
-              size: 24.sp,
+          Builder(
+            builder: (context) => IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: Icon(
+                Icons.menu_rounded,
+                color: isDark ? Colors.white : const Color(0xFF1A1C1E),
+                size: 24.sp,
+              ),
             ),
           ),
         ],
@@ -86,7 +90,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 children: [
                   const SummaryHeader(),
                   const SizedBox(height: 24),
-                  _buildSectionTitle(local.vital_indicators),
+                  _buildSectionTitle(context, local.vital_indicators),
                   const SizedBox(height: 16),
                   ModernStatGrid(stats: stats),
                   const SizedBox(height: 24),
@@ -96,7 +100,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   const SizedBox(height: 24),
                   MainComparisonChart(stats: stats),
                   const SizedBox(height: 32),
-                  _buildSectionTitle(local.market_composition_analysis),
+                  _buildSectionTitle(context, local.market_composition_analysis),
                   const SizedBox(height: 16),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -129,11 +133,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  _buildSectionTitle(local.recent_activity_summary),
+                  _buildSectionTitle(context, local.recent_activity_summary),
                   const SizedBox(height: 16),
                   RecentActivityTimeline(stats: stats),
                   const SizedBox(height: 32),
-                  _buildSectionTitle(local.control_and_system),
+                  _buildSectionTitle(context, local.control_and_system),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -242,13 +246,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) => Text(
-    title,
-    style: TextStyle(
-      fontSize: 17.sp,
-      fontWeight: FontWeight.bold,
-      color: const Color(0xFF1A1C1E),
-      fontFamily: 'Cairo',
-    ),
-  );
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 17.sp,
+        fontWeight: FontWeight.bold,
+        color: isDark ? Colors.white : const Color(0xFF1A1C1E),
+        fontFamily: 'Cairo',
+      ),
+    );
+  }
 }

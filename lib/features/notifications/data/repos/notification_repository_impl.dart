@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:test_graduation/core/errors/failures.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
+import 'package:test_graduation/core/services/fcm_sender_service.dart';
 import 'package:test_graduation/core/services/notification_service.dart';
+import 'package:test_graduation/core/utils/service_locator.dart';
 import '../../domain/repos/notification_repository.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
@@ -12,8 +14,20 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<Either<Failure, Unit>> sendNotification(AppNotification notification) async {
     try {
-      // Use existing saveNotification method
+      // 1. Save to Firestore (for history)
       await _notificationService.saveNotification(notification);
+
+      // 2. Trigger Real Push Notification via FCM
+      await getIt<FCMSenderService>().sendPushNotification(
+        title: notification.title,
+        body: notification.body,
+        token: notification.sentToAll ? null : notification.fcmToken,
+        topic: notification.sentToAll ? 'all' : null,
+        data: {
+          'targetId': notification.targetId ?? '',
+          'type': notification.type.name,
+        },
+      );
 
       return right(unit);
     } catch (e) {

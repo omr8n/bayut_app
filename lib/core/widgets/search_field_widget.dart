@@ -27,11 +27,13 @@ class SearchFieldWidget extends StatelessWidget {
     return Container(
       height: 52,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16), // زيادة نصف القطر للمسة عصرية
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.06,
+            ),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -45,15 +47,28 @@ class SearchFieldWidget extends StatelessWidget {
         autofocus: autofocus,
         textAlign: localizations.isEnLocale ? TextAlign.left : TextAlign.right,
         cursorColor: AppColors.primary,
-        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimaryLight,
+        ),
         decoration: InputDecoration(
           hintText: hintText ?? localizations.translate(LangKeys.searchHere),
-          hintStyle: const TextStyle(
-            color: AppColors.textLight, 
+          hintStyle: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppColors.textSecondaryDark
+                : AppColors.textLight,
             fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
-          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textSecondary),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white70
+                : AppColors.textSecondaryLight,
+          ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,

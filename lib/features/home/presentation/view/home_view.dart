@@ -20,13 +20,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: RefreshIndicator(
         onRefresh: () async {
-          // 🔥 تحديث يدوي: سيظهر شاشة الخطأ إذا لم يتوفر إنترنت
           await context.read<PropertyCubit>().fetchProperties(isRefresh: true);
         },
         color: AppColors.primary,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [

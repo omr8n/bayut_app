@@ -28,15 +28,20 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F5F9),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           isEdit
               ? locale!.translate(LangKeys.editProperty)
               : locale!.translate(LangKeys.addNewProperty),
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
         ),
         centerTitle: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: AddPropertyViewBodyBlocBuilder(
         child: AddPropertyBody(

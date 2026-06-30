@@ -34,12 +34,12 @@ class _LogoIcon extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(14.r),
       ),
       child: Icon(
         Icons.home_work_rounded,
-        color: AppColors.primary,
+        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary,
         size: 26.sp,
       ),
     );
@@ -61,7 +61,7 @@ class _LogoText extends StatelessWidget {
             fontSize: 24.sp,
             fontWeight: FontWeight.w900,
             letterSpacing: localizations.isEnLocale ? 1.5 : 0,
-            color: AppColors.primary,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary,
             height: 1.2,
           ),
         ),
@@ -70,7 +70,7 @@ class _LogoText extends StatelessWidget {
           style: TextStyle(
             fontSize: 10.sp,
             fontWeight: FontWeight.w600,
-            color: Colors.grey,
+            color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.grey,
             letterSpacing: localizations.isEnLocale ? 1 : 0,
             height: 1.2,
           ),

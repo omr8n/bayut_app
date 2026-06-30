@@ -185,16 +185,17 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 
   Widget _buildSectionHeader(String title, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Icon(icon, size: 18, color: Colors.grey),
+        Icon(icon, size: 18, color: isDark ? AppColors.textSecondaryDark : Colors.grey),
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
       ],
@@ -203,11 +204,12 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
 
   Widget _buildRecentChip(String label) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => _onLocationSelected(label),
       child: Chip(
-        label: Text(locale.translate(label)),
-        backgroundColor: Colors.grey[100],
+        label: Text(locale.translate(label), style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+        backgroundColor: isDark ? AppColors.darkSurface : Colors.grey[100],
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
@@ -216,6 +218,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
 
   Widget _buildLocationItem(String loc) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     bool isSelected = selectedLoc == loc;
     return GestureDetector(
       onTap: () => _onLocationSelected(loc),
@@ -224,16 +227,16 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withOpacity(0.1)
-              : Colors.grey[50],
+              : (isDark ? AppColors.darkSurface : Colors.grey[50]),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.grey[200]!,
+            color: isSelected ? AppColors.primary : (isDark ? Colors.white10 : Colors.grey[200]!),
           ),
         ),
         child: Text(
           locale.translate(loc),
           style: TextStyle(
-            color: isSelected ? AppColors.primary : Colors.black87,
+            color: isSelected ? AppColors.primary : (isDark ? Colors.white70 : Colors.black87),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -242,6 +245,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 
   Widget _buildActionButtons(BuildContext context, AppLocalizations locale) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Expanded(
@@ -259,8 +263,8 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
             ),
             child: Text(
               locale.translate(LangKeys.resetSearch),
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: isDark ? Colors.white : AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -304,7 +308,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF005F5F),
+                backgroundColor: isDark ? AppColors.primary : const Color(0xFF005F5F),
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

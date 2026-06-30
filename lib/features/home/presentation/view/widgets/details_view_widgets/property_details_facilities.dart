@@ -16,11 +16,14 @@ class PropertyDetailsFacilities extends StatelessWidget {
           .map((f) => Chip(
                 label: Text(
                   localizations.translate(f),
-                  style: const TextStyle(fontSize: 12),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                  ),
                 ),
                 avatar: const Icon(Icons.check_circle, size: 16, color: AppColors.success),
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Colors.grey.shade200),
+                backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : Colors.white,
+                side: BorderSide(color: Theme.of(context).brightness == Brightness.dark ? Colors.white24 : Colors.grey.shade200),
               ))
           .toList(),
     );

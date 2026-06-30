@@ -21,16 +21,17 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.close, color: Colors.black),
+              icon: Icon(Icons.close, color: isDark ? Colors.white : Colors.black),
               onPressed: () => context.pop(),
             ),
             // 🔥 Expanded هو الأب المباشر للـ Row، والـ Hero بداخله

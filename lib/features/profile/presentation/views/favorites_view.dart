@@ -27,18 +27,19 @@ class _FavoritesViewState extends State<FavoritesView> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: Text(
           locale!.translate(LangKeys.favorites),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
-        foregroundColor: Colors.black,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: BlocBuilder<FavoritesCubit, FavoritesState>(
         builder: (context, state) {
           if (state is FavoritesLoading) {
@@ -52,7 +53,7 @@ class _FavoritesViewState extends State<FavoritesView> {
                     Icon(
                       Icons.favorite_border,
                       size: 80.sp,
-                      color: Colors.grey[300],
+                      color: isDark ? Colors.white12 : Colors.grey[300],
                     ),
                     SizedBox(height: 16.h),
                     Text(
@@ -61,7 +62,7 @@ class _FavoritesViewState extends State<FavoritesView> {
                       ), // Or a more specific key if available
                       style: TextStyle(
                         fontSize: 18.sp,
-                        color: Colors.grey[600],
+                        color: isDark ? AppColors.textSecondaryDark : Colors.grey[600],
                       ),
                     ),
                   ],
@@ -90,7 +91,7 @@ class _FavoritesViewState extends State<FavoritesView> {
               },
             );
           } else if (state is FavoritesFailure) {
-            return Center(child: Text(state.errMessage));
+            return Center(child: Text(state.errMessage, style: TextStyle(color: isDark ? Colors.white : Colors.black)));
           }
           return const SizedBox.shrink();
         },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/views/widgets/admin_dashboard_screen/header_mini_stat.dart';
 
 class SummaryHeader extends StatelessWidget {
@@ -12,14 +13,18 @@ class SummaryHeader extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
-        ),
+        gradient: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkGradient
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+              ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1E293B).withOpacity(0.3),
+            color: const Color(0xFF1E293B).withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.3,
+            ),
             blurRadius: 25,
             offset: const Offset(0, 15),
           ),

@@ -25,7 +25,7 @@ class PropertiesHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
             ),
           ),
           GestureDetector(
@@ -35,7 +35,7 @@ class PropertiesHeader extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.primary,
               ),
             ),
           ),

@@ -14,13 +14,14 @@ class BuildSection extends StatelessWidget {
   final List<Widget> children;
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 25),
         Row(
           children: [
-            Icon(icon, size: 22, color: AppColors.primary),
+            Icon(icon, size: 22, color: isDark ? AppColors.primary : AppColors.primary),
             const SizedBox(width: 10),
             FilterSectionTitle(title: title),
           ],

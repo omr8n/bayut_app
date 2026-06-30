@@ -13,6 +13,7 @@ class PropertyDetailsSeller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () {
         GoRouter.of(context).push(AppRoutes.sellerProfileView, extra: property);
@@ -20,16 +21,16 @@ class PropertyDetailsSeller extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: isDark ? AppColors.darkSurface : AppColors.background,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
         ),
         child: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.person, color: Colors.white),
+              backgroundColor: isDark ? AppColors.primary : Colors.blue,
+              child: const Icon(Icons.person, color: Colors.white),
             ),
             const SizedBox(width: 12),
             Column(
@@ -37,11 +38,18 @@ class PropertyDetailsSeller extends StatelessWidget {
               children: [
                 Text(
                   property.sellerName,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                 ),
                 Text(
                   AppLocalizations.of(context)!.translate(LangKeys.verifiedMember),
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? AppColors.textSecondaryDark : Colors.grey
+                  ),
                 ),
               ],
             ),

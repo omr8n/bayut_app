@@ -65,7 +65,7 @@ class _WelcomeText extends StatelessWidget {
           localizations.isEnLocale ? 'Hello,' : 'هلا،',
           style: TextStyle(
             fontSize: 11.sp,
-            color: Colors.grey.shade600,
+            color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.grey.shade600,
             fontWeight: FontWeight.w500,
             height: 1.1,
           ),
@@ -75,7 +75,7 @@ class _WelcomeText extends StatelessWidget {
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
             height: 1.1,
           ),
         ),
@@ -106,7 +106,7 @@ class _NotificationBadge extends StatelessWidget {
             backgroundColor: Colors.redAccent,
             child: Icon(
               Icons.notifications_none_rounded,
-              color: Colors.black87,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
               size: 24.sp,
             ),
           ),
@@ -135,7 +135,7 @@ class _ProfileAvatar extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.grey.shade200,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white24 : Colors.grey.shade200,
             width: 1.5,
           ),
         ),
@@ -148,10 +148,10 @@ class _ProfileAvatar extends StatelessWidget {
     if (!isLoggedIn) {
       return CircleAvatar(
         radius: 18.r,
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : Colors.grey.shade50,
         child: Icon(
           Icons.person_outline_rounded,
-          color: Colors.grey.shade700,
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade700,
           size: 22.sp,
         ),
       );

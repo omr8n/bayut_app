@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
@@ -46,6 +47,7 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
@@ -59,12 +61,25 @@ class CustomTextFormField extends StatelessWidget {
       onChanged: onChanged,
       readOnly: readOnly,
       onTap: onTap,
+      style: TextStyle(
+        color: isDark ? Colors.white : AppColors.textPrimaryLight,
+        fontSize: 15,
+      ),
       decoration: InputDecoration(
         prefixText: prefixText,
         suffixText: suffixText,
         labelText: labelText,
+        labelStyle: TextStyle(
+          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+        ),
         hintText: hintText,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        hintStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey),
+        prefixIcon: prefixIcon != null
+            ? Icon(
+                prefixIcon,
+                color: isDark ? AppColors.primary : AppColors.primary,
+              )
+            : null,
         suffixIcon: suffixIcon,
       ),
       validator: validator,

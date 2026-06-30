@@ -49,6 +49,7 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return BlocProvider(
       create: (context) => getIt<ReportCubit>(),
       child: BlocConsumer<ReportCubit, ReportState>(
@@ -73,9 +74,9 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
               right: 20,
               bottom: MediaQuery.of(context).viewInsets.bottom + 20,
             ),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             ),
             child: SingleChildScrollView(
               child: Form(
@@ -108,15 +109,17 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                       AppLocalizations.of(
                         context,
                       )!.translate(LangKeys.additionalDetailsOptional),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _descriptionController,
                       maxLines: 3,
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                       decoration: _inputDecoration(
                         hint: AppLocalizations.of(
                           context,
@@ -150,21 +153,22 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
 
   Widget _buildTitle() {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           locale.translate(LangKeys.sendReportToAdmin),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
+            color: isDark ? Colors.white : AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           locale.translate(LangKeys.helpUsBuildCommunity),
-          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 14, color: isDark ? AppColors.textSecondaryDark : Colors.grey[600]),
         ),
       ],
     );
@@ -277,19 +281,20 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
   }
 
   InputDecoration _inputDecoration({required String hint}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(fontSize: 13, color: Colors.grey[400]),
+      hintStyle: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey[400]),
       filled: true,
-      fillColor: Colors.grey[50],
+      fillColor: isDark ? AppColors.darkSurface : Colors.grey[50],
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey[200]!),
+        borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey[200]!),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey[200]!),
+        borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey[200]!),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

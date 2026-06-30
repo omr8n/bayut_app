@@ -27,6 +27,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -39,17 +40,17 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
               Text(
                 localizations.translate(LangKeys.resetPassword),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  color: isDark ? Colors.white : AppColors.primary,
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 localizations.translate(LangKeys.resetPasswordInstructions),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 14, color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary),
               ),
               const SizedBox(height: 40),
               CustomTextFormField(

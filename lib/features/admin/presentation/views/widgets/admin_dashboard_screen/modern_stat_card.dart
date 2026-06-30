@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'mini_sparkline.dart';
 
 class ModernStatCard extends StatelessWidget {
@@ -32,16 +33,18 @@ class ModernStatCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.04),
+              color: color.withOpacity(
+                Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04,
+              ),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.05), width: 1),
+          border: Border.all(color: color.withOpacity(0.1), width: 1),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -79,8 +82,11 @@ class ModernStatCard extends StatelessWidget {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: _buildAnimatedValue(
+                        context,
                         value,
-                        const Color(0xFF1E293B),
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -91,14 +97,18 @@ class ModernStatCard extends StatelessWidget {
                             title,
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.blueGrey[400],
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.textSecondaryDark
+                                  : Colors.blueGrey[400],
                               fontWeight: FontWeight.w600,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                       if (trend != "0" && trend != local.stable)
+                        if (trend != "0" && trend != local.stable)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
@@ -130,7 +140,7 @@ class ModernStatCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedValue(String value, Color color) {
+  Widget _buildAnimatedValue(BuildContext context, String value, Color color) {
     double numericValue =
         double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
     String suffix = value.replaceAll(RegExp(r'[0-9.]'), '');

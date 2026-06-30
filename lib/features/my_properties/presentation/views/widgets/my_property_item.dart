@@ -28,6 +28,8 @@ class MyPropertyItem extends StatelessWidget {
         ? property.media[0]
         : (property.images.isNotEmpty ? property.images[0] : '');
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: locale.isEnLocale
           ? ui.TextDirection.ltr
@@ -45,11 +47,11 @@ class MyPropertyItem extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withOpacity(isDark ? 0.2 : 0.06),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
@@ -83,9 +85,9 @@ class MyPropertyItem extends StatelessWidget {
                                         height: 115.w,
                                         fit: BoxFit.cover,
                                         errorBuilder: (_, __, ___) =>
-                                            _buildPlaceholder(),
+                                            _buildPlaceholder(context),
                                       )
-                                    : _buildPlaceholder(),
+                                    : _buildPlaceholder(context),
                               ),
                             ),
                             Positioned(
@@ -107,7 +109,7 @@ class MyPropertyItem extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17.sp,
-                                  color: Colors.black87,
+                                  color: isDark ? Colors.white : Colors.black87,
                                   letterSpacing: -0.5,
                                 ),
                                 maxLines: 1,
@@ -118,7 +120,7 @@ class MyPropertyItem extends StatelessWidget {
                                 '${numberFormat.format(property.price)} ${locale.translate(property.currency.trim().toLowerCase())}',
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
-                                  color: AppColors.primary,
+                                  color: isDark ? Colors.white : AppColors.primary,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 18.sp,
                                 ),
@@ -129,14 +131,14 @@ class MyPropertyItem extends StatelessWidget {
                                   Icon(
                                     Icons.location_on_rounded,
                                     size: 14.sp,
-                                    color: Colors.grey.shade400,
+                                    color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade400,
                                   ),
                                   SizedBox(width: 4.w),
                                   Expanded(
                                     child: Text(
                                       '${locale.translate(property.governorate)} - ${property.city}',
                                       style: TextStyle(
-                                        color: Colors.grey.shade500,
+                                        color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade500,
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -154,7 +156,7 @@ class MyPropertyItem extends StatelessWidget {
                                       Icon(
                                         Icons.calendar_today_rounded,
                                         size: 13.sp,
-                                        color: Colors.grey.shade400,
+                                        color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade400,
                                       ),
                                       SizedBox(width: 4.w),
                                       Text(
@@ -162,7 +164,7 @@ class MyPropertyItem extends StatelessWidget {
                                           'yyyy/MM/dd',
                                         ).format(property.createdAt),
                                         style: TextStyle(
-                                          color: Colors.grey.shade500,
+                                          color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade500,
                                           fontSize: 11.sp,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -185,7 +187,7 @@ class MyPropertyItem extends StatelessWidget {
                         gradient: LinearGradient(
                           colors: [
                             Colors.grey.withOpacity(0.0),
-                            Colors.grey.withOpacity(0.2),
+                            isDark ? Colors.white12 : Colors.grey.withOpacity(0.2),
                             Colors.grey.withOpacity(0.0),
                           ],
                         ),
@@ -223,7 +225,7 @@ class MyPropertyItem extends StatelessWidget {
                             context,
                             Icons.insights_rounded,
                             locale.translate(LangKeys.activityHistory),
-                            Colors.grey.shade700,
+                            isDark ? AppColors.textSecondaryDark : Colors.grey.shade700,
                             () => GoRouter.of(context).push(
                               AppRoutes.propertyDashboard,
                               extra: property,
@@ -289,10 +291,11 @@ class MyPropertyItem extends StatelessWidget {
   }
 
   Widget _buildViewsBadge(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.08),
+        color: AppColors.primary.withOpacity(isDark ? 0.2 : 0.08),
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
@@ -301,13 +304,13 @@ class MyPropertyItem extends StatelessWidget {
           Icon(
             Icons.remove_red_eye_rounded,
             size: 14.sp,
-            color: AppColors.primary,
+            color: isDark ? Colors.white : AppColors.primary,
           ),
           SizedBox(width: 5.w),
           Text(
             '${property.views}',
             style: TextStyle(
-              color: AppColors.primary,
+              color: isDark ? Colors.white : AppColors.primary,
               fontSize: 12.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -533,17 +536,18 @@ class MyPropertyItem extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholder() {
+  Widget _buildPlaceholder(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 115.w,
       height: 115.w,
-      color: Colors.grey.shade50,
+      color: isDark ? AppColors.darkSurface : Colors.grey.shade50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.image_not_supported_rounded,
-            color: Colors.grey.shade300,
+            color: isDark ? Colors.white12 : Colors.grey.shade300,
             size: 32.sp,
           ),
         ],

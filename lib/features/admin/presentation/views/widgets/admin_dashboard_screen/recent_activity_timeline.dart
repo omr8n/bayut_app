@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 
 class RecentActivityTimeline extends StatelessWidget {
   final AdminStats stats;
@@ -13,11 +14,13 @@ class RecentActivityTimeline extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(32.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.015),
+            color: Colors.black.withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.015,
+            ),
             blurRadius: 25,
             offset: const Offset(0, 8),
           ),
@@ -26,6 +29,7 @@ class RecentActivityTimeline extends StatelessWidget {
       child: Column(
         children: [
           _buildActivityItem(
+            context: context,
             icon: Icons.person_add_alt_1_rounded,
             color: const Color(0xFFFFB74D), // Orange
             title: local.new_users,
@@ -34,6 +38,7 @@ class RecentActivityTimeline extends StatelessWidget {
             isFirst: true,
           ),
           _buildActivityItem(
+            context: context,
             icon: Icons.add_home_work_rounded,
             color: const Color(0xFF64B5F6), // Blue
             title: local.added_properties,
@@ -41,6 +46,7 @@ class RecentActivityTimeline extends StatelessWidget {
             count: stats.newPropertiesToday,
           ),
           _buildActivityItem(
+            context: context,
             icon: Icons.check_circle_rounded,
             color: const Color(0xFF81C784), // Green
             title: local.sales_transactions,
@@ -54,6 +60,7 @@ class RecentActivityTimeline extends StatelessWidget {
   }
 
   Widget _buildActivityItem({
+    required BuildContext context,
     required IconData icon,
     required Color color,
     required String title,
@@ -62,6 +69,9 @@ class RecentActivityTimeline extends StatelessWidget {
     bool isFirst = false,
     bool isLast = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final lineColor = isDark ? AppColors.darkSurface : const Color(0xFFF0F0F0);
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -98,14 +108,16 @@ class RecentActivityTimeline extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15.sp,
-                  color: const Color(0xFF1A1C1E),
+                  color: isDark ? Colors.white : const Color(0xFF1A1C1E),
                   fontFamily: 'Cairo',
                 ),
               ),
               Text(
                 desc,
                 style: TextStyle(
-                  color: Colors.grey.shade400,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : Colors.grey.shade400,
                   fontSize: 11.sp,
                   fontFamily: 'Cairo',
                 ),
@@ -117,11 +129,7 @@ class RecentActivityTimeline extends StatelessWidget {
           Column(
             children: [
               if (!isFirst)
-                Container(
-                  width: 1.2,
-                  height: 12.h,
-                  color: const Color(0xFFF0F0F0),
-                ),
+                Container(width: 1.2, height: 12.h, color: lineColor),
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
@@ -131,9 +139,7 @@ class RecentActivityTimeline extends StatelessWidget {
                 child: Icon(icon, color: color, size: 20.sp),
               ),
               if (!isLast)
-                Expanded(
-                  child: Container(width: 1.2, color: const Color(0xFFF0F0F0)),
-                ),
+                Expanded(child: Container(width: 1.2, color: lineColor)),
             ],
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 
 import 'package:test_graduation/core/language/app_localizations.dart';
@@ -15,12 +16,18 @@ class AdminPropertiesView extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<AdminCubit>()..fetchProperties(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: const Color(0xFF1E4C9A), // Royal Blue
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.darkBackground
+              : const Color(0xFF1E4C9A), // Royal Blue
           title: Text(
             AppLocalizations.of(context)!.manage_properties,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           centerTitle: true,
           leading: IconButton(

@@ -4,6 +4,7 @@ import 'package:test_graduation/core/helper/my_app_method.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/services/secure_storage_singleton.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/profile/presentation/manager/rating_cubit/rating_cubit.dart';
@@ -35,28 +36,30 @@ class SellerProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // 🔥 توفير الكيوبيت للشاشة بالكامل (MVVM)
     return BlocProvider(
       create: (context) =>
           getIt.get<RatingCubit>()..fetchRatings(property.sellerId),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FB),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.black,
-              textDirection:
-                  locale.isEnLocale ? TextDirection.ltr : TextDirection.rtl,
+              color: isDark ? Colors.white : Colors.black,
+              textDirection: locale.isEnLocale
+                  ? TextDirection.ltr
+                  : TextDirection.rtl,
             ),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             locale.translate(LangKeys.sellerProfile),
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -68,7 +71,10 @@ class SellerProfileView extends StatelessWidget {
             children: [
               SellerHeader(property: property),
               const SizedBox(height: 16),
-              _buildSectionTitle(context, locale.translate(LangKeys.usersReviews)),
+              _buildSectionTitle(
+                context,
+                locale.translate(LangKeys.usersReviews),
+              ),
               // 🔥 استدعاء المحرك الذكي
               const SellerProfileViewBlocBuilder(),
               const SizedBox(height: 100),
@@ -79,12 +85,20 @@ class SellerProfileView extends StatelessWidget {
         // 🔥 التصحيح: استخدام Builder لتوفير context يحتوي على الـ BlocProvider
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => _handleRatingAction(context),
-          backgroundColor: const Color(0xFFE3F2FD),
+          backgroundColor: isDark
+              ? AppColors.primary.withOpacity(0.2)
+              : const Color(0xFFE3F2FD),
           elevation: 2,
-          icon: const Icon(Icons.star_rate_rounded, color: Colors.blue),
+          icon: Icon(
+            Icons.star_rate_rounded,
+            color: isDark ? Colors.white : Colors.blue,
+          ),
           label: Text(
             locale.translate(LangKeys.rateSeller),
-            style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.blue,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
@@ -93,17 +107,18 @@ class SellerProfileView extends StatelessWidget {
 
   Widget _buildSectionTitle(BuildContext context, String title) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: Text(
         title,
         textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: isDark ? Colors.white : Colors.black87,
         ),
       ),
     );

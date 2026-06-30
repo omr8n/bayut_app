@@ -135,20 +135,25 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20.r),
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: isError ? color.withOpacity(0.05) : Colors.white,
+          color: isError
+              ? color.withOpacity(0.05)
+              : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isError ? color.withOpacity(0.2) : Colors.grey.shade100,
+            color: isError
+                ? color.withOpacity(0.2)
+                : (isDark ? Colors.white10 : Colors.grey.shade100),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withOpacity(isDark ? 0.05 : 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -179,7 +184,7 @@ class _StatCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
-                color: isError || isPremiumAction ? color : Colors.black87,
+                color: isError || isPremiumAction ? color : (isDark ? Colors.white : Colors.black87),
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -187,7 +192,7 @@ class _StatCard extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+              style: TextStyle(fontSize: 10.sp, color: isDark ? AppColors.textSecondaryDark : Colors.grey),
             ),
           ],
         ),

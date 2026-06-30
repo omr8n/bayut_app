@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/helper/functions/get_user.dart';
 import 'package:test_graduation/core/services/data_service.dart';
 import 'package:test_graduation/core/services/firebase_auth_service.dart';
@@ -23,15 +25,14 @@ class ProfileCubit extends Cubit<ProfileState> {
   bool _isDarkMode = false;
   StreamSubscription? _userSubscription;
 
-  ProfileCubit(this._authService, this._databaseService) : super(ProfileInitial()) {
-    _isDarkMode = Prefs.getBool('isDarkMode');
-  }
+  ProfileCubit(this._authService, this._databaseService)
+    : super(ProfileInitial());
 
   bool get isDarkMode => _isDarkMode;
 
-  void toggleDarkMode(bool value) {
+  void toggleDarkMode(BuildContext context, bool value) {
     _isDarkMode = value;
-    Prefs.setBool('isDarkMode', value);
+    context.read<AppCubit>().changeAppThemeMode(sharedMode: value);
     emit(ProfileDarkModeToggled(value));
   }
 
@@ -69,24 +70,24 @@ class ProfileCubit extends Cubit<ProfileState> {
       if (uId.isEmpty) return;
 
       _userSubscription?.cancel();
-      _userSubscription = _databaseService.streamData(
-        path: BackendEndpoint.getUsersData,
-      ).listen((usersList) {
-        try {
-          final userData = usersList.firstWhere(
-            (data) => data['uId'] == uId,
-          );
-          user = UserModel.fromJson(userData);
-          if (user?.status == 'banned') {
-            emit(ProfileUserBanned());
-          } else {
-            saveFcmToken(); // 🔥 حفظ التوكن عند نجاح جلب البيانات من الـ Stream
-            emit(ProfileUserLoaded(user!));
-          }
-        } catch (e) {
-          // User not found in stream
-        }
-      });
+      _userSubscription = _databaseService
+          .streamData(path: BackendEndpoint.getUsersData)
+          .listen((usersList) {
+            try {
+              final userData = usersList.firstWhere(
+                (data) => data['uId'] == uId,
+              );
+              user = UserModel.fromJson(userData);
+              if (user?.status == 'banned') {
+                emit(ProfileUserBanned());
+              } else {
+                saveFcmToken(); // 🔥 حفظ التوكن عند نجاح جلب البيانات من الـ Stream
+                emit(ProfileUserLoaded(user!));
+              }
+            } catch (e) {
+              // User not found in stream
+            }
+          });
 
       var cachedUser = await getUser();
       if (cachedUser != null && user == null) {

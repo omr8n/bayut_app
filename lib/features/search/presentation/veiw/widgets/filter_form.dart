@@ -134,6 +134,8 @@ class _FilterFormState extends State<FilterForm> {
     final format = NumberFormat('#,###');
     final locale = AppLocalizations.of(context)!;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -217,15 +219,15 @@ class _FilterFormState extends State<FilterForm> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.05),
+                  color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   children: [
                     Text(
                       '${format.format(_priceRange.start)} - ${format.format(_priceRange.end)}',
-                      style: const TextStyle(
-                        color: Colors.blue,
+                      style: TextStyle(
+                        color: isDark ? Colors.blue.shade300 : Colors.blue,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -236,6 +238,7 @@ class _FilterFormState extends State<FilterForm> {
                       max: 5000000000,
                       divisions: 100,
                       activeColor: AppColors.primary,
+                      inactiveColor: isDark ? Colors.white12 : Colors.grey.shade300,
                       onChanged: (v) {
                         setState(() {
                           _priceRange = v;
@@ -263,15 +266,15 @@ class _FilterFormState extends State<FilterForm> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.05),
+                  color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   children: [
                     Text(
                       '${_areaRange.start.toInt()} - ${_areaRange.end.toInt()} ${locale.translate(LangKeys.areaUnit)}',
-                      style: const TextStyle(
-                        color: Colors.blue,
+                      style: TextStyle(
+                        color: isDark ? Colors.blue.shade300 : Colors.blue,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -282,6 +285,7 @@ class _FilterFormState extends State<FilterForm> {
                       max: 5000,
                       divisions: 50,
                       activeColor: AppColors.primary,
+                      inactiveColor: isDark ? Colors.white12 : Colors.grey.shade300,
                       onChanged: (v) {
                         setState(() {
                           _areaRange = v;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
@@ -27,11 +28,13 @@ class AdminPropertyCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -55,7 +58,9 @@ class AdminPropertyCard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13.sp,
-                    color: Colors.blue.shade900,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.blue.shade900,
                   ),
                 ),
                 const Spacer(),
@@ -100,6 +105,9 @@ class AdminPropertyCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black87,
                         ),
                       ),
                       SizedBox(height: 6.h),
@@ -108,13 +116,20 @@ class AdminPropertyCard extends StatelessWidget {
                           Icon(
                             Icons.location_on_rounded,
                             size: 14.sp,
-                            color: Colors.grey,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.textSecondaryDark
+                                : Colors.grey,
                           ),
                           SizedBox(width: 4.w),
                           Text(
                             "${property.city} ، ${property.governorate}",
                             style: TextStyle(
-                              color: Colors.grey,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.textSecondaryDark
+                                  : Colors.grey,
                               fontSize: 12.sp,
                             ),
                           ),
@@ -124,7 +139,9 @@ class AdminPropertyCard extends StatelessWidget {
                       Text(
                         "${property.currency} ${property.price}",
                         style: TextStyle(
-                          color: const Color(0xFF1E4C9A), // Royal Blue
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : const Color(0xFF1E4C9A), // Royal Blue
                           fontWeight: FontWeight.w900,
                           fontSize: 16.sp,
                         ),
@@ -135,13 +152,20 @@ class AdminPropertyCard extends StatelessWidget {
                           Icon(
                             Icons.visibility_rounded,
                             size: 14.sp,
-                            color: Colors.grey,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.textSecondaryDark
+                                : Colors.grey,
                           ),
                           SizedBox(width: 4.w),
                           Text(
                             "${property.views}",
                             style: TextStyle(
-                              color: Colors.grey,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.textSecondaryDark
+                                  : Colors.grey,
                               fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -211,21 +235,30 @@ class AdminPropertyCard extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 16.w),
             padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.darkSurface
+                  : Colors.grey.shade50,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_month_outlined,
                   size: 14,
-                  color: Colors.grey,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.textSecondaryDark
+                      : Colors.grey,
                 ),
                 SizedBox(width: 8.w),
                 Text(
                   "${local.last_update.replaceFirst('{date}', DateFormat('d MMMM yyyy - hh:mm a', local.locale.languageCode).format(property.createdAt))}",
-                  style: TextStyle(color: Colors.grey, fontSize: 11.sp),
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.textSecondaryDark
+                        : Colors.grey,
+                    fontSize: 11.sp,
+                  ),
                 ),
               ],
             ),

@@ -17,8 +17,9 @@ class SellerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
@@ -40,21 +41,21 @@ class SellerHeader extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE3F2FD),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.primary.withOpacity(0.2) : const Color(0xFFE3F2FD),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.home,
-                        color: Color(0xFF0D47A1),
+                        color: isDark ? Colors.white : const Color(0xFF0D47A1),
                         size: 30,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       locale.translate(LangKeys.myProperties),
-                      style: const TextStyle(
-                        color: Color(0xFF0D47A1),
+                      style: TextStyle(
+                        color: isDark ? Colors.white70 : const Color(0xFF0D47A1),
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -69,14 +70,15 @@ class SellerHeader extends StatelessWidget {
                   children: [
                     Text(
                       property.sellerName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
                     Text(
                       locale.translate(property.sellerJoinDate),
-                      style: const TextStyle(color: Colors.grey, fontSize: 13),
+                      style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey, fontSize: 13),
                     ),
                     const SizedBox(height: 10),
 
@@ -106,9 +108,10 @@ class SellerHeader extends StatelessWidget {
                               children: [
                                 Text(
                                   average.toStringAsFixed(1),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
+                                    color: isDark ? Colors.white : Colors.black,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -128,8 +131,8 @@ class SellerHeader extends StatelessWidget {
                             ),
                             Text(
                               '${locale.translate(LangKeys.sellerRatingCount)} ($totalReviews)',
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              style: TextStyle(
+                                color: isDark ? AppColors.textSecondaryDark : Colors.grey,
                                 fontSize: 11,
                               ),
                             ),
@@ -144,17 +147,17 @@ class SellerHeader extends StatelessWidget {
               // الصورة الشخصية
               CircleAvatar(
                 radius: 45,
-                backgroundColor: const Color(0xFFE3F2FD),
+                backgroundColor: isDark ? AppColors.primary.withOpacity(0.2) : const Color(0xFFE3F2FD),
                 backgroundImage: property.sellerImage != null
                     ? NetworkImage(property.sellerImage!)
                     : null,
                 child: property.sellerImage == null
                     ? Text(
                         property.sellerName[0],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: isDark ? Colors.white : Colors.blue,
                         ),
                       )
                     : null,

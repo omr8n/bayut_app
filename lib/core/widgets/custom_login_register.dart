@@ -13,16 +13,17 @@ class CustomLoginRegister extends StatelessWidget {
   final void Function()? onPressed;
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(title, style: TextStyle(color: AppColors.textSecondary)),
+        Text(title, style: TextStyle(color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary)),
         TextButton(
           onPressed: onPressed,
           child: Text(
             titleButton,
             style: TextStyle(
-              color: AppColors.primary,
+              color: isDark ? AppColors.primary : AppColors.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

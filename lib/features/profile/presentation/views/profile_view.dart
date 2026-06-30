@@ -10,16 +10,16 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ProfileViewBlocListener(
+    return ProfileViewBlocListener(
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: CustomScrollView(
           slivers: [
             // 🔥 استخدام Slivers لتمرير سلس واحترافي
-            SliverToBoxAdapter(child: ProfileHeader()),
-            SliverToBoxAdapter(child: SizedBox(height: 20)),
-            SliverToBoxAdapter(child: ProfileMenuSection()),
-            SliverToBoxAdapter(child: SizedBox(height: 40)),
+            const SliverToBoxAdapter(child: ProfileHeader()),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: ProfileMenuSection()),
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
           ],
         ),
       ),

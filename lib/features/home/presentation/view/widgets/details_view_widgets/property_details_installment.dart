@@ -25,11 +25,11 @@ class PropertyDetailsInstallment extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 24.h),
-        _buildSectionTitle(locale.translate(LangKeys.installmentAvailable)),
+        _buildSectionTitle(context, locale.translate(LangKeys.installmentAvailable)),
         Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.05),
+            color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : AppColors.primary.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: AppColors.primary.withOpacity(0.1)),
           ),
@@ -39,11 +39,13 @@ class PropertyDetailsInstallment extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildInstallmentItem(
+                    context,
                     locale.translate(LangKeys.downPayment),
                     '${format.format(property.downPayment ?? 0)} ${locale.translate(property.currency)}',
                     Icons.payments_outlined,
                   ),
                   _buildInstallmentItem(
+                    context,
                     locale.translate(LangKeys.monthlyInstallment),
                     '${format.format(property.monthlyInstallment ?? 0)} ${locale.translate(property.currency)}',
                     Icons.calendar_month_outlined,
@@ -55,6 +57,7 @@ class PropertyDetailsInstallment extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildInstallmentItem(
+                    context,
                     locale.translate(LangKeys.installmentDuration),
                     '${property.installmentDuration ?? 0} ${locale.translate(LangKeys.months)}',
                     Icons.timer_outlined,
@@ -73,7 +76,7 @@ class PropertyDetailsInstallment extends StatelessWidget {
                     Icon(
                       Icons.info_outline,
                       size: 20.sp,
-                      color: AppColors.primary,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.primary,
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
@@ -84,7 +87,7 @@ class PropertyDetailsInstallment extends StatelessWidget {
                             locale.translate(LangKeys.installmentNotes),
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -93,7 +96,7 @@ class PropertyDetailsInstallment extends StatelessWidget {
                             property.installmentNotes!,
                             style: TextStyle(
                               fontSize: 14.sp,
-                              color: AppColors.textPrimary,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
                             ),
                           ),
                         ],
@@ -109,27 +112,31 @@ class PropertyDetailsInstallment extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: Text(
         title,
-        style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+        ),
       ),
     );
   }
 
-  Widget _buildInstallmentItem(String label, String value, IconData icon) {
+  Widget _buildInstallmentItem(BuildContext context, String label, String value, IconData icon) {
     return Expanded(
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : Colors.white,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 20.sp, color: AppColors.primary),
+            child: Icon(icon, size: 20.sp, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary),
           ),
           SizedBox(width: 12.w),
           Expanded(
@@ -140,7 +147,7 @@ class PropertyDetailsInstallment extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   ),
                 ),
                 Text(
@@ -148,7 +155,7 @@ class PropertyDetailsInstallment extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
                   ),
                 ),
               ],

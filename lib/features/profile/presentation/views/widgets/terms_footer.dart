@@ -19,7 +19,7 @@ class TermsFooter extends StatelessWidget {
             Text(
               localizations.translate(LangKeys.lastUpdate).replaceFirst('{date}', '2024'),
               style: TextStyle(
-                color: AppColors.textSecondary.withOpacity(0.6),
+                color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark.withOpacity(0.6) : AppColors.textSecondary.withOpacity(0.6),
                 fontSize: 12,
               ),
             ),

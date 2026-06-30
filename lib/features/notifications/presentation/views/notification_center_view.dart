@@ -29,14 +29,14 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'مركز الإشعارات',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : Colors.white,
         elevation: 0,
       ),
       body: BlocBuilder<UserNotificationCubit, UserNotificationState>(
@@ -74,11 +74,13 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
         margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: notification.isRead ? Colors.white : const Color(0xFFF0F7FF),
+          color: notification.isRead
+              ? Theme.of(context).cardColor
+              : (Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : const Color(0xFFF0F7FF)),
           borderRadius: BorderRadius.circular(15.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -87,7 +89,7 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildIcon(notification.type),
+            _buildIcon(context, notification.type),
             SizedBox(width: 16.w),
             Expanded(
               child: Column(
@@ -98,7 +100,7 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                     style: TextStyle(
                       fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
                       fontSize: 14.sp,
-                      color: Colors.black87,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                     ),
                     textAlign: TextAlign.right,
                   ),
@@ -107,7 +109,7 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                     notification.body,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.grey.shade600,
                     ),
                     textAlign: TextAlign.right,
                   ),
@@ -119,7 +121,7 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                     ).format(notification.sentAt),
                     style: TextStyle(
                       fontSize: 10.sp,
-                      color: Colors.grey.shade400,
+                      color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark.withOpacity(0.7) : Colors.grey.shade400,
                     ),
                   ),
                 ],
@@ -131,14 +133,14 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
     );
   }
 
-  Widget _buildIcon(NotificationType type) {
+  Widget _buildIcon(BuildContext context, NotificationType type) {
     IconData icon;
     Color color;
 
     switch (type) {
       case NotificationType.adminAction:
         icon = Icons.admin_panel_settings_rounded;
-        color = Colors.redAccent;
+        color = AppColors.error;
         break;
       case NotificationType.general:
       default:
@@ -148,8 +150,11 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
 
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
-      child: Icon(icon, color: color, size: 20.sp),
+      decoration: BoxDecoration(
+        color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
+        shape: BoxShape.circle
+      ),
+      child: Icon(icon, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : color, size: 20.sp),
     );
   }
 

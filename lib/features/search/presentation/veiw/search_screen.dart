@@ -33,21 +33,26 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // 🎯 حذفنا BlocProvider من هنا ليعتمد على العالمي في main.dart لضمان مزامنة الفلترة
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(localizations.translate(LangKeys.search)),
+        title: Text(
+          localizations.translate(LangKeys.search),
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         surfaceTintColor: Colors.transparent,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
               context.read<SearchCubit>().applyFilters(sortBy: value);
             },
-            icon: const Icon(Icons.sort),
+            icon: Icon(Icons.sort, color: isDark ? Colors.white : Colors.black),
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'newest',
@@ -74,7 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
           await context.read<SearchCubit>().fetchAllPropertiesForSearch();
         },
         color: AppColors.primary,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [

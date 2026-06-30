@@ -60,22 +60,24 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
         .where((p) => p.status == PropertyStatus.sold)
         .toList();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: locale.isEnLocale ? TextDirection.ltr : TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(
             locale.translate(LangKeys.myProperties),
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 22.sp,
-              color: const Color(0xFF1E293B),
+              color: isDark ? Colors.white : const Color(0xFF1E293B),
               letterSpacing: -0.5,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           scrolledUnderElevation: 0,
           bottom: PreferredSize(
@@ -83,7 +85,7 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: isDark ? AppColors.darkSurface : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: TabBar(
@@ -91,7 +93,7 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
-                unselectedLabelColor: const Color(0xFF64748B),
+                unselectedLabelColor: isDark ? AppColors.textSecondaryDark : const Color(0xFF64748B),
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
                   color: AppColors.primary,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/custom_primary_button.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 import 'package:test_graduation/features/auth/presentation/cubits/signin_cubit/signin_cubit.dart';
@@ -79,7 +80,11 @@ class _LoginViewBodyFormState extends State<LoginViewBodyForm> {
                   GoRouter.of(context).pushNamed(AppRoutes.forgetPassword),
               child: Text(
                 localizations.translate(LangKeys.forgotPassword),
-                style: const TextStyle(color: Colors.blue),
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.primary
+                      : Colors.blue,
+                ),
               ),
             ),
           ),

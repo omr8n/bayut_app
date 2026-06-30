@@ -74,21 +74,24 @@ class _AdminPropertiesViewBodyState extends State<AdminPropertiesViewBody> {
             filteredList = filteredList.take(5).toList();
           }
 
-          return Column(
-            children: [
-              AdminPropertiesHeader(
-                onSearchChanged: (val) => setState(() => searchQuery = val),
-                onFilterChanged: (type) => setState(() => selectedType = type),
-                onExtraFilterChanged: (val) => setState(() => extraFilter = val),
-              ),
-              
-              // Original 4 stats
-              AdminPropertiesStats(properties: state.properties),
+          return Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Column(
+              children: [
+                AdminPropertiesHeader(
+                  onSearchChanged: (val) => setState(() => searchQuery = val),
+                  onFilterChanged: (type) => setState(() => selectedType = type),
+                  onExtraFilterChanged: (val) => setState(() => extraFilter = val),
+                ),
 
-              Expanded(
-                child: AdminPropertiesList(properties: filteredList, extraFilter: currentExtraFilter),
-              ),
-            ],
+                // Original 4 stats
+                AdminPropertiesStats(properties: state.properties),
+
+                Expanded(
+                  child: AdminPropertiesList(properties: filteredList, extraFilter: currentExtraFilter),
+                ),
+              ],
+            ),
           );
         }
 

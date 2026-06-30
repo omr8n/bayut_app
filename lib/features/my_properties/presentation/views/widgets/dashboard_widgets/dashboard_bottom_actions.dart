@@ -20,15 +20,16 @@ class DashboardBottomActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (locale == null) return const SizedBox.shrink();
 
     return Container(
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 30.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -154,10 +155,11 @@ class _StatusUpdateSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -167,14 +169,14 @@ class _StatusUpdateSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: isDark ? Colors.white12 : Colors.grey.shade300,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
           const SizedBox(height: 20),
           Text(
             locale.translate(LangKeys.updateStatusTitle),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
           ),
           const SizedBox(height: 20),
           _buildOption(
@@ -212,9 +214,10 @@ class _StatusUpdateSheet extends StatelessWidget {
     String title,
     IconData icon,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListTile(
       leading: Icon(icon, color: _getStatusColor(status)),
-      title: Text(title),
+      title: Text(title, style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)),
       onTap: () {
         if (status == PropertyStatus.sold) {
           Navigator.pop(context);

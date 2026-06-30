@@ -74,7 +74,7 @@ class SettingsSwitchTile extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFF1A1A1A),
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF1A1A1A),
                             fontFamily: 'Cairo',
                           ),
                         ),
@@ -84,7 +84,7 @@ class SettingsSwitchTile extends StatelessWidget {
                             subtitle!,
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: const Color(0xFF7F8C8D),
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : const Color(0xFF7F8C8D),
                               fontFamily: 'Cairo',
                             ),
                           ),

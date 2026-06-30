@@ -6,20 +6,21 @@ class OrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Expanded(child: Divider(color: AppColors.error)),
+        Expanded(child: Divider(color: isDark ? Colors.white24 : Colors.grey.shade300)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'أو',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        Expanded(child: Divider(color: AppColors.error)),
+        Expanded(child: Divider(color: isDark ? Colors.white24 : Colors.grey.shade300)),
       ],
     );
   }

@@ -16,7 +16,7 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(locale!.translate(LangKeys.settings)),
         centerTitle: true,
@@ -40,7 +40,7 @@ class SettingsView extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Column(
@@ -54,7 +54,7 @@ class SettingsView extends StatelessWidget {
                             extra: {'user': user, 'isPasswordChange': false},
                           ),
                         ),
-                        _buildDivider(),
+                        _buildDivider(context),
                         ProfileMenuItem(
                           icon: Icons.lock_outline,
                           title: locale.translate(LangKeys.changePassword),
@@ -74,7 +74,7 @@ class SettingsView extends StatelessWidget {
                 _buildSectionTitle(locale.translate(LangKeys.app), locale),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
@@ -98,7 +98,7 @@ class SettingsView extends StatelessWidget {
                           }
                         },
                       ),
-                      _buildDivider(),
+                      _buildDivider(context),
                       ProfileMenuItem(
                         icon: Icons.notifications_none,
                         title: locale.translate(LangKeys.notifications),
@@ -114,7 +114,7 @@ class SettingsView extends StatelessWidget {
                 _buildSectionTitle(locale!.translate(LangKeys.about), locale),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
@@ -125,7 +125,7 @@ class SettingsView extends StatelessWidget {
                         iconColor: Colors.teal,
                         onTap: () {},
                       ),
-                      _buildDivider(),
+                      _buildDivider(context),
                       ProfileMenuItem(
                         icon: Icons.privacy_tip_outlined,
                         title: locale.translate(LangKeys.privacyPolicy),
@@ -162,12 +162,12 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Divider(
       height: 1,
       indent: 60,
       endIndent: 20,
-      color: Colors.grey.withOpacity(0.1),
+      color: Theme.of(context).dividerColor.withOpacity(0.1),
     );
   }
 }

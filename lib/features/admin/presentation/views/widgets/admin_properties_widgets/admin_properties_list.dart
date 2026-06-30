@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'admin_property_card.dart';
@@ -40,8 +41,7 @@ class AdminPropertiesList extends StatelessWidget {
     return ListView.builder(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       itemCount:
-          properties.length +
-          (extraFilter == local.trend_leaders ? 1 : 0),
+          properties.length + (extraFilter == local.trend_leaders ? 1 : 0),
       itemBuilder: (context, index) {
         if (extraFilter == local.trend_leaders && index == 0) {
           return Column(
@@ -58,10 +58,20 @@ class AdminPropertiesList extends StatelessWidget {
                     SizedBox(width: 8.w),
                     Text(
                       local.trend_leaders_30_days,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black87,
+                      ),
                     ),
                     const Spacer(),
-                    const Icon(Icons.leaderboard_rounded, color: Colors.orange, size: 24),
+                    const Icon(
+                      Icons.leaderboard_rounded,
+                      color: Colors.orange,
+                      size: 24,
+                    ),
                   ],
                 ),
               ),
@@ -70,13 +80,17 @@ class AdminPropertiesList extends StatelessWidget {
           );
         }
 
-        final propertyIndex = extraFilter == local.trend_leaders ? index - 1 : index;
+        final propertyIndex = extraFilter == local.trend_leaders
+            ? index - 1
+            : index;
         final property = properties[propertyIndex];
 
         return AdminPropertyCard(
           property: property,
           adminCubit: context.read<AdminCubit>(),
-          trendRank: extraFilter == local.trend_leaders ? (propertyIndex + 1) : null,
+          trendRank: extraFilter == local.trend_leaders
+              ? (propertyIndex + 1)
+              : null,
         );
       },
     );
@@ -96,23 +110,29 @@ class AdminPropertiesList extends StatelessWidget {
         itemCount: leaders.length,
         itemBuilder: (context, index) {
           final property = leaders[index];
-          return _buildTrendingLeaderCard(property, index + 1);
+          return _buildTrendingLeaderCard(context, property, index + 1);
         },
       ),
     );
   }
 
-  Widget _buildTrendingLeaderCard(PropertyEntity property, int rank) {
+  Widget _buildTrendingLeaderCard(
+    BuildContext context,
+    PropertyEntity property,
+    int rank,
+  ) {
     return Container(
       width: 150.w,
       margin: EdgeInsets.only(left: 12.w, bottom: 10.h),
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04,
+            ),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -126,7 +146,9 @@ class AdminPropertiesList extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
                 child: CachedNetworkImage(
-                  imageUrl: property.images.isNotEmpty ? property.images[0] : '',
+                  imageUrl: property.images.isNotEmpty
+                      ? property.images[0]
+                      : '',
                   height: 70.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -137,7 +159,13 @@ class AdminPropertiesList extends StatelessWidget {
                 property.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.sp),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.sp,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black87,
+                ),
               ),
               const Spacer(),
               Row(
@@ -145,10 +173,22 @@ class AdminPropertiesList extends StatelessWidget {
                 children: [
                   Text(
                     "${property.views}",
-                    style: TextStyle(color: Colors.grey, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.textSecondaryDark
+                          : Colors.grey,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(width: 4.w),
-                  Icon(Icons.visibility_rounded, size: 12.sp, color: Colors.grey),
+                  Icon(
+                    Icons.visibility_rounded,
+                    size: 12.sp,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.textSecondaryDark
+                        : Colors.grey,
+                  ),
                 ],
               ),
             ],
@@ -170,4 +210,3 @@ class AdminPropertiesList extends StatelessWidget {
     );
   }
 }
-

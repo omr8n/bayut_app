@@ -17,13 +17,14 @@ class DashboardActivityTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     final history = property.statusHistory.reversed.toList();
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: isDark ? AppColors.darkSurface : const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
       ),
       child: history.isEmpty
           ? Center(
@@ -31,7 +32,7 @@ class DashboardActivityTimeline extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 20.h),
               child: Text(
                 locale.translate(LangKeys.noResults),
-                style: const TextStyle(color: Colors.grey),
+                style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey),
               ),
             ),
           )
@@ -84,7 +85,7 @@ class DashboardActivityTimeline extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
-                              color: Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                           if (item['reason'] != null && item['reason'].toString().isNotEmpty)
@@ -92,7 +93,7 @@ class DashboardActivityTimeline extends StatelessWidget {
                               item['reason'].toString(),
                               style: TextStyle(
                                 fontSize: 11.sp,
-                                color: Colors.grey.shade600,
+                                color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade600,
                               ),
                             ),
                         ],
@@ -101,7 +102,7 @@ class DashboardActivityTimeline extends StatelessWidget {
                     Text(
                       DateFormat('HH:mm  yyyy/MM/dd').format(date),
                       style: TextStyle(
-                        color: Colors.grey.shade500,
+                        color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade500,
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w500,
                       ),

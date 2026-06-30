@@ -18,12 +18,13 @@ class ReportReasonSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           locale.translate(LangKeys.whyReportingQuestion),
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -40,10 +41,10 @@ class ReportReasonSelector extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.error : Colors.grey[50],
+                  color: isSelected ? AppColors.error : (isDark ? AppColors.darkSurface : Colors.grey[50]),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? AppColors.error : Colors.grey[200]!,
+                    color: isSelected ? AppColors.error : (isDark ? Colors.white10 : Colors.grey[200]!),
                   ),
                   boxShadow: isSelected
                       ? [
@@ -62,7 +63,7 @@ class ReportReasonSelector extends StatelessWidget {
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: isSelected ? Colors.white : AppColors.textPrimary,
+                    color: isSelected ? Colors.white : (isDark ? Colors.white70 : AppColors.textPrimary),
                   ),
                 ),
               ),

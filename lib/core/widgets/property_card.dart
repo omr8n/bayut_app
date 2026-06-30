@@ -50,6 +50,7 @@ class _PropertyCardState extends State<PropertyCard> {
 
     final int displayCount = allMedia.length > 3 ? 3 : allMedia.length;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
         if (widget.onTap != null) {
@@ -67,11 +68,11 @@ class _PropertyCardState extends State<PropertyCard> {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(15.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withOpacity(isDark ? 0.2 : 0.06),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -199,7 +200,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: isDark ? AppColors.darkCard.withOpacity(0.9) : Colors.white.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(20.r),
                             boxShadow: [
                               BoxShadow(
@@ -215,7 +216,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               Text(
                                 localizations.isEnLocale ? 'Viewed' : 'شوهد',
                                 style: TextStyle(
-                                  color: Colors.grey[700],
+                                  color: isDark ? Colors.white70 : Colors.grey[700],
                                   fontSize: 10.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -223,7 +224,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               SizedBox(width: 4.w),
                               Icon(
                                 Icons.check_circle_rounded,
-                                color: Colors.grey[600],
+                                color: isDark ? AppColors.success : Colors.grey[600],
                                 size: 14.sp,
                               ),
                             ],
@@ -420,7 +421,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.primary,
+                                  color: isDark ? Colors.white : AppColors.primary,
                                 ),
                               ),
                             ),
@@ -458,7 +459,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -474,14 +475,14 @@ class _PropertyCardState extends State<PropertyCard> {
                               Icon(
                                 Icons.location_on_rounded,
                                 size: 14.sp,
-                                color: AppColors.primary,
+                                color: isDark ? Colors.white70 : AppColors.primary,
                               ),
                               SizedBox(width: 4.w),
                               Text(
                                 '${localizations.translate(widget.property.governorate)}، ${widget.property.city}',
                                 style: TextStyle(
                                   fontSize: 13.sp,
-                                  color: Colors.grey[600],
+                                  color: isDark ? AppColors.textSecondaryDark : Colors.grey[600],
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -494,7 +495,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 ),
               ),
             ),
-            const Divider(height: 1),
+            Divider(height: 1, color: isDark ? Colors.white12 : Colors.grey.shade200),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CommunicationButtons(property: widget.property),
@@ -506,17 +507,18 @@ class _PropertyCardState extends State<PropertyCard> {
   }
 
   Widget _buildInfoItem(IconData icon, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 18.sp, color: Colors.grey[700]),
+        Icon(icon, size: 18.sp, color: isDark ? Colors.white70 : Colors.grey[700]),
         SizedBox(width: 6.w),
         Text(
           value,
           style: TextStyle(
             fontSize: 13.sp,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
       ],

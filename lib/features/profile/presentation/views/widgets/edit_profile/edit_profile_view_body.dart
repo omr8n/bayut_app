@@ -98,6 +98,7 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       controller: _scrollController,
       padding: const EdgeInsets.all(24),
@@ -118,7 +119,7 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
                       border: Border.all(color: AppColors.primary, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
                           blurRadius: 10,
                           spreadRadius: 2,
                         ),
@@ -135,9 +136,9 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
                               widget.user.profilePic!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.person, size: 80),
+                                  Icon(Icons.person, size: 80, color: isDark ? Colors.white24 : Colors.grey),
                             )
-                          : const Icon(Icons.person, size: 80),
+                          : Icon(Icons.person, size: 80, color: isDark ? Colors.white24 : Colors.grey),
                     ),
                   ),
                   Positioned(
@@ -164,7 +165,7 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
             ),
             const SizedBox(height: 32),
 
-            _buildSectionTitle(locale.translate(LangKeys.personalInfo)),
+            _buildSectionTitle(locale.translate(LangKeys.personalInfo), isDark),
             const SizedBox(height: 16),
             CustomTextFormField(
               controller: _nameController,
@@ -199,6 +200,7 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
             const SizedBox(height: 32),
             _buildSectionTitle(
               locale.translate(LangKeys.changePasswordOptional),
+              isDark,
             ),
             const SizedBox(height: 16),
             CustomTextFormField(
@@ -275,13 +277,13 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, bool isDark) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: AppColors.primary,
+        color: isDark ? Colors.white : AppColors.primary,
       ),
     );
   }

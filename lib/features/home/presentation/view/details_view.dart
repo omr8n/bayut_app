@@ -115,7 +115,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         : widget.property.images;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           // 1. الخلفية الثابتة مع التحكم في السكرول
@@ -157,7 +157,11 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               SizedBox(height: 15.h),
               Text(
                 widget.property.title,
-                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                ),
               ),
               SizedBox(height: 10.h),
               PropertyDetailsLocation(property: widget.property),
@@ -168,18 +172,19 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 format: numberFormat,
               ),
               SizedBox(height: 24.h),
-              _buildSectionTitle(localizations.translate(LangKeys.description)),
+              _buildSectionTitle(context, localizations.translate(LangKeys.description)),
               Text(
                 widget.property.description,
                 style: TextStyle(
                   fontSize: 15.sp,
                   height: 1.6,
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                 ),
               ),
               if (widget.property.facilities.isNotEmpty) ...[
                 SizedBox(height: 24.h),
                 _buildSectionTitle(
+                  context,
                   localizations.translate(LangKeys.facilitiesAndServices),
                 ),
                 PropertyDetailsFacilities(
@@ -236,7 +241,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             child: Hero(
               tag: 'contact_buttons_${widget.property.id}', // 🔥 التاج السحري
               child: Material(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: CommunicationButtons(property: widget.property),
@@ -249,17 +254,22 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: Text(
         title,
-        style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+        ),
       ),
     );
   }
 
   Widget _buildDetailsPromotionCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
         // الانتقال لصفحة عقاراتي لطلب التميز
@@ -269,16 +279,16 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         margin: EdgeInsets.symmetric(vertical: 16.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF3E0), // برتقالي فاتح جداً (مثل الصورة)
+          color: isDark ? Colors.orange.withOpacity(0.1) : const Color(0xFFFFF3E0), // برتقالي فاتح جداً (مثل الصورة)
           borderRadius: BorderRadius.circular(15.r),
-          border: Border.all(color: const Color(0xFFFFCC80)),
+          border: Border.all(color: isDark ? Colors.orange.withOpacity(0.3) : const Color(0xFFFFCC80)),
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.arrow_back_ios_rounded,
               size: 14,
-              color: Colors.orange,
+              color: isDark ? Colors.orange.shade300 : Colors.orange,
             ),
             const Spacer(),
             Column(
@@ -292,13 +302,13 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
-                        color: const Color(0xFFE65100),
+                        color: isDark ? Colors.orange.shade200 : const Color(0xFFE65100),
                       ),
                     ),
                     SizedBox(width: 8.w),
                     Icon(
                       Icons.rocket_launch_rounded,
-                      color: Colors.orange.shade800,
+                      color: isDark ? Colors.orange.shade400 : Colors.orange.shade800,
                       size: 20.sp,
                     ),
                   ],
@@ -307,7 +317,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                   'حالة التميز',
                   style: TextStyle(
                     fontSize: 11.sp,
-                    color: Colors.grey.shade600,
+                    color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade600,
                   ),
                 ),
               ],

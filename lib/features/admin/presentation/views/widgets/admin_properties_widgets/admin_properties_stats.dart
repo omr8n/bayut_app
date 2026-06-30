@@ -20,24 +20,24 @@ class AdminPropertiesStats extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         border: Border(
-          bottom: BorderSide(color: Colors.grey.shade100, width: 1),
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem(local.total_label, '${properties.length}', const Color(0xFF1E4C9A)),
-          _buildStatItem(local.for_sale, '$forSale', const Color(0xFF2E7D32)),
-          _buildStatItem(local.for_rent, '$forRent', const Color(0xFF0288D1)),
-          _buildStatItem(local.featured_label, '$featured', const Color(0xFFFBC02D)),
+          _buildStatItem(context, local.total_label, '${properties.length}', Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF1E4C9A)),
+          _buildStatItem(context, local.for_sale, '$forSale', const Color(0xFF2E7D32)),
+          _buildStatItem(context, local.for_rent, '$forRent', const Color(0xFF0288D1)),
+          _buildStatItem(context, local.featured_label, '$featured', const Color(0xFFFBC02D)),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value, Color color) {
+  Widget _buildStatItem(BuildContext context, String label, String value, Color color) {
     return Column(
       children: [
         Text(
@@ -53,7 +53,7 @@ class AdminPropertiesStats extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12.sp,
-            color: AppColors.textSecondary,
+            color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondary,
             fontWeight: FontWeight.w500,
           ),
         ),

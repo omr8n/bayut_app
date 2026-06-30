@@ -15,22 +15,23 @@ class AppCubit extends Cubit<AppState> {
   Future<void> changeAppThemeMode({bool? sharedMode}) async {
     if (sharedMode != null) {
       isDark = sharedMode;
-      emit(ThemeChangeModeState(isDark: isDark));
     } else {
       isDark = !isDark;
-      Prefs.setBool('isDark', isDark);
-      emit(ThemeChangeModeState(isDark: isDark));
     }
+    Prefs.setBool('isDarkMode', isDark);
+    emit(ThemeChangeModeState(isDark: isDark));
   }
 
   // Language Change
   void getSavedLanguage() {
-    final result = Prefs.getString('language').isEmpty 
-        ? 'ar' 
+    currentLangCode = Prefs.getString('language').isEmpty
+        ? 'ar'
         : Prefs.getString('language');
 
-    currentLangCode = result;
+    isDark = Prefs.getBool('isDarkMode');
+
     emit(LanguageChangeState(locale: Locale(currentLangCode)));
+    emit(ThemeChangeModeState(isDark: isDark));
   }
 
   Future<void> _changeLang(String langCode) async {

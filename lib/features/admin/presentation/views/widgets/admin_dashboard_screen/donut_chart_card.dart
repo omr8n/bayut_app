@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 
 class DonutChartCard extends StatelessWidget {
   final String title;
@@ -41,11 +42,13 @@ class DonutChartCard extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       margin: EdgeInsetsDirectional.only(end: 12.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.02,
+            ),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -82,7 +85,9 @@ class DonutChartCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1E293B),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
                         fontFamily: 'Cairo',
                       ),
                     ),
@@ -90,7 +95,9 @@ class DonutChartCard extends StatelessWidget {
                       local.total_label,
                       style: TextStyle(
                         fontSize: 9.sp,
-                        color: Colors.grey.shade400,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey.shade400,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Cairo',
                       ),
@@ -125,7 +132,9 @@ class DonutChartCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1E293B),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
                         fontFamily: 'Cairo',
                       ),
                     ),
@@ -134,7 +143,9 @@ class DonutChartCard extends StatelessWidget {
                       _translateKey(e.key, local),
                       style: TextStyle(
                         fontSize: 10.sp,
-                        color: Colors.grey.shade400,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey.shade400,
                         fontFamily: 'Cairo',
                       ),
                     ),

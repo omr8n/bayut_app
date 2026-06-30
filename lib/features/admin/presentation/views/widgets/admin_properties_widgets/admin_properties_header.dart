@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 
 import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 
 class AdminPropertiesHeader extends StatefulWidget {
   const AdminPropertiesHeader({
@@ -37,7 +38,9 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
         top: 10.h,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E4C9A), // Standard Royal Blue
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkBackground
+            : const Color(0xFF1E4C9A), // Standard Royal Blue
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30.r),
           bottomRight: Radius.circular(30.r),

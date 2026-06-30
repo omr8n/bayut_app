@@ -32,10 +32,12 @@ class ProfileMenuItem extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : AppColors.textPrimary,
         ),
       ),
       trailing: trailing ??

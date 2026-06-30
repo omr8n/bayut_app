@@ -18,7 +18,7 @@ class ProfileSliverAppBar extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: expandedHeight,
       pinned: true,
-      backgroundColor: AppColors.primary,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : AppColors.primary,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
         title: Text(
@@ -30,8 +30,8 @@ class ProfileSliverAppBar extends StatelessWidget {
           ),
         ),
         background: Container(
-          decoration: const BoxDecoration(
-            gradient: AppColors.primaryGradient,
+          decoration: BoxDecoration(
+            gradient: Theme.of(context).brightness == Brightness.dark ? AppColors.darkGradient : AppColors.primaryGradient,
           ),
           child: Opacity(
             opacity: 0.1,

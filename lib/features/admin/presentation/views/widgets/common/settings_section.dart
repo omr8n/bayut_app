@@ -32,17 +32,17 @@ class SettingsSection extends StatelessWidget {
         Container(
           margin: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(24.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
             border: Border.all(
-              color: Colors.black.withOpacity(0.02),
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white12 : Colors.black.withOpacity(0.02),
               width: 1,
             ),
           ),

@@ -19,7 +19,7 @@ class HomeHeader extends StatelessWidget {
         top: MediaQuery.of(context).padding.top + 8.h,
         bottom: 8.h,
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           LogoSection(),

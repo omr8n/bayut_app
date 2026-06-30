@@ -21,7 +21,7 @@ class TimeFilterSelector extends StatelessWidget {
     return Container(
       height: 45,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -39,7 +39,7 @@ class TimeFilterSelector extends StatelessWidget {
                 child: Text(
                   f['label'] as String,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey[600],
+                    color: isSelected ? Colors.white : (Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.grey[600]),
                     fontSize: 13,
                   ),
                 ),

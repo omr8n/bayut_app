@@ -25,11 +25,11 @@ class ProfileMenuSection extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -44,7 +44,7 @@ class ProfileMenuSection extends StatelessWidget {
               iconColor: Colors.deepPurple,
               onTap: () => GoRouter.of(context).push(AppRoutes.adminDashboard),
             ),
-            _buildDivider(),
+            _buildDivider(context),
           ],
           ProfileMenuItem(
             icon: Icons.home_work_outlined,
@@ -62,7 +62,7 @@ class ProfileMenuSection extends StatelessWidget {
               }
             },
           ),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.favorite_outline,
             title: locale.translate(LangKeys.favorites),
@@ -79,51 +79,51 @@ class ProfileMenuSection extends StatelessWidget {
               }
             },
           ),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.settings_outlined,
             title: locale.translate(LangKeys.settings),
             iconColor: Colors.orange,
             onTap: () => GoRouter.of(context).push(AppRoutes.settingsView),
           ),
-          _buildDivider(),
+          _buildDivider(context),
           const NightModeSwitch(),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.menu_book_outlined,
             title: locale.translate(LangKeys.guide),
             iconColor: Colors.pink,
             onTap: () => GoRouter.of(context).push(AppRoutes.guideView),
           ),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.policy_outlined,
             title: locale.translate(LangKeys.terms),
             iconColor: Colors.teal,
             onTap: () => GoRouter.of(context).push(AppRoutes.termsView),
           ),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.star_outline,
             title: locale.translate(LangKeys.rateApp),
             iconColor: Colors.amber,
             onTap: () {},
           ),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.share_outlined,
             title: locale.translate(LangKeys.shareApp),
             iconColor: Colors.lightBlue,
             onTap: () {},
           ),
-          _buildDivider(),
+          _buildDivider(context),
           ProfileMenuItem(
             icon: Icons.contact_support_outlined,
             title: locale.translate(LangKeys.contactUs),
             iconColor: Colors.cyan,
             onTap: () => GoRouter.of(context).push(AppRoutes.contactView),
           ),
-          _buildDivider(),
+          _buildDivider(context),
 
           // 🔥 زر تفاعلي: تسجيل دخول (للزائر) أو تسجيل خروج (للمسجل)
           ProfileMenuItem(
@@ -153,12 +153,12 @@ class ProfileMenuSection extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Divider(
       height: 1,
       indent: 70,
       endIndent: 20,
-      color: Colors.grey.withValues(alpha: 0.1),
+      color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
     );
   }
 }

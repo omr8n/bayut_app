@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
@@ -31,15 +32,17 @@ class NightModeSwitch extends StatelessWidget {
           ),
           title: Text(
             locale!.translate(LangKeys.darkMode),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : AppColors.textPrimary,
             ),
           ),
-          value: cubit.isDarkMode,
+          value: context.read<AppCubit>().isDark,
           onChanged: (value) {
-            cubit.toggleDarkMode(value);
+            cubit.toggleDarkMode(context, value);
           },
         );
       },

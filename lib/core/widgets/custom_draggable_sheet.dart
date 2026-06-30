@@ -88,7 +88,7 @@ class _CustomDraggableSheetState extends State<CustomDraggableSheet> {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: widget.backgroundColor ?? Colors.white,
+            color: widget.backgroundColor ?? Theme.of(context).cardColor,
             borderRadius: widget.borderRadius ??
                 BorderRadius.only(
                   topLeft: Radius.circular(30.r),
@@ -96,7 +96,7 @@ class _CustomDraggableSheetState extends State<CustomDraggableSheet> {
                 ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
                 blurRadius: 15,
                 spreadRadius: 2,
               ),
