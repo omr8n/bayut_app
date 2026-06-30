@@ -22,7 +22,9 @@ class EmptyBagProperties extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(isDark ? 0.2 : 0.1),
+                  color: AppColors.primary.withValues(
+                    alpha: isDark ? 0.2 : 0.1,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -46,7 +48,9 @@ class EmptyBagProperties extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   height: 1.5,
                 ),
               ),

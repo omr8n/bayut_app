@@ -17,7 +17,7 @@ class NightModeSwitch extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<ProfileCubit>();
         return SwitchListTile(
-          activeColor: AppColors.primary,
+          activeThumbColor: AppColors.primary,
           secondary: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(

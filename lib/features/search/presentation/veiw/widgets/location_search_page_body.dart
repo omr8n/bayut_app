@@ -79,8 +79,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
 
     //优先 جلب الموقع من الكيوبيت لضمان المزامنة مع الفلترة، ثم من Prefs
     final cubitLoc = context.read<SearchCubit>().currentGovernorate;
-    final String initialLoc =
-        cubitLoc ?? Prefs.getString('user_location') ?? '';
+    final String initialLoc = cubitLoc ?? Prefs.getString('user_location');
 
     if (initialLoc.isNotEmpty && initialLoc != LangKeys.all) {
       setState(() {
@@ -188,7 +187,11 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Icon(icon, size: 18, color: isDark ? AppColors.textSecondaryDark : Colors.grey),
+        Icon(
+          icon,
+          size: 18,
+          color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+        ),
         const SizedBox(width: 8),
         Text(
           title,
@@ -208,7 +211,10 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
     return GestureDetector(
       onTap: () => _onLocationSelected(label),
       child: Chip(
-        label: Text(locale.translate(label), style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+        label: Text(
+          locale.translate(label),
+          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+        ),
         backgroundColor: isDark ? AppColors.darkSurface : Colors.grey[100],
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -226,17 +232,21 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.1)
+              ? AppColors.primary.withValues(alpha: 0.1)
               : (isDark ? AppColors.darkSurface : Colors.grey[50]),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color: isSelected ? AppColors.primary : (isDark ? Colors.white10 : Colors.grey[200]!),
+            color: isSelected
+                ? AppColors.primary
+                : (isDark ? Colors.white10 : Colors.grey[200]!),
           ),
         ),
         child: Text(
           locale.translate(loc),
           style: TextStyle(
-            color: isSelected ? AppColors.primary : (isDark ? Colors.white70 : Colors.black87),
+            color: isSelected
+                ? AppColors.primary
+                : (isDark ? Colors.white70 : Colors.black87),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -281,9 +291,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                 // 1. حفظ الموقع في الـ Cubit والـ Prefs لضمان توفره للفلترة
                 Prefs.setString('user_location', locToSave);
                 context.read<SearchCubit>().currentGovernorate =
-                    (locToSave == LangKeys.all)
-                    ? null
-                    : locToSave;
+                    (locToSave == LangKeys.all) ? null : locToSave;
 
                 // 2. التحقق من أين أتينا؟
                 // سنستخدم محاولة الـ Pop، إذا نجحت ورجعنا للفلترة فهذا المطلوب.
@@ -308,7 +316,7 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? AppColors.primary : const Color(0xFF005F5F),
+                backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -329,10 +337,10 @@ class _LocationSearchPageBodyState extends State<LocationSearchPageBody> {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
+class SectionHeader extends StatelessWidget {
   final String title;
   final IconData icon;
-  const _SectionHeader({required this.title, required this.icon});
+  const SectionHeader({required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {

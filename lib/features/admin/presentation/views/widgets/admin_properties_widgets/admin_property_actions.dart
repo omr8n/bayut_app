@@ -96,7 +96,7 @@ class AdminPropertyActions extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 20),
@@ -117,7 +117,9 @@ class AdminPropertyActions extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(
-          property.isApproved ? local.disable_property_title : local.approve_property_title,
+          property.isApproved
+              ? local.disable_property_title
+              : local.approve_property_title,
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -157,7 +159,11 @@ class AdminPropertyActions extends StatelessWidget {
               );
               Navigator.pop(dialogContext);
             },
-            child: Text(property.isApproved ? local.disable_now : local.approve_and_publish),
+            child: Text(
+              property.isApproved
+                  ? local.disable_now
+                  : local.approve_and_publish,
+            ),
           ),
         ],
       ),
@@ -168,17 +174,32 @@ class AdminPropertyActions extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-        title: Text(local.review_premium_request, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        title: Text(
+          local.review_premium_request,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(local.selected_plan_pro, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(
+              local.selected_plan_pro,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
             SizedBox(height: 12.h),
-            Text(local.mock_payment_confirmed, style: const TextStyle(color: Colors.black87, fontSize: 13)),
+            Text(
+              local.mock_payment_confirmed,
+              style: const TextStyle(color: Colors.black87, fontSize: 13),
+            ),
             SizedBox(height: 20.h),
-            Text(local.premium_duration_days, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+            Text(
+              local.premium_duration_days,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
+            ),
             SizedBox(height: 8.h),
             TextField(
               controller: TextEditingController(text: '30'),
@@ -186,7 +207,9 @@ class AdminPropertyActions extends StatelessWidget {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 8.h),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
               ),
             ),
           ],
@@ -204,7 +227,10 @@ class AdminPropertyActions extends StatelessWidget {
                   );
                   Navigator.pop(dialogContext);
                 },
-                child: Text(local.reject_request, style: const TextStyle(color: Colors.redAccent)),
+                child: Text(
+                  local.reject_request,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
               ),
               const Spacer(),
               ElevatedButton(
@@ -222,10 +248,18 @@ class AdminPropertyActions extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   side: BorderSide(color: Colors.grey.shade200),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
                   elevation: 0,
                 ),
-                child: Text(local.approve_and_activate, style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+                child: Text(
+                  local.approve_and_activate,
+                  style: const TextStyle(
+                    color: Colors.blueAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

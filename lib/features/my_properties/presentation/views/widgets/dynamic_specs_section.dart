@@ -337,7 +337,7 @@ class DynamicSpecsSection extends StatelessWidget {
     AppLocalizations locale,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,

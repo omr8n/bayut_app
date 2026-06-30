@@ -31,8 +31,10 @@ class SearchFieldWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.06,
+            color: Colors.black.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.2
+                  : 0.06,
             ),
             blurRadius: 12,
             offset: const Offset(0, 4),

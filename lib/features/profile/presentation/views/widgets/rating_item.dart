@@ -19,7 +19,9 @@ class RatingItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.grey.shade100,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +31,10 @@ class RatingItem extends StatelessWidget {
             children: [
               Text(
                 DateFormat('yyyy/MM/dd').format(rating.createdAt),
-                style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey, fontSize: 11),
+                style: TextStyle(
+                  color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+                  fontSize: 11,
+                ),
               ),
               Row(
                 children: List.generate(
@@ -50,12 +55,18 @@ class RatingItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: isDark ? AppColors.primary.withOpacity(0.2) : Colors.grey.shade200,
+                backgroundColor: isDark
+                    ? AppColors.primary.withValues(alpha: 0.2)
+                    : Colors.grey.shade200,
                 backgroundImage: rating.raterImage != null
                     ? NetworkImage(rating.raterImage!)
                     : null,
                 child: rating.raterImage == null
-                    ? Icon(Icons.person, size: 20, color: isDark ? Colors.white : Colors.grey)
+                    ? Icon(
+                        Icons.person,
+                        size: 20,
+                        color: isDark ? Colors.white : Colors.grey,
+                      )
                     : null,
               ),
               const SizedBox(width: 10),

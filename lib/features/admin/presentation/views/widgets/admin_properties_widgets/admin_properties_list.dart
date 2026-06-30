@@ -130,8 +130,10 @@ class AdminPropertiesList extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04,
+            color: Colors.black.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.2
+                  : 0.04,
             ),
             blurRadius: 8,
             offset: const Offset(0, 4),

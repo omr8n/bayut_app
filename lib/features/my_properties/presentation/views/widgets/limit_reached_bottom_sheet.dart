@@ -82,9 +82,11 @@ class LimitReachedBottomSheet extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
+              color: AppColors.primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(15.r),
-              border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
             ),
             child: Consumer<ListingLimitViewModel>(
               builder: (context, vm, child) {
@@ -137,7 +139,7 @@ class LimitReachedBottomSheet extends StatelessWidget {
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 4,
-                shadowColor: AppColors.primary.withOpacity(0.4),
+                shadowColor: AppColors.primary.withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.r),
                 ),

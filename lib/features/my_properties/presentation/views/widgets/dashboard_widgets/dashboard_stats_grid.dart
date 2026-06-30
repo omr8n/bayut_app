@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
+
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/promotion_sheet.dart';
 
 class DashboardStatsGrid extends StatelessWidget {
@@ -143,17 +143,17 @@ class _StatCard extends StatelessWidget {
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           color: isError
-              ? color.withOpacity(0.05)
+              ? color.withValues(alpha: 0.05)
               : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: isError
-                ? color.withOpacity(0.2)
+                ? color.withValues(alpha: 0.2)
                 : (isDark ? Colors.white10 : Colors.grey.shade100),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.05 : 0.02),
+              color: Colors.black.withValues(alpha: isDark ? 0.05 : 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -184,7 +184,9 @@ class _StatCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
-                color: isError || isPremiumAction ? color : (isDark ? Colors.white : Colors.black87),
+                color: isError || isPremiumAction
+                    ? color
+                    : (isDark ? Colors.white : Colors.black87),
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -192,7 +194,10 @@ class _StatCard extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 10.sp, color: isDark ? AppColors.textSecondaryDark : Colors.grey),
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+              ),
             ),
           ],
         ),

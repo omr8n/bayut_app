@@ -140,7 +140,9 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
         duration: const Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.15),
+          color: isSelected
+              ? Colors.white
+              : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Text(

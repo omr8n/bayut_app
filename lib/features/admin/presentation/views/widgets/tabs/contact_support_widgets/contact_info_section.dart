@@ -9,7 +9,7 @@ import 'package:test_graduation/features/admin/presentation/manager/admin_settin
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import '../../common/settings_section.dart';
-import '../../common/settings_tile.dart';
+
 import 'contact_edit_dialog.dart';
 
 class ContactInfoSection extends StatelessWidget {
@@ -48,7 +48,6 @@ class ContactInfoSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
     final cubit = context.read<AdminSettingsCubit>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SettingsSection(
       title: local.translate(LangKeys.contactAndSupport),
@@ -177,7 +176,11 @@ class ContactInfoSection extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             child: Row(
               children: [
-                Icon(Icons.arrow_back_ios_new, size: 10.sp, color: Colors.grey.shade300),
+                Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 10.sp,
+                  color: Colors.grey.shade300,
+                ),
                 const Spacer(),
                 Expanded(
                   flex: 8,
@@ -211,7 +214,7 @@ class ContactInfoSection extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.1),
+                    color: iconColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Icon(icon, color: iconColor, size: 20.sp),
@@ -223,7 +226,10 @@ class ContactInfoSection extends StatelessWidget {
         if (showDivider)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Divider(height: 1, color: isDark ? Colors.white12 : Colors.grey.shade100),
+            child: Divider(
+              height: 1,
+              color: isDark ? Colors.white12 : Colors.grey.shade100,
+            ),
           ),
       ],
     );

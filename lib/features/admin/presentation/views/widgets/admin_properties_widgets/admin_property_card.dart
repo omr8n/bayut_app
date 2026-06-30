@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
-import 'admin_property_actions.dart'; // 🔥 Using new actions
 
 class AdminPropertyCard extends StatelessWidget {
   final PropertyEntity property;
@@ -32,8 +31,10 @@ class AdminPropertyCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04,
+            color: Colors.black.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.2
+                  : 0.04,
             ),
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -340,7 +341,7 @@ class AdminPropertyCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
+            color: color.withValues(alpha: 0.08),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 20.sp),
@@ -552,9 +553,9 @@ class AdminPropertyCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.05),
+        color: Colors.orange.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: Colors.orange.withOpacity(0.1)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.1)),
       ),
       child: Column(
         children: [
@@ -618,7 +619,7 @@ class AdminPropertyCard extends StatelessWidget {
       margin: EdgeInsetsDirectional.only(start: 16.w, end: 16.w, bottom: 8.h),
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.03),
+        color: Colors.orange.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
@@ -626,7 +627,7 @@ class AdminPropertyCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.1),
+              color: Colors.orange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(

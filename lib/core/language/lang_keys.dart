@@ -858,6 +858,13 @@ class LangKeys {
   static const String mediaTitle = 'media_title';
   static const String mediaSubtitle = 'media_subtitle';
 
+  static const String markAllAsRead = 'mark_all_as_read';
+  static const String noNotificationsCurrently = 'no_notifications_currently';
+  static const String promotionReceived = 'promotion_received';
+  static const String propertyFeaturedTitle = 'property_featured_title';
+  static const String pleaseLoginToViewNotifications = 'please_login_to_view_notifications';
+  static const String updateAvailable = 'update_available';
+
   static const String usd = 'usd';
   static const String tryCurrency = 'try';
 

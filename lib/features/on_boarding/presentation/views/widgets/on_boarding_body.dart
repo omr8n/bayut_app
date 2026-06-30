@@ -105,7 +105,7 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                         decoration: BoxDecoration(
                           color: currentIndex == index
                               ? AppColors.primary
-                              : Colors.grey.withOpacity(0.3),
+                              : Colors.grey.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -121,7 +121,9 @@ class _OnBoardingBodyState extends State<OnBoardingBody> {
                             backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                             elevation: 5,
-                            shadowColor: AppColors.primary.withOpacity(0.4),
+                            shadowColor: AppColors.primary.withValues(
+                              alpha: 0.4,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

@@ -7,7 +7,6 @@ import 'package:test_graduation/features/admin/presentation/manager/admin_settin
 import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_state.dart';
 import 'contact_support_widgets/live_contact_preview_card.dart';
 import 'contact_support_widgets/contact_info_section.dart';
-import 'contact_support_widgets/legal_policies_section.dart';
 
 class ContactSupportSettingsTab extends StatelessWidget {
   const ContactSupportSettingsTab({super.key});
@@ -51,10 +50,7 @@ class ContactSupportSettingsTab extends StatelessWidget {
     final local = AppLocalizations.of(context)!;
     if (state is AdminSettingsFailure) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.errMessage),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(state.errMessage), backgroundColor: Colors.red),
       );
     }
     if (state is AdminSettingsUpdateSuccess) {
@@ -67,7 +63,11 @@ class ContactSupportSettingsTab extends StatelessWidget {
     }
   }
 
-  Widget _buildErrorState(BuildContext context, AppLocalizations local, String message) {
+  Widget _buildErrorState(
+    BuildContext context,
+    AppLocalizations local,
+    String message,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

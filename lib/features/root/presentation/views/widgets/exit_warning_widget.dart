@@ -15,7 +15,8 @@ class ExitWarningWidget extends StatefulWidget {
   State<ExitWarningWidget> createState() => _ExitWarningWidgetState();
 }
 
-class _ExitWarningWidgetState extends State<ExitWarningWidget> with SingleTickerProviderStateMixin {
+class _ExitWarningWidgetState extends State<ExitWarningWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -27,7 +28,10 @@ class _ExitWarningWidgetState extends State<ExitWarningWidget> with SingleTicker
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _fadeAnimation = CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
@@ -51,7 +55,8 @@ class _ExitWarningWidgetState extends State<ExitWarningWidget> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isVisible && _animationController.isDismissed) return const SizedBox.shrink();
+    if (!widget.isVisible && _animationController.isDismissed)
+      return const SizedBox.shrink();
 
     return Align(
       alignment: Alignment.bottomCenter,
@@ -66,7 +71,7 @@ class _ExitWarningWidgetState extends State<ExitWarningWidget> with SingleTicker
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.8),
+                  color: Colors.black.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(25.r),
                 ),
                 child: Text(

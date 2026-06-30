@@ -32,13 +32,16 @@ class MaintenanceGuard extends StatelessWidget {
                   child: Material(
                     color: Colors.transparent,
                     child: Container(
-                      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: 4.h),
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).padding.top,
+                        bottom: 4.h,
+                      ),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.9),
+                        color: Colors.orange.withValues(alpha: 0.9),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -48,7 +51,11 @@ class MaintenanceGuard extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.build_rounded, size: 14.sp, color: Colors.white),
+                            Icon(
+                              Icons.build_rounded,
+                              size: 14.sp,
+                              color: Colors.white,
+                            ),
                             SizedBox(width: 8.w),
                             Text(
                               "وضع الصيانة مفعل - المستخدمون محجوبون حالياً",

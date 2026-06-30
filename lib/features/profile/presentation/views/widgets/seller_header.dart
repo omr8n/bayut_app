@@ -42,7 +42,9 @@ class SellerHeader extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.primary.withOpacity(0.2) : const Color(0xFFE3F2FD),
+                        color: isDark
+                            ? AppColors.primary.withValues(alpha: 0.2)
+                            : const Color(0xFFE3F2FD),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -55,7 +57,9 @@ class SellerHeader extends StatelessWidget {
                     Text(
                       locale.translate(LangKeys.myProperties),
                       style: TextStyle(
-                        color: isDark ? Colors.white70 : const Color(0xFF0D47A1),
+                        color: isDark
+                            ? Colors.white70
+                            : const Color(0xFF0D47A1),
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -78,7 +82,12 @@ class SellerHeader extends StatelessWidget {
                     ),
                     Text(
                       locale.translate(property.sellerJoinDate),
-                      style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey, fontSize: 13),
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey,
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 10),
 
@@ -132,7 +141,9 @@ class SellerHeader extends StatelessWidget {
                             Text(
                               '${locale.translate(LangKeys.sellerRatingCount)} ($totalReviews)',
                               style: TextStyle(
-                                color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : Colors.grey,
                                 fontSize: 11,
                               ),
                             ),
@@ -147,7 +158,9 @@ class SellerHeader extends StatelessWidget {
               // الصورة الشخصية
               CircleAvatar(
                 radius: 45,
-                backgroundColor: isDark ? AppColors.primary.withOpacity(0.2) : const Color(0xFFE3F2FD),
+                backgroundColor: isDark
+                    ? AppColors.primary.withValues(alpha: 0.2)
+                    : const Color(0xFFE3F2FD),
                 backgroundImage: property.sellerImage != null
                     ? NetworkImage(property.sellerImage!)
                     : null,

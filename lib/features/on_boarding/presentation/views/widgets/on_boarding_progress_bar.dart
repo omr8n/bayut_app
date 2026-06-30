@@ -17,7 +17,9 @@ class OnBoardingProgressBar extends StatelessWidget {
               height: 4,
               margin: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
-                color: isActive ? AppColors.primary : AppColors.primary.withOpacity(0.1),
+                color: isActive
+                    ? AppColors.primary
+                    : AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

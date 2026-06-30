@@ -45,7 +45,7 @@ class LocationStep extends StatelessWidget {
                       selected: isSelected,
                       onSelected: (_) =>
                           context.read<OnBoardingCubit>().toggleLocation(loc),
-                      selectedColor: AppColors.primary.withOpacity(0.2),
+                      selectedColor: AppColors.primary.withValues(alpha: 0.2),
                       checkmarkColor: AppColors.primary,
                     );
                   }).toList(),
@@ -115,7 +115,9 @@ class LocationStep extends StatelessWidget {
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.primary.withOpacity(0.3),
+                disabledBackgroundColor: AppColors.primary.withValues(
+                  alpha: 0.3,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

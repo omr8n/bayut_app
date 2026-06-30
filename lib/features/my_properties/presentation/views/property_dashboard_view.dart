@@ -411,7 +411,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppColors.primary.withOpacity(0.2)
+                      ? AppColors.primary.withValues(alpha: 0.2)
                       : const Color(0xFFD3E3F0),
                   borderRadius: BorderRadius.circular(10.r),
                 ),

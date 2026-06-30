@@ -18,6 +18,7 @@ class FilterButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Expanded(
@@ -32,10 +33,10 @@ class FilterButtons extends StatelessWidget {
             ),
             child: Text(
               locale.translate(LangKeys.reset),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+                color: isDark ? Colors.white : AppColors.primary,
               ),
             ),
           ),

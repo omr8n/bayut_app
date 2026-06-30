@@ -138,7 +138,7 @@ class _FilterChip extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? (color ?? AppColors.primary)
-                      : Colors.white.withOpacity(0.3),
+                      : Colors.white.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Text(

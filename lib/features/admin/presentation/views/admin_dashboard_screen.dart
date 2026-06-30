@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
-import 'package:test_graduation/core/utils/colors.dart';
+
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_state.dart';
 import 'package:test_graduation/features/admin/presentation/views/widgets/admin_dashboard_screen/admin_dashboard_shimmer.dart';
@@ -100,7 +100,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   const SizedBox(height: 24),
                   MainComparisonChart(stats: stats),
                   const SizedBox(height: 32),
-                  _buildSectionTitle(context, local.market_composition_analysis),
+                  _buildSectionTitle(
+                    context,
+                    local.market_composition_analysis,
+                  ),
                   const SizedBox(height: 16),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,

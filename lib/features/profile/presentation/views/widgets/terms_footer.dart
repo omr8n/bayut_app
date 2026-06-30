@@ -17,9 +17,13 @@ class TermsFooter extends StatelessWidget {
             const Divider(indent: 50, endIndent: 50),
             const SizedBox(height: 10),
             Text(
-              localizations.translate(LangKeys.lastUpdate).replaceFirst('{date}', '2024'),
+              localizations
+                  .translate(LangKeys.lastUpdate)
+                  .replaceFirst('{date}', '2024'),
               style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark.withOpacity(0.6) : AppColors.textSecondary.withOpacity(0.6),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.textSecondaryDark.withValues(alpha: 0.6)
+                    : AppColors.textSecondary.withValues(alpha: 0.6),
                 fontSize: 12,
               ),
             ),

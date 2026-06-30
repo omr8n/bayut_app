@@ -48,7 +48,7 @@ class SummaryHeader extends StatelessWidget {
                   Text(
                     local.smart_control_center,
                     style: TextStyle(
-                      color: Colors.blueAccent.withOpacity(0.8),
+                      color: Colors.blueAccent.withValues(alpha: 0.8),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,

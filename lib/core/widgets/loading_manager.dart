@@ -19,9 +19,10 @@ class LoadingManager extends StatelessWidget {
       children: [
         child,
         if (isLoading)
-          Positioned.fill( // 🔥 الحل الجذري: ملء المساحة المتاحة فقط بدلاً من التمدد اللانهائي
+          Positioned.fill(
+            // 🔥 الحل الجذري: ملء المساحة المتاحة فقط بدلاً من التمدد اللانهائي
             child: Container(
-              color: Colors.black.withOpacity(0.7),
+              color: Colors.black.withValues(alpha: 0.7),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

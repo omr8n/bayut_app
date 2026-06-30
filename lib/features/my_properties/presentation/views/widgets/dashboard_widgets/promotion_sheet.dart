@@ -29,50 +29,66 @@ class _PromotionSheetState extends State<PromotionSheet> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r))),
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10))),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
           SizedBox(height: 24.h),
-          Text(locale.translate(LangKeys.featureProperty),
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(
+            locale.translate(LangKeys.featureProperty),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 32.h),
           _buildPackageItem(
-              0,
-              locale.translate(LangKeys.weeklyPackage),
-              weeklyPrice.toStringAsFixed(0),
-              currency,
-              Icons.bolt_rounded,
-              Colors.blue),
+            0,
+            locale.translate(LangKeys.weeklyPackage),
+            weeklyPrice.toStringAsFixed(0),
+            currency,
+            Icons.bolt_rounded,
+            Colors.blue,
+          ),
           SizedBox(height: 16.h),
           _buildPackageItem(
-              1,
-              locale.translate(LangKeys.monthlyPackage),
-              monthlyPrice.toStringAsFixed(0),
-              currency,
-              Icons.stars_rounded,
-              Colors.amber.shade700),
+            1,
+            locale.translate(LangKeys.monthlyPackage),
+            monthlyPrice.toStringAsFixed(0),
+            currency,
+            Icons.stars_rounded,
+            Colors.amber.shade700,
+          ),
           SizedBox(height: 32.h),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              _showConfirmPaymentDialog(context, _selectedPackage == 0 ? weeklyPrice : monthlyPrice);
+              _showConfirmPaymentDialog(
+                context,
+                _selectedPackage == 0 ? weeklyPrice : monthlyPrice,
+              );
             },
             style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                minimumSize: Size(double.infinity, 55.h),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.r))),
-            child: Text(locale.translate(LangKeys.startReview),
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
+              backgroundColor: AppColors.primary,
+              minimumSize: Size(double.infinity, 55.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+            ),
+            child: Text(
+              locale.translate(LangKeys.startReview),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -80,43 +96,65 @@ class _PromotionSheetState extends State<PromotionSheet> {
   }
 
   Widget _buildPackageItem(
-      int index, String title, String price, String currency, IconData icon, Color color) {
+    int index,
+    String title,
+    String price,
+    String currency,
+    IconData icon,
+    Color color,
+  ) {
     bool isSelected = _selectedPackage == index;
     return GestureDetector(
       onTap: () => setState(() => _selectedPackage = index),
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-            color: isSelected ? color.withOpacity(0.05) : Colors.white,
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(
-                color: isSelected ? color : Colors.grey.shade200, width: 2)),
-        child: Row(children: [
-          Expanded(
+          color: isSelected ? color.withValues(alpha: 0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isSelected ? color : Colors.grey.shade200,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(price,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    price,
                     style: TextStyle(
-                        color: color,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 18.sp)),
-                Text(currency, style: TextStyle(color: color, fontSize: 12.sp)),
-                SizedBox(height: 8.h),
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold))
-              ])),
-          Icon(icon, color: color, size: 28.sp)
-        ]),
+                      color: color,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18.sp,
+                    ),
+                  ),
+                  Text(
+                    currency,
+                    style: TextStyle(color: color, fontSize: 12.sp),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            Icon(icon, color: color, size: 28.sp),
+          ],
+        ),
       ),
     );
   }
 
   void _showConfirmPaymentDialog(BuildContext context, double amount) {
     showDialog(
-        context: context,
-        builder: (context) => _ConfirmPaymentDialog(
-            property: widget.property,
-            amount: amount));
+      context: context,
+      builder: (context) =>
+          _ConfirmPaymentDialog(property: widget.property, amount: amount),
+    );
   }
 }
 
@@ -138,29 +176,41 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('تأكيد الدفع 💳',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text(
+            'تأكيد الدفع 💳',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 24.h),
           _buildMethodTile(0, 'البطاقة المصرفية السورية'),
           _buildMethodTile(1, 'سيريتل كاش / إم تي إن كاش'),
           SizedBox(height: 24.h),
-          Row(children: [
-            TextButton(
+          Row(
+            children: [
+              TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء')),
-            Expanded(
+                child: const Text('إلغاء'),
+              ),
+              Expanded(
                 child: ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<MyPropertiesCubit>()
-                          .requestPromotion(widget.property);
-                      _showSuccessDialog(context); // 🔥 إظهار رسالة النجاح الجمالية
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary),
-                    child: const Text('دفع الآن',
-                        style: TextStyle(color: Colors.white))))
-          ]),
+                  onPressed: () {
+                    context.read<MyPropertiesCubit>().requestPromotion(
+                      widget.property,
+                    );
+                    _showSuccessDialog(
+                      context,
+                    ); // 🔥 إظهار رسالة النجاح الجمالية
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                  ),
+                  child: const Text(
+                    'دفع الآن',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -168,10 +218,12 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
 
   Widget _buildMethodTile(int index, String title) {
     return RadioListTile(
-        value: index,
-        groupValue: _selectedMethod,
-        onChanged: (val) => setState(() => _selectedMethod = val as int),
-        title: Text(title, style: TextStyle(fontSize: 13.sp)));
+      value: index,
+      groupValue: _selectedMethod,
+
+      onChanged: (val) => setState(() => _selectedMethod = val as int),
+      title: Text(title, style: TextStyle(fontSize: 13.sp)),
+    );
   }
 
   void _showSuccessDialog(BuildContext context) {
@@ -180,7 +232,9 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.r),
+        ),
         child: Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
@@ -189,7 +243,7 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
               Container(
                 padding: EdgeInsets.all(20.w),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: TweenAnimationBuilder(

@@ -24,18 +24,22 @@ class DashboardActivityTimeline extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.grey.shade100,
+        ),
       ),
       child: history.isEmpty
           ? Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.h),
-              child: Text(
-                locale.translate(LangKeys.noResults),
-                style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+                child: Text(
+                  locale.translate(LangKeys.noResults),
+                  style: TextStyle(
+                    color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+                  ),
+                ),
               ),
-            ),
-          )
+            )
           : ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -47,7 +51,7 @@ class DashboardActivityTimeline extends StatelessWidget {
                   (e) => e.name == item['status'],
                   orElse: () => PropertyStatus.active,
                 );
-                
+
                 DateTime date;
                 final ts = item['timestamp'];
                 if (ts is Timestamp) {
@@ -68,7 +72,9 @@ class DashboardActivityTimeline extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: _getStatusColor(status).withOpacity(0.4),
+                            color: _getStatusColor(
+                              status,
+                            ).withValues(alpha: 0.4),
                             blurRadius: 6,
                             spreadRadius: 1,
                           ),
@@ -88,12 +94,15 @@ class DashboardActivityTimeline extends StatelessWidget {
                               color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
-                          if (item['reason'] != null && item['reason'].toString().isNotEmpty)
+                          if (item['reason'] != null &&
+                              item['reason'].toString().isNotEmpty)
                             Text(
                               item['reason'].toString(),
                               style: TextStyle(
                                 fontSize: 11.sp,
-                                color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade600,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : Colors.grey.shade600,
                               ),
                             ),
                         ],
@@ -102,7 +111,9 @@ class DashboardActivityTimeline extends StatelessWidget {
                     Text(
                       DateFormat('HH:mm  yyyy/MM/dd').format(date),
                       style: TextStyle(
-                        color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade500,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey.shade500,
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w500,
                       ),
@@ -116,10 +127,14 @@ class DashboardActivityTimeline extends StatelessWidget {
 
   Color _getStatusColor(PropertyStatus status) {
     switch (status) {
-      case PropertyStatus.active: return const Color(0xFF1E4C9A);
-      case PropertyStatus.sold: return Colors.redAccent;
-      case PropertyStatus.rented: return Colors.purple;
-      case PropertyStatus.underInstallment: return Colors.orange.shade800;
+      case PropertyStatus.active:
+        return const Color(0xFF1E4C9A);
+      case PropertyStatus.sold:
+        return Colors.redAccent;
+      case PropertyStatus.rented:
+        return Colors.purple;
+      case PropertyStatus.underInstallment:
+        return Colors.orange.shade800;
     }
   }
 }

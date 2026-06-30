@@ -51,13 +51,14 @@ class _PremiumCountdownTimerState extends State<PremiumCountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.property.premiumExpiryDate == null || _remainingTime.isNegative || _remainingTime == Duration.zero) {
+    if (widget.property.premiumExpiryDate == null ||
+        _remainingTime.isNegative ||
+        _remainingTime == Duration.zero) {
       return const SizedBox.shrink();
     }
 
     final days = _remainingTime.inDays;
     final hours = _remainingTime.inHours % 24;
-    final minutes = _remainingTime.inMinutes % 60;
 
     // حساب النسبة المئوية لشريط التقدم (بفرض البداية 30 يوم أو 7 أيام)
     // حالياً سنفترض الحد الأقصى 30 يوم للجمالية
@@ -79,7 +80,11 @@ class _PremiumCountdownTimerState extends State<PremiumCountdownTimer> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.stars_rounded, color: Colors.amber.shade700, size: 20.sp),
+                  Icon(
+                    Icons.stars_rounded,
+                    color: Colors.amber.shade700,
+                    size: 20.sp,
+                  ),
                   SizedBox(width: 8.w),
                   Text(
                     'تميز عقارك نشط حالياً 🏆',

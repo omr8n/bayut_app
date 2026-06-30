@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 
 class BuildCounterRow extends StatelessWidget {
@@ -13,15 +15,18 @@ class BuildCounterRow extends StatelessWidget {
   final Function(int?) onSelect;
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Colors.grey,
+            color: isDark ? AppColors.textSecondaryDark : Colors.grey,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -29,7 +34,8 @@ class BuildCounterRow extends StatelessWidget {
         Row(
           children: [0, 1, 2, 3, 4, 5].map((i) {
             bool isSelected = (value == i) || (i == 0 && value == null);
-            String label = i == 0 ? 'الكل' : (i == 5 ? '+5' : '$i');
+            String label =
+                i == 0 ? locale.translate(LangKeys.all) : (i == 5 ? '+5' : '$i');
             return Flexible(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -38,11 +44,13 @@ class BuildCounterRow extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.white,
+                      color: isSelected
+                          ? AppColors.primary
+                          : (isDark ? AppColors.darkSurface : Colors.white),
                       border: Border.all(
                         color: isSelected
                             ? AppColors.primary
-                            : Colors.grey.shade300,
+                            : (isDark ? Colors.white10 : Colors.grey.shade300),
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -50,7 +58,9 @@ class BuildCounterRow extends StatelessWidget {
                       child: Text(
                         label,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
+                          color: isSelected
+                              ? Colors.white
+                              : (isDark ? Colors.white70 : Colors.black),
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),

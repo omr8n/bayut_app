@@ -29,7 +29,7 @@ class PageViewItem extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       Colors.transparent,
-                      AppColors.background.withOpacity(0.8),
+                      AppColors.background.withValues(alpha: .8),
                       AppColors.background,
                     ],
                     begin: Alignment.topCenter,

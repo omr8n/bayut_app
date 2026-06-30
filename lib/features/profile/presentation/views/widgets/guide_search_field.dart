@@ -24,7 +24,7 @@ class GuideSearchField extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -34,8 +34,9 @@ class GuideSearchField extends StatelessWidget {
             controller: controller,
             onChanged: onChanged,
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!
-                  .translate(LangKeys.searchYourQuestion),
+              hintText: AppLocalizations.of(
+                context,
+              )!.translate(LangKeys.searchYourQuestion),
               prefixIcon: const Icon(Icons.search, color: AppColors.primary),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 15),

@@ -86,7 +86,7 @@ class SellerProfileView extends StatelessWidget {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => _handleRatingAction(context),
           backgroundColor: isDark
-              ? AppColors.primary.withOpacity(0.2)
+              ? AppColors.primary.withValues(alpha: 0.2)
               : const Color(0xFFE3F2FD),
           elevation: 2,
           icon: Icon(

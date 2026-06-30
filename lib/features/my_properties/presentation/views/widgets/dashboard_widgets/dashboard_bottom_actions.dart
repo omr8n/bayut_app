@@ -29,7 +29,7 @@ class DashboardBottomActions extends StatelessWidget {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -138,7 +138,7 @@ class _CircleActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Icon(icon, color: color, size: 26),
@@ -176,7 +176,11 @@ class _StatusUpdateSheet extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             locale.translate(LangKeys.updateStatusTitle),
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
           ),
           const SizedBox(height: 20),
           _buildOption(
@@ -217,7 +221,10 @@ class _StatusUpdateSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListTile(
       leading: Icon(icon, color: _getStatusColor(status)),
-      title: Text(title, style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)),
+      title: Text(
+        title,
+        style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+      ),
       onTap: () {
         if (status == PropertyStatus.sold) {
           Navigator.pop(context);
@@ -242,7 +249,9 @@ class _StatusUpdateSheet extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         title: Text(locale.translate(LangKeys.updateStatusTitle)),
         content: Text(locale.translate(LangKeys.soldStatusDesc)),
         actions: [

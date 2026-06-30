@@ -69,7 +69,9 @@ class PurposeStep extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 18),
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
+        color: isSelected
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : Colors.white,
         borderRadius: BorderRadius.circular(50),
         border: Border.all(
           color: isSelected ? AppColors.primary : Colors.grey.shade200,
@@ -124,7 +126,9 @@ class PurposeStep extends StatelessWidget {
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.primary.withOpacity(0.3),
+                disabledBackgroundColor: AppColors.primary.withValues(
+                  alpha: 0.3,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

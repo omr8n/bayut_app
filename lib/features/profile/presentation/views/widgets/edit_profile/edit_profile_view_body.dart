@@ -119,7 +119,9 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
                       border: Border.all(color: AppColors.primary, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
+                          color: Colors.black.withValues(
+                            alpha: isDark ? 0.3 : 0.1,
+                          ),
                           blurRadius: 10,
                           spreadRadius: 2,
                         ),

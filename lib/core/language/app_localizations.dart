@@ -268,6 +268,13 @@ class AppLocalizations {
   String get save => translate(LangKeys.save);
   String get home => translate(LangKeys.home);
   String get notifications => translate(LangKeys.notifications);
+  String get mark_all_as_read => translate(LangKeys.markAllAsRead);
+  String get no_notifications_currently => translate(LangKeys.noNotificationsCurrently);
+  String get please_login_to_view_notifications => translate(LangKeys.pleaseLoginToViewNotifications);
+  String get property_featured_title => translate(LangKeys.propertyFeaturedTitle);
+  String get promotion_received => translate(LangKeys.promotionReceived);
+  String get update_available => translate(LangKeys.updateAvailable);
+  String get promotion_rejected => translate(LangKeys.promotionRejected);
   String get log_out => translate(LangKeys.logOut);
 
   // User Details & Admin Actions

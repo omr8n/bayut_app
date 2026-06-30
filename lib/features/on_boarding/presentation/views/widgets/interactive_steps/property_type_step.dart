@@ -112,7 +112,7 @@ class PropertyTypeStep extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isSelected
-                  ? AppColors.primary.withOpacity(0.1)
+                  ? AppColors.primary.withValues(alpha: 0.1)
                   : Colors.white,
               border: Border.all(
                 color: isSelected ? AppColors.primary : Colors.grey.shade200,
@@ -178,7 +178,9 @@ class PropertyTypeStep extends StatelessWidget {
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.primary.withOpacity(0.3),
+                disabledBackgroundColor: AppColors.primary.withValues(
+                  alpha: 0.3,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

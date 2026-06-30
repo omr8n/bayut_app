@@ -51,7 +51,9 @@ class MyPropertyItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.2 : 0.06),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.2 : 0.06,
+                      ),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
@@ -70,7 +72,7 @@ class MyPropertyItem extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(18.r),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -120,7 +122,9 @@ class MyPropertyItem extends StatelessWidget {
                                 '${numberFormat.format(property.price)} ${locale.translate(property.currency.trim().toLowerCase())}',
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
-                                  color: isDark ? Colors.white : AppColors.primary,
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppColors.primary,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 18.sp,
                                 ),
@@ -131,14 +135,18 @@ class MyPropertyItem extends StatelessWidget {
                                   Icon(
                                     Icons.location_on_rounded,
                                     size: 14.sp,
-                                    color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade400,
+                                    color: isDark
+                                        ? AppColors.textSecondaryDark
+                                        : Colors.grey.shade400,
                                   ),
                                   SizedBox(width: 4.w),
                                   Expanded(
                                     child: Text(
                                       '${locale.translate(property.governorate)} - ${property.city}',
                                       style: TextStyle(
-                                        color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade500,
+                                        color: isDark
+                                            ? AppColors.textSecondaryDark
+                                            : Colors.grey.shade500,
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -156,7 +164,9 @@ class MyPropertyItem extends StatelessWidget {
                                       Icon(
                                         Icons.calendar_today_rounded,
                                         size: 13.sp,
-                                        color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade400,
+                                        color: isDark
+                                            ? AppColors.textSecondaryDark
+                                            : Colors.grey.shade400,
                                       ),
                                       SizedBox(width: 4.w),
                                       Text(
@@ -164,7 +174,9 @@ class MyPropertyItem extends StatelessWidget {
                                           'yyyy/MM/dd',
                                         ).format(property.createdAt),
                                         style: TextStyle(
-                                          color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade500,
+                                          color: isDark
+                                              ? AppColors.textSecondaryDark
+                                              : Colors.grey.shade500,
                                           fontSize: 11.sp,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -186,9 +198,11 @@ class MyPropertyItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.grey.withOpacity(0.0),
-                            isDark ? Colors.white12 : Colors.grey.withOpacity(0.2),
-                            Colors.grey.withOpacity(0.0),
+                            Colors.grey.withValues(alpha: 0.0),
+                            isDark
+                                ? Colors.white12
+                                : Colors.grey.withValues(alpha: 0.2),
+                            Colors.grey.withValues(alpha: 0.0),
                           ],
                         ),
                       ),
@@ -225,7 +239,9 @@ class MyPropertyItem extends StatelessWidget {
                             context,
                             Icons.insights_rounded,
                             locale.translate(LangKeys.activityHistory),
-                            isDark ? AppColors.textSecondaryDark : Colors.grey.shade700,
+                            isDark
+                                ? AppColors.textSecondaryDark
+                                : Colors.grey.shade700,
                             () => GoRouter.of(context).push(
                               AppRoutes.propertyDashboard,
                               extra: property,
@@ -270,7 +286,7 @@ class MyPropertyItem extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.red.withOpacity(0.3),
+                        color: Colors.red.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -295,7 +311,7 @@ class MyPropertyItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(isDark ? 0.2 : 0.08),
+        color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.08),
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
@@ -331,11 +347,11 @@ class MyPropertyItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.9),
+        color: color.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(10.r),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -407,9 +423,9 @@ class MyPropertyItem extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             decoration: BoxDecoration(
-              border: Border.all(color: color.withOpacity(0.15)),
+              border: Border.all(color: color.withValues(alpha: 0.15)),
               borderRadius: BorderRadius.circular(12.r),
-              color: color.withOpacity(0.05),
+              color: color.withValues(alpha: 0.05),
             ),
             child: Opacity(
               opacity: onTap == null ? 0.6 : 1.0,

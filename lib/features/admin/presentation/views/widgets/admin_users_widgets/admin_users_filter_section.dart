@@ -119,7 +119,9 @@ class _UserFilterChip extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.15),
+          color: isSelected
+              ? Colors.white
+              : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(

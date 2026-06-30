@@ -93,13 +93,15 @@ class _MyPropertiesViewBodyState extends State<MyPropertiesViewBody>
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
-                unselectedLabelColor: isDark ? AppColors.textSecondaryDark : const Color(0xFF64748B),
+                unselectedLabelColor: isDark
+                    ? AppColors.textSecondaryDark
+                    : const Color(0xFF64748B),
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
                   color: AppColors.primary,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

@@ -84,8 +84,10 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
           borderRadius: BorderRadius.circular(15.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(
-                Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.02,
+              color: Colors.black.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.2
+                    : 0.02,
               ),
               blurRadius: 10,
               offset: const Offset(0, 4),
@@ -134,7 +136,7 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: Theme.of(context).brightness == Brightness.dark
-                          ? AppColors.textSecondaryDark.withOpacity(0.7)
+                          ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
                           : Colors.grey.shade400,
                     ),
                   ),
@@ -165,8 +167,8 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(
-          Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1,
+        color: color.withValues(
+          alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1,
         ),
         shape: BoxShape.circle,
       ),

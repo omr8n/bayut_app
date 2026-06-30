@@ -315,9 +315,9 @@ class ContactView extends StatelessWidget {
         width: 60.w,
         height: 60.w,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
-          border: Border.all(color: color.withOpacity(0.2), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
         ),
         child: Center(
           child: Icon(icon, color: color, size: 28.sp),

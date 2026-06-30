@@ -62,7 +62,7 @@ class _LocationCardState extends State<LocationCard> {
     AppLocalizations locale,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
@@ -73,10 +73,9 @@ class _LocationCardState extends State<LocationCard> {
           .map(
             (String val) => DropdownMenuItem<String>(
               value: val,
-              alignment:
-                  locale.isEnLocale
-                      ? AlignmentDirectional.centerStart
-                      : AlignmentDirectional.centerEnd,
+              alignment: locale.isEnLocale
+                  ? AlignmentDirectional.centerStart
+                  : AlignmentDirectional.centerEnd,
               child: Text(
                 locale.translate(val),
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,

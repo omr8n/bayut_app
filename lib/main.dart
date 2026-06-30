@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
 import 'package:test_graduation/core/language/app_localizations_setup.dart';
