@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:test_graduation/core/enums/property_enums.dart';
+
 import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
 import 'package:test_graduation/features/root/presentation/manager/navigation_cubit.dart';
-import 'package:test_graduation/features/root/presentation/views/root_view.dart';
+
 import '../manager/search_cubit/search_cubit.dart';
 import 'widgets/filter_form.dart';
 

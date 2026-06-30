@@ -9,20 +9,8 @@ import 'contact_support_widgets/live_contact_preview_card.dart';
 import 'contact_support_widgets/contact_info_section.dart';
 import 'contact_support_widgets/legal_policies_section.dart';
 
-class ContactSupportSettingsTab extends StatefulWidget {
+class ContactSupportSettingsTab extends StatelessWidget {
   const ContactSupportSettingsTab({super.key});
-
-  @override
-  State<ContactSupportSettingsTab> createState() =>
-      _ContactSupportSettingsTabState();
-}
-
-class _ContactSupportSettingsTabState extends State<ContactSupportSettingsTab> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<AdminSettingsCubit>().getSettings();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +21,6 @@ class _ContactSupportSettingsTabState extends State<ContactSupportSettingsTab> {
         final cubit = context.read<AdminSettingsCubit>();
         final config = cubit.currentConfig;
 
-        if (state is AdminSettingsLoading && config == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
         if (config != null) {
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -45,14 +29,17 @@ class _ContactSupportSettingsTabState extends State<ContactSupportSettingsTab> {
               children: [
                 LiveContactPreviewCard(config: config),
                 ContactInfoSection(config: config),
-                LegalPoliciesSection(config: config),
               ],
             ),
           );
         }
 
+        if (state is AdminSettingsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
         if (state is AdminSettingsFailure) {
-          return _buildErrorState(local, state.errMessage);
+          return _buildErrorState(context, local, state.errMessage);
         }
 
         return const Center(child: CircularProgressIndicator());
@@ -80,7 +67,7 @@ class _ContactSupportSettingsTabState extends State<ContactSupportSettingsTab> {
     }
   }
 
-  Widget _buildErrorState(AppLocalizations local, String message) {
+  Widget _buildErrorState(BuildContext context, AppLocalizations local, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

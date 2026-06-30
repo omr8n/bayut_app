@@ -31,7 +31,7 @@ class SimilarPropertyCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -52,8 +52,12 @@ class SimilarPropertyCard extends StatelessWidget {
                       final List<String> allMedia = property.media.isNotEmpty
                           ? property.media
                           : property.images;
-                      final String firstMedia = allMedia.isNotEmpty ? allMedia[0] : '';
-                      final bool isVideo = firstMedia.toLowerCase().endsWith('.mp4');
+                      final String firstMedia = allMedia.isNotEmpty
+                          ? allMedia[0]
+                          : '';
+                      final bool isVideo = firstMedia.toLowerCase().endsWith(
+                        '.mp4',
+                      );
 
                       return SizedBox(
                         height: 120.h,
@@ -72,7 +76,7 @@ class SimilarPropertyCard extends StatelessWidget {
                                 child: Container(
                                   padding: EdgeInsets.all(4.w),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.4),
+                                    color: Colors.black.withValues(alpha: 0.4),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -104,7 +108,7 @@ class SimilarPropertyCard extends StatelessWidget {
                           vertical: 2.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Row(
@@ -137,7 +141,7 @@ class SimilarPropertyCard extends StatelessWidget {
                   child: FavoriteButton(
                     propertyId: property.id,
                     size: 16,
-                    backgroundColor: Colors.white.withOpacity(0.8),
+                    backgroundColor: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],

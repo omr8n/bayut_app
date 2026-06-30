@@ -17,7 +17,10 @@ class PromotionFallbackCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: isDark
-                ? [AppColors.primary.withOpacity(0.4), AppColors.primary.withOpacity(0.2)]
+                ? [
+                    AppColors.primary.withValues(alpha: 0.4),
+                    AppColors.primary.withValues(alpha: 0.2),
+                  ]
                 : [const Color(0xFF0D47A1), const Color(0xFF1976D2)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -25,7 +28,7 @@ class PromotionFallbackCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(isDark ? 0.1 : 0.3),
+              color: Colors.blue.withValues(alpha: isDark ? 0.1 : 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -40,9 +43,12 @@ class PromotionFallbackCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Row(
@@ -74,7 +80,7 @@ class PromotionFallbackCard extends StatelessWidget {
                       Text(
                         'اطلب خدمة التميز الآن ليظهر عقارك لآلاف المستخدمين في أعلى الصفحة الرئيسية.',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 12.sp,
                         ),
                       ),

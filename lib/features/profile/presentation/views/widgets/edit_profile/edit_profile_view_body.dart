@@ -8,7 +8,7 @@ import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/custom_primary_button.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
-import 'package:test_graduation/core/widgets/pick_image_widget.dart';
+
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
 import 'package:test_graduation/features/profile/presentation/manager/edit_profile_cubit/edit_profile_cubit.dart';
 
@@ -136,9 +136,19 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
                               widget.user.profilePic!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                                  Icon(Icons.person, size: 80, color: isDark ? Colors.white24 : Colors.grey),
+                                  Icon(
+                                    Icons.person,
+                                    size: 80,
+                                    color: isDark
+                                        ? Colors.white24
+                                        : Colors.grey,
+                                  ),
                             )
-                          : Icon(Icons.person, size: 80, color: isDark ? Colors.white24 : Colors.grey),
+                          : Icon(
+                              Icons.person,
+                              size: 80,
+                              color: isDark ? Colors.white24 : Colors.grey,
+                            ),
                     ),
                   ),
                   Positioned(

@@ -28,8 +28,8 @@ class SettingsSwitchTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => onChanged(!value),
-        splashColor: iconBackgroundColor.withOpacity(0.08),
-        highlightColor: iconBackgroundColor.withOpacity(0.04),
+        splashColor: iconBackgroundColor.withValues(alpha: 0.08),
+        highlightColor: iconBackgroundColor.withValues(alpha: 0.04),
         child: Column(
           children: [
             Padding(
@@ -43,8 +43,8 @@ class SettingsSwitchTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          iconBackgroundColor.withOpacity(0.12),
-                          iconBackgroundColor.withOpacity(0.05),
+                          iconBackgroundColor.withValues(alpha: 0.12),
+                          iconBackgroundColor.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -74,7 +74,10 @@ class SettingsSwitchTile extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w700,
-                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF1A1A1A),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : const Color(0xFF1A1A1A),
                             fontFamily: 'Cairo',
                           ),
                         ),
@@ -84,7 +87,11 @@ class SettingsSwitchTile extends StatelessWidget {
                             subtitle!,
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : const Color(0xFF7F8C8D),
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.textSecondaryDark
+                                  : const Color(0xFF7F8C8D),
                               fontFamily: 'Cairo',
                             ),
                           ),
@@ -99,8 +106,10 @@ class SettingsSwitchTile extends StatelessWidget {
                     child: Switch.adaptive(
                       value: value,
                       onChanged: onChanged,
-                      activeColor: AppColors.primary,
-                      activeTrackColor: AppColors.primary.withOpacity(0.2),
+                      activeThumbColor: AppColors.primary,
+                      activeTrackColor: AppColors.primary.withValues(
+                        alpha: 0.2,
+                      ),
                       inactiveThumbColor: Colors.white,
                       inactiveTrackColor: Colors.grey.shade200,
                     ),

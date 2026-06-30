@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:rxdart/rxdart.dart';
+
 import 'package:test_graduation/core/errors/failures.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
 import '../repos/notification_repository.dart';

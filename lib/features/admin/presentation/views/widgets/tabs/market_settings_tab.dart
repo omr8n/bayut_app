@@ -40,7 +40,8 @@ class MarketSettingsTab extends StatelessWidget {
                       context,
                       title: local.translate(LangKeys.monthlyFeaturedPrice),
                       initialValue: config.monthlyFeaturedPrice.toString(),
-                      onSave: (val) => cubit.updateMonthlyPrice(double.parse(val)),
+                      onSave: (val) =>
+                          cubit.updateMonthlyPrice(double.parse(val)),
                       isNumeric: true,
                     ),
                     trailing: _buildValueText(
@@ -55,7 +56,8 @@ class MarketSettingsTab extends StatelessWidget {
                       context,
                       title: local.translate(LangKeys.weeklyFeaturedPrice),
                       initialValue: config.weeklyFeaturedPrice.toString(),
-                      onSave: (val) => cubit.updateWeeklyPrice(double.parse(val)),
+                      onSave: (val) =>
+                          cubit.updateWeeklyPrice(double.parse(val)),
                       isNumeric: true,
                     ),
                     trailing: _buildValueText(
@@ -90,10 +92,13 @@ class MarketSettingsTab extends StatelessWidget {
                       context,
                       title: local.translate(LangKeys.freePropertyLimit),
                       initialValue: config.freePropertyLimitPerDay.toString(),
-                      onSave: (val) => cubit.updateMarketLimits(freeLimit: int.parse(val)),
+                      onSave: (val) =>
+                          cubit.updateMarketLimits(freeLimit: int.parse(val)),
                       isNumeric: true,
                     ),
-                    trailing: _buildValueText(config.freePropertyLimitPerDay.toString()),
+                    trailing: _buildValueText(
+                      config.freePropertyLimitPerDay.toString(),
+                    ),
                   ),
                   SettingsTile(
                     title: local.translate(LangKeys.extraPropertyPrice),
@@ -104,7 +109,9 @@ class MarketSettingsTab extends StatelessWidget {
                       context,
                       title: local.translate(LangKeys.extraPropertyPrice),
                       initialValue: config.extraPropertyPrice.toString(),
-                      onSave: (val) => cubit.updateMarketLimits(extraPrice: double.parse(val)),
+                      onSave: (val) => cubit.updateMarketLimits(
+                        extraPrice: double.parse(val),
+                      ),
                       isNumeric: true,
                     ),
                     trailing: _buildValueText(
@@ -126,11 +133,17 @@ class MarketSettingsTab extends StatelessWidget {
                       context,
                       title: local.translate(LangKeys.maxImages),
                       initialValue: config.maxImagesPerProperty.toString(),
-                      onSave: (val) => cubit.updateMarketLimits(maxImages: int.parse(val)),
+                      onSave: (val) =>
+                          cubit.updateMarketLimits(maxImages: int.parse(val)),
                       isNumeric: true,
                     ),
                     trailing: _buildValueText(
-                      local.translate(LangKeys.imagesCount).replaceFirst('{count}', config.maxImagesPerProperty.toString()),
+                      local
+                          .translate(LangKeys.imagesCount)
+                          .replaceFirst(
+                            '{count}',
+                            config.maxImagesPerProperty.toString(),
+                          ),
                     ),
                   ),
                   SettingsTile(
@@ -142,11 +155,17 @@ class MarketSettingsTab extends StatelessWidget {
                       context,
                       title: local.translate(LangKeys.maxVideos),
                       initialValue: config.maxVideosPerProperty.toString(),
-                      onSave: (val) => cubit.updateMarketLimits(maxVideos: int.parse(val)),
+                      onSave: (val) =>
+                          cubit.updateMarketLimits(maxVideos: int.parse(val)),
                       isNumeric: true,
                     ),
                     trailing: _buildValueText(
-                      local.translate(LangKeys.videosCount).replaceFirst('{count}', config.maxVideosPerProperty.toString()),
+                      local
+                          .translate(LangKeys.videosCount)
+                          .replaceFirst(
+                            '{count}',
+                            config.maxVideosPerProperty.toString(),
+                          ),
                     ),
                   ),
                 ],
@@ -162,7 +181,11 @@ class MarketSettingsTab extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.arrow_back_ios_new, size: 10.sp, color: const Color(0xFF9EA3AE)),
+        Icon(
+          Icons.arrow_back_ios_new,
+          size: 10.sp,
+          color: const Color(0xFF9EA3AE),
+        ),
         SizedBox(width: 8.w),
         Text(
           value,
@@ -184,25 +207,29 @@ class MarketSettingsTab extends StatelessWidget {
     bool isNumeric = false,
   }) {
     final controller = TextEditingController(text: initialValue);
-    final local = AppLocalizations.of(context)!; // 🔥 تعريف الـ local داخل الدالة لإصلاح الخطأ
+    final local = AppLocalizations.of(
+      context,
+    )!; // 🔥 تعريف الـ local داخل الدالة لإصلاح الخطأ
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         title: Text(title, style: TextStyle(fontSize: 16.sp)),
         content: TextField(
           controller: controller,
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
           decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey.shade600,
-            ),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey.shade600),
             child: Text(local.translate(LangKeys.cancel)),
           ),
           ElevatedButton(
@@ -223,10 +250,15 @@ class MarketSettingsTab extends StatelessWidget {
               backgroundColor: const Color(0xFF1E3A8A),
               foregroundColor: Colors.white,
               elevation: 2,
-              shadowColor: const Color(0xFF1E3A8A).withOpacity(0.5),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+              shadowColor: const Color(0xFF1E3A8A).withValues(alpha: 0.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
             ),
-            child: Text(local.translate(LangKeys.save), style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              local.translate(LangKeys.save),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

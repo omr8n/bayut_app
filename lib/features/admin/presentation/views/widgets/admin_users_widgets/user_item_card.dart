@@ -24,11 +24,11 @@ class UserItemCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isBanned 
-              ? Colors.red.withOpacity(0.3) 
-              : isFrozen 
-                  ? Colors.orange.withOpacity(0.3) 
-                  : Colors.grey.withOpacity(0.1),
+          color: isBanned
+              ? Colors.red.withValues(alpha: .3)
+              : isFrozen
+              ? Colors.orange.withValues(alpha: 0.3)
+              : Colors.grey.withValues(alpha: 0.1),
         ),
       ),
       child: InkWell(
@@ -49,19 +49,30 @@ class UserItemCard extends StatelessWidget {
                         Flexible(
                           child: Text(
                             user.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (user.isVerified)
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Icon(Icons.verified, size: 16, color: Colors.blue),
+                            child: Icon(
+                              Icons.verified,
+                              size: 16,
+                              color: Colors.blue,
+                            ),
                           ),
                         if (isAdmin)
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 4),
-                            child: Icon(Icons.shield, size: 14, color: AppColors.info),
+                            child: Icon(
+                              Icons.shield,
+                              size: 14,
+                              color: AppColors.info,
+                            ),
                           ),
                       ],
                     ),
@@ -88,10 +99,17 @@ class UserItemCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 28,
-          backgroundColor: isAdmin ? AppColors.primary.withOpacity(0.1) : Colors.grey[100],
-          backgroundImage: user.profilePic != null ? NetworkImage(user.profilePic!) : null,
+          backgroundColor: isAdmin
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : Colors.grey[100],
+          backgroundImage: user.profilePic != null
+              ? NetworkImage(user.profilePic!)
+              : null,
           child: user.profilePic == null
-              ? Icon(Icons.person, color: isAdmin ? AppColors.primary : Colors.grey)
+              ? Icon(
+                  Icons.person,
+                  color: isAdmin ? AppColors.primary : Colors.grey,
+                )
               : null,
         ),
         if (isBanned || isFrozen)
@@ -100,7 +118,10 @@ class UserItemCard extends StatelessWidget {
             bottom: 0,
             child: Container(
               padding: const EdgeInsets.all(2),
-              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
               child: Icon(
                 isBanned ? Icons.block : Icons.ac_unit,
                 size: 14,
@@ -115,9 +136,17 @@ class UserItemCard extends StatelessWidget {
   Widget _buildMiniStats(bool isBanned, bool isFrozen, AppLocalizations local) {
     return Row(
       children: [
-        _statChip(Icons.home_work_outlined, "${user.propertiesCount}", Colors.blue),
+        _statChip(
+          Icons.home_work_outlined,
+          "${user.propertiesCount}",
+          Colors.blue,
+        ),
         const SizedBox(width: 8),
-        _statChip(Icons.report_gmailerrorred_outlined, "${user.reportsCount}", Colors.orange),
+        _statChip(
+          Icons.report_gmailerrorred_outlined,
+          "${user.reportsCount}",
+          Colors.orange,
+        ),
         const SizedBox(width: 8),
         if (isBanned)
           _statusLabel(local.banned_user, Colors.red)
@@ -132,12 +161,22 @@ class UserItemCard extends StatelessWidget {
   Widget _statChip(IconData icon, String count, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Row(
         children: [
           Icon(icon, size: 12, color: color),
           const SizedBox(width: 4),
-          Text(count, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            count,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -155,7 +194,8 @@ class UserItemCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => UserDetailsBottomSheet(user: user, adminCubit: adminCubit),
+      builder: (context) =>
+          UserDetailsBottomSheet(user: user, adminCubit: adminCubit),
     );
   }
 }

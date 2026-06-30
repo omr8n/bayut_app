@@ -32,7 +32,10 @@ class _FavoritesViewState extends State<FavoritesView> {
       appBar: AppBar(
         title: Text(
           locale!.translate(LangKeys.favorites),
-          style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -57,12 +60,14 @@ class _FavoritesViewState extends State<FavoritesView> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      locale!.translate(
+                      locale.translate(
                         LangKeys.noResults,
                       ), // Or a more specific key if available
                       style: TextStyle(
                         fontSize: 18.sp,
-                        color: isDark ? AppColors.textSecondaryDark : Colors.grey[600],
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.grey[600],
                       ),
                     ),
                   ],
@@ -91,7 +96,12 @@ class _FavoritesViewState extends State<FavoritesView> {
               },
             );
           } else if (state is FavoritesFailure) {
-            return Center(child: Text(state.errMessage, style: TextStyle(color: isDark ? Colors.white : Colors.black)));
+            return Center(
+              child: Text(
+                state.errMessage,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              ),
+            );
           }
           return const SizedBox.shrink();
         },

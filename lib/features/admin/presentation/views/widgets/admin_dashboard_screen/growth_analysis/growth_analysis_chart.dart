@@ -16,6 +16,7 @@ class GrowthAnalysisChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       height: 240,
       child: LineChart(
@@ -36,7 +37,7 @@ class GrowthAnalysisChart extends StatelessWidget {
                       child: Text(
                         userGrowth[index].label,
                         style: TextStyle(
-                          color: Colors.blueGrey[400],
+                          color: isDark ? Colors.white54 : Colors.blueGrey[400],
                           fontWeight: FontWeight.bold,
                           fontSize: 10,
                         ),
@@ -63,16 +64,19 @@ class GrowthAnalysisChart extends StatelessWidget {
               userGrowth,
               const Color(0xFF6366F1),
               showArea: false,
+              isDark: isDark,
             ),
             _buildLine(
               propertyGrowth,
               const Color(0xFF10B981),
               showArea: true,
+              isDark: isDark,
             ),
           ],
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (_) => const Color(0xFF1E293B),
+              getTooltipColor: (_) =>
+                  isDark ? const Color(0xFF2C3E50) : const Color(0xFF1E293B),
               getTooltipItems: (touchedSpots) {
                 return touchedSpots.map((spot) {
                   return LineTooltipItem(
@@ -96,6 +100,7 @@ class GrowthAnalysisChart extends StatelessWidget {
     List<ChartDataPoint> data,
     Color color, {
     bool showArea = false,
+    required bool isDark,
   }) {
     return LineChartBarData(
       spots: data.asMap().entries.map((e) {
@@ -112,7 +117,7 @@ class GrowthAnalysisChart extends StatelessWidget {
         getDotPainter: (spot, percent, barData, index) {
           return FlDotCirclePainter(
             radius: 4,
-            color: Colors.white,
+            color: isDark ? const Color(0xFF1A1C1E) : Colors.white,
             strokeWidth: 2,
             strokeColor: color,
           );
@@ -123,10 +128,7 @@ class GrowthAnalysisChart extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            color.withOpacity(0.2),
-            color.withOpacity(0.01),
-          ],
+          colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.01)],
         ),
       ),
     );

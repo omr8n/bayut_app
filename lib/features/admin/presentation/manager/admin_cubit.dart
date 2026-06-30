@@ -89,11 +89,13 @@ class AdminCubit extends Cubit<AdminState> {
 
     // 🔥 Check properties about to expire before fetching stats
     await _checkExpiringPremiums();
+    if (isClosed) return;
 
     final result = await adminRepo.getAdminStats(
       timeFilter: currentFilter,
       targetDate: selectedDate,
     );
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AdminFailure(failure.message)),
       (stats) => emit(AdminStatsSuccess(stats)),
@@ -104,6 +106,7 @@ class AdminCubit extends Cubit<AdminState> {
   Future<void> fetchUsers() async {
     emit(AdminLoading());
     final result = await adminRepo.getAllUsers();
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AdminFailure(failure.message)),
       (users) => emit(AdminUsersSuccess(users)),
@@ -113,6 +116,7 @@ class AdminCubit extends Cubit<AdminState> {
   // 3. Block/Unblock User
   Future<void> toggleUserBlock(String uId, bool isBlocked) async {
     final result = await adminRepo.blockUser(uId: uId, block: isBlocked);
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       final desc = isBlocked
           ? "Your account has been blocked by administration for violating terms"
@@ -132,6 +136,7 @@ class AdminCubit extends Cubit<AdminState> {
   // 4. Delete User
   Future<void> deleteUser(String uId) async {
     final result = await adminRepo.deleteUser(uId: uId);
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       _processAction(
         type: 'DELETE_USER',
@@ -146,6 +151,7 @@ class AdminCubit extends Cubit<AdminState> {
   // 5. Update Admin Notes
   Future<void> updateAdminNotes(String uId, String notes) async {
     final result = await adminRepo.updateAdminNotes(uId: uId, notes: notes);
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       emit(const AdminActionSuccess("Admin notes saved"));
       fetchUsers();
@@ -156,6 +162,7 @@ class AdminCubit extends Cubit<AdminState> {
   Future<void> fetchProperties() async {
     emit(AdminLoading());
     final result = await adminRepo.getAllProperties();
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AdminFailure(failure.message)),
       (properties) => emit(AdminPropertiesSuccess(properties)),
@@ -172,6 +179,7 @@ class AdminCubit extends Cubit<AdminState> {
       propertyId: id,
       isApproved: isApproved,
     );
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       final desc = isApproved
           ? "Your property #$id has been approved for publishing"
@@ -202,6 +210,7 @@ class AdminCubit extends Cubit<AdminState> {
       propertyId: id,
       isFeatured: isFeatured,
     );
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       _processAction(
         type: 'FEATURE_PROPERTY',
@@ -237,11 +246,22 @@ class AdminCubit extends Cubit<AdminState> {
     if (isApproved) {
       final expiryDate = DateTime.now().add(Duration(days: days ?? 7));
 
+      // 0. Fetch property title for financial record detail
+      String? propTitle;
+      final propData = await getIt<DatabaseService>().getData(
+        path: BackendEndpoint.getProperty,
+        documentId: propertyId,
+      );
+      if (propData != null) {
+        propTitle = propData['title'] as String?;
+      }
+
       // 1. Update property status in Firestore
       await adminRepo.togglePropertyFeatured(
         propertyId: propertyId,
         isFeatured: true,
       );
+      if (isClosed) return;
       await getIt<DatabaseService>().updateData(
         path: BackendEndpoint.getProperty,
         documentId: propertyId,
@@ -252,11 +272,13 @@ class AdminCubit extends Cubit<AdminState> {
           'isFeatured': true,
         },
       );
+      if (isClosed) return;
 
       // 2. Financial transaction log (Mock Payment)
       final financialRecord = FinancialRecordModel(
         id: const Uuid().v4(),
         propertyId: propertyId,
+        propertyTitle: propTitle, // 🔥 حفظ اسم العقار
         sellerId: sellerId,
         sellerName: sellerName ?? 'User',
         amount: amount ?? 0,
@@ -271,6 +293,7 @@ class AdminCubit extends Cubit<AdminState> {
         path: BackendEndpoint.financialTransfers,
         data: financialRecord.toJson(),
       );
+      if (isClosed) return;
 
       // 3. Send notification to user
       _processAction(
@@ -288,6 +311,7 @@ class AdminCubit extends Cubit<AdminState> {
         documentId: propertyId,
         data: {'premiumStatus': PremiumStatus.rejected.name},
       );
+      if (isClosed) return;
 
       _processAction(
         type: 'PREMIUM_REJECTED',
@@ -306,6 +330,7 @@ class AdminCubit extends Cubit<AdminState> {
   // 9. Delete Property
   Future<void> deleteProperty(String id, String sellerId) async {
     final result = await adminRepo.deleteProperty(propertyId: id);
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       _processAction(
         type: 'DELETE_PROPERTY',
@@ -323,6 +348,7 @@ class AdminCubit extends Cubit<AdminState> {
   Future<void> fetchReports() async {
     emit(AdminLoading());
     final result = await adminRepo.getAllReports();
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AdminFailure(failure.message)),
       (reports) => emit(AdminReportsSuccess(reports)),
@@ -342,6 +368,7 @@ class AdminCubit extends Cubit<AdminState> {
       status: status,
       adminNote: adminNote,
     );
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       if (reporterId != null) {
         _processAction(
@@ -365,6 +392,7 @@ class AdminCubit extends Cubit<AdminState> {
       title: title,
       body: body,
     );
+    if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
       // Log action in admin logs
       final admin = profileCubit.user;
@@ -410,9 +438,12 @@ class AdminCubit extends Cubit<AdminState> {
 
     // Fetch user data to get token
     final userResult = await adminRepo.getUserById(uId);
+    if (isClosed) return;
 
     await userResult.fold(
-      (failure) async => emit(AdminFailure(failure.message)),
+      (failure) async {
+        if (!isClosed) emit(AdminFailure(failure.message));
+      },
       (userEntity) async {
         final notification = AppNotification(
           id: const Uuid().v4(),
@@ -429,6 +460,7 @@ class AdminCubit extends Cubit<AdminState> {
         );
 
         final result = await sendNotificationUseCase(notification);
+        if (isClosed) return;
 
         result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
           // Log in admin actions log

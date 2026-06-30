@@ -16,7 +16,6 @@ class AppConfigModel {
   final List<String> allowedCities;
   final List<String> allowedPropertyTypes;
   final bool maintenanceMode;
-  final bool requireAdminApproval;
   final String termsOfService;
   final String privacyPolicy;
 
@@ -38,7 +37,6 @@ class AppConfigModel {
     required this.allowedCities,
     required this.allowedPropertyTypes,
     required this.maintenanceMode,
-    required this.requireAdminApproval,
     required this.termsOfService,
     required this.privacyPolicy,
   });
@@ -61,7 +59,6 @@ class AppConfigModel {
         'allowedCities': allowedCities,
         'allowedPropertyTypes': allowedPropertyTypes,
         'maintenanceMode': maintenanceMode,
-        'requireAdminApproval': requireAdminApproval,
         'termsOfService': termsOfService,
         'privacyPolicy': privacyPolicy,
       };
@@ -84,7 +81,6 @@ class AppConfigModel {
         allowedCities: List<String>.from(json['allowedCities'] ?? ['دمشق', 'حلب', 'حمص', 'اللاذقية', 'طرطوس', 'حماة']),
         allowedPropertyTypes: List<String>.from(json['allowedPropertyTypes'] ?? ['شقة', 'فيلا', 'مكتب', 'محل تجاري', 'أرض']),
         maintenanceMode: json['maintenanceMode'] ?? false,
-        requireAdminApproval: json['requireAdminApproval'] ?? false,
         termsOfService: json['termsOfService'] ?? '',
         privacyPolicy: json['privacyPolicy'] ?? '',
       );
@@ -107,7 +103,6 @@ class AppConfigModel {
     List<String>? allowedCities,
     List<String>? allowedPropertyTypes,
     bool? maintenanceMode,
-    bool? requireAdminApproval,
     String? termsOfService,
     String? privacyPolicy,
   }) {
@@ -129,7 +124,6 @@ class AppConfigModel {
       allowedCities: allowedCities ?? this.allowedCities,
       allowedPropertyTypes: allowedPropertyTypes ?? this.allowedPropertyTypes,
       maintenanceMode: maintenanceMode ?? this.maintenanceMode,
-      requireAdminApproval: requireAdminApproval ?? this.requireAdminApproval,
       termsOfService: termsOfService ?? this.termsOfService,
       privacyPolicy: privacyPolicy ?? this.privacyPolicy,
     );

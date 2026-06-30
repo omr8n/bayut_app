@@ -27,7 +27,11 @@ class AdminToolSquare extends StatelessWidget {
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.015),
+              color: Colors.black.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.2
+                    : 0.015,
+              ),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
@@ -43,7 +47,9 @@ class AdminToolSquare extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF1A1C1E),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : const Color(0xFF1A1C1E),
                 fontFamily: 'Cairo',
               ),
               textAlign: TextAlign.center,

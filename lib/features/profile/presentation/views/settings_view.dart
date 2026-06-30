@@ -111,7 +111,7 @@ class SettingsView extends StatelessWidget {
                 ),
                 const SizedBox(height: 25),
 
-                _buildSectionTitle(locale!.translate(LangKeys.about), locale),
+                _buildSectionTitle(locale.translate(LangKeys.about), locale),
                 Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
@@ -167,7 +167,7 @@ class SettingsView extends StatelessWidget {
       height: 1,
       indent: 60,
       endIndent: 20,
-      color: Theme.of(context).dividerColor.withOpacity(0.1),
+      color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
     );
   }
 }

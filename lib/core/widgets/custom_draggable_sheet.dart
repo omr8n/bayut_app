@@ -69,8 +69,9 @@ class _CustomDraggableSheetState extends State<CustomDraggableSheet> {
   void _toggleSheet() {
     if (!_sheetController.isAttached) return;
     final double threshold = (widget.maxChildSize + widget.minChildSize) / 2;
-    final double targetSize =
-        _sheetController.size < threshold ? widget.maxChildSize : widget.minChildSize;
+    final double targetSize = _sheetController.size < threshold
+        ? widget.maxChildSize
+        : widget.minChildSize;
     _sheetController.animateTo(
       targetSize,
       duration: const Duration(milliseconds: 300),
@@ -89,14 +90,19 @@ class _CustomDraggableSheetState extends State<CustomDraggableSheet> {
         return Container(
           decoration: BoxDecoration(
             color: widget.backgroundColor ?? Theme.of(context).cardColor,
-            borderRadius: widget.borderRadius ??
+            borderRadius:
+                widget.borderRadius ??
                 BorderRadius.only(
                   topLeft: Radius.circular(30.r),
                   topRight: Radius.circular(30.r),
                 ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
+                color: Colors.black.withValues(
+                  alpha: Theme.of(context).brightness == Brightness.dark
+                      ? 0.3
+                      : 0.1,
+                ),
                 blurRadius: 15,
                 spreadRadius: 2,
               ),

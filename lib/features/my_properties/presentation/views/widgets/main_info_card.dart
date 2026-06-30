@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/constants/app_constants.dart';
+
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
@@ -63,7 +63,9 @@ class MainInfoCard extends StatelessWidget {
                   child: CustomTextFormField(
                     controller: priceController,
                     focusNode: priceNode,
-                    textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                    textAlign: locale.isEnLocale
+                        ? TextAlign.left
+                        : TextAlign.right,
                     labelText: locale.translate(LangKeys.price),
                     prefixIcon: Icons.attach_money,
                     keyboardType: TextInputType.number,
@@ -108,11 +110,13 @@ class MainInfoCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: PropertyType.values
-                  .map((type) => TypeChip(
-                        label: type.localizedName(context),
-                        isSelected: selectedPropertyType == type,
-                        onTap: () => onPropertyTypeChanged(type),
-                      ))
+                  .map(
+                    (type) => TypeChip(
+                      label: type.localizedName(context),
+                      isSelected: selectedPropertyType == type,
+                      onTap: () => onPropertyTypeChanged(type),
+                    ),
+                  )
                   .toList(),
             ),
           ],
@@ -122,7 +126,6 @@ class MainInfoCard extends StatelessWidget {
   }
 
   Widget _buildCurrencySelector(BuildContext context) {
-    final locale = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
@@ -131,7 +134,7 @@ class MainInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        selectedCurrency,
+        CurrencyHelper.localize(context, selectedCurrency),
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.blue.shade800,

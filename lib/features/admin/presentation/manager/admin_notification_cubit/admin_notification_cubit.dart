@@ -19,6 +19,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     emit(AdminNotificationLoading());
     _subscription?.cancel();
     _subscription = _getAllNotificationsUseCase().listen((result) {
+      if (isClosed) return;
       result.fold(
         (failure) => emit(AdminNotificationFailure(failure.message)),
         (notifications) => emit(AdminNotificationSuccess(notifications)),
@@ -32,6 +33,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     emit(AdminNotificationSendLoading());
     try {
       await _adminCubit.sendNotification(title, body);
+      if (isClosed) return;
       // AdminCubit handles the actual sending and logs.
       // We don't need a separate result because AdminCubit emits AdminActionSuccess.
       // However, to keep this clean, we listen to AdminCubit in the UI or handle results.
@@ -57,6 +59,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
         body: body,
         type: type,
       );
+      if (isClosed) return;
       emit(AdminNotificationSendSuccess("Notification sent to $name"));
     } catch (e) {
       emit(AdminNotificationSendFailure(e.toString()));

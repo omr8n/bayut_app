@@ -18,11 +18,13 @@ class GrowthAnalysisLegend extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         _legendBullet(
+          context,
           const Color(0xFF10B981),
           "${local.properties_label} ($totalProperties)",
         ),
         const SizedBox(width: 16),
         _legendBullet(
+          context,
           const Color(0xFF6366F1),
           "${local.users_label} ($totalUsers)",
         ),
@@ -30,14 +32,15 @@ class GrowthAnalysisLegend extends StatelessWidget {
     );
   }
 
-  Widget _legendBullet(Color color, String label) {
+  Widget _legendBullet(BuildContext context, Color color, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Color(0xFF64748B),
+            color: isDark ? Colors.white70 : const Color(0xFF64748B),
             fontWeight: FontWeight.w600,
           ),
         ),

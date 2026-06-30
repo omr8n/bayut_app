@@ -45,8 +45,10 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           final locale = AppLocalizations.of(context)!;
-          _titleController.text =
-              locale.alert_for.replaceFirst('{name}', _selectedUserName!);
+          _titleController.text = locale.alert_for.replaceFirst(
+            '{name}',
+            _selectedUserName!,
+          );
         }
       });
     }
@@ -146,7 +148,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -172,7 +174,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
@@ -323,11 +325,17 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               contentPadding: EdgeInsets.zero,
               title: Text(
                 locale.send_to_all_users,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: Text(
                 _sendToAll
-                    ? locale.send_to_all_hint.replaceFirst('{count}', totalUsersCount.toString())
+                    ? locale.send_to_all_hint.replaceFirst(
+                        '{count}',
+                        totalUsersCount.toString(),
+                      )
                     : (_selectedUserName != null
                           ? '${locale.recipient}: $_selectedUserName'
                           : locale.send_to_user_hint),
@@ -335,14 +343,17 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               ),
               value: _sendToAll,
               onChanged: (v) => setState(() => _sendToAll = v),
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             if (!_sendToAll)
               GestureDetector(
                 onTap: () async {
                   final user = await showSearch<UserEntity?>(
                     context: context,
-                    delegate: UserSearchDelegate(allUsers, searchLabel: locale.search),
+                    delegate: UserSearchDelegate(
+                      allUsers,
+                      searchLabel: locale.search,
+                    ),
                   );
                   if (user != null) {
                     setState(() {
@@ -358,9 +369,11 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.05),
+                    color: Colors.blue.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue.withOpacity(0.1)),
+                    border: Border.all(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -374,7 +387,9 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                         child: Text(
                           _selectedUserName ?? locale.send_to_user_hint,
                           style: TextStyle(
-                            color: _selectedUserName != null ? Colors.blue : Colors.grey,
+                            color: _selectedUserName != null
+                                ? Colors.blue
+                                : Colors.grey,
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
@@ -457,7 +472,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getTypeColor(notif.type).withOpacity(0.1),
+                  color: _getTypeColor(notif.type).withValues(alpha: .1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -502,7 +517,10 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               Text(
                 notif.sentToAll
                     ? locale.sent_to_all
-                    : locale.sent_to_specific_user.replaceFirst('{name}', notif.targetUserName ?? locale.specific_user),
+                    : locale.sent_to_specific_user.replaceFirst(
+                        '{name}',
+                        notif.targetUserName ?? locale.specific_user,
+                      ),
                 style: TextStyle(fontSize: 11, color: Colors.blueGrey[300]),
               ),
             ],
@@ -514,14 +532,22 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
 
   String _getTypeArabicName(NotificationType type, AppLocalizations locale) {
     switch (type) {
-      case NotificationType.general: return locale.notif_type_general;
-      case NotificationType.warning: return locale.notif_type_warning;
-      case NotificationType.promotion: return locale.notif_type_promotion;
-      case NotificationType.update: return locale.notif_type_update;
-      case NotificationType.report: return locale.notif_type_report;
-      case NotificationType.propertyFeatured: return locale.notif_type_property_featured;
-      case NotificationType.accountStatus: return locale.notif_type_account_status;
-      case NotificationType.adminAction: return locale.notif_type_admin_action;
+      case NotificationType.general:
+        return locale.notif_type_general;
+      case NotificationType.warning:
+        return locale.notif_type_warning;
+      case NotificationType.promotion:
+        return locale.notif_type_promotion;
+      case NotificationType.update:
+        return locale.notif_type_update;
+      case NotificationType.report:
+        return locale.notif_type_report;
+      case NotificationType.propertyFeatured:
+        return locale.notif_type_property_featured;
+      case NotificationType.accountStatus:
+        return locale.notif_type_account_status;
+      case NotificationType.adminAction:
+        return locale.notif_type_admin_action;
     }
   }
 
@@ -563,9 +589,9 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
           type: _selectedType,
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(locale.select_user_or_all)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(locale.select_user_or_all)));
       }
     }
   }

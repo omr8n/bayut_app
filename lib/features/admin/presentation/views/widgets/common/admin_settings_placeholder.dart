@@ -40,13 +40,13 @@ class AdminSettingsPlaceholder extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(20.w),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       icon,
                       size: 60.sp,
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withValues(alpha: 0.5),
                     ),
                   ),
                   SizedBox(height: 24.h),
@@ -61,7 +61,8 @@ class AdminSettingsPlaceholder extends StatelessWidget {
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    description ?? local.translate(LangKeys.sectionDevelopmentDesc),
+                    description ??
+                        local.translate(LangKeys.sectionDevelopmentDesc),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14.sp,

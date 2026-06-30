@@ -14,6 +14,7 @@ class AdminStats extends Equatable {
   final List<ChartDataPoint> propertyGrowth; // العقارات المضافة
   final List<ChartDataPoint> salesGrowth; // العقارات المباعة
   final List<ChartDataPoint> rentGrowth; // العقارات المؤجرة
+  final List<ChartDataPoint> revenueGrowth; // 🔥 نمو الإيرادات المالية
   
   // إحصائيات يومية/أسبوعية/سنوية (ملخصات)
   final DailySummary daily;
@@ -26,7 +27,6 @@ class AdminStats extends Equatable {
   final Map<String, int> propertiesByStatus;
   final Map<String, int> usersByRole;
   final int pendingPremiumRequests;
-  final int pendingProperties; // 🔥 إضافة العقارات التي بانتظار الاعتماد
 
   const AdminStats({
     required this.totalUsers,
@@ -40,6 +40,7 @@ class AdminStats extends Equatable {
     required this.propertyGrowth,
     required this.salesGrowth,
     required this.rentGrowth,
+    required this.revenueGrowth,
     required this.daily,
     required this.weekly,
     required this.yearly,
@@ -48,7 +49,6 @@ class AdminStats extends Equatable {
     required this.propertiesByStatus,
     required this.usersByRole,
     this.pendingPremiumRequests = 0,
-    this.pendingProperties = 0,
   });
 
   // 🔥 Getters ذكية لتسهيل الوصول للبيانات اليومية ومنع أخطاء الكود
@@ -70,6 +70,7 @@ class AdminStats extends Equatable {
         propertyGrowth,
         salesGrowth,
         rentGrowth,
+        revenueGrowth,
         daily,
         weekly,
         yearly,
@@ -78,7 +79,6 @@ class AdminStats extends Equatable {
         propertiesByStatus,
         usersByRole,
         pendingPremiumRequests,
-        pendingProperties,
       ];
 }
 

@@ -29,11 +29,13 @@ class PropertiesListScreen extends StatelessWidget {
               ],
             )
           : CustomScrollView(
-              physics: const BouncingScrollPhysics(), // إضافة حركة مطاطية (iOS Style)
+              physics:
+                  const BouncingScrollPhysics(), // إضافة حركة مطاطية (iOS Style)
               slivers: [
                 SliverAppBar(
                   expandedHeight: 120.h,
-                  floating: true, // يختفي عند السحب لأسفل ويظهر فوراً عند السحب لأعلى
+                  floating:
+                      true, // يختفي عند السحب لأسفل ويظهر فوراً عند السحب لأعلى
                   pinned: true, // يبقى العنوان ظاهراً بشكل مصغر عند الصعود
                   stretch: true, // يتمدد عند السحب بقوة لأسفل
                   backgroundColor: AppColors.primary,
@@ -55,7 +57,7 @@ class PropertiesListScreen extends StatelessWidget {
                           end: Alignment.bottomCenter,
                           colors: [
                             AppColors.primary,
-                            AppColors.primary.withOpacity(0.8),
+                            AppColors.primary.withValues(alpha: 0.8),
                           ],
                         ),
                       ),
@@ -70,29 +72,26 @@ class PropertiesListScreen extends StatelessWidget {
                 SliverPadding(
                   padding: EdgeInsets.symmetric(vertical: 10.h),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final property = properties[index];
-                        // إضافة حركة دخول تدريجية لكل كرت
-                        return AnimatedContainer(
-                          duration: Duration(milliseconds: 300 + (index * 100)),
-                          curve: Curves.easeOut,
-                          child: PropertyCard(
-                            property: property,
-                            onTap: (imageIndex) {
-                              context.push(
-                                AppRoutes.propertyDetailsScreen,
-                                extra: {
-                                  'property': property,
-                                  'initialIndex': imageIndex,
-                                },
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      childCount: properties.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final property = properties[index];
+                      // إضافة حركة دخول تدريجية لكل كرت
+                      return AnimatedContainer(
+                        duration: Duration(milliseconds: 300 + (index * 100)),
+                        curve: Curves.easeOut,
+                        child: PropertyCard(
+                          property: property,
+                          onTap: (imageIndex) {
+                            context.push(
+                              AppRoutes.propertyDetailsScreen,
+                              extra: {
+                                'property': property,
+                                'initialIndex': imageIndex,
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }, childCount: properties.length),
                   ),
                 ),
               ],

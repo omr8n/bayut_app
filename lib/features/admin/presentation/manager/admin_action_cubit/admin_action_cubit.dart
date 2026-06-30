@@ -10,6 +10,7 @@ class AdminActionCubit extends Cubit<AdminActionState> {
 
   Future<void> logAdminAction(AdminActionModel action) async {
     final result = await _adminActionRepo.logAction(action);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AdminActionFailure(failure.message)),
       (_) => null, // Logged successfully in background
@@ -19,6 +20,7 @@ class AdminActionCubit extends Cubit<AdminActionState> {
   Future<void> fetchAdminActions() async {
     emit(AdminActionLoading());
     final result = await _adminActionRepo.getActions();
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AdminActionFailure(failure.message)),
       (actions) => emit(AdminActionSuccess(actions)),

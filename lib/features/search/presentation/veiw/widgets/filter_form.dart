@@ -12,7 +12,7 @@ import 'package:test_graduation/features/search/presentation/veiw/widgets/build_
 import 'package:test_graduation/features/search/presentation/veiw/widgets/build_counter_row.dart';
 import 'package:test_graduation/features/search/presentation/veiw/widgets/build_section.dart';
 import '../../manager/search_cubit/search_cubit.dart';
-import '../widgets/filter_section_title.dart';
+
 import '../widgets/filter_buttons.dart';
 
 import 'package:test_graduation/core/language/app_localizations.dart';
@@ -148,9 +148,15 @@ class _FilterFormState extends State<FilterForm> {
             children: [
               Row(
                 children: [
-                  _buildTypeOption(locale.translate(LangKeys.sale), ListingType.sale),
+                  _buildTypeOption(
+                    locale.translate(LangKeys.sale),
+                    ListingType.sale,
+                  ),
                   const SizedBox(width: 12),
-                  _buildTypeOption(locale.translate(LangKeys.rent), ListingType.rent),
+                  _buildTypeOption(
+                    locale.translate(LangKeys.rent),
+                    ListingType.rent,
+                  ),
                 ],
               ),
             ],
@@ -162,14 +168,15 @@ class _FilterFormState extends State<FilterForm> {
               children: [
                 SearchFieldWidget(
                   controller: TextEditingController(
-                    text: (governorate == null ||
+                    text:
+                        (governorate == null ||
                             governorate == LangKeys.all ||
                             governorate == 'الكل' ||
                             governorate == 'All')
                         ? locale.translate(LangKeys.searchHere)
                         : (AppConstants.governorates.contains(governorate)
-                            ? locale.translate(governorate!)
-                            : governorate),
+                              ? locale.translate(governorate!)
+                              : governorate),
                   ),
                   readOnly: true,
                 ),
@@ -178,8 +185,9 @@ class _FilterFormState extends State<FilterForm> {
                     behavior: HitTestBehavior.opaque,
                     onTap: () async {
                       // 💡 ننتظر الموقع المختار عند العودة
-                      final selectedLocation =
-                          await context.push<String>(AppRoutes.locationSearchPage);
+                      final selectedLocation = await context.push<String>(
+                        AppRoutes.locationSearchPage,
+                      );
                       if (selectedLocation != null) {
                         setState(() {
                           governorate = selectedLocation;
@@ -213,13 +221,16 @@ class _FilterFormState extends State<FilterForm> {
             ],
           ),
           BuildSection(
-            title: '${locale.translate(LangKeys.priceRange)} (${locale.translate(LangKeys.currencyLira)})',
+            title:
+                '${locale.translate(LangKeys.priceRange)} (${locale.translate(LangKeys.currencyLira)})',
             icon: Icons.monetization_on_rounded,
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.withOpacity(0.05),
+                  color: isDark
+                      ? Colors.blue.withValues(alpha: 0.1)
+                      : Colors.blue.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -238,7 +249,9 @@ class _FilterFormState extends State<FilterForm> {
                       max: 5000000000,
                       divisions: 100,
                       activeColor: AppColors.primary,
-                      inactiveColor: isDark ? Colors.white12 : Colors.grey.shade300,
+                      inactiveColor: isDark
+                          ? Colors.white12
+                          : Colors.grey.shade300,
                       onChanged: (v) {
                         setState(() {
                           _priceRange = v;
@@ -260,13 +273,16 @@ class _FilterFormState extends State<FilterForm> {
           ),
 
           BuildSection(
-            title: '${locale.translate(LangKeys.areaRange)} (${locale.translate(LangKeys.areaUnit)})',
+            title:
+                '${locale.translate(LangKeys.areaRange)} (${locale.translate(LangKeys.areaUnit)})',
             icon: Icons.architecture_rounded,
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.withOpacity(0.05),
+                  color: isDark
+                      ? Colors.blue.withValues(alpha: 0.1)
+                      : Colors.blue.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -285,7 +301,9 @@ class _FilterFormState extends State<FilterForm> {
                       max: 5000,
                       divisions: 50,
                       activeColor: AppColors.primary,
-                      inactiveColor: isDark ? Colors.white12 : Colors.grey.shade300,
+                      inactiveColor: isDark
+                          ? Colors.white12
+                          : Colors.grey.shade300,
                       onChanged: (v) {
                         setState(() {
                           _areaRange = v;
@@ -390,7 +408,12 @@ class _FilterFormState extends State<FilterForm> {
       maxPrice: _priceRange.end,
       minArea: _areaRange.start,
       maxArea: _areaRange.end,
-      governorate: (governorate == LangKeys.all || governorate == 'الكل' || governorate == null) ? null : governorate,
+      governorate:
+          (governorate == LangKeys.all ||
+              governorate == 'الكل' ||
+              governorate == null)
+          ? null
+          : governorate,
       minRooms: minRooms,
       minBedrooms: minBedrooms,
       minBathrooms: minBathrooms,

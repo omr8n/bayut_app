@@ -12,8 +12,8 @@ class MediaGallery extends StatelessWidget {
   final PropertyEntity property; // 🔥 إضافة العقار
 
   const MediaGallery({
-    super.key, 
-    required this.mediaUrls, 
+    super.key,
+    required this.mediaUrls,
     required this.propertyImages,
     required this.property,
   });
@@ -30,12 +30,12 @@ class MediaGallery extends StatelessWidget {
 
           return GestureDetector(
             onTap: () => context.push(
-              AppRoutes.videoView, 
+              AppRoutes.videoView,
               extra: {
-                'urls': mediaUrls, 
+                'urls': mediaUrls,
                 'index': index,
                 'property': property, // 🔥 تمرير البيانات هنا
-              }
+              },
             ),
             child: Container(
               width: double.infinity,
@@ -44,39 +44,45 @@ class MediaGallery extends StatelessWidget {
               child: Stack(
                 children: [
                   // إذا كان فيديو، نعرض لقطة منه، وإذا كانت صورة نعرضها مباشرة
-                  isVideo 
-                    ? VideoThumbnailWidget(videoUrl: url)
-                    : FancyShimmerImage(
-                        imageUrl: url,
-                        boxFit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 380.h,
-                      ),
-                  
-                  if (isVideo)
-                    _buildPlayOverlay(),
+                  isVideo
+                      ? VideoThumbnailWidget(videoUrl: url)
+                      : FancyShimmerImage(
+                          imageUrl: url,
+                          boxFit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 380.h,
+                        ),
+
+                  if (isVideo) _buildPlayOverlay(),
                 ],
               ),
             ),
           );
         }),
-        SizedBox(height: 120.h), 
+        SizedBox(height: 120.h),
       ],
     );
   }
 
   Widget _buildPlayOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.15),
+      color: Colors.black.withValues(alpha: 0.15),
       child: Center(
         child: Container(
           padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             color: Colors.black45,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withOpacity(0.8), width: 2),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.8),
+              width: 2,
+            ),
           ),
-          child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 50.sp),
+          child: Icon(
+            Icons.play_arrow_rounded,
+            color: Colors.white,
+            size: 50.sp,
+          ),
         ),
       ),
     );
@@ -101,23 +107,25 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-      ..initialize().then((_) {
-        if (mounted) {
-          _controller.seekTo(const Duration(seconds: 1));
-          setState(() {
-            _isInitialized = true;
-            _hasError = false;
+      ..initialize()
+          .then((_) {
+            if (mounted) {
+              _controller.seekTo(const Duration(seconds: 1));
+              setState(() {
+                _isInitialized = true;
+                _hasError = false;
+              });
+            }
+          })
+          .catchError((error) {
+            // 🔥 معالجة الخطأ هنا لمنع انهيار التطبيق
+            if (mounted) {
+              setState(() {
+                _hasError = true;
+                _isInitialized = false;
+              });
+            }
           });
-        }
-      }).catchError((error) {
-        // 🔥 معالجة الخطأ هنا لمنع انهيار التطبيق
-        if (mounted) {
-          setState(() {
-            _hasError = true;
-            _isInitialized = false;
-          });
-        }
-      });
   }
 
   @override
@@ -134,7 +142,11 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.video_collection_outlined, color: Colors.grey.shade400, size: 40.sp),
+            Icon(
+              Icons.video_collection_outlined,
+              color: Colors.grey.shade400,
+              size: 40.sp,
+            ),
             SizedBox(height: 8.h),
             Text(
               "الفيديو غير متاح حالياً",
@@ -144,7 +156,7 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
         ),
       );
     }
-    
+
     if (!_isInitialized) {
       return Container(
         color: Colors.grey.shade200,

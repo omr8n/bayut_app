@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:test_graduation/core/language/app_localizations.dart';
+
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
 import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
@@ -36,7 +36,9 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkBackground
+            : Colors.white,
         elevation: 0,
       ),
       body: BlocBuilder<UserNotificationCubit, UserNotificationState>(
@@ -76,11 +78,15 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
         decoration: BoxDecoration(
           color: notification.isRead
               ? Theme.of(context).cardColor
-              : (Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : const Color(0xFFF0F7FF)),
+              : (Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.darkSurface
+                    : const Color(0xFFF0F7FF)),
           borderRadius: BorderRadius.circular(15.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.02),
+              color: Colors.black.withOpacity(
+                Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.02,
+              ),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -98,9 +104,13 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                   Text(
                     notification.title,
                     style: TextStyle(
-                      fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+                      fontWeight: notification.isRead
+                          ? FontWeight.normal
+                          : FontWeight.bold,
                       fontSize: 14.sp,
-                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black87,
                     ),
                     textAlign: TextAlign.right,
                   ),
@@ -109,7 +119,9 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                     notification.body,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.grey.shade600,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.textSecondaryDark
+                          : Colors.grey.shade600,
                     ),
                     textAlign: TextAlign.right,
                   ),
@@ -121,7 +133,9 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
                     ).format(notification.sentAt),
                     style: TextStyle(
                       fontSize: 10.sp,
-                      color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark.withOpacity(0.7) : Colors.grey.shade400,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.textSecondaryDark.withOpacity(0.7)
+                          : Colors.grey.shade400,
                     ),
                   ),
                 ],
@@ -151,10 +165,18 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
-        shape: BoxShape.circle
+        color: color.withOpacity(
+          Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1,
+        ),
+        shape: BoxShape.circle,
       ),
-      child: Icon(icon, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : color, size: 20.sp),
+      child: Icon(
+        icon,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white
+            : color,
+        size: 20.sp,
+      ),
     );
   }
 

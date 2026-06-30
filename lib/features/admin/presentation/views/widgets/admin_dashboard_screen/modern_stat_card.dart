@@ -37,14 +37,16 @@ class ModernStatCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(
-                Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.04,
+              color: color.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.2
+                    : 0.04,
               ),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.1), width: 1),
+          border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -53,7 +55,11 @@ class ModernStatCard extends StatelessWidget {
               Positioned(
                 bottom: -15,
                 right: -15,
-                child: Icon(icon, size: 90, color: color.withOpacity(0.05)),
+                child: Icon(
+                  icon,
+                  size: 90,
+                  color: color.withValues(alpha: 0.05),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -66,7 +72,7 @@ class ModernStatCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.1),
+                            color: color.withValues(alpha: .1),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Icon(icon, color: color, size: 20),
@@ -116,7 +122,7 @@ class ModernStatCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: (isUp ? Colors.green : Colors.red)
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(

@@ -774,15 +774,16 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
           onPayAndPublish: () async {
             // محاكاة عملية الدفع
             final cubit = context.read<AddPropertyCubit>();
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
+            final localizations = AppLocalizations.of(context)!;
+
             Navigator.pop(context); // إغلاق الشيت
 
             // إظهار تنبيه جاري المعالجة
-            ScaffoldMessenger.of(context).showSnackBar(
+            scaffoldMessenger.showSnackBar(
               SnackBar(
                 content: Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.translate(LangKeys.waitingForPayment),
+                  localizations.translate(LangKeys.waitingForPayment),
                 ),
               ),
             );
@@ -795,12 +796,10 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
                 );
 
             if (success) {
-              ScaffoldMessenger.of(context).showSnackBar(
+              scaffoldMessenger.showSnackBar(
                 SnackBar(
                   content: Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.translate(LangKeys.paymentSuccess),
+                    localizations.translate(LangKeys.paymentSuccess),
                   ),
                   backgroundColor: Colors.green,
                 ),
@@ -808,12 +807,10 @@ class _AddPropertyBodyState extends State<AddPropertyBody> {
               // تنفيذ عملية الرفع الفعلي
               _executeUpload(user);
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
+              scaffoldMessenger.showSnackBar(
                 SnackBar(
                   content: Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.translate(LangKeys.paymentFailed),
+                    localizations.translate(LangKeys.paymentFailed),
                   ),
                   backgroundColor: Colors.red,
                 ),

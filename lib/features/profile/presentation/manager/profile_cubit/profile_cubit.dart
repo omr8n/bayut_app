@@ -8,7 +8,7 @@ import 'package:test_graduation/core/helper/functions/get_user.dart';
 import 'package:test_graduation/core/services/data_service.dart';
 import 'package:test_graduation/core/services/firebase_auth_service.dart';
 import 'package:test_graduation/core/services/secure_storage_singleton.dart';
-import 'package:test_graduation/core/services/shared_preferences_singleton.dart';
+
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
 import 'package:test_graduation/features/auth/data/models/user_model.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';

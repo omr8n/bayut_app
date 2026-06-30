@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:test_graduation/core/utils/colors.dart';
+
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_state.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
@@ -38,7 +38,9 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
           } else if (state is AdminStatsSuccess) {
             return _buildBody(state.stats, local);
           } else if (state is AdminFailure) {
-            return Center(child: Text('${local.error_label}${state.errMessage}'));
+            return Center(
+              child: Text('${local.error_label}${state.errMessage}'),
+            );
           }
           return const SizedBox();
         },
@@ -212,8 +214,16 @@ class _AdminAnalyticsScreenState extends State<AdminAnalyticsScreen>
             titlesData: _buildChartTitles(stats.userGrowth),
             borderData: FlBorderData(show: false),
             lineBarsData: [
-              _buildLineSeries(stats.userGrowth, Colors.blue, local.users_label),
-              _buildLineSeries(stats.propertyGrowth, Colors.orange, local.properties_label),
+              _buildLineSeries(
+                stats.userGrowth,
+                Colors.blue,
+                local.users_label,
+              ),
+              _buildLineSeries(
+                stats.propertyGrowth,
+                Colors.orange,
+                local.properties_label,
+              ),
             ],
           ),
         ),

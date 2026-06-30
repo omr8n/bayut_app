@@ -11,9 +11,21 @@ import 'widgets/tabs/platform_settings_tab.dart';
 import 'widgets/tabs/market_settings_tab.dart';
 import 'widgets/tabs/property_data_settings_tab.dart';
 import 'widgets/tabs/contact_support_settings_tab.dart';
+import 'widgets/tabs/legal_policies_settings_tab.dart';
 
-class AdminSettingsScreen extends StatelessWidget {
+class AdminSettingsScreen extends StatefulWidget {
   const AdminSettingsScreen({super.key});
+
+  @override
+  State<AdminSettingsScreen> createState() => _AdminSettingsScreenState();
+}
+
+class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AdminSettingsCubit>().getSettings();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +39,19 @@ class AdminSettingsScreen extends StatelessWidget {
                 SnackBar(
                   content: Row(
                     children: [
-                      const Icon(Icons.check_circle_outline, color: Colors.white),
+                      const Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.white,
+                      ),
                       SizedBox(width: 12.w),
                       Text(local.translate(LangKeys.updateSuccess)),
                     ],
                   ),
                   backgroundColor: Colors.green.shade600,
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
                   margin: EdgeInsets.all(16.w),
                   duration: const Duration(seconds: 3),
                 ),
@@ -42,26 +59,34 @@ class AdminSettingsScreen extends StatelessWidget {
             }
             if (state is AdminSettingsFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errMessage), backgroundColor: Colors.red),
+                SnackBar(
+                  content: Text(state.errMessage),
+                  backgroundColor: Colors.red,
+                ),
               );
             }
           },
           child: LoadingManager(
             isLoading: state is AdminSettingsLoading,
             child: DefaultTabController(
-              length: 4,
+              length: 5,
               initialIndex: 0,
               child: Scaffold(
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 appBar: AppBar(
-                  backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : Colors.white,
+                  backgroundColor:
+                      Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkBackground
+                      : Colors.white,
                   elevation: 0.5,
                   centerTitle: true,
                   automaticallyImplyLeading: false,
                   leading: IconButton(
                     icon: Icon(
                       Icons.arrow_back_ios,
-                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                       size: 20,
                     ),
                     onPressed: () => Navigator.pop(context),
@@ -70,8 +95,14 @@ class AdminSettingsScreen extends StatelessWidget {
                     Padding(
                       padding: EdgeInsetsDirectional.only(end: 8.w),
                       child: TextButton.icon(
-                        onPressed: () => context.read<AdminSettingsCubit>().saveAllSettings(),
-                        icon: Icon(Icons.save_rounded, size: 18.sp, color: AppColors.primary),
+                        onPressed: () => context
+                            .read<AdminSettingsCubit>()
+                            .saveAllSettings(),
+                        icon: Icon(
+                          Icons.save_rounded,
+                          size: 18.sp,
+                          color: AppColors.primary,
+                        ),
                         label: Text(
                           local.translate(LangKeys.save),
                           style: TextStyle(
@@ -82,10 +113,15 @@ class AdminSettingsScreen extends StatelessWidget {
                           ),
                         ),
                         style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 4.h,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
-                            side: BorderSide(color: AppColors.primary.withOpacity(0.1)),
+                            side: BorderSide(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                            ),
                           ),
                         ),
                       ),
@@ -94,7 +130,9 @@ class AdminSettingsScreen extends StatelessWidget {
                   title: Text(
                     local.translate(LangKeys.adminSettingsTitle),
                     style: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -103,7 +141,9 @@ class AdminSettingsScreen extends StatelessWidget {
                     isScrollable: true,
                     indicatorColor: AppColors.primary,
                     indicatorWeight: 3,
-                    labelColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary,
+                    labelColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : AppColors.primary,
                     unselectedLabelColor: const Color(0xFF9EA3AE),
                     labelStyle: TextStyle(
                       fontSize: 12.sp,
@@ -131,6 +171,10 @@ class AdminSettingsScreen extends StatelessWidget {
                         text: local.translate(LangKeys.contactAndSupport),
                         icon: const Icon(Icons.gavel_rounded),
                       ),
+                      Tab(
+                        text: local.translate(LangKeys.legalPolicies),
+                        icon: const Icon(Icons.policy_rounded),
+                      ),
                     ],
                   ),
                 ),
@@ -140,6 +184,7 @@ class AdminSettingsScreen extends StatelessWidget {
                     MarketSettingsTab(),
                     PropertyDataSettingsTab(),
                     ContactSupportSettingsTab(),
+                    LegalPoliciesSettingsTab(),
                   ],
                 ),
               ),

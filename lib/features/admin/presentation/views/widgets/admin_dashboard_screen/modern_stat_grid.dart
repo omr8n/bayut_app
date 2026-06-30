@@ -21,7 +21,7 @@ class ModernStatGrid extends StatelessWidget {
 
     double userTrend = calculateTrend(stats.userGrowth);
     double propTrend = calculateTrend(stats.propertyGrowth);
-    double salesTrend = calculateTrend(stats.salesGrowth);
+    double revenueTrend = calculateTrend(stats.revenueGrowth);
 
     return GridView.count(
       crossAxisCount: 2,
@@ -62,12 +62,12 @@ class ModernStatGrid extends StatelessWidget {
         ),
         ModernStatCard(
           title: local.estimated_revenue,
-          value: "${(stats.yearly.totalRevenue / 1000).toStringAsFixed(1)}K",
-          trend: salesTrend >= 0 ? "+${salesTrend.toInt()}" : "${salesTrend.toInt()}",
-          isUp: salesTrend >= 0,
+          value: "${stats.yearly.totalRevenue.toInt()} ${local.currency_lira}",
+          trend: revenueTrend >= 0 ? "+${revenueTrend.toInt()}" : "${revenueTrend.toInt()}",
+          isUp: revenueTrend >= 0,
           icon: Icons.monetization_on_rounded,
           color: const Color(0xFF10B981),
-          data: stats.salesGrowth,
+          data: stats.revenueGrowth,
         ),
       ],
     );

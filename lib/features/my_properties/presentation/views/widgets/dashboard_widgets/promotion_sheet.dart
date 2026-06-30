@@ -154,7 +154,6 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
                       context
                           .read<MyPropertiesCubit>()
                           .requestPromotion(widget.property);
-                      Navigator.pop(context);
                       _showSuccessDialog(context); // 🔥 إظهار رسالة النجاح الجمالية
                     },
                     style: ElevatedButton.styleFrom(
@@ -213,7 +212,7 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
               ),
               SizedBox(height: 24.h),
               Text(
-                locale.translate('promotion_success_title'),
+                locale.promotion_success_title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20.sp,
@@ -223,7 +222,7 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
               ),
               SizedBox(height: 12.h),
               Text(
-                locale.translate('promotion_processing_msg'),
+                locale.promotion_processing_msg,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13.sp,
@@ -234,8 +233,10 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
               SizedBox(height: 32.h),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Close dialog
-                  Navigator.pop(context); // Close Payment dialog
+                  Navigator.pop(context); // Close success dialog
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context); // Close Confirm Payment dialog
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

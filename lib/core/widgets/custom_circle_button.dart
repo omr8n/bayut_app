@@ -24,14 +24,10 @@ class CustomCircleButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(10.w),
         decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.white.withOpacity(0.9),
+          color: backgroundColor ?? Colors.white.withValues(alpha: 0.9),
           shape: BoxShape.circle,
           boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              spreadRadius: 1,
-            ),
+            BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 1),
           ],
         ),
         child: Icon(

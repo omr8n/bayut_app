@@ -87,7 +87,7 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
       children: [
         CircleAvatar(
           radius: 35,
-          backgroundColor: AppColors.primary.withOpacity(0.1),
+          backgroundColor: AppColors.primary.withValues(alpha: .1),
           backgroundImage: widget.user.profilePic != null
               ? NetworkImage(widget.user.profilePic!)
               : null,
@@ -108,7 +108,9 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
                 ),
               ),
               Text(
-                widget.user.role == 'admin' ? local.admin_role : local.user_role,
+                widget.user.role == 'admin'
+                    ? local.admin_role
+                    : local.user_role,
                 style: TextStyle(
                   color: widget.user.role == 'admin'
                       ? AppColors.info
@@ -142,7 +144,10 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
           const Divider(),
           _buildInfoRow(
             Icons.calendar_today,
-            local.member_since.replaceFirst('{date}', _formatDate(widget.user.createdAt, local)),
+            local.member_since.replaceFirst(
+              '{date}',
+              _formatDate(widget.user.createdAt, local),
+            ),
           ),
         ],
       ),
@@ -190,7 +195,9 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
           ),
         ),
         Align(
-          alignment: local.isEnLocale ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: local.isEnLocale
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: () => widget.adminCubit.updateAdminNotes(
               widget.user.uId,
@@ -235,7 +242,9 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
                   color: Colors.white,
                 ),
                 label: Text(
-                  widget.user.isBanned ? local.unblock_user : local.block_account,
+                  widget.user.isBanned
+                      ? local.unblock_user
+                      : local.block_account,
                   style: const TextStyle(color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -289,7 +298,10 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
         children: [
           Text(
             local.danger_zone,
-            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 12),
           SizedBox(

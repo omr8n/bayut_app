@@ -26,12 +26,15 @@ class CommunicationDialogs {
                     Icon(Icons.info_outline,
                         color: Colors.orange, size: 28.sp),
                   if (loc.isEnLocale) SizedBox(width: 10.w),
-                  Text(
-                    loc.translate(LangKeys.whatsappFallbackTitle),
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF333333),
+                  Expanded(
+                    child: Text(
+                      loc.translate(LangKeys.whatsappFallbackTitle),
+                      textAlign: loc.isEnLocale ? TextAlign.start : TextAlign.end,
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF333333),
+                      ),
                     ),
                   ),
                   if (!loc.isEnLocale) SizedBox(width: 10.w),

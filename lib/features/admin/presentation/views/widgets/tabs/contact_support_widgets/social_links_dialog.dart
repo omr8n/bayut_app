@@ -52,7 +52,7 @@ class _SocialLinksDialogState extends State<SocialLinksDialog> {
           borderRadius: BorderRadius.circular(32.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -68,10 +68,14 @@ class _SocialLinksDialogState extends State<SocialLinksDialog> {
                   Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Icon(Icons.share_rounded, color: AppColors.primary, size: 24.sp),
+                    child: Icon(
+                      Icons.share_rounded,
+                      color: AppColors.primary,
+                      size: 24.sp,
+                    ),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
@@ -129,7 +133,10 @@ class _SocialLinksDialogState extends State<SocialLinksDialog> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        widget.onSave(_fbController.text, _instaController.text);
+                        widget.onSave(
+                          _fbController.text,
+                          _instaController.text,
+                        );
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

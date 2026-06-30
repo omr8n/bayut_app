@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:intl/intl.dart';
-import 'package:test_graduation/core/enums/property_enums.dart';
+
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
-import 'package:test_graduation/core/routing/app_routes.dart';
+
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/communication.dart';
 import 'package:test_graduation/core/widgets/custom_circle_button.dart';
@@ -20,8 +20,7 @@ import 'package:test_graduation/features/home/presentation/view/widgets/details_
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/property_details_seller.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/property_type_specific_details.dart';
 import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/similar_properties_section.dart';
-import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/premium_countdown_timer.dart';
-import 'package:test_graduation/features/home/presentation/view/widgets/details_view_widgets/trending_status_card.dart'; // 🔥 إضافة كارت التريند
+
 import 'package:test_graduation/core/utils/viewed_properties_manager.dart';
 import 'package:test_graduation/core/repos/property_repo/property_repo.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
@@ -138,18 +137,6 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             maxChildSize: 0.9,
             padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 60.h),
             children: [
-              if (isOwner &&
-                  widget.property.premiumStatus == PremiumStatus.active)
-                PremiumCountdownTimer(property: widget.property),
-              if (isOwner && widget.property.views >= 5) // مثال: إذا كان ضمن التريند
-                TrendingStatusCard(
-                  property: widget.property,
-                  rank: 2,
-                ), // استخدام rank=2 كما في الصورة
-              if (isOwner &&
-                  (widget.property.premiumStatus == PremiumStatus.none ||
-                      widget.property.premiumStatus == PremiumStatus.rejected))
-                _buildDetailsPromotionCard(context),
               PropertyDetailsHeader(
                 format: numberFormat,
                 property: widget.property,
@@ -160,7 +147,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black87,
                 ),
               ),
               SizedBox(height: 10.h),
@@ -172,13 +161,18 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 format: numberFormat,
               ),
               SizedBox(height: 24.h),
-              _buildSectionTitle(context, localizations.translate(LangKeys.description)),
+              _buildSectionTitle(
+                context,
+                localizations.translate(LangKeys.description),
+              ),
               Text(
                 widget.property.description,
                 style: TextStyle(
                   fontSize: 15.sp,
                   height: 1.6,
-                  color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                 ),
               ),
               if (widget.property.facilities.isNotEmpty) ...[
@@ -224,7 +218,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                       FavoriteButton(
                         propertyId: widget.property.id,
                         size: 22,
-                        backgroundColor: Colors.white.withOpacity(0.9),
+                        backgroundColor: Colors.white.withValues(alpha: 0.9),
                       ),
                     ],
                   ),
@@ -262,67 +256,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         style: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailsPromotionCard(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: () {
-        // الانتقال لصفحة عقاراتي لطلب التميز
-        GoRouter.of(context).push(AppRoutes.myPropertiesScreen);
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 16.h),
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.orange.withOpacity(0.1) : const Color(0xFFFFF3E0), // برتقالي فاتح جداً (مثل الصورة)
-          borderRadius: BorderRadius.circular(15.r),
-          border: Border.all(color: isDark ? Colors.orange.withOpacity(0.3) : const Color(0xFFFFCC80)),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.arrow_back_ios_rounded,
-              size: 14,
-              color: isDark ? Colors.orange.shade300 : Colors.orange,
-            ),
-            const Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'ميز عقارك الآن',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                        color: isDark ? Colors.orange.shade200 : const Color(0xFFE65100),
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    Icon(
-                      Icons.rocket_launch_rounded,
-                      color: isDark ? Colors.orange.shade400 : Colors.orange.shade800,
-                      size: 20.sp,
-                    ),
-                  ],
-                ),
-                Text(
-                  'حالة التميز',
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
         ),
       ),
     );

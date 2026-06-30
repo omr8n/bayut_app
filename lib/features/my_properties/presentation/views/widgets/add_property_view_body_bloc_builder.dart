@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
-import 'package:test_graduation/core/language/lang_keys.dart';
-import 'package:test_graduation/core/routing/app_routes.dart';
-import 'package:test_graduation/core/utils/colors.dart';
+
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_state.dart';
 

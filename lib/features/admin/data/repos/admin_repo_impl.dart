@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/errors/failures.dart';
 import 'package:test_graduation/core/models/admin_stats_model.dart';
+import 'package:test_graduation/core/models/financial_record_model.dart';
 import 'package:test_graduation/core/models/property_model.dart';
 import 'package:test_graduation/core/services/data_service.dart';
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
@@ -32,6 +33,9 @@ class AdminRepoImpl implements AdminRepo {
       final reportsDocs = await _databaseService.getCollectionDocuments(
         path: BackendEndpoint.addReport,
       );
+      final financialDocs = await _databaseService.getCollectionDocuments(
+        path: BackendEndpoint.financialTransfers,
+      );
 
       final now = targetDate ?? DateTime.now();
       final todayStart = DateTime(now.year, now.month, now.day);
@@ -58,6 +62,8 @@ class AdminRepoImpl implements AdminRepo {
           .map((d) => PropertyModel.fromJson(d))
           .toList();
       final reports = reportsDocs.map((d) => ReportModel.fromJson(d)).toList();
+      final financialRecords =
+          financialDocs.map((d) => FinancialRecordModel.fromJson(d)).toList();
 
       // --- Precise Time-based Statistics Calculation ---
 
@@ -120,7 +126,6 @@ class AdminRepoImpl implements AdminRepo {
           pendingPremiumRequests: properties
               .where((p) => p.premiumStatus == PremiumStatus.pending)
               .length,
-          pendingProperties: properties.where((p) => !p.isApproved).length, // Calculate unapproved properties
 
           // Dynamic Chart Data Points
           userGrowth: _generateStats(
@@ -145,6 +150,7 @@ class AdminRepoImpl implements AdminRepo {
                 .toList(),
             timeFilter,
           ),
+          revenueGrowth: _generateRevenueStats(financialRecords, timeFilter),
 
           daily: DailySummary(
             newUsers: newUsersToday,
@@ -173,9 +179,10 @@ class AdminRepoImpl implements AdminRepo {
           yearly: YearlySummary(
             totalUsers: users.length,
             totalProperties: properties.length,
-            totalRevenue: properties
-                .where((p) => p.status == PropertyStatus.sold)
-                .fold(0.0, (sum, p) => sum + p.price),
+            totalRevenue: financialRecords.fold(
+              0.0,
+              (sum, record) => sum + record.amount,
+            ),
           ),
           propertiesByType: propsByType,
           propertiesByCity: propsByCity,
@@ -237,6 +244,73 @@ class AdminRepoImpl implements AdminRepo {
         if (date == null) continue;
         final label = "${date.day}/${date.month}";
         if (counts.containsKey(label)) counts[label] = counts[label]! + 1;
+      }
+    }
+
+    return counts.entries.map((e) => ChartDataPoint(e.key, e.value)).toList();
+  }
+
+  List<ChartDataPoint> _generateRevenueStats(
+    List<FinancialRecordModel> records,
+    String filter,
+  ) {
+    Map<String, double> counts = {};
+    final now = DateTime.now();
+
+    if (filter == 'day') {
+      for (int i = 23; i >= 0; i--) {
+        final hour = now.subtract(Duration(hours: i)).hour;
+        counts["$hour:00"] = 0;
+      }
+      for (var record in records) {
+        final date = record.createdAt;
+        if (date.day == now.day && date.month == now.month && date.year == now.year) {
+          final label = "${date.hour}:00";
+          if (counts.containsKey(label)) {
+            counts[label] = counts[label]! + record.amount;
+          }
+        }
+      }
+    } else if (filter == 'month') {
+      final lastDay = DateTime(now.year, now.month + 1, 0).day;
+      for (int i = 1; i <= lastDay; i++) {
+        counts["$i"] = 0;
+      }
+      for (var record in records) {
+        final date = record.createdAt;
+        if (date.month == now.month && date.year == now.year) {
+          final label = "${date.day}";
+          if (counts.containsKey(label)) {
+            counts[label] = counts[label]! + record.amount;
+          }
+        }
+      }
+    } else if (filter == 'year') {
+      for (int i = 1; i <= 12; i++) {
+        counts["$i"] = 0;
+      }
+      for (var record in records) {
+        final date = record.createdAt;
+        if (date.year == now.year) {
+          final label = "${date.month}";
+          if (counts.containsKey(label)) {
+            counts[label] = counts[label]! + record.amount;
+          }
+        }
+      }
+    } else {
+      // Week (Default)
+      for (int i = 6; i >= 0; i--) {
+        final date = now.subtract(Duration(days: i));
+        final label = "${date.day}/${date.month}";
+        counts[label] = 0;
+      }
+      for (var record in records) {
+        final date = record.createdAt;
+        final label = "${date.day}/${date.month}";
+        if (counts.containsKey(label)) {
+          counts[label] = counts[label]! + record.amount;
+        }
       }
     }
 

@@ -95,7 +95,7 @@ class AdminManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withOpacity(0.04),
+            color: Colors.black12.withValues(alpha: 0.04),
             blurRadius: 5,
             offset: const Offset(0, 3),
           ),
@@ -176,7 +176,10 @@ class AdminManagementScreen extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               child: Text(local.cancel),
             ),
-            ElevatedButton(onPressed: () {}, child: Text(local.register)), // Or localized Add
+            ElevatedButton(
+              onPressed: () {},
+              child: Text(local.register),
+            ), // Or localized Add
           ],
         );
       },
@@ -229,7 +232,9 @@ class AdminManagementScreen extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(local.delete_admin),
-        content: Text(local.delete_admin_confirm_label.replaceFirst('{name}', name)),
+        content: Text(
+          local.delete_admin_confirm_label.replaceFirst('{name}', name),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

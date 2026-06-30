@@ -12,16 +12,16 @@ class MiniSparkline extends StatelessWidget {
   Widget build(BuildContext context) {
     final spots = data.length > 6
         ? data
-            .sublist(data.length - 6)
-            .asMap()
-            .entries
-            .map((e) => FlSpot(e.key.toDouble(), e.value.value))
-            .toList()
+              .sublist(data.length - 6)
+              .asMap()
+              .entries
+              .map((e) => FlSpot(e.key.toDouble(), e.value.value))
+              .toList()
         : data
-            .asMap()
-            .entries
-            .map((e) => FlSpot(e.key.toDouble(), e.value.value))
-            .toList();
+              .asMap()
+              .entries
+              .map((e) => FlSpot(e.key.toDouble(), e.value.value))
+              .toList();
 
     return SizedBox(
       height: 35,
@@ -46,7 +46,10 @@ class MiniSparkline extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [color.withOpacity(0.15), color.withOpacity(0)],
+                  colors: [
+                    color.withValues(alpha: 0.15),
+                    color.withValues(alpha: 0),
+                  ],
                 ),
               ),
             ),

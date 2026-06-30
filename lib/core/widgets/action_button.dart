@@ -27,10 +27,10 @@ class ActionButton extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 10.h),
             decoration: BoxDecoration(
               // خلفية فاتحة جداً من نفس لون الأيقونة
-              color: color.withOpacity(0.05),
+              color: color.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8.r),
               border: Border.all(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 width: 1,
               ),
             ),

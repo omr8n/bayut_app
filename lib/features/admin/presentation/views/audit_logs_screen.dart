@@ -92,7 +92,7 @@ class _AuditLogsScreenState extends State<AuditLogsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -104,7 +104,7 @@ class _AuditLogsScreenState extends State<AuditLogsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: typeColor.withOpacity(0.1),
+              color: typeColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(typeIcon, color: typeColor, size: 24),
@@ -127,10 +127,7 @@ class _AuditLogsScreenState extends State<AuditLogsScreen> {
                     ),
                     Text(
                       dateStr,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[500],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                     ),
                   ],
                 ),

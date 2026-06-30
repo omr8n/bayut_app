@@ -7,6 +7,7 @@ class GrowthAnalysisHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -15,10 +16,10 @@ class GrowthAnalysisHeader extends StatelessWidget {
           children: [
             Text(
               local.growth_analysis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+                color: isDark ? Colors.white : const Color(0xFF1E293B),
               ),
             ),
             const SizedBox(height: 4),
@@ -26,7 +27,7 @@ class GrowthAnalysisHeader extends StatelessWidget {
               local.performance_comparison,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.blueGrey[300],
+                color: isDark ? Colors.white60 : Colors.blueGrey[300],
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -35,12 +36,14 @@ class GrowthAnalysisHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.grey[50],
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.analytics_outlined,
-            color: Colors.blue,
+            color: isDark ? Colors.blueAccent : Colors.blue,
             size: 20,
           ),
         ),

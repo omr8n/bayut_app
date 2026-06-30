@@ -22,14 +22,19 @@ class SummaryHeader extends StatelessWidget {
               ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1E293B).withOpacity(
-              Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.3,
+            color: const Color(0xFF1E293B).withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.4
+                  : 0.3,
             ),
             blurRadius: 25,
             offset: const Offset(0, 15),
           ),
         ],
-        border: Border.all(color: Colors.white.withOpacity(0.08), width: 1.5),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,9 +69,11 @@ class SummaryHeader extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                  ),
                 ),
                 child: const Icon(
                   Icons.bolt_rounded,
@@ -80,7 +87,7 @@ class SummaryHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -95,7 +102,7 @@ class SummaryHeader extends StatelessWidget {
                 Container(
                   width: 1,
                   height: 20,
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                 ),
                 HeaderMiniStat(
                   label: local.updateStatus,

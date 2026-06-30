@@ -63,7 +63,7 @@ class FinancialTransfersView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withOpacity(0.3),
+                      color: Colors.green.withValues(alpha: .3),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -135,7 +135,7 @@ class FinancialTransfersView extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -147,8 +147,8 @@ class FinancialTransfersView extends StatelessWidget {
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: record.type == TransactionType.extraPropertyListing
-                  ? Colors.blue.withOpacity(0.1)
-                  : Colors.green.withOpacity(0.1),
+                  ? Colors.blue.withValues(alpha: 0.1)
+                  : Colors.green.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -173,9 +173,20 @@ class FinancialTransfersView extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
+                if (record.propertyTitle != null)
+                  Text(
+                    record.propertyTitle!,
+                    style: TextStyle(
+                      color: AppColors.primary.withValues(alpha: 0.7),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 Text(
                   typeText,
-                  style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                  style: TextStyle(color: Colors.grey, fontSize: 11.sp),
                 ),
               ],
             ),

@@ -75,10 +75,10 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: local.search_property_hint,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: .6)),
               prefixIcon: const Icon(Icons.search, color: Colors.white70),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.15),
+              fillColor: Colors.white.withValues(alpha: 0.15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15.r),
                 borderSide: BorderSide.none,
@@ -168,7 +168,9 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
         duration: const Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.amber : Colors.white.withOpacity(0.1),
+          color: isSelected
+              ? Colors.amber
+              : Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20.r),
           border: isSelected ? null : Border.all(color: Colors.white24),
         ),

@@ -15,11 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PropertyCard extends StatefulWidget {
-  const PropertyCard({
-    super.key,
-    required this.property,
-    this.onTap,
-  });
+  const PropertyCard({super.key, required this.property, this.onTap});
 
   final Function(int index)? onTap;
   final PropertyEntity property;
@@ -58,10 +54,7 @@ class _PropertyCardState extends State<PropertyCard> {
         } else {
           context.push(
             AppRoutes.propertyDetailsScreen,
-            extra: {
-              'property': widget.property,
-              'initialIndex': 0,
-            },
+            extra: {'property': widget.property, 'initialIndex': 0},
           );
         }
       },
@@ -72,7 +65,7 @@ class _PropertyCardState extends State<PropertyCard> {
           borderRadius: BorderRadius.circular(15.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.2 : 0.06),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -116,7 +109,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                 child: Container(
                                   padding: EdgeInsets.all(8.w),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.4),
+                                    color: Colors.black.withValues(alpha: 0.4),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -130,7 +123,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           if (isLastVisible)
                             IgnorePointer(
                               child: Container(
-                                color: Colors.black.withOpacity(0.5),
+                                color: Colors.black.withValues(alpha: 0.5),
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -176,7 +169,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             decoration: BoxDecoration(
                               color: _currentImageIndex == index
                                   ? Colors.white
-                                  : Colors.white.withOpacity(0.5),
+                                  : Colors.white.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
@@ -188,7 +181,9 @@ class _PropertyCardState extends State<PropertyCard> {
                   ValueListenableBuilder(
                     valueListenable: ViewedPropertiesManager().changeNotifier,
                     builder: (context, _, __) {
-                      if (!ViewedPropertiesManager().isViewed(widget.property.id)) {
+                      if (!ViewedPropertiesManager().isViewed(
+                        widget.property.id,
+                      )) {
                         return const SizedBox.shrink();
                       }
                       return Positioned(
@@ -200,11 +195,13 @@ class _PropertyCardState extends State<PropertyCard> {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkCard.withOpacity(0.9) : Colors.white.withOpacity(0.9),
+                            color: isDark
+                                ? AppColors.darkCard.withValues(alpha: 0.9)
+                                : Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(20.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -216,7 +213,9 @@ class _PropertyCardState extends State<PropertyCard> {
                               Text(
                                 localizations.isEnLocale ? 'Viewed' : 'شوهد',
                                 style: TextStyle(
-                                  color: isDark ? Colors.white70 : Colors.grey[700],
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.grey[700],
                                   fontSize: 10.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -224,7 +223,9 @@ class _PropertyCardState extends State<PropertyCard> {
                               SizedBox(width: 4.w),
                               Icon(
                                 Icons.check_circle_rounded,
-                                color: isDark ? AppColors.success : Colors.grey[600],
+                                color: isDark
+                                    ? AppColors.success
+                                    : Colors.grey[600],
                                 size: 14.sp,
                               ),
                             ],
@@ -241,7 +242,8 @@ class _PropertyCardState extends State<PropertyCard> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (widget.property.views >= 5) // شارة التريند تظهر دائماً إذا حقق الشرط
+                        if (widget.property.views >=
+                            5) // شارة التريند تظهر دائماً إذا حقق الشرط
                           Container(
                             margin: EdgeInsets.only(left: 8.w),
                             padding: EdgeInsets.symmetric(
@@ -253,7 +255,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               borderRadius: BorderRadius.circular(8.r),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -285,13 +287,14 @@ class _PropertyCardState extends State<PropertyCard> {
                             vertical: 5.h,
                           ),
                           decoration: BoxDecoration(
-                            color: widget.property.listingType == ListingType.sale
+                            color:
+                                widget.property.listingType == ListingType.sale
                                 ? AppColors.forSale
                                 : AppColors.forRent,
                             borderRadius: BorderRadius.circular(8.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -325,7 +328,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           borderRadius: BorderRadius.circular(8.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -356,7 +359,8 @@ class _PropertyCardState extends State<PropertyCard> {
                   // 🔥 شارة "قيد التقسيط" (Under Installment Badge)
                   if (widget.property.status == PropertyStatus.underInstallment)
                     Positioned(
-                      top: 45.h, // وضعه تحت شارة "مميز" إذا وُجدت، أو في مكان بارز
+                      top: 45
+                          .h, // وضعه تحت شارة "مميز" إذا وُجدت، أو في مكان بارز
                       left: 12.w,
                       child: Container(
                         padding: EdgeInsets.symmetric(
@@ -368,7 +372,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           borderRadius: BorderRadius.circular(8.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: .2),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -384,7 +388,9 @@ class _PropertyCardState extends State<PropertyCard> {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              localizations.translate(LangKeys.underInstallment),
+                              localizations.translate(
+                                LangKeys.underInstallment,
+                              ),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.sp,
@@ -421,7 +427,9 @@ class _PropertyCardState extends State<PropertyCard> {
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w900,
-                                  color: isDark ? Colors.white : AppColors.primary,
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppColors.primary,
                                 ),
                               ),
                             ),
@@ -453,7 +461,9 @@ class _PropertyCardState extends State<PropertyCard> {
                         width: double.infinity,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: localizations.isEnLocale ? Alignment.centerLeft : Alignment.centerRight,
+                          alignment: localizations.isEnLocale
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
                           child: Text(
                             widget.property.title,
                             style: TextStyle(
@@ -469,20 +479,26 @@ class _PropertyCardState extends State<PropertyCard> {
                         width: double.infinity,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: localizations.isEnLocale ? Alignment.centerLeft : Alignment.centerRight,
+                          alignment: localizations.isEnLocale
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
                           child: Row(
                             children: [
                               Icon(
                                 Icons.location_on_rounded,
                                 size: 14.sp,
-                                color: isDark ? Colors.white70 : AppColors.primary,
+                                color: isDark
+                                    ? Colors.white70
+                                    : AppColors.primary,
                               ),
                               SizedBox(width: 4.w),
                               Text(
                                 '${localizations.translate(widget.property.governorate)}، ${widget.property.city}',
                                 style: TextStyle(
                                   fontSize: 13.sp,
-                                  color: isDark ? AppColors.textSecondaryDark : Colors.grey[600],
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : Colors.grey[600],
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -495,7 +511,10 @@ class _PropertyCardState extends State<PropertyCard> {
                 ),
               ),
             ),
-            Divider(height: 1, color: isDark ? Colors.white12 : Colors.grey.shade200),
+            Divider(
+              height: 1,
+              color: isDark ? Colors.white12 : Colors.grey.shade200,
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CommunicationButtons(property: widget.property),
@@ -511,7 +530,11 @@ class _PropertyCardState extends State<PropertyCard> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 18.sp, color: isDark ? Colors.white70 : Colors.grey[700]),
+        Icon(
+          icon,
+          size: 18.sp,
+          color: isDark ? Colors.white70 : Colors.grey[700],
+        ),
         SizedBox(width: 6.w),
         Text(
           value,

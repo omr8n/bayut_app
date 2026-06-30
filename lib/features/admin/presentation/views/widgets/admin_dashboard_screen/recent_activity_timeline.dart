@@ -18,8 +18,10 @@ class RecentActivityTimeline extends StatelessWidget {
         borderRadius: BorderRadius.circular(32.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.015,
+            color: Colors.black.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.2
+                  : 0.015,
             ),
             blurRadius: 25,
             offset: const Offset(0, 8),
@@ -81,9 +83,9 @@ class RecentActivityTimeline extends StatelessWidget {
             width: 38.w,
             height: 38.w,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.03),
+              color: color.withValues(alpha: .03),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withOpacity(0.08)),
+              border: Border.all(color: color.withValues(alpha: 0.08)),
             ),
             child: Center(
               child: Text(
@@ -133,7 +135,7 @@ class RecentActivityTimeline extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.08),
+                  color: color.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: color, size: 20.sp),

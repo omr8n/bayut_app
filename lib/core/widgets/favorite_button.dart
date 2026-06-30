@@ -42,8 +42,10 @@ class FavoriteButton extends StatelessWidget {
     return BlocBuilder<FavoritesCubit, FavoritesState>(
       buildWhen: (previous, current) => current is FavoritesLoaded,
       builder: (context, state) {
-        final bool isFav = context.read<FavoritesCubit>().isFavorite(propertyId);
-        
+        final bool isFav = context.read<FavoritesCubit>().isFavorite(
+          propertyId,
+        );
+
         Widget icon = Icon(
           isFav ? Icons.favorite : Icons.favorite_border,
           color: isFav ? Colors.red : Colors.grey,
@@ -60,7 +62,7 @@ class FavoriteButton extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),

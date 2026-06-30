@@ -21,12 +21,12 @@ class TrendingStatusCard extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.orange.withOpacity(0.05)
+            ? Colors.orange.withValues(alpha: 0.05)
             : const Color(0xFFFFF7F2), // برتقالي باهت جداً
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isDark
-              ? Colors.orange.withOpacity(0.3)
+              ? Colors.orange.withValues(alpha: 0.3)
               : const Color(0xFFFFE0B2),
           width: 1.5,
         ),
@@ -40,7 +40,7 @@ class TrendingStatusCard extends StatelessWidget {
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.orange.withOpacity(0.2)
+                      ? Colors.orange.withValues(alpha: 0.2)
                       : const Color(0xFFFFE0B2),
                   shape: BoxShape.circle,
                 ),
@@ -107,7 +107,7 @@ class TrendingStatusCard extends StatelessWidget {
                       'مؤهل للتريند حتى: 2026/07/28',
                       style: TextStyle(
                         color: isDark
-                            ? Colors.orange.withOpacity(0.5)
+                            ? Colors.orange.withValues(alpha: 0.5)
                             : Colors.orange.shade200,
                         fontSize: 10.sp,
                       ),

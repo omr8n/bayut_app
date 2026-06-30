@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/utils/colors.dart';
 
 import 'widgets/profile_header.dart';
 import 'widgets/profile_menu_section.dart';

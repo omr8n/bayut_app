@@ -56,7 +56,8 @@ class _WelcomeText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final firstName = name?.split(' ').first ?? localizations.translate(LangKeys.guestUser);
+    final firstName =
+        name?.split(' ').first ?? localizations.translate(LangKeys.guestUser);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
@@ -65,7 +66,9 @@ class _WelcomeText extends StatelessWidget {
           localizations.isEnLocale ? 'Hello,' : 'هلا،',
           style: TextStyle(
             fontSize: 11.sp,
-            color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : Colors.grey.shade600,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppColors.textSecondaryDark
+                : Colors.grey.shade600,
             fontWeight: FontWeight.w500,
             height: 1.1,
           ),
@@ -75,7 +78,9 @@ class _WelcomeText extends StatelessWidget {
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
             height: 1.1,
           ),
         ),
@@ -102,11 +107,16 @@ class _NotificationBadge extends StatelessWidget {
           constraints: const BoxConstraints(),
           icon: Badge(
             isLabelVisible: unreadCount > 0,
-            label: Text(unreadCount.toString(), style: TextStyle(fontSize: 10.sp)),
+            label: Text(
+              unreadCount.toString(),
+              style: TextStyle(fontSize: 10.sp),
+            ),
             backgroundColor: Colors.redAccent,
             child: Icon(
               Icons.notifications_none_rounded,
-              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black87,
               size: 24.sp,
             ),
           ),
@@ -121,11 +131,7 @@ class _ProfileAvatar extends StatelessWidget {
   final String? imageUrl;
   final String? name;
 
-  const _ProfileAvatar({
-    required this.isLoggedIn,
-    this.imageUrl,
-    this.name,
-  });
+  const _ProfileAvatar({required this.isLoggedIn, this.imageUrl, this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +141,9 @@ class _ProfileAvatar extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white24 : Colors.grey.shade200,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white24
+                : Colors.grey.shade200,
             width: 1.5,
           ),
         ),
@@ -148,10 +156,14 @@ class _ProfileAvatar extends StatelessWidget {
     if (!isLoggedIn) {
       return CircleAvatar(
         radius: 18.r,
-        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.darkSurface : Colors.grey.shade50,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkSurface
+            : Colors.grey.shade50,
         child: Icon(
           Icons.person_outline_rounded,
-          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.grey.shade700,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white70
+              : Colors.grey.shade700,
           size: 22.sp,
         ),
       );
@@ -161,14 +173,10 @@ class _ProfileAvatar extends StatelessWidget {
       // 🔥 استخدام CachedNetworkImage للسرعة والأداء
       return CachedNetworkImage(
         imageUrl: imageUrl!,
-        imageBuilder: (context, imageProvider) => CircleAvatar(
-          radius: 18.r,
-          backgroundImage: imageProvider,
-        ),
-        placeholder: (context, url) => CircleAvatar(
-          radius: 18.r,
-          backgroundColor: Colors.grey.shade200,
-        ),
+        imageBuilder: (context, imageProvider) =>
+            CircleAvatar(radius: 18.r, backgroundImage: imageProvider),
+        placeholder: (context, url) =>
+            CircleAvatar(radius: 18.r, backgroundColor: Colors.grey.shade200),
         errorWidget: (context, url, error) => _buildInitialAvatar(),
       );
     }
@@ -177,10 +185,12 @@ class _ProfileAvatar extends StatelessWidget {
   }
 
   Widget _buildInitialAvatar() {
-    final initial = (name != null && name!.isNotEmpty) ? name![0].toUpperCase() : "U";
+    final initial = (name != null && name!.isNotEmpty)
+        ? name![0].toUpperCase()
+        : "U";
     return CircleAvatar(
       radius: 18.r,
-      backgroundColor: AppColors.primary.withOpacity(0.1),
+      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
       child: Text(
         initial,
         style: TextStyle(

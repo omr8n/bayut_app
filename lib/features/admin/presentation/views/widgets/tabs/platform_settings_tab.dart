@@ -44,17 +44,6 @@ class PlatformSettingsTab extends StatelessWidget {
                     },
                   ),
                   SettingsSwitchTile(
-                    title: local.translate(LangKeys.manualApproval),
-                    subtitle: local.translate(LangKeys.manualApprovalDesc),
-                    icon: const Icon(Icons.verified_user_rounded),
-                    iconBackgroundColor: const Color(0xFF64B5F6),
-                    value: config.requireAdminApproval,
-                    onChanged: (val) {
-                      final updated = config.copyWith(requireAdminApproval: val);
-                      cubit.updateConfigLocally(updated);
-                    },
-                  ),
-                  SettingsSwitchTile(
                     title: local.translate(LangKeys.generalNotifications),
                     subtitle: local.translate(LangKeys.generalNotificationsDesc),
                     icon: const Icon(Icons.notifications_active_rounded),

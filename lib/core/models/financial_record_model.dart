@@ -5,6 +5,7 @@ enum TransactionType { promotionWeekly, promotionMonthly, extraPropertyListing }
 class FinancialRecordModel {
   final String id;
   final String propertyId;
+  final String? propertyTitle; // 🔥 إضافة عنوان العقار لمزيد من التفاصيل
   final String sellerId;
   final String sellerName;
   final double amount;
@@ -15,6 +16,7 @@ class FinancialRecordModel {
   FinancialRecordModel({
     required this.id,
     required this.propertyId,
+    this.propertyTitle,
     required this.sellerId,
     required this.sellerName,
     required this.amount,
@@ -27,6 +29,7 @@ class FinancialRecordModel {
     return {
       'id': id,
       'propertyId': propertyId,
+      'propertyTitle': propertyTitle,
       'sellerId': sellerId,
       'sellerName': sellerName,
       'amount': amount,
@@ -40,6 +43,7 @@ class FinancialRecordModel {
     return FinancialRecordModel(
       id: json['id'] as String? ?? '',
       propertyId: json['propertyId'] as String? ?? '',
+      propertyTitle: json['propertyTitle'] as String?,
       sellerId: json['sellerId'] as String? ?? '',
       sellerName: json['sellerName'] as String? ?? '',
       amount: (json['amount'] as num? ?? 0).toDouble(),

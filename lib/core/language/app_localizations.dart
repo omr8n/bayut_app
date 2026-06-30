@@ -305,4 +305,11 @@ class AppLocalizations {
   String get remaining_time => translate(LangKeys.remainingTime);
   String get settings => translate(LangKeys.settings);
   String get currency_lira => translate(LangKeys.currencyLira);
+
+  // Promotion
+  String get promotion_success_title => translate(LangKeys.promotionSuccessTitle);
+  String get promotion_processing_msg => translate(LangKeys.promotionProcessingMsg);
+  String get link_coming_soon => translate(LangKeys.linkComingSoon);
+  String get legal_policies => translate(LangKeys.legalPolicies);
+  String get legal_policies_desc => translate(LangKeys.legalPoliciesDesc);
 }

@@ -50,7 +50,9 @@ class BasicInfoCard extends StatelessWidget {
                   child: CustomTextFormField(
                     controller: buildingAgeController,
                     focusNode: ageNode,
-                    textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,
+                    textAlign: locale.isEnLocale
+                        ? TextAlign.left
+                        : TextAlign.right,
                     labelText: locale.translate(LangKeys.buildingAge),
                     prefixIcon: Icons.calendar_today,
                     keyboardType: TextInputType.number,
@@ -59,7 +61,9 @@ class BasicInfoCard extends StatelessWidget {
                             buildingAgeController.text.isNotEmpty
                         ? locale.translate(LangKeys.year)
                         : null,
-                    hintText: ageNode.hasFocus ? '' : locale.translate(LangKeys.leaveEmptyForNew),
+                    hintText: ageNode.hasFocus
+                        ? ''
+                        : locale.translate(LangKeys.leaveEmptyForNew),
                   ),
                 ),
               ],
@@ -133,7 +137,7 @@ class BasicInfoCard extends StatelessWidget {
     AppLocalizations locale,
   ) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
@@ -144,10 +148,9 @@ class BasicInfoCard extends StatelessWidget {
           .map(
             (String val) => DropdownMenuItem<String>(
               value: val,
-              alignment:
-                  locale.isEnLocale
-                      ? AlignmentDirectional.centerStart
-                      : AlignmentDirectional.centerEnd,
+              alignment: locale.isEnLocale
+                  ? AlignmentDirectional.centerStart
+                  : AlignmentDirectional.centerEnd,
               child: Text(
                 locale.translate(val),
                 textAlign: locale.isEnLocale ? TextAlign.left : TextAlign.right,

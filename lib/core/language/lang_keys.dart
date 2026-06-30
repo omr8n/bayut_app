@@ -497,6 +497,7 @@ class LangKeys {
   static const String cancel = 'cancel';
   static const String sendRating = 'send_rating';
   static const String ratingSuccess = 'rating_success';
+  static const String report = 'notif_type_report';
 
   // General Messages
   static const String sellerProfile = 'seller_profile';
@@ -717,8 +718,6 @@ class LangKeys {
   static const String basicControl = 'basic_control';
   static const String maintenanceMode = 'maintenance_mode';
   static const String maintenanceModeDesc = 'maintenance_mode_desc';
-  static const String manualApproval = 'manual_approval';
-  static const String manualApprovalDesc = 'manual_approval_desc';
   static const String generalNotifications = 'general_notifications';
   static const String generalNotificationsDesc = 'general_notifications_desc';
   static const String platformIdentity = 'platform_identity';
@@ -866,6 +865,10 @@ class LangKeys {
   static const String promotionRequest = 'promotion_request';
   static const String promotionPending = 'promotion_pending';
   static const String promotionRejected = 'promotion_rejected';
+  static const String promotionSuccessTitle = 'promotion_success_title';
+  static const String promotionProcessingMsg = 'promotion_processing_msg';
+  static const String linkComingSoon = 'link_coming_soon';
+  static const String fillFromProfile = 'fill_from_profile';
   static const String featuredPropertyLabel = 'featured_property_label';
   static const String editAction = 'edit_action';
   static const String views = 'views';

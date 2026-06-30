@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
-import 'package:test_graduation/core/utils/colors.dart';
 
 class CustomBottonNavigationBar extends StatelessWidget {
   const CustomBottonNavigationBar({
@@ -21,7 +20,11 @@ class CustomBottonNavigationBar extends StatelessWidget {
         color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
+            color: Colors.black.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.3
+                  : 0.1,
+            ),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -32,8 +35,12 @@ class CustomBottonNavigationBar extends StatelessWidget {
         onTap: onTap,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
-        selectedItemColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
-        unselectedItemColor: Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+        selectedItemColor: Theme.of(
+          context,
+        ).bottomNavigationBarTheme.selectedItemColor,
+        unselectedItemColor: Theme.of(
+          context,
+        ).bottomNavigationBarTheme.unselectedItemColor,
         selectedFontSize: 12,
         unselectedFontSize: 12,
         elevation: 0,

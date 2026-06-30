@@ -15,7 +15,7 @@ class RecentActivityTable extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15),
+          BoxShadow(color: Colors.black.withValues(alpha: .03), blurRadius: 15),
         ],
       ),
       child: Column(

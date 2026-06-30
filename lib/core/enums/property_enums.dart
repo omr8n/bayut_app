@@ -21,6 +21,26 @@ enum PropertyType {
 
 enum Currency { usd, tryCurrency }
 
+class CurrencyHelper {
+  static String localize(BuildContext context, String currency) {
+    final localizations = AppLocalizations.of(context);
+    if (localizations == null) return currency;
+
+    final trimmedCurrency = currency.trim().toUpperCase();
+
+    // Map common currency strings to translation keys
+    if (trimmedCurrency == 'SYP' || trimmedCurrency == 'ل.س') {
+      return localizations.translate(LangKeys.currencyLira);
+    } else if (trimmedCurrency == 'USD' || trimmedCurrency == 'دولار أمريكي') {
+      return localizations.translate(LangKeys.usd);
+    } else if (trimmedCurrency == 'TRY' || trimmedCurrency == 'ليرة تركية') {
+      return localizations.translate(LangKeys.tryCurrency);
+    }
+
+    return currency;
+  }
+}
+
 enum ListingType { sale, rent }
 
 enum PropertyStatus { active, sold, rented, underInstallment }

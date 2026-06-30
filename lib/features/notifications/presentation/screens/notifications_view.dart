@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:test_graduation/core/language/app_localizations.dart';
+
 import 'package:test_graduation/core/models/notification_model.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
@@ -16,7 +16,9 @@ class NotificationsView extends StatelessWidget {
     final userId = context.read<ProfileCubit>().user?.uId ?? '';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFBFBFC), // خلفية رمادية خفيفة جداً كما في الصورة
+      backgroundColor: const Color(
+        0xFFFBFBFC,
+      ), // خلفية رمادية خفيفة جداً كما في الصورة
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -35,7 +37,8 @@ class NotificationsView extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => context.read<UserNotificationCubit>().markAllAsRead(userId),
+            onPressed: () =>
+                context.read<UserNotificationCubit>().markAllAsRead(userId),
             child: Text(
               'تحديد الكل كمقروء',
               style: TextStyle(fontSize: 12.sp, color: AppColors.primary),
@@ -59,9 +62,16 @@ class NotificationsView extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.notifications_none_rounded, size: 64.sp, color: Colors.grey.shade300),
+                    Icon(
+                      Icons.notifications_none_rounded,
+                      size: 64.sp,
+                      color: Colors.grey.shade300,
+                    ),
                     SizedBox(height: 16.h),
-                    Text('لا يوجد إشعارات حالياً', style: TextStyle(color: Colors.grey.shade500)),
+                    Text(
+                      'لا يوجد إشعارات حالياً',
+                      style: TextStyle(color: Colors.grey.shade500),
+                    ),
                   ],
                 ),
               );
@@ -102,7 +112,10 @@ class _NotificationItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (isUnread) {
-          context.read<UserNotificationCubit>().markAsSeen(userId, notification.id);
+          context.read<UserNotificationCubit>().markAsSeen(
+            userId,
+            notification.id,
+          );
         }
       },
       child: Container(
@@ -138,7 +151,10 @@ class _NotificationItem extends StatelessWidget {
                         Container(
                           width: 8.w,
                           height: 8.w,
-                          decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                            color: dotColor,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                         SizedBox(width: 8.w),
                       ],

@@ -31,10 +31,12 @@ class DonutChartCard extends StatelessWidget {
       'oninstallment': const Color(0xFF06B6D4),
       'underinstallment': const Color(0xFF06B6D4),
       local.featured_label: color,
-      local.normal_label: color.withOpacity(0.12),
+      local.normal_label: color.withValues(alpha: 0.12),
       local.sale: color,
-      local.rent: color.withOpacity(0.12),
+      local.rent: color.withValues(alpha: 0.12),
     };
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: 170.w,
@@ -46,13 +48,17 @@ class DonutChartCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.02,
-            ),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : const Color(0xFFF0F0F0).withValues(alpha: 0.5),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
@@ -69,7 +75,8 @@ class DonutChartCard extends StatelessWidget {
                     sections: data.entries.map((e) {
                       final key = e.key.toLowerCase().trim();
                       return PieChartSectionData(
-                        color: statusColors[key] ?? color.withOpacity(0.3),
+                        color:
+                            statusColors[key] ?? color.withValues(alpha: 0.3),
                         value: e.value.toDouble(),
                         radius: 10.r,
                         showTitle: false,
@@ -122,7 +129,8 @@ class DonutChartCard extends StatelessWidget {
                       width: 7.w,
                       height: 7.w,
                       decoration: BoxDecoration(
-                        color: statusColors[key] ?? color.withOpacity(0.3),
+                        color:
+                            statusColors[key] ?? color.withValues(alpha: 0.3),
                         shape: BoxShape.circle,
                       ),
                     ),

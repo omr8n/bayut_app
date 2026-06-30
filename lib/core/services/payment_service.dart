@@ -20,6 +20,7 @@ class PaymentService {
       final record = FinancialRecordModel(
         id: transactionId,
         propertyId: "extra_listing_${DateTime.now().millisecondsSinceEpoch}",
+        propertyTitle: propertyTitle, // 🔥 حفظ اسم العقار لزيادة التفاصيل
         sellerId: user.uId,
         sellerName: user.name,
         amount: amount,

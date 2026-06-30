@@ -22,16 +22,19 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
     // الاستماع للتغييرات بشكل مباشر
     _settingsSubscription = appSettingsRepo.watchAppSettings().listen(
       (result) {
+        if (isClosed) return;
         result.fold(
-          (failure) => emit(AdminSettingsFailure(failure.message)),
+          (failure) {
+            if (!isClosed) emit(AdminSettingsFailure(failure.message));
+          },
           (config) {
             currentConfig = config;
-            emit(AdminSettingsLoaded(config));
+            if (!isClosed) emit(AdminSettingsLoaded(config));
           },
         );
       },
       onError: (e) {
-        emit(AdminSettingsFailure(e.toString()));
+        if (!isClosed) emit(AdminSettingsFailure(e.toString()));
       },
     );
   }
@@ -45,19 +48,22 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
   // تحديث الإعدادات محلياً فقط (Draft)
   void updateConfigLocally(AppConfigModel config) {
     currentConfig = config;
-    emit(AdminSettingsLoaded(config));
+    if (!isClosed) emit(AdminSettingsLoaded(config));
   }
 
   // حفظ كل التغييرات لقاعدة البيانات
   Future<void> saveAllSettings() async {
     if (currentConfig == null) return;
-    emit(AdminSettingsLoading());
+    if (!isClosed) emit(AdminSettingsLoading());
     final result = await appSettingsRepo.updateAppSettings(currentConfig!);
+    if (isClosed) return;
     result.fold(
-      (failure) => emit(AdminSettingsFailure(failure.message)),
+      (failure) {
+        if (!isClosed) emit(AdminSettingsFailure(failure.message));
+      },
       (_) {
-        emit(AdminSettingsUpdateSuccess());
-        emit(AdminSettingsLoaded(currentConfig!));
+        if (!isClosed) emit(AdminSettingsUpdateSuccess());
+        if (!isClosed) emit(AdminSettingsLoaded(currentConfig!));
       },
     );
   }
@@ -78,6 +84,33 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
       whatsappNumber: whatsapp,
       facebookUrl: facebook,
       instagramUrl: instagram,
+    );
+
+    updateConfigLocally(updatedConfig);
+  }
+
+  // Pre-fill contact info from currently logged-in Admin profile
+  void fillInfoFromAdmin({
+    required String email,
+    required String phone,
+  }) {
+    if (currentConfig == null) return;
+
+    // Clean phone number to start with 09
+    String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanPhone.startsWith('963')) {
+      cleanPhone = cleanPhone.substring(3);
+    }
+    if (!cleanPhone.startsWith('09')) {
+      if (cleanPhone.startsWith('9')) {
+        cleanPhone = '0$cleanPhone';
+      }
+    }
+
+    final updatedConfig = currentConfig!.copyWith(
+      contactEmail: email,
+      contactPhone: cleanPhone,
+      whatsappNumber: cleanPhone,
     );
 
     updateConfigLocally(updatedConfig);

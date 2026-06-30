@@ -235,13 +235,13 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.orange.withOpacity(0.05)
+            ? Colors.orange.withValues(alpha: 0.05)
             : const Color(0xFFFFF9F0),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isDark
-              ? Colors.orange.withOpacity(0.2)
-              : Colors.orange.withOpacity(0.2),
+              ? Colors.orange.withValues(alpha: 0.2)
+              : Colors.orange.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -356,13 +356,13 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: isDark
-            ? AppColors.primary.withOpacity(0.1)
+            ? AppColors.primary.withValues(alpha: .1)
             : const Color(0xFFF3F7FA),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isDark
-              ? AppColors.primary.withOpacity(0.2)
-              : Colors.blue.withOpacity(0.1),
+              ? AppColors.primary.withValues(alpha: 0.2)
+              : Colors.blue.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -376,7 +376,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1E4C9A).withOpacity(0.1),
+                      color: const Color(0xFF1E4C9A).withValues(alpha: .1),
                       blurRadius: 10,
                     ),
                   ],

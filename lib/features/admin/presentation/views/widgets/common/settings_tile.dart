@@ -30,8 +30,8 @@ class SettingsTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        splashColor: iconBackgroundColor.withOpacity(0.08),
-        highlightColor: iconBackgroundColor.withOpacity(0.04),
+        splashColor: iconBackgroundColor.withValues(alpha: .08),
+        highlightColor: iconBackgroundColor.withValues(alpha: 0.04),
         child: Column(
           children: [
             Padding(
@@ -45,8 +45,8 @@ class SettingsTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          iconBackgroundColor.withOpacity(0.12),
-                          iconBackgroundColor.withOpacity(0.05),
+                          iconBackgroundColor.withValues(alpha: 0.12),
+                          iconBackgroundColor.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,

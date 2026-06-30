@@ -77,9 +77,11 @@ class PropertyDetailsHeader extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(isDark ? 0.2 : 0.1),
+                  color: AppColors.error.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                  border: Border.all(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -90,8 +92,8 @@ class PropertyDetailsHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'إبلاغ',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.translate(LangKeys.report),
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: AppColors.error,
@@ -135,15 +137,23 @@ class PropertyDetailsHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1),
+        color: color.withValues(
+          alpha: Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.1,
+        ),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 14, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : color),
+            Icon(
+              icon,
+              size: 14,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : color,
+            ),
             const SizedBox(width: 4),
           ],
           Text(
@@ -151,7 +161,9 @@ class PropertyDetailsHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : color,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : color,
             ),
           ),
         ],

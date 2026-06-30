@@ -1,16 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
-import 'package:test_graduation/core/models/report_model.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
+import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:test_graduation/features/reports/domain/entities/report_entity.dart';
 import 'package:test_graduation/features/reports/presentation/cubit/report_cubit.dart';
 import 'package:test_graduation/features/reports/presentation/views/widgets/report_reason_selector.dart';
-import 'package:test_graduation/features/reports/presentation/views/widgets/reporter_contact_fields.dart';
 import 'package:uuid/uuid.dart';
 
 class ReportBottomSheet extends StatefulWidget {
@@ -24,25 +22,11 @@ class ReportBottomSheet extends StatefulWidget {
 
 class _ReportBottomSheetState extends State<ReportBottomSheet> {
   ReportReason? _selectedReason;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-    final user = firebase.FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      _nameController.text = user.displayName ?? '';
-      _emailController.text = user.email ?? '';
-    }
-  }
-
-  @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
@@ -97,13 +81,6 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
                           setState(() => _selectedReason = reason),
                     ),
                     const SizedBox(height: 25),
-
-                    // استخدام الـ Widget المنفصل لحقول الاتصال
-                    ReporterContactFields(
-                      nameController: _nameController,
-                      emailController: _emailController,
-                    ),
-                    const SizedBox(height: 20),
 
                     Text(
                       AppLocalizations.of(
@@ -214,13 +191,15 @@ class _ReportBottomSheetState extends State<ReportBottomSheet> {
   void _submit(BuildContext context) {
     if (!_formKey.currentState!.validate()) return;
 
+    final user = context.read<ProfileCubit>().user;
+
     final report = ReportEntity(
       id: const Uuid().v4(),
       propertyId: widget.property.id,
       propertyTitle: widget.property.title,
-      reporterId: firebase.FirebaseAuth.instance.currentUser?.uid ?? 'guest',
-      reporterName: _nameController.text.trim(),
-      reporterEmail: _emailController.text.trim(),
+      reporterId: user?.uId ?? 'guest',
+      reporterName: user?.name ?? 'Guest',
+      reporterEmail: user?.email ?? 'No email',
       reportedUserId: widget.property.sellerId,
       reportedUserName: widget.property.sellerName,
       reason: _selectedReason!,

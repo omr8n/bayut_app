@@ -5,7 +5,7 @@ import 'package:test_graduation/core/helper/my_app_method.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
-import 'package:test_graduation/core/services/secure_storage_singleton.dart';
+
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 
 import 'night_mode_switch.dart';
@@ -29,7 +29,9 @@ class ProfileMenuSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.05),
+            color: Colors.black.withOpacity(
+              Theme.of(context).brightness == Brightness.dark ? 0.2 : 0.05,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -127,7 +129,9 @@ class ProfileMenuSection extends StatelessWidget {
 
           // 🔥 زر تفاعلي: تسجيل دخول (للزائر) أو تسجيل خروج (للمسجل)
           ProfileMenuItem(
-            key: ValueKey('login_logout_$isLoggedIn'), // مفتاح فريد لإجبار إعادة البناء
+            key: ValueKey(
+              'login_logout_$isLoggedIn',
+            ), // مفتاح فريد لإجبار إعادة البناء
             icon: isLoggedIn ? Icons.logout : Icons.login,
             title: isLoggedIn
                 ? locale.translate(LangKeys.logOut)
