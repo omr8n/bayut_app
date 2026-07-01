@@ -55,23 +55,23 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         surfaceTintColor: Colors.transparent,
         leading: Builder(
           builder: (context) => IconButton(
+            onPressed: () => Scaffold.of(context).openDrawer(),
             icon: Icon(
-              Icons.settings_outlined,
+              Icons.menu_rounded,
               color: isDark ? Colors.white : const Color(0xFF1A1C1E),
-              size: 22.sp,
+              size: 24.sp,
             ),
-            onPressed: () => context.pushNamed(AppRoutes.adminSettings),
           ),
         ),
         actions: [
           Builder(
             builder: (context) => IconButton(
-              onPressed: () => Scaffold.of(context).openDrawer(),
               icon: Icon(
-                Icons.menu_rounded,
+                Icons.settings_outlined,
                 color: isDark ? Colors.white : const Color(0xFF1A1C1E),
-                size: 24.sp,
+                size: 22.sp,
               ),
+              onPressed: () => context.pushNamed(AppRoutes.adminSettings),
             ),
           ),
         ],

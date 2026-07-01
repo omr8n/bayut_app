@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
@@ -54,7 +55,11 @@ import 'package:test_graduation/features/admin/presentation/manager/admin_notifi
 import 'app_routes.dart';
 
 class RouterGenerationConfig {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static GoRouter goRouter = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: AppRoutes.onBoardingScreen,
     // 🔥 إضافة refreshListenable لجعل الراوتر يشعر بتغييرات الحالة
     // لكن بما أننا لا نملك ChangeNotifier لـ Auth، سنقوم بتعديل الـ Redirect ليكون أكثر ذكاءً
@@ -402,12 +407,14 @@ class RouterGenerationConfig {
                 BlocProvider(create: (context) => getIt<AdminCubit>()),
                 BlocProvider(
                   create: (context) =>
-                      getIt<AdminNotificationCubit>()..fetchNotificationsHistory(),
+                      getIt<AdminNotificationCubit>()
+                        ..fetchNotificationsHistory(),
                 ),
               ],
               child: AdminNotificationsScreen(
                 targetUserId: extra?['uId'],
                 targetUserName: extra?['name'],
+                targetUserEmail: extra?['email'],
               ),
             ),
           );
@@ -457,9 +464,8 @@ class RouterGenerationConfig {
           }
           return null;
         },
-        pageBuilder: (context, state) => BaseRoute(
-          child: const FinancialTransfersView(),
-        ),
+        pageBuilder: (context, state) =>
+            BaseRoute(child: const FinancialTransfersView()),
       ),
     ],
   );

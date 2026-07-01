@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_graduation/core/utils/colors.dart';
 
 class CustomPriamryButton extends StatelessWidget {
   const CustomPriamryButton({super.key, required this.title, this.onPressed});
@@ -18,10 +17,7 @@ class CustomPriamryButton extends StatelessWidget {
       ),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

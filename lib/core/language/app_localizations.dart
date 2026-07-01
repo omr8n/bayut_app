@@ -78,7 +78,7 @@ class AppLocalizations {
   String get admin_platform_center => translate(LangKeys.adminPlatformCenter);
   String get vital_indicators => translate(LangKeys.vitalIndicators);
   String get market_composition_analysis => translate(LangKeys.marketCompositionAnalysis);
-  String get featured_label => translate(LangKeys.featured);
+  String get featured_label => translate(LangKeys.featuredLabel);
   String get normal_label => translate(LangKeys.normal);
   String get market_status => translate(LangKeys.marketStatus);
   String get recent_activity_summary => translate(LangKeys.recentActivitySummary);
@@ -284,6 +284,8 @@ class AppLocalizations {
   String get user_role => translate(LangKeys.userRole);
   String get no_phone_number => translate(LangKeys.noPhoneNumber);
   String get member_since => translate(LangKeys.memberSince);
+  String get member_since_label => translate(LangKeys.memberSince);
+  String get phone => translate(LangKeys.phone);
   String get write_notes_hint => translate(LangKeys.writeNotesHint);
   String get save_note => translate(LangKeys.saveNote);
   String get send_email => translate(LangKeys.sendEmail);

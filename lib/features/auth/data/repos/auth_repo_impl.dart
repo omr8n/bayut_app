@@ -57,6 +57,23 @@ class AuthRepoImpl extends AuthRepo {
     String? imageUrl,
   }) async {
     try {
+      // 🔥 الأمان: التأكد من أن الإيميل ليس مرتبطاً بحساب محذوف أو محظور سابقاً
+      final existingDocs = await databaseService.getCollectionDocuments(
+        path: BackendEndpoint.getUsersData,
+        whereField: 'email',
+        isEqualTo: email,
+      );
+
+      if (existingDocs.isNotEmpty) {
+        final status = existingDocs.first['status'];
+        if (status == 'deleted' || status == 'banned') {
+          return left(ServerFailure(
+            "عذراً، هذا البريد الإلكتروني غير متاح للاستخدام (محظور أو محذوف سابقاً).",
+          ));
+        }
+        // إذا كان نشطاً، فايربيز سيتكفل برفض العملية لاحقاً كـ email-already-in-use
+      }
+
       var user = await firebaseAuthService.createUserWithEmailAndPassword(
         email: email,
         password: password,

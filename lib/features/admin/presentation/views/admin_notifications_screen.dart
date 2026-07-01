@@ -13,11 +13,13 @@ import 'widgets/admin_notifications/user_search_delegate.dart';
 class AdminNotificationsScreen extends StatefulWidget {
   final String? targetUserId;
   final String? targetUserName;
+  final String? targetUserEmail;
 
   const AdminNotificationsScreen({
     super.key,
     this.targetUserId,
     this.targetUserName,
+    this.targetUserEmail,
   });
 
   @override
@@ -40,6 +42,11 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
     _sendToAll = widget.targetUserId == null;
     _selectedUserId = widget.targetUserId;
     _selectedUserName = widget.targetUserName;
+
+    // 🔥 Auto-disable 'Send to All' if a target user is provided
+    if (widget.targetUserId != null) {
+      _sendToAll = false;
+    }
 
     if (_selectedUserName != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -66,17 +73,17 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FD),
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: Text(locale.admin_notifications),
+        title: Text(locale.admin_notifications, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFF00142B),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -84,20 +91,49 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
         listeners: [
           BlocListener<AdminNotificationCubit, AdminNotificationState>(
             listener: (context, state) {
+              final locale = AppLocalizations.of(context)!;
               if (state is AdminNotificationSendSuccess) {
                 _titleController.clear();
                 _bodyController.clear();
+                
+                // Determine the correct Arabic message
+                String message = state.message;
+                if (message.contains("all users")) {
+                  message = "تم إرسال الإشعار لجميع المستخدمين بنجاح";
+                } else if (message.contains("sent to")) {
+                  final name = message.split("sent to ").last;
+                  message = "تم إرسال الإشعار لـ $name بنجاح";
+                }
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.message),
+                    content: Text(
+                      message,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.all(20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                 );
               } else if (state is AdminNotificationSendFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.errMessage),
+                    content: Text(
+                      state.errMessage,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     backgroundColor: AppColors.error,
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.all(20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                 );
               }
@@ -121,18 +157,18 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSendForm(locale),
+              _buildSendForm(locale, isDark),
               const SizedBox(height: 32),
               Text(
                 locale.sent_notifications_history,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 16),
-              _buildNotificationsHistory(locale),
+              _buildNotificationsHistory(locale, isDark),
             ],
           ),
         ),
@@ -140,15 +176,15 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
     );
   }
 
-  Widget _buildSendForm(AppLocalizations locale) {
+  Widget _buildSendForm(AppLocalizations locale, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -167,7 +203,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey[900],
+                      color: isDark ? Colors.white : Colors.blueGrey[900],
                     ),
                   ),
                 ),
@@ -189,11 +225,16 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
 
             TextFormField(
               controller: _titleController,
+              maxLength: 60, // 🔥 الحد المسموح به في العنوان
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: locale.notification_title,
+                labelStyle: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey),
                 hintText: locale.notification_title_hint,
+                hintStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey),
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: isDark ? AppColors.darkInput : Colors.grey[50],
+                counterStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -206,11 +247,16 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
             TextFormField(
               controller: _bodyController,
               maxLines: 3,
+              maxLength: 240, // 🔥 الحد المسموح به في محتوى الرسالة
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: locale.notification_message,
+                labelStyle: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey),
                 hintText: locale.notification_message_hint,
+                hintStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey),
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: isDark ? AppColors.darkInput : Colors.grey[50],
+                counterStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -222,7 +268,11 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
 
             Text(
               locale.notification_type,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 14, 
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
             const SizedBox(height: 12),
             Wrap(
@@ -238,7 +288,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.grey[100],
+                      color: isSelected ? AppColors.primary : (isDark ? AppColors.darkInput : Colors.grey[100]),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isSelected
@@ -251,7 +301,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : Colors.blueGrey,
+                        color: isSelected ? Colors.white : (isDark ? AppColors.textSecondaryDark : Colors.blueGrey),
                       ),
                     ),
                   ),
@@ -260,7 +310,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
             ),
             const SizedBox(height: 24),
 
-            _buildRecipientSelector(locale),
+            _buildRecipientSelector(locale, isDark),
 
             const SizedBox(height: 24),
 
@@ -306,7 +356,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
     );
   }
 
-  Widget _buildRecipientSelector(AppLocalizations locale) {
+  Widget _buildRecipientSelector(AppLocalizations locale, bool isDark) {
     return BlocBuilder<AdminCubit, AdminState>(
       builder: (context, state) {
         int totalUsersCount = 0;
@@ -325,9 +375,10 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               contentPadding: EdgeInsets.zero,
               title: Text(
                 locale.send_to_all_users,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               subtitle: Text(
@@ -337,9 +388,9 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                         totalUsersCount.toString(),
                       )
                     : (_selectedUserName != null
-                          ? '${locale.recipient}: $_selectedUserName'
+                          ? '${locale.recipient}: $_selectedUserName ${widget.targetUserEmail != null ? "(${widget.targetUserEmail})" : ""}'
                           : locale.send_to_user_hint),
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: isDark ? AppColors.textSecondaryDark : Colors.grey),
               ),
               value: _sendToAll,
               onChanged: (v) => setState(() => _sendToAll = v),
@@ -351,7 +402,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                   final user = await showSearch<UserEntity?>(
                     context: context,
                     delegate: UserSearchDelegate(
-                      allUsers,
+                      context.read<AdminCubit>().adminRepo,
                       searchLabel: locale.search,
                     ),
                   );
@@ -389,7 +440,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                           style: TextStyle(
                             color: _selectedUserName != null
                                 ? Colors.blue
-                                : Colors.grey,
+                                : (isDark ? AppColors.textSecondaryDark : Colors.grey),
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
@@ -407,7 +458,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
     );
   }
 
-  Widget _buildNotificationsHistory(AppLocalizations locale) {
+  Widget _buildNotificationsHistory(AppLocalizations locale, bool isDark) {
     return BlocBuilder<AdminNotificationCubit, AdminNotificationState>(
       builder: (context, state) {
         if (state is AdminNotificationLoading) {
@@ -415,7 +466,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
         }
 
         if (state is AdminNotificationFailure) {
-          return Center(child: Text(state.errMessage));
+          return Center(child: Text(state.errMessage, style: TextStyle(color: isDark ? Colors.white : Colors.black)));
         }
 
         if (state is AdminNotificationSuccess) {
@@ -427,12 +478,12 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                   Icon(
                     Icons.notifications_off_rounded,
                     size: 64,
-                    color: Colors.grey[300],
+                    color: isDark ? AppColors.darkSurface : Colors.grey[300],
                   ),
                   const SizedBox(height: 16),
                   Text(
                     locale.no_notification_history,
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(color: isDark ? AppColors.textSecondaryDark : Colors.grey),
                   ),
                 ],
               ),
@@ -445,7 +496,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
             itemCount: notifications.length,
             itemBuilder: (context, index) {
               final notif = notifications[index];
-              return _buildHistoryItem(notif, locale);
+              return _buildHistoryItem(notif, locale, isDark);
             },
           );
         }
@@ -455,14 +506,14 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
     );
   }
 
-  Widget _buildHistoryItem(AppNotification notif, AppLocalizations locale) {
+  Widget _buildHistoryItem(AppNotification notif, AppLocalizations locale, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[100]!),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[100]!),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,23 +538,23 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               const Spacer(),
               Text(
                 DateFormat('yyyy/MM/dd HH:mm').format(notif.sentAt),
-                style: TextStyle(fontSize: 11, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 11, color: isDark ? AppColors.textSecondaryDark : Colors.grey[400]),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             notif.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
-              color: Color(0xFF2D3748),
+              color: isDark ? Colors.white : const Color(0xFF2D3748),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             notif.body,
-            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 13, color: isDark ? Colors.white70 : Colors.grey[600]),
           ),
           const SizedBox(height: 12),
           Row(
@@ -511,7 +562,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
               Icon(
                 notif.sentToAll ? Icons.groups_rounded : Icons.person_rounded,
                 size: 14,
-                color: Colors.blueGrey[300],
+                color: isDark ? AppColors.textSecondaryDark : Colors.blueGrey[300],
               ),
               const SizedBox(width: 4),
               Text(
@@ -521,7 +572,7 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen> {
                         '{name}',
                         notif.targetUserName ?? locale.specific_user,
                       ),
-                style: TextStyle(fontSize: 11, color: Colors.blueGrey[300]),
+                style: TextStyle(fontSize: 11, color: isDark ? AppColors.textSecondaryDark : Colors.blueGrey[300]),
               ),
             ],
           ),

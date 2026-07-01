@@ -174,6 +174,8 @@ class _NotificationItem extends StatelessWidget {
         ? (isDark ? Colors.blue.withValues(alpha: 0.4) : const Color(0xFFD1DCE5))
         : (isDark ? Colors.grey.shade800 : Colors.grey.shade100);
 
+    final isEn = AppLocalizations.of(context)?.isEnLocale ?? false;
+
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: InkWell(
@@ -206,57 +208,99 @@ class _NotificationItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (isEn) ...[
+                _buildThemedIcon(context, isDark),
+                SizedBox(width: 16.w),
+              ],
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      isEn ? CrossAxisAlignment.start : CrossAxisAlignment.end,
                   children: [
                     Row(
                       children: [
-                        if (isUnread) ...[
-                          Container(
-                            width: 8.w,
-                            height: 8.w,
-                            decoration: const BoxDecoration(
-                              color: Colors.redAccent,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.redAccent,
-                                  blurRadius: 4,
-                                  spreadRadius: 1,
+                        if (!isEn) ...[
+                          Text(
+                            DateFormat('dd/MM HH:mm')
+                                .format(notification.sentAt),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: isDark
+                                  ? Colors.grey.shade500
+                                  : Colors.grey.shade400,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    _getLocalizedTitle(
+                                        context, notification.title),
+                                    textAlign: TextAlign.end,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF1A202C),
+                                    ),
+                                  ),
                                 ),
+                                if (isUnread) ...[
+                                  SizedBox(width: 8.w),
+                                  _buildUnreadDot(),
+                                ],
                               ],
                             ),
                           ),
-                          SizedBox(width: 8.w),
+                        ] else ...[
+                          if (isUnread) ...[
+                            _buildUnreadDot(),
+                            SizedBox(width: 8.w),
+                          ],
+                          Expanded(
+                            child: Text(
+                              _getLocalizedTitle(context, notification.title),
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w800,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1A202C),
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            DateFormat('dd/MM HH:mm')
+                                .format(notification.sentAt),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: isDark
+                                  ? Colors.grey.shade500
+                                  : Colors.grey.shade400,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
-                        Text(
-                          DateFormat('dd/MM HH:mm').format(notification.sentAt),
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          _getLocalizedTitle(context, notification.title),
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w800,
-                            color: isDark ? Colors.white : const Color(0xFF1A202C),
-                          ),
-                        ),
                       ],
                     ),
                     SizedBox(height: 8.h),
                     Text(
                       _getLocalizedBody(context, notification.body),
-                      textAlign: TextAlign.end,
+                      textAlign: isEn ? TextAlign.left : TextAlign.right,
                       style: TextStyle(
                         fontSize: 13.5.sp,
-                        color: isDark ? Colors.grey.shade400 : const Color(0xFF4A5568),
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : const Color(0xFF4A5568),
                         height: 1.5,
                         fontWeight: FontWeight.w500,
                       ),
@@ -264,8 +308,10 @@ class _NotificationItem extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 16.w),
-              _buildThemedIcon(context, isDark),
+              if (!isEn) ...[
+                SizedBox(width: 16.w),
+                _buildThemedIcon(context, isDark),
+              ],
             ],
           ),
         ),
@@ -273,35 +319,80 @@ class _NotificationItem extends StatelessWidget {
     );
   }
 
+  Widget _buildUnreadDot() {
+    return Container(
+      width: 8.w,
+      height: 8.w,
+      decoration: const BoxDecoration(
+        color: Colors.redAccent,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.redAccent,
+            blurRadius: 4,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
   String _getLocalizedTitle(BuildContext context, String title) {
     final locale = AppLocalizations.of(context)!;
     final t = title.toLowerCase();
-    
-    // محاولة الترجمة إذا كان العنوان يطابق مفاتيح معينة
-    if (t.contains('تهانينا') || t.contains('congratulations') || t.contains('featured')) {
+
+    if (t.contains('premium activated') ||
+        t.contains('تم تفعيل التميز') ||
+        t.contains('premium approved')) {
       return locale.property_featured_title;
     }
-    if (t.contains('استلام') || t.contains('received') || t.contains('promotion')) {
+    if (t.contains('premium request rejected') || t.contains('رفض طلب التميز')) {
+      return locale.promotion_rejected;
+    }
+    if (t.contains('congratulations') ||
+        t.contains('تهانينا') ||
+        t.contains('featured')) {
+      return locale.property_featured_title;
+    }
+    if (t.contains('received') ||
+        t.contains('تم استلام') ||
+        t.contains('promotion')) {
       return locale.promotion_received;
     }
-    if (t.contains('تحديث') || t.contains('update')) {
+    if (t.contains('update') || t.contains('تحديث')) {
       return locale.update_available;
     }
-    
+    if (t.contains('approved') || t.contains('اعتمد')) {
+      return locale.property_approved;
+    }
+    if (t.contains('rejected') || t.contains('رفض')) {
+      return locale.promotion_rejected;
+    }
+    if (t.contains('blocked') || t.contains('حظر')) {
+      return locale.banned_user;
+    }
+    if (t.contains('deleted') || t.contains('حذف')) {
+      return locale.delete_property;
+    }
+
     return title;
   }
 
   String _getLocalizedBody(BuildContext context, String body) {
     final locale = AppLocalizations.of(context)!;
     final b = body.toLowerCase();
-    
-    if (b.contains('استلام') || b.contains('received')) {
-      return locale.promotion_received;
+
+    if ((b.contains('congratulations') || b.contains('تهانينا')) &&
+        (b.contains('approved') || b.contains('featured') || b.contains('مميز'))) {
+      return locale.property_featured_title;
     }
-    if (b.contains('رفض') || b.contains('rejected')) {
+    if (b.contains('rejected') || b.contains('رفض')) {
       return locale.promotion_rejected;
     }
-    
+    if (b.contains('approved') || b.contains('موافقة') || b.contains('اعتمد')) {
+      return locale.property_approved;
+    }
+
     return body;
   }
 

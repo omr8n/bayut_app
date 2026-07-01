@@ -15,12 +15,14 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(locale!.translate(LangKeys.settings)),
         centerTitle: true,
-        backgroundColor: AppColors.primary,
+        backgroundColor: isDark ? AppColors.darkCard : AppColors.primary,
         foregroundColor: Colors.white,
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(

@@ -11,6 +11,8 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         final user = context.read<ProfileCubit>().user;
@@ -27,9 +29,9 @@ class ProfileHeader extends StatelessWidget {
             left: 20,
             right: 20,
           ),
-          decoration: const BoxDecoration(
-            gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            gradient: isDark ? AppColors.darkGradient : AppColors.primaryGradient,
+            borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
             ),

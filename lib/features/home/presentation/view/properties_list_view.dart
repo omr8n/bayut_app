@@ -19,8 +19,9 @@ class PropertiesListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.grey[50], // خلفية خفيفة لتمييز الكروت
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: properties.isEmpty
           ? Column(
               children: [
@@ -38,7 +39,7 @@ class PropertiesListScreen extends StatelessWidget {
                       true, // يختفي عند السحب لأسفل ويظهر فوراً عند السحب لأعلى
                   pinned: true, // يبقى العنوان ظاهراً بشكل مصغر عند الصعود
                   stretch: true, // يتمدد عند السحب بقوة لأسفل
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: isDark ? Theme.of(context).cardColor : AppColors.primary,
                   elevation: 0,
                   flexibleSpace: FlexibleSpaceBar(
                     title: Text(
@@ -55,10 +56,9 @@ class PropertiesListScreen extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.primary,
-                            AppColors.primary.withValues(alpha: 0.8),
-                          ],
+                          colors: isDark 
+                            ? [Theme.of(context).cardColor, Theme.of(context).scaffoldBackgroundColor]
+                            : [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
                         ),
                       ),
                     ),

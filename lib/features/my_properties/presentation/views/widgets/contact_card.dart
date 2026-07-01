@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 
 class ContactCard extends StatelessWidget {
@@ -53,7 +54,7 @@ class ContactCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.05),
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -74,7 +75,13 @@ class ContactCard extends StatelessWidget {
                               Text(
                                 locale.translate(LangKeys.whatsappDifferent),
                                 style: TextStyle(
-                                  color: Colors.grey.shade600,
+                                  color:
+                                      Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color
+                                          ?.withValues(alpha: 0.6) ??
+                                      Colors.grey.shade600,
                                   fontSize: 10,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -89,12 +96,18 @@ class ContactCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue.shade200),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
                     onPressed: () {},
-                    icon: const Icon(Icons.copy, color: Colors.blue, size: 20),
+                    icon: const Icon(
+                      Icons.copy,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                   ),
                 ),
               ],

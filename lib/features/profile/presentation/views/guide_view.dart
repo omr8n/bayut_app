@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
-import 'package:test_graduation/core/utils/colors.dart';
+
 import 'widgets/guide_footer.dart';
 import 'widgets/guide_list.dart';
 import 'widgets/guide_search_field.dart';
@@ -72,7 +72,7 @@ class _GuideViewState extends State<GuideView> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
           ProfileSliverAppBar(

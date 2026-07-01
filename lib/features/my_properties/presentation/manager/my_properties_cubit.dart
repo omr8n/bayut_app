@@ -89,8 +89,8 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
       'reason':
           statusReason ??
           (newStatus == PropertyStatus.sold
-              ? locale.translate(LangKeys.saleCompleted)
-              : locale.translate(LangKeys.statusUpdated)),
+              ? LangKeys.saleCompleted
+              : LangKeys.statusUpdated),
     };
 
     final Map<String, dynamic> updates = {

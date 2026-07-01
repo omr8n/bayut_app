@@ -77,6 +77,7 @@ class ReportEntity extends Equatable {
   final ReportStatus status;
   final DateTime createdAt;
   final String? adminNote;
+  final dynamic lastDocSnapshot; // 🔥 Cursor للـ Pagination
 
   const ReportEntity({
     required this.id,
@@ -92,7 +93,42 @@ class ReportEntity extends Equatable {
     required this.status,
     required this.createdAt,
     this.adminNote,
+    this.lastDocSnapshot,
   });
+
+  ReportEntity copyWith({
+    String? id,
+    String? propertyId,
+    String? propertyTitle,
+    String? reporterId,
+    String? reporterName,
+    String? reporterEmail,
+    String? reportedUserId,
+    String? reportedUserName,
+    ReportReason? reason,
+    String? description,
+    ReportStatus? status,
+    DateTime? createdAt,
+    String? adminNote,
+    dynamic lastDocSnapshot,
+  }) {
+    return ReportEntity(
+      id: id ?? this.id,
+      propertyId: propertyId ?? this.propertyId,
+      propertyTitle: propertyTitle ?? this.propertyTitle,
+      reporterId: reporterId ?? this.reporterId,
+      reporterName: reporterName ?? this.reporterName,
+      reporterEmail: reporterEmail ?? this.reporterEmail,
+      reportedUserId: reportedUserId ?? this.reportedUserId,
+      reportedUserName: reportedUserName ?? this.reportedUserName,
+      reason: reason ?? this.reason,
+      description: description ?? this.description,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      adminNote: adminNote ?? this.adminNote,
+      lastDocSnapshot: lastDocSnapshot ?? this.lastDocSnapshot,
+    );
+  }
 
   @override
   List<Object?> get props => [

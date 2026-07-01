@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import '../../../../../core/utils/colors.dart';
 
 class TermSection extends StatelessWidget {
@@ -15,6 +16,7 @@ class TermSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = AppLocalizations.of(context)?.isEnLocale ?? false;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Container(
@@ -35,32 +37,48 @@ class TermSection extends StatelessWidget {
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: isEn ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: isEn ? MainAxisAlignment.start : MainAxisAlignment.end,
               children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : AppColors.primary,
+                if (!isEn) ...[
+                  Expanded(
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.primary,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Icon(
-                  icon,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white70
-                      : AppColors.primary,
-                  size: 28,
-                ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    icon,
+                    color: Theme.of(context).primaryColor,
+                    size: 28,
+                  ),
+                ] else ...[
+                  Icon(
+                    icon,
+                    color: Theme.of(context).primaryColor,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
             Padding(
@@ -72,13 +90,11 @@ class TermSection extends StatelessWidget {
             ),
             Text(
               content,
-              textAlign: TextAlign.right,
+              textAlign: isEn ? TextAlign.left : TextAlign.right,
               style: TextStyle(
                 fontSize: 14,
                 height: 1.7,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ],

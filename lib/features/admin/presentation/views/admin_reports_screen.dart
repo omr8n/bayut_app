@@ -19,11 +19,32 @@ class AdminReportsScreen extends StatefulWidget {
 
 class _AdminReportsScreenState extends State<AdminReportsScreen> {
   ReportStatus? _filterStatus;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    context.read<AdminCubit>().fetchReports();
+    context.read<AdminCubit>().fetchReports(isRefresh: true);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<AdminCubit>().fetchReports();
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    return currentScroll >= (maxScroll * 0.9);
   }
 
   List<ReportEntity> _getFilteredReports(List<ReportEntity> allReports) {
@@ -34,18 +55,14 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5),
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF0F2F5),
       appBar: _buildAppBar(context, local),
       body: BlocConsumer<AdminCubit, AdminState>(
         listener: _adminListener,
         builder: (context, state) {
-          if (state is AdminLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF0F172A)),
-            );
-          }
-
+          final isLoading = state is AdminLoading;
           List<ReportEntity> allReports = [];
           if (state is AdminReportsSuccess) {
             allReports = state.reports;
@@ -55,6 +72,12 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
 
           return Column(
             children: [
+              if (isLoading && allReports.isEmpty)
+                const LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  color: AppColors.primary,
+                  minHeight: 3,
+                ),
               ReportsFilterSection(
                 allReports: allReports,
                 selectedStatus: _filterStatus,
@@ -62,22 +85,40 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
                     setState(() => _filterStatus = status),
               ),
               Expanded(
-                child: filteredReports.isEmpty
-                    ? _buildEmptyState(local)
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        itemCount: filteredReports.length,
-                        itemBuilder: (context, index) {
-                          final report = filteredReports[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: ReportItem(
-                              report: report,
-                              onTap: () => _showReportDetails(context, report),
-                            ),
-                          );
-                        },
-                      ),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await context.read<AdminCubit>().fetchReports(isRefresh: true);
+                  },
+                  color: AppColors.primary,
+                  child: filteredReports.isEmpty
+                      ? (isLoading ? const SizedBox.shrink() : _buildEmptyState(local))
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: state is AdminReportsSuccess && !state.hasReachedMax
+                              ? filteredReports.length + 1
+                              : filteredReports.length,
+                          itemBuilder: (context, index) {
+                            if (index >= filteredReports.length) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                            final report = filteredReports[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: ReportItem(
+                                report: report,
+                                onTap: () => _showReportDetails(context, report),
+                              ),
+                            );
+                          },
+                        ),
+                ),
               ),
             ],
           );
@@ -87,9 +128,10 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   }
 
   AppBar _buildAppBar(BuildContext context, AppLocalizations local) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AppBar(
       elevation: 0,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: isDark ? const Color(0xFF1E293B) : const Color(0xFF00142B),
       title: Text(
         local.reports_management_center,
         style: const TextStyle(
@@ -126,26 +168,32 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
   }
 
   Widget _buildEmptyState(AppLocalizations local) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.assignment_turned_in_rounded,
-            size: 100,
-            color: Colors.grey[300],
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.assignment_turned_in_rounded,
+                size: 100,
+                color: Colors.grey[300],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                local.no_reports_in_section,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            local.no_reports_in_section,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

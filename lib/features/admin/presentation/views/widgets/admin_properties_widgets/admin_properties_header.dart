@@ -40,7 +40,7 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
             ? AppColors.darkBackground
-            : const Color(0xFF1E4C9A), // Standard Royal Blue
+            : const Color(0xFF00142B),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30.r),
           bottomRight: Radius.circular(30.r),
@@ -48,27 +48,6 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20,
-              ),
-              const Spacer(),
-              Text(
-                local.manage_properties,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              const SizedBox(width: 20),
-            ],
-          ),
-          SizedBox(height: 15.h),
           // Search bar with transparency
           TextField(
             onChanged: widget.onSearchChanged,
@@ -106,22 +85,25 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
           // Extra filters (Premium Requests, Currently Featured, Trend)
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildExtraFilterChip(local.all, local.all),
-                SizedBox(width: 8.w),
-                _buildExtraFilterChip(
-                  local.premium_requests,
-                  local.premium_requests,
-                ),
-                SizedBox(width: 8.w),
-                _buildExtraFilterChip(
-                  local.currently_featured,
-                  local.currently_featured,
-                ),
-                SizedBox(width: 8.w),
-                _buildExtraFilterChip(local.trend_leaders, local.trend_leaders),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.h),
+              child: Row(
+                children: [
+                  _buildExtraFilterChip(local.all, local.all),
+                  SizedBox(width: 8.w),
+                  _buildExtraFilterChip(
+                    local.premium_requests,
+                    local.premium_requests,
+                  ),
+                  SizedBox(width: 8.w),
+                  _buildExtraFilterChip(
+                    local.currently_featured,
+                    local.currently_featured,
+                  ),
+                  SizedBox(width: 8.w),
+                  _buildExtraFilterChip(local.trend_leaders, local.trend_leaders),
+                ],
+              ),
             ),
           ),
         ],
@@ -131,6 +113,9 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
 
   Widget _buildFilterChip(String label, ListingType? type) {
     bool isSelected = selectedType == type;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedTextColor = isDark ? Colors.black87 : const Color(0xFF00142B);
+
     return GestureDetector(
       onTap: () {
         setState(() => selectedType = type);
@@ -143,7 +128,15 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
           color: isSelected
               ? Colors.white
               : Colors.white.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(15.r),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           label,
@@ -151,7 +144,7 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
-            color: isSelected ? const Color(0xFF1E4C9A) : Colors.white,
+            color: isSelected ? selectedTextColor : Colors.white,
           ),
         ),
       ),
@@ -161,6 +154,9 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
   Widget _buildExtraFilterChip(String label, String value) {
     bool isSelected =
         (selectedExtraFilter ?? AppLocalizations.of(context)!.all) == value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedTextColor = isDark ? Colors.black87 : const Color(0xFF00142B);
+
     return GestureDetector(
       onTap: () {
         setState(() => selectedExtraFilter = value);
@@ -172,16 +168,23 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
         decoration: BoxDecoration(
           color: isSelected
               ? Colors.amber
-              : Colors.white.withValues(alpha: 0.1),
+              : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20.r),
-          border: isSelected ? null : Border.all(color: Colors.white24),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 12.sp,
             fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.black87 : Colors.white70,
+            color: isSelected ? selectedTextColor : Colors.white70,
           ),
         ),
       ),

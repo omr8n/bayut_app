@@ -8,7 +8,9 @@ class CustomBlocObserver extends BlocObserver {
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
     if (kDebugMode) {
-      log('${bloc.runtimeType} $transition');
+      final currentStateName = transition.currentState.runtimeType.toString();
+      final nextStateName = transition.nextState.runtimeType.toString();
+      log('🔵 [${bloc.runtimeType}] Transition: $currentStateName -> $nextStateName');
     }
   }
 
@@ -16,7 +18,11 @@ class CustomBlocObserver extends BlocObserver {
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
     if (kDebugMode) {
-      log('${bloc.runtimeType} $change');
+      final currentStateName = change.currentState.runtimeType.toString();
+      final nextStateName = change.nextState.runtimeType.toString();
+      
+      // تجنب طباعة المحتوى الكامل للقوائم
+      log('🟢 [${bloc.runtimeType}] Change: $currentStateName -> $nextStateName');
     }
   }
 }

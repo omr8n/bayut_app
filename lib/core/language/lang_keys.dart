@@ -21,10 +21,19 @@ class LangKeys {
   static const String langCode = 'lang_code';
   static const String notifications = 'notifications';
   static const String viewAll = 'view_all';
+  static const String viewed = 'viewed';
+  static const String trend = 'trend';
+  static const String areaUnit = 'area_unit';
+  static const String syp = 'syp';
 
   // Auth
   static const String welcomeBack = 'welcome_back';
   static const String loginToContinue = 'login_to_continue';
+  static const String confirmPayment = 'confirm_payment';
+  static const String syrianBankCard = 'syrian_bank_card';
+  static const String cashMethod = 'cash_method';
+  static const String payNow = 'pay_now';
+  static const String payAndPromote = 'pay_and_promote';
   static const String emailHint = 'email_hint';
   static const String passwordHint = 'password_hint';
   static const String invalidEmail = 'invalid_email';
@@ -513,7 +522,7 @@ class LangKeys {
   static const String all = 'all';
   static const String addProperty = 'add_property';
   static const String editProperty = 'edit_property';
-  static const String areaUnit = 'area_unit';
+
   static const String installmentNotes = 'installment_notes';
   static const String ok = 'ok';
   static const String pleaseSelectImage = 'please_select_image';
@@ -674,7 +683,7 @@ class LangKeys {
   static const String financialWallet = 'financial_wallet';
   static const String initializingData = 'initializing_data';
   static const String errorFetchingData = 'error_fetching_data';
-  static const String trend = 'trend';
+
   static const String approved = 'approved';
   static const String highActivity = 'high_activity';
   static const String trendRank = 'trend_rank';
@@ -862,7 +871,8 @@ class LangKeys {
   static const String noNotificationsCurrently = 'no_notifications_currently';
   static const String promotionReceived = 'promotion_received';
   static const String propertyFeaturedTitle = 'property_featured_title';
-  static const String pleaseLoginToViewNotifications = 'please_login_to_view_notifications';
+  static const String pleaseLoginToViewNotifications =
+      'please_login_to_view_notifications';
   static const String updateAvailable = 'update_available';
 
   static const String usd = 'usd';
@@ -877,6 +887,7 @@ class LangKeys {
   static const String linkComingSoon = 'link_coming_soon';
   static const String fillFromProfile = 'fill_from_profile';
   static const String featuredPropertyLabel = 'featured_property_label';
+  static const String featuredLabel = 'featured_label';
   static const String editAction = 'edit_action';
   static const String views = 'views';
   static const String enterValue = 'enter_value';

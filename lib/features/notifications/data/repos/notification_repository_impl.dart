@@ -18,6 +18,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       await _notificationService.saveNotification(notification);
 
       // 2. Trigger Real Push Notification via FCM
+      // We restore this because relying on server extensions might be unreliable
       await getIt<FCMSenderService>().sendPushNotification(
         title: notification.title,
         body: notification.body,
@@ -26,6 +27,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
         data: {
           'targetId': notification.targetId ?? '',
           'type': notification.type.name,
+          'targetUserId': notification.targetUserId ?? '', // Added for isolation filter
+          'sentToAll': notification.sentToAll.toString(),
         },
       );
 
@@ -36,10 +39,13 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
-  Stream<Either<Failure, List<AppNotification>>> getNotificationsStream(String userId) {
-    return _notificationService.getNotificationsStream(userId).map(
-      (list) => right<Failure, List<AppNotification>>(list),
-    );
+  Stream<Either<Failure, List<AppNotification>>> getNotificationsStream(
+    String userId, {
+    DateTime? accountCreatedAt,
+  }) {
+    return _notificationService
+        .getNotificationsStream(userId, accountCreatedAt: accountCreatedAt)
+        .map((list) => right<Failure, List<AppNotification>>(list));
   }
 
   @override

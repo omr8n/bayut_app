@@ -16,7 +16,7 @@ class GuideFooter extends StatelessWidget {
           children: [
             Text(
               localizations.translate(LangKeys.haveMoreQuestions),
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color),
             ),
             const SizedBox(height: 8),
             Text(

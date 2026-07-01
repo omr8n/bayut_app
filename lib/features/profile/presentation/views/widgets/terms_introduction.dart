@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
-import '../../../../../core/utils/colors.dart';
 
 class TermsIntroduction extends StatelessWidget {
   const TermsIntroduction({super.key});
@@ -15,11 +14,11 @@ class TermsIntroduction extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? AppColors.darkSurface
-                : AppColors.primary.withValues(alpha: 0.05),
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
+            border: Border.all(
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+            ),
           ),
           child: Text(
             localizations.translate(LangKeys.termsIntroduction),
@@ -27,9 +26,7 @@ class TermsIntroduction extends StatelessWidget {
             style: TextStyle(
               fontSize: 15,
               height: 1.6,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : AppColors.textPrimaryLight,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w500,
             ),
           ),

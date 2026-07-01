@@ -19,11 +19,32 @@ class AdminUsersScreen extends StatefulWidget {
 class _AdminUsersScreenState extends State<AdminUsersScreen> {
   String searchQuery = '';
   String? filterType; // null (all), 'active', 'blocked', 'admin'
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    context.read<AdminCubit>().fetchUsers();
+    context.read<AdminCubit>().fetchUsers(isRefresh: true);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<AdminCubit>().fetchUsers();
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    return currentScroll >= (maxScroll * 0.9);
   }
 
   List<UserEntity> _getFilteredUsers(List<UserEntity> allUsers) {
@@ -43,33 +64,36 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryBlue = isDark
+        ? AppColors.darkBackground
+        : const Color(0xFF00142B);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5),
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : const Color(0xFFF8F9FA),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppColors.primary,
+        backgroundColor: primaryBlue,
         title: Text(
           AppLocalizations.of(context)!.manage_users,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
+            fontSize: 18,
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () => context.pop(),
         ),
       ),
       body: BlocConsumer<AdminCubit, AdminState>(
         listener: _adminListener,
         builder: (context, state) {
-          if (state is AdminLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
-
+          final isLoading = state is AdminLoading;
           List<UserEntity> allUsers = [];
           if (state is AdminUsersSuccess) {
             allUsers = state.users;
@@ -79,6 +103,12 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
 
           return Column(
             children: [
+              if (isLoading)
+                const LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  color: AppColors.primary,
+                  minHeight: 3,
+                ),
               AdminUsersFilterSection(
                 allUsers: allUsers,
                 selectedFilter: filterType,
@@ -86,23 +116,46 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                 onSearchChanged: (val) => setState(() => searchQuery = val),
               ),
               Expanded(
-                child: filteredUsers.isEmpty
-                    ? _buildEmptyState(context)
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await context.read<AdminCubit>().fetchUsers(
+                      isRefresh: true,
+                    );
+                  },
+                  color: AppColors.primary,
+                  child: filteredUsers.isEmpty
+                      ? (isLoading
+                            ? const SizedBox.shrink()
+                            : _buildEmptyState(context))
+                      : ListView.builder(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          itemCount:
+                              state is AdminUsersSuccess && !state.hasReachedMax
+                              ? filteredUsers.length + 1
+                              : filteredUsers.length,
+                          itemBuilder: (context, index) {
+                            if (index >= filteredUsers.length) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                            final user = filteredUsers[index];
+                            return UserItemCard(
+                              user: user,
+                              adminCubit: context
+                                  .read<AdminCubit>(), // Pass cubit here
+                            );
+                          },
                         ),
-                        itemCount: filteredUsers.length,
-                        itemBuilder: (context, index) {
-                          final user = filteredUsers[index];
-                          return UserItemCard(
-                            user: user,
-                            adminCubit: context
-                                .read<AdminCubit>(), // Pass cubit here
-                          );
-                        },
-                      ),
+                ),
               ),
             ],
           );
@@ -132,26 +185,32 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.people_outline_rounded,
-            size: 100,
-            color: Colors.grey[300],
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.people_outline_rounded,
+                size: 100,
+                color: Colors.grey[300],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.no_matching_users,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.no_matching_users,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

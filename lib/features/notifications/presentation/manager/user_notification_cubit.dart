@@ -16,14 +16,17 @@ class UserNotificationCubit extends Cubit<UserNotificationState> {
   UserNotificationCubit(this._getCombinedNotifications, this._repository)
       : super(UserNotificationInitial());
 
-  void getNotifications(String userId) {
+  void getNotifications(String userId, {DateTime? accountCreatedAt}) {
     if (userId.isEmpty) return;
 
     emit(UserNotificationLoading());
 
     _notificationsSubscription?.cancel();
 
-    _notificationsSubscription = _getCombinedNotifications(userId).listen(
+    _notificationsSubscription = _getCombinedNotifications(
+      userId,
+      accountCreatedAt: accountCreatedAt,
+    ).listen(
       (result) {
         result.fold(
           (failure) => emit(UserNotificationFailure(failure.message)),

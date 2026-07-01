@@ -20,30 +20,36 @@ class AdminUsersFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryBlue = isDark
+        ? AppColors.darkBackground
+        : const Color(0xFF00142B); // Matching the image's blue
+
     return Container(
-      padding: const EdgeInsets.only(bottom: 20),
-      decoration: const BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+      padding: const EdgeInsets.only(bottom: 25),
+      decoration: BoxDecoration(
+        color: primaryBlue,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(35),
+          bottomRight: Radius.circular(35),
         ),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: TextField(
               onChanged: onSearchChanged,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: local.search_user_hint,
                 hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: Colors.white.withValues(alpha: 0.5),
+                  fontSize: 14,
                 ),
-                prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                prefixIcon: const Icon(Icons.search, color: Colors.white60),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.15),
+                fillColor: Colors.white.withValues(alpha: 0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide.none,
@@ -68,7 +74,6 @@ class AdminUsersFilterSection extends StatelessWidget {
                   label: local.active,
                   isSelected: selectedFilter == 'active',
                   onTap: () => onFilterChanged('active'),
-                  color: AppColors.success,
                   count: allUsers.where((u) => !u.isBanned).length,
                 ),
                 const SizedBox(width: 8),
@@ -76,7 +81,6 @@ class AdminUsersFilterSection extends StatelessWidget {
                   label: local.banned_user,
                   isSelected: selectedFilter == 'blocked',
                   onTap: () => onFilterChanged('blocked'),
-                  color: AppColors.error,
                   count: allUsers.where((u) => u.isBanned).length,
                 ),
                 const SizedBox(width: 8),
@@ -84,7 +88,6 @@ class AdminUsersFilterSection extends StatelessWidget {
                   label: local.admins,
                   isSelected: selectedFilter == 'admin',
                   onTap: () => onFilterChanged('admin'),
-                  color: AppColors.info,
                   count: allUsers.where((u) => u.role == 'admin').length,
                 ),
               ],
@@ -101,18 +104,19 @@ class _UserFilterChip extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
-    this.color,
     this.count = 0,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final Color? color;
   final int count;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedTextColor = isDark ? Colors.black87 : const Color(0xFF00142B);
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -123,24 +127,34 @@ class _UserFilterChip extends StatelessWidget {
               ? Colors.white
               : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                  ),
+                ]
+              : null,
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               label,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: isSelected ? AppColors.primary : Colors.white,
+                color: isSelected ? selectedTextColor : Colors.white,
               ),
             ),
-            if (count > 0) ...[
+            if (count >= 0) ...[
               const SizedBox(width: 6),
-              Container(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (color ?? AppColors.primary)
+                      ? (isDark ? const Color(0xFF1E293B) : const Color(0xFF005696))
                       : Colors.white.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),

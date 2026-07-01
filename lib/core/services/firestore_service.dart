@@ -114,6 +114,25 @@ class FireStoreService implements DatabaseService {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> searchDocuments({
+    required String path,
+    required String field,
+    required String query,
+  }) async {
+    final snapshot = await firestore
+        .collection(path)
+        .where(field, isGreaterThanOrEqualTo: query)
+        .where(field, isLessThanOrEqualTo: '$query\uf8ff')
+        .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
+  }
+
+  @override
   Future<void> updateData({
     required String path,
     required Map<String, dynamic> data,
@@ -174,5 +193,36 @@ class FireStoreService implements DatabaseService {
 
     final aggregateQuery = await query.count().get();
     return aggregateQuery.count ?? 0;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getPaginatedCollection({
+    required String path,
+    required int limit,
+    dynamic lastDocument,
+    String? orderByField,
+    bool descending = false,
+  }) async {
+    Query<Map<String, dynamic>> ref = firestore.collection(path);
+
+    if (orderByField != null) {
+      ref = ref.orderBy(orderByField, descending: descending);
+    }
+
+    if (lastDocument != null) {
+      ref = ref.startAfterDocument(lastDocument as DocumentSnapshot);
+    }
+
+    ref = ref.limit(limit);
+
+    final snapshot = await ref.get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      // 🔥 نقوم بحفظ الـ DocumentSnapshot نفسه لنستخدمه كـ Cursor في الطلب القادم
+      data['last_doc_snapshot'] = doc; 
+      return data;
+    }).toList();
   }
 }

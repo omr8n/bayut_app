@@ -19,6 +19,7 @@ class UserEntity extends Equatable {
   final int dailyListingsCount; // 🔥 عدد العقارات المنشورة اليوم
   final Timestamp? lastListingTimestamp; // 🔥 توقيت آخر عملية نشر
   final String? fcmToken; // 🔥 حقل التوكن للإشعارات
+  final dynamic lastDocSnapshot; // 🔥 لتخزين الـ Cursor الخاص بالـ Pagination (تجاهل في Equatable)
 
   const UserEntity({
     required this.name,
@@ -38,6 +39,7 @@ class UserEntity extends Equatable {
     this.dailyListingsCount = 0,
     this.lastListingTimestamp,
     this.fcmToken,
+    this.lastDocSnapshot,
   });
 
   // Getters ذكية
@@ -65,6 +67,7 @@ class UserEntity extends Equatable {
     int? dailyListingsCount,
     Timestamp? lastListingTimestamp,
     String? fcmToken,
+    dynamic lastDocSnapshot,
   }) {
     return UserEntity(
       name: name ?? this.name,
@@ -84,6 +87,7 @@ class UserEntity extends Equatable {
       dailyListingsCount: dailyListingsCount ?? this.dailyListingsCount,
       lastListingTimestamp: lastListingTimestamp ?? this.lastListingTimestamp,
       fcmToken: fcmToken ?? this.fcmToken,
+      lastDocSnapshot: lastDocSnapshot ?? this.lastDocSnapshot,
     );
   }
 

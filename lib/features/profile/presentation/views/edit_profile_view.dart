@@ -38,6 +38,8 @@ class EditProfileView extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
           return LoadingManager(
             isLoading: state is EditProfileLoading,
             child: Scaffold(
@@ -48,7 +50,7 @@ class EditProfileView extends StatelessWidget {
                       : locale!.translate(LangKeys.editProfile),
                 ),
                 centerTitle: true,
-                backgroundColor: AppColors.primary,
+                backgroundColor: isDark ? AppColors.darkCard : AppColors.primary,
                 foregroundColor: Colors.white,
               ),
               body: EditProfileViewBody(

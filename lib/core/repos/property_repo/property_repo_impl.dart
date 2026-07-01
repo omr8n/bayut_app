@@ -4,9 +4,9 @@ import 'package:test_graduation/core/models/property_model.dart';
 import 'package:test_graduation/core/services/connectivity_service.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
-import '../../errors/failures.dart';
-import '../../services/data_service.dart';
-import '../../utils/backend_endpoint.dart';
+import 'package:test_graduation/core/errors/failures.dart';
+import 'package:test_graduation/core/services/data_service.dart';
+import 'package:test_graduation/core/utils/backend_endpoint.dart';
 import 'property_repo.dart';
 
 class PropertyRepoImpl extends PropertyRepo {

@@ -195,15 +195,17 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
           // الأزرار العائمة العليا
           Positioned(
-            top: 40.h,
+            top: 16.h,
             left: 16.w,
             right: 16.w,
-            child: Flexible(
+            child: SafeArea(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomCircleButton(
-                    icon: Icons.arrow_back_ios_new,
+                    icon: localizations.isEnLocale
+                        ? Icons.arrow_back_ios_new
+                        : Icons.arrow_forward_ios,
                     onTap: () => Navigator.pop(context),
                   ),
                   Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_state.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
@@ -13,13 +14,41 @@ class AdminPropertiesViewBody extends StatefulWidget {
   const AdminPropertiesViewBody({super.key});
 
   @override
-  State<AdminPropertiesViewBody> createState() => _AdminPropertiesViewBodyState();
+  State<AdminPropertiesViewBody> createState() =>
+      _AdminPropertiesViewBodyState();
 }
 
 class _AdminPropertiesViewBodyState extends State<AdminPropertiesViewBody> {
   String searchQuery = '';
   ListingType? selectedType;
   String? extraFilter;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AdminCubit>().fetchProperties(isRefresh: true);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<AdminCubit>().fetchProperties();
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    return currentScroll >= (maxScroll * 0.9);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +75,23 @@ class _AdminPropertiesViewBodyState extends State<AdminPropertiesViewBody> {
         }
       },
       builder: (context, state) {
-        if (state is AdminLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        final isLoading = state is AdminLoading;
 
-        if (state is AdminPropertiesSuccess) {
-          List<PropertyEntity> filteredList = state.properties.where((property) {
-            final matchesSearch = property.title.toLowerCase().contains(searchQuery.toLowerCase()) || 
-                                property.location.toLowerCase().contains(searchQuery.toLowerCase());
-            final matchesType = selectedType == null || property.listingType == selectedType;
+        if (state is AdminPropertiesSuccess || isLoading) {
+          final properties = state is AdminPropertiesSuccess
+              ? state.properties
+              : <PropertyEntity>[];
+
+          List<PropertyEntity> filteredList = properties.where((property) {
+            final matchesSearch =
+                property.title.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                ) ||
+                property.location.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                );
+            final matchesType =
+                selectedType == null || property.listingType == selectedType;
 
             bool matchesExtra = true;
             if (currentExtraFilter == local.premium_requests) {
@@ -78,17 +115,36 @@ class _AdminPropertiesViewBodyState extends State<AdminPropertiesViewBody> {
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Column(
               children: [
+                if (isLoading)
+                  const LinearProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    color: AppColors.primary,
+                    minHeight: 3,
+                  ),
                 AdminPropertiesHeader(
                   onSearchChanged: (val) => setState(() => searchQuery = val),
-                  onFilterChanged: (type) => setState(() => selectedType = type),
-                  onExtraFilterChanged: (val) => setState(() => extraFilter = val),
+                  onFilterChanged: (type) =>
+                      setState(() => selectedType = type),
+                  onExtraFilterChanged: (val) =>
+                      setState(() => extraFilter = val),
                 ),
 
                 // Original 4 stats
-                AdminPropertiesStats(properties: state.properties),
+                AdminPropertiesStats(properties: properties),
 
                 Expanded(
-                  child: AdminPropertiesList(properties: filteredList, extraFilter: currentExtraFilter),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      await context.read<AdminCubit>().fetchProperties(isRefresh: true);
+                    },
+                    color: AppColors.primary,
+                    child: AdminPropertiesList(
+                      properties: filteredList,
+                      extraFilter: currentExtraFilter,
+                      scrollController: _scrollController,
+                      isLoadingMore: state is AdminPropertiesSuccess && !state.hasReachedMax,
+                    ),
+                  ),
                 ),
               ],
             ),

@@ -152,13 +152,19 @@ class PropertyTypeSpecificDetails extends StatelessWidget {
 
     if (specs.isEmpty) return const SizedBox.shrink();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
         Text(
           localizations.translate(LangKeys.technicalSpecifications),
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         const SizedBox(height: 12),
         GridView.builder(
@@ -174,21 +180,25 @@ class PropertyTypeSpecificDetails extends StatelessWidget {
           itemBuilder: (context, index) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: isDark ? AppColors.darkSurface : AppColors.background,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Text(
                   '${specs[index].keys.first}: ',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? AppColors.textSecondaryDark : Colors.grey,
+                  ),
                 ),
                 Expanded(
                   child: Text(
                     specs[index].values.first,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

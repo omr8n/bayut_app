@@ -15,6 +15,11 @@ abstract class AdminRepo {
 
   // User Management
   Future<Either<Failure, List<UserEntity>>> getAllUsers();
+  Future<Either<Failure, List<UserEntity>>> getPaginatedUsers({
+    required int limit,
+    dynamic lastDoc,
+  });
+  Future<Either<Failure, List<UserEntity>>> searchUsers(String query);
   Future<Either<Failure, UserEntity>> getUserById(String uId);
   Future<Either<Failure, void>> blockUser({required String uId, required bool block});
   Future<Either<Failure, void>> deleteUser({required String uId});
@@ -23,12 +28,20 @@ abstract class AdminRepo {
 
   // Property Management
   Future<Either<Failure, List<PropertyEntity>>> getAllProperties();
+  Future<Either<Failure, List<PropertyEntity>>> getPaginatedProperties({
+    required int limit,
+    dynamic lastDoc,
+  });
   Future<Either<Failure, void>> togglePropertyApproval({required String propertyId, required bool isApproved});
   Future<Either<Failure, void>> deleteProperty({required String propertyId});
   Future<Either<Failure, void>> togglePropertyFeatured({required String propertyId, required bool isFeatured});
 
   // Reports Management
   Future<Either<Failure, List<ReportEntity>>> getAllReports();
+  Future<Either<Failure, List<ReportEntity>>> getPaginatedReports({
+    required int limit,
+    dynamic lastDoc,
+  });
   Future<Either<Failure, void>> updateReportStatus({required String reportId, required String status, String? adminNote});
 
   // Notifications

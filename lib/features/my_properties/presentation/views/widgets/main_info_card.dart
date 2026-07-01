@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/widgets/custom_text_form_field.dart';
 import 'package:test_graduation/core/widgets/type_chip.dart';
 
@@ -129,15 +130,15 @@ class MainInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        border: Border.all(color: Colors.blue.shade200),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         CurrencyHelper.localize(context, selectedCurrency),
-        style: TextStyle(
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.blue.shade800,
+          color: AppColors.primary,
           fontSize: 14,
         ),
       ),

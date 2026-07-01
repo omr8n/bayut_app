@@ -24,6 +24,7 @@ class ProfileMenuSection extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
+      clipBehavior: Clip.antiAlias, // 🔥 لضمان قص حواف الـ Material داخل الـ Container
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),

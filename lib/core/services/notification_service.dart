@@ -21,13 +21,14 @@ class NotificationService {
   }
 
   // جلب سجل الإشعارات لمستخدم معين أو الجميع (أو كل شيء للمسؤول)
-  Stream<List<AppNotification>> getNotificationsStream(String? userId, {bool isAdmin = false}) {
+  Stream<List<AppNotification>> getNotificationsStream(
+    String? userId, {
+    bool isAdmin = false,
+    DateTime? accountCreatedAt,
+  }) {
     Query query = _firestore.collection('notifications');
 
-    return query
-        .orderBy('sentAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
+    return query.orderBy('sentAt', descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         return AppNotification(
@@ -36,7 +37,8 @@ class NotificationService {
           body: data['body'] ?? '',
           type: NotificationType.values[data['type'] ?? 0],
           sentToAll: data['sentToAll'] ?? false,
-          sentAt: DateTime.parse(data['sentAt'] ?? DateTime.now().toIso8601String()),
+          sentAt:
+              DateTime.parse(data['sentAt'] ?? DateTime.now().toIso8601String()),
           recipientsCount: data['recipientsCount'] ?? 0,
           targetUserId: data['targetUserId'],
           targetId: data['targetId'], // 🔥 جلب معرف الهدف
@@ -45,7 +47,16 @@ class NotificationService {
       }).where((notif) {
         if (isAdmin) return true; // المسؤول يرى كل شيء
         if (userId == null) return notif.sentToAll;
-        return notif.sentToAll || notif.targetUserId == userId;
+
+        // 🔥 فحص العزل الزماني والشخصي
+        final bool isDirectedToMe = notif.targetUserId == userId;
+        final bool isGlobal = notif.sentToAll;
+
+        // لا يرى الإشعارات (حتى العامة) التي أرسلت قبل إنشاء حسابه
+        final bool isSentAfterMe = accountCreatedAt == null ||
+            notif.sentAt.isAfter(accountCreatedAt);
+
+        return (isDirectedToMe || isGlobal) && isSentAfterMe;
       }).toList();
     });
   }

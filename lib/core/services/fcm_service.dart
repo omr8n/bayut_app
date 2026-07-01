@@ -1,17 +1,19 @@
 import 'dart:developer';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:flutter/material.dart';
 
-/// معالج الإشعارات في الخلفية
+/// معالج الإشعارات في الخلفية - يجب أن يكون دالة علوية (Top-level)
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  log("Handling a background message: ${message.messageId}");
+  log("🔥 Handling a background message: ${message.messageId}");
   
-  // تأكد من تهيئة Awesome Notifications في هذه المعزولة (Isolate) إذا لم تكن مهيأة
+  // تهيئة Awesome Notifications للعمل في الـ Isolate الخاص بالخلفية
   await AwesomeNotifications().initialize(
     null,
     [
@@ -21,18 +23,30 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         channelDescription: 'إشعارات الأخبار والتحديثات من التطبيق',
         defaultColor: AppColors.primary,
         ledColor: Colors.white,
-        importance: NotificationImportance.High,
+        importance: NotificationImportance.Max, // أعلى أهمية للظهور فوراً
         channelShowBadge: true,
+        defaultPrivacy: NotificationPrivacy.Public,
       ),
     ],
-    debug: true,
   );
 
-  _showBackgroundNotification(message);
+  _showNotification(message);
 }
 
-void _showBackgroundNotification(RemoteMessage message) {
+void _showNotification(RemoteMessage message) {
   if (message.notification != null) {
+    // 🔥 فحص العزل: التأكد من أن الإشعار مخصص للمستخدم الحالي (أو للكل)
+    final String? targetUserId = message.data['targetUserId'];
+    final bool sentToAll = message.data['sentToAll'] == 'true';
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (!sentToAll && targetUserId != null && currentUser != null) {
+      if (targetUserId != currentUser.uid) {
+        log("🛡️ FCM Service: Discarding notification intended for another user ($targetUserId)");
+        return;
+      }
+    }
+
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: DateTime.now().millisecond,
@@ -41,6 +55,8 @@ void _showBackgroundNotification(RemoteMessage message) {
         body: message.notification!.body,
         notificationLayout: NotificationLayout.Default,
         payload: message.data.map((key, value) => MapEntry(key, value.toString())),
+        wakeUpScreen: true, // إيقاظ الشاشة
+        category: NotificationCategory.Message,
       ),
     );
   }
@@ -54,48 +70,86 @@ class FCMService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   Future<void> init() async {
-    // 1. طلب الإذن
+    // 1. طلب الإذن (أساسي)
     await _requestPermission();
 
-    // 2. إعداد مستمعي Awesome Notifications
-    _initAwesomeListeners();
-
-    // 3. تعيين معالج الخلفية
+    // 2. تعيين معالج الخلفية قبل أي شيء
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // 4. الاستماع للإشعارات والتطبيق مفتوح (Foreground)
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      log("Foreground Message received: ${message.notification?.title}");
-      _showLocalNotification(message);
+    // 3. تحديث التوكن في السيرفر (Firestore)
+    await updateTokenInFirestore();
+
+    // 4. الاستماع لتغييرات التوكن
+    _messaging.onTokenRefresh.listen((newToken) {
+      log("🔄 FCM Token Refreshed: $newToken");
+      _saveTokenToFirestore(newToken);
     });
 
-    // 5. التعامل مع النقر على الإشعار والتطبيق في الخلفية
+    // 5. الاستماع للإشعارات والتطبيق مفتوح (Foreground)
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log("📱 Foreground Message: ${message.notification?.title}");
+      _showNotification(message);
+    });
+
+    // 6. التعامل مع النقر (خلفية / مغلق)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log("Notification clicked in Background: ${message.data}");
       _handleNavigation(message.data);
     });
 
-    // 6. التعامل مع النقر على الإشعار والتطبيق مغلق (Terminated)
     RemoteMessage? initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
-      log("Notification clicked in Terminated state: ${initialMessage.data}");
       _handleNavigation(initialMessage.data);
     }
 
-    // 7. الاشتراك في القناة العامة
-    await _messaging.subscribeToTopic('all');
+    // 7. التأكد من الاشتراك في القناة العامة (سيتم التعامل معه عند تسجيل الدخول)
+    // await _messaging.subscribeToTopic('all');
+    // log("✅ Subscribed to 'all' topic");
 
-    // 8. طباعة التوكن
-    String? token = await _messaging.getToken();
-    log("FCM Token: $token");
+    _initAwesomeListeners();
+  }
+
+  Future<void> subscribeToAllTopic() async {
+    await _messaging.subscribeToTopic('all');
+    log("✅ Subscribed to 'all' topic");
+  }
+
+  Future<void> unsubscribeFromAllTopic() async {
+    await _messaging.unsubscribeFromTopic('all');
+    log("🚫 Unsubscribed from 'all' topic");
+  }
+
+  Future<void> updateTokenInFirestore() async {
+    try {
+      String? token = await _messaging.getToken();
+      if (token != null) {
+        log("🔑 Current FCM Token: $token");
+        await _saveTokenToFirestore(token);
+      }
+    } catch (e) {
+      log("❌ Error getting token: $e");
+    }
+  }
+
+  Future<void> _saveTokenToFirestore(String token) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'fcmToken': token})
+          .then((_) => log("💾 Token saved to Firestore for user: ${user.uid}"))
+          .catchError((e) => log("⚠️ Failed to save token: $e"));
+    }
   }
 
   Future<void> _requestPermission() async {
-    await _messaging.requestPermission(
+    NotificationSettings settings = await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
+      provisional: false,
     );
+    log("User granted permission: ${settings.authorizationStatus}");
 
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) {
@@ -106,62 +160,24 @@ class FCMService {
   void _initAwesomeListeners() {
     AwesomeNotifications().setListeners(
       onActionReceivedMethod: onActionReceivedMethod,
-      onNotificationCreatedMethod: onNotificationCreatedMethod,
-      onNotificationDisplayedMethod: onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod: onDismissActionReceivedMethod,
     );
   }
 
   @pragma("vm:entry-point")
-  static Future<void> onNotificationCreatedMethod(ReceivedNotification receivedNotification) async {
-    log("Awesome Notification Created");
-  }
-
-  @pragma("vm:entry-point")
-  static Future<void> onNotificationDisplayedMethod(ReceivedNotification receivedNotification) async {
-    log("Awesome Notification Displayed");
-  }
-
-  @pragma("vm:entry-point")
-  static Future<void> onDismissActionReceivedMethod(ReceivedAction receivedAction) async {
-    log("Awesome Notification Dismissed");
-  }
-
-  @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
-    log("Awesome Notification Action Received: ${receivedAction.payload}");
     if (receivedAction.payload != null) {
       _handleNavigation(receivedAction.payload!);
     }
   }
 
-  static void _showLocalNotification(RemoteMessage message) {
-    if (message.notification != null) {
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: DateTime.now().millisecond,
-          channelKey: 'general_channel',
-          title: message.notification!.title,
-          body: message.notification!.body,
-          notificationLayout: NotificationLayout.Default,
-          payload: message.data.map((key, value) => MapEntry(key, value.toString())),
-        ),
-      );
-    }
-  }
-
   static void _handleNavigation(Map<String, dynamic> data) {
-    // نستخدم targetId للانتقال لتفاصيل العقار
     final String? targetId = data['targetId'];
-
     if (targetId != null && targetId.isNotEmpty) {
-      log("Deep linking to Property: $targetId");
       RouterGenerationConfig.goRouter.pushNamed(
         AppRoutes.propertyDetailsById,
         pathParameters: {'id': targetId},
       );
     } else {
-      log("Opening Notifications center");
       RouterGenerationConfig.goRouter.pushNamed(AppRoutes.notifications);
     }
   }

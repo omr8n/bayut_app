@@ -21,17 +21,18 @@ class SimilarPropertyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currencyFormat = NumberFormat('#,###');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 180.w, // عرض أصغر ومناسب
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -108,7 +109,7 @@ class SimilarPropertyCard extends StatelessWidget {
                           vertical: 2.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Row(
@@ -117,7 +118,7 @@ class SimilarPropertyCard extends StatelessWidget {
                             Text(
                               'شوهد',
                               style: TextStyle(
-                                color: Colors.grey[700],
+                                color: isDark ? Colors.white70 : Colors.grey[700],
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -125,7 +126,7 @@ class SimilarPropertyCard extends StatelessWidget {
                             SizedBox(width: 2.w),
                             Icon(
                               Icons.check_circle_rounded,
-                              color: Colors.grey[600],
+                              color: isDark ? Colors.white60 : Colors.grey[600],
                               size: 12.sp,
                             ),
                           ],
@@ -141,7 +142,7 @@ class SimilarPropertyCard extends StatelessWidget {
                   child: FavoriteButton(
                     propertyId: property.id,
                     size: 16,
-                    backgroundColor: Colors.white.withValues(alpha: 0.8),
+                    backgroundColor: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -159,7 +160,7 @@ class SimilarPropertyCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                      color: isDark ? AppColors.accent : AppColors.primary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -172,28 +173,28 @@ class SimilarPropertyCard extends StatelessWidget {
                       Icon(
                         Icons.king_bed_outlined,
                         size: 14.sp,
-                        color: Colors.grey,
+                        color: isDark ? AppColors.textSecondaryDark : Colors.grey,
                       ),
                       SizedBox(width: 4.w),
                       Text(
                         '${property.bedrooms ?? 0}',
                         style: TextStyle(
                           fontSize: 12.sp,
-                          color: Colors.black87,
+                          color: isDark ? Colors.white70 : Colors.black87,
                         ),
                       ),
                       SizedBox(width: 8.w),
                       Icon(
                         Icons.square_foot_outlined,
                         size: 14.sp,
-                        color: Colors.grey,
+                        color: isDark ? AppColors.textSecondaryDark : Colors.grey,
                       ),
                       SizedBox(width: 4.w),
                       Text(
                         '${property.area} م²',
                         style: TextStyle(
                           fontSize: 12.sp,
-                          color: Colors.black87,
+                          color: isDark ? Colors.white70 : Colors.black87,
                         ),
                       ),
                     ],
@@ -205,7 +206,7 @@ class SimilarPropertyCard extends StatelessWidget {
                     '${property.city}، ${property.governorate}',
                     style: TextStyle(
                       fontSize: 11.sp,
-                      color: Colors.grey.shade600,
+                      color: isDark ? AppColors.textSecondaryDark : Colors.grey.shade600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

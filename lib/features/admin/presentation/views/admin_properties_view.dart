@@ -13,15 +13,14 @@ class AdminPropertiesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return BlocProvider(
       create: (context) => getIt<AdminCubit>()..fetchProperties(),
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF8F9FA),
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Theme.of(context).brightness == Brightness.dark
-              ? AppColors.darkBackground
-              : const Color(0xFF1E4C9A), // Royal Blue
+          backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFF00142B),
           title: Text(
             AppLocalizations.of(context)!.manage_properties,
             style: const TextStyle(

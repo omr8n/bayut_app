@@ -1,35 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:test_graduation/core/utils/colors.dart';
 
-class ReportDetailCard extends StatelessWidget {
-  const ReportDetailCard({super.key, required this.children});
+class AdminInfoTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color? color;
+  final Widget? trailing;
 
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      ),
-    );
-  }
-}
-
-class ReportDetailRow extends StatelessWidget {
-  const ReportDetailRow({
+  const AdminInfoTile({
     super.key,
     required this.icon,
     required this.label,
@@ -38,27 +17,34 @@ class ReportDetailRow extends StatelessWidget {
     this.trailing,
   });
 
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color? color;
-  final Widget? trailing;
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = color ?? AppColors.primary;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : Colors.grey[50],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[200]!,
+        ),
+      ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: (color ?? Colors.grey).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, size: 20, color: color ?? Colors.grey[600]),
+            child: Icon(icon, size: 20, color: primaryColor),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,24 +52,27 @@ class ReportDetailRow extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    color: Colors.grey[500],
                     fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : Colors.grey[500],
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   value,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: color ?? Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          ?trailing,
+          if (trailing != null) trailing!,
         ],
       ),
     );

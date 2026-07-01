@@ -14,18 +14,15 @@ class MyPropertiesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
-        final profileCubit = context.read<ProfileCubit>();
-        final bool isLoggedIn = profileCubit.user != null;
+        // الاعتماد على الحالة الحالية للـ ProfileCubit كمصدر وحيد للحقيقة
+        final user = context.watch<ProfileCubit>().user;
 
-        if (isLoggedIn) {
+        if (user != null) {
           return const MyPropertiesViewBlocBuilder();
         }
 
         return EmptyBagProperties(
-          onPressed: () {
-            // نستخدم Navigator مباشرة أو GoRouter بطريقة تضمن عدم التداخل مع الـ Rebuild
-            context.pushNamed(AppRoutes.loginScreen);
-          },
+          onPressed: () => context.pushNamed(AppRoutes.loginScreen),
         );
       },
     );

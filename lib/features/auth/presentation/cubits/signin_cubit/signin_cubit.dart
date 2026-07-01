@@ -32,6 +32,17 @@ class SigninCubit extends Cubit<SigninState> {
         return;
       }
 
+      // 🔥 التحقق من حالة الحذف (Deleted)
+      if (userEntity.status == 'deleted') {
+        emit(
+          SigninFailure(
+            message:
+                "عذراً، هذا الحساب تم حذفه نهائياً ولا يمكن استخدامه مجدداً.",
+          ),
+        );
+        return;
+      }
+
       await SecureStorage.setBool('isLoggedIn', true);
 
       // تحديث بيانات المستخدم في الكيوبيت العالمي فوراً

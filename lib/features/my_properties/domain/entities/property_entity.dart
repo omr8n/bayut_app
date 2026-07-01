@@ -28,6 +28,7 @@ class PropertyEntity extends Equatable {
   final String phone;
   final String whatsapp;
   final String? email;
+  final dynamic lastDocSnapshot; // 🔥 Cursor للـ Pagination (تجاهل في Equatable)
 
   // بيانات البائع
   final String sellerId;
@@ -138,6 +139,7 @@ class PropertyEntity extends Equatable {
     this.hallCapacity,
     this.workshopType,
     this.workshopHeight,
+    this.lastDocSnapshot,
   });
 
   PropertyEntity copyWith({
@@ -206,6 +208,7 @@ class PropertyEntity extends Equatable {
     int? hallCapacity,
     String? workshopType,
     double? workshopHeight,
+    dynamic lastDocSnapshot,
   }) {
     return PropertyEntity(
       id: id ?? this.id,
@@ -273,6 +276,7 @@ class PropertyEntity extends Equatable {
       hallCapacity: hallCapacity ?? this.hallCapacity,
       workshopType: workshopType ?? this.workshopType,
       workshopHeight: workshopHeight ?? this.workshopHeight,
+      lastDocSnapshot: lastDocSnapshot ?? this.lastDocSnapshot,
     );
   }
 

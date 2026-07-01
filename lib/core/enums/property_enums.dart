@@ -26,18 +26,19 @@ class CurrencyHelper {
     final localizations = AppLocalizations.of(context);
     if (localizations == null) return currency;
 
-    final trimmedCurrency = currency.trim().toUpperCase();
+    final trimmedCurrency = currency.trim().toLowerCase();
 
     // Map common currency strings to translation keys
-    if (trimmedCurrency == 'SYP' || trimmedCurrency == 'ل.س') {
-      return localizations.translate(LangKeys.currencyLira);
-    } else if (trimmedCurrency == 'USD' || trimmedCurrency == 'دولار أمريكي') {
+    if (trimmedCurrency == 'syp' || trimmedCurrency == 'ل.س' || trimmedCurrency == 'ليرة سورية') {
+      return localizations.translate(LangKeys.syp);
+    } else if (trimmedCurrency == 'usd' || trimmedCurrency == 'دولار أمريكي' || trimmedCurrency == 'دولار') {
       return localizations.translate(LangKeys.usd);
-    } else if (trimmedCurrency == 'TRY' || trimmedCurrency == 'ليرة تركية') {
+    } else if (trimmedCurrency == 'try' || trimmedCurrency == 'ليرة تركية') {
       return localizations.translate(LangKeys.tryCurrency);
     }
 
-    return currency;
+    // Try to translate the key directly if it matches one of our defined keys
+    return localizations.translate(trimmedCurrency);
   }
 }
 

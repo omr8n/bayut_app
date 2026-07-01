@@ -54,36 +54,53 @@ class AdminPropertyCard extends StatelessWidget {
                   size: 18.sp,
                 ),
                 SizedBox(width: 8.w),
-                Text(
-                  property.sellerName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13.sp,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.blue.shade900,
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    property.sellerName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.sp,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.blue.shade900,
+                    ),
                   ),
                 ),
-                const Spacer(),
-                if (trendRank != null)
-                  _statusBadge(
-                    local.trend_label,
-                    const Color(0xFFFFF3E0),
-                    const Color(0xFFFF9800),
+                SizedBox(width: 4.w),
+                Expanded(
+                  flex: 3,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true, // لإظهار الشارات من اليمين لليسار في حال الضيق
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (trendRank != null)
+                          _statusBadge(
+                            local.trend_label,
+                            const Color(0xFFFFF3E0),
+                            const Color(0xFFFF9800),
+                          ),
+                        if (trendRank != null) SizedBox(width: 6.w),
+                        if (property.premiumStatus == PremiumStatus.pending)
+                          _statusBadge(
+                            local.premium_requests,
+                            const Color(0xFFE3F2FD),
+                            const Color(0xFF2196F3),
+                          ),
+                        if (property.premiumStatus == PremiumStatus.pending)
+                          SizedBox(width: 6.w),
+                        _statusBadge(
+                          local.approved_label,
+                          const Color(0xFFE8F5E9),
+                          const Color(0xFF4CAF50),
+                        ),
+                      ],
+                    ),
                   ),
-                if (trendRank != null) SizedBox(width: 6.w),
-                if (property.premiumStatus == PremiumStatus.pending)
-                  _statusBadge(
-                    local.premium_requests,
-                    const Color(0xFFE3F2FD),
-                    const Color(0xFF2196F3),
-                  ),
-                if (property.premiumStatus == PremiumStatus.pending)
-                  SizedBox(width: 6.w),
-                _statusBadge(
-                  local.approved_label,
-                  const Color(0xFFE8F5E9),
-                  const Color(0xFF4CAF50),
                 ),
               ],
             ),

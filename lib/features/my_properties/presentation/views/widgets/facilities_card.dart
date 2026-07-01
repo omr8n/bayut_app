@@ -78,11 +78,11 @@ class FacilitiesCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Colors.blue.withValues(alpha: 0.05)
-                    : Colors.white,
+                    ? AppColors.primary.withValues(alpha: 0.1)
+                    : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.grey.shade300,
+                  color: isSelected ? AppColors.primary : Theme.of(context).dividerColor,
                   width: isSelected ? 1.5 : 1,
                 ),
               ),
@@ -92,11 +92,11 @@ class FacilitiesCard extends StatelessWidget {
                     width: 22,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.white,
+                      color: isSelected ? AppColors.primary : Colors.transparent,
                       border: Border.all(
                         color: isSelected
                             ? AppColors.primary
-                            : Colors.grey.shade400,
+                            : Theme.of(context).dividerColor,
                       ),
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -112,7 +112,7 @@ class FacilitiesCard extends StatelessWidget {
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,
-                      color: isSelected ? AppColors.primary : Colors.black87,
+                      color: isSelected ? AppColors.primary : Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -120,7 +120,7 @@ class FacilitiesCard extends StatelessWidget {
                     facilities[key]!['icon'] as IconData,
                     color: isSelected
                         ? AppColors.primary
-                        : Colors.grey.shade600,
+                        : Theme.of(context).iconTheme.color?.withValues(alpha: 0.6) ?? Colors.grey.shade600,
                     size: 24,
                   ),
                 ],

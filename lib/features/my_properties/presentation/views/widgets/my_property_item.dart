@@ -12,7 +12,7 @@ import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
-import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/promotion_sheet.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/property_promotion_button.dart';
 
 class MyPropertyItem extends StatelessWidget {
   const MyPropertyItem({super.key, required this.property, this.onSold});
@@ -224,7 +224,7 @@ class MyPropertyItem extends StatelessWidget {
                               extra: property,
                             ),
                           ),
-                          _buildPremiumActionStatus(context),
+                          PropertyPromotionButton(property: property),
                           _buildActionItem(
                             context,
                             Icons.check_circle_outline_rounded,
@@ -368,44 +368,6 @@ class MyPropertyItem extends StatelessWidget {
     );
   }
 
-  Widget _buildPremiumActionStatus(BuildContext context) {
-    final locale = AppLocalizations.of(context)!;
-    switch (property.premiumStatus) {
-      case PremiumStatus.pending:
-        return _buildActionItem(
-          context,
-          Icons.pending_actions_rounded,
-          locale.translate(LangKeys.promotionPending),
-          const Color(0xFF1565C0),
-          () {},
-        );
-      case PremiumStatus.active:
-        return _buildActionItem(
-          context,
-          Icons.stars_rounded,
-          locale.translate(LangKeys.featuredPropertyLabel),
-          const Color(0xFFFFB300),
-          null,
-        );
-      case PremiumStatus.rejected:
-        return _buildActionItem(
-          context,
-          Icons.new_releases_rounded,
-          locale.translate(LangKeys.promotionRejected),
-          Colors.redAccent,
-          () => _showPromotionDialog(context),
-        );
-      default:
-        return _buildActionItem(
-          context,
-          Icons.auto_awesome_rounded,
-          locale.translate(LangKeys.promotionRequest),
-          const Color(0xFF673AB7),
-          () => _showPromotionDialog(context),
-        );
-    }
-  }
-
   Widget _buildActionItem(
     BuildContext context,
     IconData icon,
@@ -448,15 +410,6 @@ class MyPropertyItem extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _showPromotionDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => PromotionSheet(property: property),
     );
   }
 

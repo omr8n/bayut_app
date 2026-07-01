@@ -4,8 +4,11 @@ import 'package:test_graduation/core/models/admin_action_model.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
 import 'package:test_graduation/features/admin/domain/repos/admin_action_repo.dart';
 import 'package:test_graduation/features/admin/domain/repos/admin_repo.dart';
+import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
+import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/notifications/domain/use_cases/send_notification_use_case.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
+import 'package:test_graduation/features/reports/domain/entities/report_entity.dart';
 import 'package:uuid/uuid.dart';
 import 'package:test_graduation/core/models/financial_record_model.dart';
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
@@ -102,50 +105,181 @@ class AdminCubit extends Cubit<AdminState> {
     );
   }
 
-  // 2. Fetch All Users
-  Future<void> fetchUsers() async {
-    emit(AdminLoading());
-    final result = await adminRepo.getAllUsers();
+  // 2. Fetch Users (Paginated)
+  Future<void> fetchUsers({bool isRefresh = false}) async {
+    final currentState = state;
+    List<UserEntity> oldUsers = [];
+
+    if (currentState is AdminUsersSuccess && !isRefresh) {
+      if (currentState.hasReachedMax) return;
+      oldUsers = currentState.users;
+    } else {
+      emit(AdminLoading());
+    }
+
+    final lastDoc = isRefresh || oldUsers.isEmpty
+        ? null
+        : oldUsers.last.lastDocSnapshot;
+
+    final result = await adminRepo.getPaginatedUsers(
+      limit: 20,
+      lastDoc: lastDoc,
+    );
+
     if (isClosed) return;
+
+    result.fold((failure) => emit(AdminFailure(failure.message)), (newUsers) {
+      final List<UserEntity> users = isRefresh
+          ? newUsers
+          : [...oldUsers, ...newUsers];
+      emit(AdminUsersSuccess(users, hasReachedMax: newUsers.length < 20));
+    });
+  }
+
+  // Search Users
+  Future<void> searchUsers(String query) async {
+    if (query.isEmpty) {
+      fetchUsers(isRefresh: true);
+      return;
+    }
+
+    emit(AdminLoading());
+    final result = await adminRepo.searchUsers(query);
+
+    if (isClosed) return;
+
     result.fold(
       (failure) => emit(AdminFailure(failure.message)),
-      (users) => emit(AdminUsersSuccess(users)),
+      (users) => emit(AdminUsersSuccess(users, hasReachedMax: true)),
     );
   }
 
-  // 3. Block/Unblock User
+  // 3. Block/Unblock User (Optimistic UI)
   Future<void> toggleUserBlock(String uId, bool isBlocked) async {
-    final result = await adminRepo.blockUser(uId: uId, block: isBlocked);
-    if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      final desc = isBlocked
-          ? "Your account has been blocked by administration for violating terms"
-          : "Your account has been unblocked, you can use it now";
-      _processAction(
-        type: 'BLOCK_USER',
-        targetId: uId,
-        targetUserId: uId,
-        description: desc,
-        notificationTitle: isBlocked ? "Account Blocked" : "Account Unblocked",
+    final currentState = state;
+    List<UserEntity>? originalUsers;
+
+    // 🔥 تحديث الواجهة فوراً (Optimistic)
+    if (currentState is AdminUsersSuccess) {
+      originalUsers = List.from(currentState.users);
+      final updatedUsers = currentState.users.map((u) {
+        if (u.uId == uId)
+          return u.copyWith(status: isBlocked ? 'banned' : 'active');
+        return u;
+      }).toList();
+      emit(
+        AdminUsersSuccess(
+          updatedUsers,
+          hasReachedMax: currentState.hasReachedMax,
+        ),
       );
-      emit(const AdminActionSuccess("User status updated successfully"));
-      fetchUsers();
-    });
+    }
+
+    final result = await adminRepo.blockUser(uId: uId, block: isBlocked);
+
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        // 🔙 تراجع عن التعديل في حال الفشل
+        if (originalUsers != null && currentState is AdminUsersSuccess) {
+          emit(
+            AdminUsersSuccess(
+              originalUsers,
+              hasReachedMax: currentState.hasReachedMax,
+            ),
+          );
+        }
+        emit(AdminFailure(failure.message));
+      },
+      (_) {
+        final desc = isBlocked
+            ? "عذراً، لقد تم حظر حسابك من قبل الإدارة لمخالفة معايير الاستخدام. يرجى التواصل مع الإدارة للاستفسار."
+            : "تم إلغاء حظر حسابك بنجاح، يمكنك الآن تسجيل الدخول واستخدام التطبيق كالمعتاد.";
+        _processAction(
+          type: isBlocked ? 'BLOCK_USER' : 'UNBLOCK_USER',
+          targetId: uId,
+          targetUserId: uId,
+          description: desc,
+          notificationTitle: isBlocked
+              ? "تنبيه: حظر الحساب"
+              : "تم فك الحظر عن حسابك",
+        );
+
+        // 🔥 تحديث الحالة محلياً للمشرف ليرى التغيير فوراً في الواجهة
+        if (state is AdminUsersSuccess) {
+          final users = (state as AdminUsersSuccess).users.map((u) {
+            if (u.uId == uId) return u.copyWith(status: isBlocked ? 'banned' : 'active');
+            return u;
+          }).toList();
+          emit(AdminUsersSuccess(users, 
+            hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
+            message: isBlocked ? "تم حظر المستخدم بنجاح" : "تم إلغاء الحظر بنجاح"
+          ));
+        } else {
+          emit(AdminActionSuccess(isBlocked ? "تم الحظر بنجاح" : "تم إلغاء الحظر بنجاح"));
+        }
+      },
+    );
   }
 
-  // 4. Delete User
+  // 4. Delete User (Optimistic UI)
   Future<void> deleteUser(String uId) async {
-    final result = await adminRepo.deleteUser(uId: uId);
-    if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      _processAction(
-        type: 'DELETE_USER',
-        targetId: uId,
-        description: "User account deleted permanently: $uId",
+    final currentState = state;
+    List<UserEntity>? originalUsers;
+
+    // 🔥 حذف من الواجهة فوراً
+    if (currentState is AdminUsersSuccess) {
+      originalUsers = List.from(currentState.users);
+      final updatedUsers = currentState.users
+          .where((u) => u.uId != uId)
+          .toList();
+      emit(
+        AdminUsersSuccess(
+          updatedUsers,
+          hasReachedMax: currentState.hasReachedMax,
+        ),
       );
-      emit(const AdminActionSuccess("User deleted successfully"));
-      fetchUsers();
-    });
+    }
+
+    final result = await adminRepo.deleteUser(uId: uId);
+
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        if (originalUsers != null && currentState is AdminUsersSuccess) {
+          emit(
+            AdminUsersSuccess(
+              originalUsers,
+              hasReachedMax: currentState.hasReachedMax,
+            ),
+          );
+        }
+        emit(AdminFailure(failure.message));
+      },
+      (_) {
+        _processAction(
+          type: 'DELETE_USER',
+          targetId: uId,
+          description: "User account marked as deleted: $uId",
+        );
+        
+        // 🔥 تحديث الحالة محلياً للمشرف ليختفي المستخدم فوراً
+        if (state is AdminUsersSuccess) {
+          final users = (state as AdminUsersSuccess).users
+              .where((u) => u.uId != uId)
+              .toList();
+          emit(AdminUsersSuccess(
+            users,
+            hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
+            message: "تم حذف المستخدم بنجاح",
+          ));
+        } else {
+          emit(const AdminActionSuccess("تم حذف المستخدم بنجاح"));
+        }
+      },
+    );
   }
 
   // 5. Update Admin Notes
@@ -153,83 +287,180 @@ class AdminCubit extends Cubit<AdminState> {
     final result = await adminRepo.updateAdminNotes(uId: uId, notes: notes);
     if (isClosed) return;
     result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      emit(const AdminActionSuccess("Admin notes saved"));
-      fetchUsers();
+      emit(
+        AdminUsersSuccess(
+          (state as AdminUsersSuccess).users,
+          hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
+          message: "Admin notes saved",
+        ),
+      );
     });
   }
 
-  // 6. Fetch All Properties
-  Future<void> fetchProperties() async {
-    emit(AdminLoading());
-    final result = await adminRepo.getAllProperties();
-    if (isClosed) return;
-    result.fold(
-      (failure) => emit(AdminFailure(failure.message)),
-      (properties) => emit(AdminPropertiesSuccess(properties)),
+  // 6. Fetch Properties (Paginated)
+  Future<void> fetchProperties({bool isRefresh = false}) async {
+    final currentState = state;
+    List<PropertyEntity> oldProps = [];
+
+    if (currentState is AdminPropertiesSuccess && !isRefresh) {
+      if (currentState.hasReachedMax) return;
+      oldProps = currentState.properties;
+    } else {
+      emit(AdminLoading());
+    }
+
+    final lastDoc = isRefresh || oldProps.isEmpty
+        ? null
+        : oldProps.last.lastDocSnapshot;
+
+    final result = await adminRepo.getPaginatedProperties(
+      limit: 20,
+      lastDoc: lastDoc,
     );
+
+    if (isClosed) return;
+
+    result.fold((failure) => emit(AdminFailure(failure.message)), (newProps) {
+      final List<PropertyEntity> props = isRefresh
+          ? newProps
+          : [...oldProps, ...newProps];
+      emit(AdminPropertiesSuccess(props, hasReachedMax: newProps.length < 20));
+    });
   }
 
-  // 7. Toggle Property Approval (Synced with UI)
+  // 7. Toggle Property Approval (Optimistic UI)
   Future<void> togglePropertyApproval(
     String id,
     bool isApproved,
     String sellerId,
   ) async {
+    final currentState = state;
+    List<PropertyEntity>? originalProps;
+
+    if (currentState is AdminPropertiesSuccess) {
+      originalProps = List.from(currentState.properties);
+      final updatedProps = currentState.properties.map((p) {
+        if (p.id == id) return p.copyWith(isApproved: isApproved);
+        return p;
+      }).toList();
+      emit(
+        AdminPropertiesSuccess(
+          updatedProps,
+          hasReachedMax: currentState.hasReachedMax,
+        ),
+      );
+    }
+
     final result = await adminRepo.togglePropertyApproval(
       propertyId: id,
       isApproved: isApproved,
     );
     if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      final desc = isApproved
-          ? "Your property #$id has been approved for publishing"
-          : "Your property #$id has been rejected, please review details";
-      _processAction(
-        type: 'CHANGE_STATUS',
-        targetId: id,
-        targetUserId: sellerId,
-        description: desc,
-        notificationTitle: isApproved ? "Property Approved" : "Property Rejected",
-      );
-      emit(
-        AdminActionSuccess(
-          isApproved ? "Property Approved" : "Property Approval Cancelled",
-        ),
-      );
-      fetchProperties();
-    });
+    result.fold(
+      (failure) {
+        if (originalProps != null && currentState is AdminPropertiesSuccess) {
+          emit(
+            AdminPropertiesSuccess(
+              originalProps,
+              hasReachedMax: currentState.hasReachedMax,
+            ),
+          );
+        }
+        emit(AdminFailure(failure.message));
+      },
+      (_) {
+        final desc = isApproved
+            ? "Your property #$id has been approved for publishing"
+            : "Your property #$id has been rejected, please review details";
+        _processAction(
+          type: 'CHANGE_STATUS',
+          targetId: id,
+          targetUserId: sellerId,
+          description: desc,
+          notificationTitle: isApproved
+              ? "Property Approved"
+              : "Property Rejected",
+        );
+        if (state is AdminPropertiesSuccess) {
+          emit(
+            AdminPropertiesSuccess(
+              (state as AdminPropertiesSuccess).properties,
+              hasReachedMax: (state as AdminPropertiesSuccess).hasReachedMax,
+              message: isApproved
+                  ? "Property Approved"
+                  : "Property Approval Cancelled",
+            ),
+          );
+        }
+      },
+    );
   }
 
-  // 8. Toggle Featured (Synced with UI)
+  // 8. Toggle Featured (Optimistic UI)
   Future<void> togglePropertyFeatured(
     String id,
     bool isFeatured,
     String sellerId,
   ) async {
+    final currentState = state;
+    List<PropertyEntity>? originalProps;
+
+    if (currentState is AdminPropertiesSuccess) {
+      originalProps = List.from(currentState.properties);
+      final updatedProps = currentState.properties.map((p) {
+        if (p.id == id) return p.copyWith(isFeatured: isFeatured);
+        return p;
+      }).toList();
+      emit(
+        AdminPropertiesSuccess(
+          updatedProps,
+          hasReachedMax: currentState.hasReachedMax,
+        ),
+      );
+    }
+
     final result = await adminRepo.togglePropertyFeatured(
       propertyId: id,
       isFeatured: isFeatured,
     );
     if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      _processAction(
-        type: 'FEATURE_PROPERTY',
-        targetId: id,
-        targetUserId: sellerId,
-        description: isFeatured
-            ? "Congratulations! Your property #$id has been selected for the featured list, it will now be shown to more users."
-            : "Featured status has been removed from property #$id by administration.",
-        notificationTitle: isFeatured
-            ? "Congratulations! Your property is now featured"
-            : "Featured Status Update",
-      );
-      emit(
-        AdminActionSuccess(
-          isFeatured ? "Property featured successfully" : "Feature removed",
-        ),
-      );
-      fetchProperties();
-    });
+    result.fold(
+      (failure) {
+        if (originalProps != null && currentState is AdminPropertiesSuccess) {
+          emit(
+            AdminPropertiesSuccess(
+              originalProps,
+              hasReachedMax: currentState.hasReachedMax,
+            ),
+          );
+        }
+        emit(AdminFailure(failure.message));
+      },
+      (_) {
+        _processAction(
+          type: 'FEATURE_PROPERTY',
+          targetId: id,
+          targetUserId: sellerId,
+          description: isFeatured
+              ? "Congratulations! Your property #$id has been selected for the featured list, it will now be shown to more users."
+              : "Featured status has been removed from property #$id by administration.",
+          notificationTitle: isFeatured
+              ? "Congratulations! Your property is now featured"
+              : "Featured Status Update",
+        );
+        if (state is AdminPropertiesSuccess) {
+          emit(
+            AdminPropertiesSuccess(
+              (state as AdminPropertiesSuccess).properties,
+              hasReachedMax: (state as AdminPropertiesSuccess).hasReachedMax,
+              message: isFeatured
+                  ? "Property featured successfully"
+                  : "Feature removed",
+            ),
+          );
+        }
+      },
+    );
   }
 
   // 🔥 Handle Premium Request (Approve/Reject) + Financial Record + Notification
@@ -327,62 +558,161 @@ class AdminCubit extends Cubit<AdminState> {
     fetchProperties();
   }
 
-  // 9. Delete Property
+  // 9. Delete Property (Optimistic UI)
   Future<void> deleteProperty(String id, String sellerId) async {
+    final currentState = state;
+    List<PropertyEntity>? originalProps;
+
+    if (currentState is AdminPropertiesSuccess) {
+      originalProps = List.from(currentState.properties);
+      final updatedProps = currentState.properties
+          .where((p) => p.id != id)
+          .toList();
+      emit(
+        AdminPropertiesSuccess(
+          updatedProps,
+          hasReachedMax: currentState.hasReachedMax,
+        ),
+      );
+    }
+
     final result = await adminRepo.deleteProperty(propertyId: id);
     if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      _processAction(
-        type: 'DELETE_PROPERTY',
-        targetId: id,
-        targetUserId: sellerId,
-        description: "Property #$id deleted for violating standards",
-        notificationTitle: "Property Deleted",
-      );
-      emit(const AdminActionSuccess("Property deleted successfully"));
-      fetchProperties();
-    });
-  }
-
-  // 10. Fetch Reports
-  Future<void> fetchReports() async {
-    emit(AdminLoading());
-    final result = await adminRepo.getAllReports();
-    if (isClosed) return;
     result.fold(
-      (failure) => emit(AdminFailure(failure.message)),
-      (reports) => emit(AdminReportsSuccess(reports)),
+      (failure) {
+        if (originalProps != null && currentState is AdminPropertiesSuccess) {
+          emit(
+            AdminPropertiesSuccess(
+              originalProps,
+              hasReachedMax: currentState.hasReachedMax,
+            ),
+          );
+        }
+        emit(AdminFailure(failure.message));
+      },
+      (_) {
+        _processAction(
+          type: 'DELETE_PROPERTY',
+          targetId: id,
+          targetUserId: sellerId,
+          description: "Property #$id deleted for violating standards",
+          notificationTitle: "Property Deleted",
+        );
+        if (state is AdminPropertiesSuccess) {
+          emit(
+            AdminPropertiesSuccess(
+              (state as AdminPropertiesSuccess).properties,
+              hasReachedMax: (state as AdminPropertiesSuccess).hasReachedMax,
+              message: "Property deleted successfully",
+            ),
+          );
+        }
+      },
     );
   }
 
-  // 11. Update Report Status
+  // 10. Fetch Reports (Paginated)
+  Future<void> fetchReports({bool isRefresh = false}) async {
+    final currentState = state;
+    List<ReportEntity> oldReports = [];
+
+    if (currentState is AdminReportsSuccess && !isRefresh) {
+      if (currentState.hasReachedMax) return;
+      oldReports = currentState.reports;
+    } else {
+      emit(AdminLoading());
+    }
+
+    final lastDoc = isRefresh || oldReports.isEmpty
+        ? null
+        : oldReports.last.lastDocSnapshot;
+
+    final result = await adminRepo.getPaginatedReports(
+      limit: 20,
+      lastDoc: lastDoc,
+    );
+
+    if (isClosed) return;
+
+    result.fold((failure) => emit(AdminFailure(failure.message)), (newReports) {
+      final List<ReportEntity> reports = isRefresh
+          ? newReports
+          : [...oldReports, ...newReports];
+      emit(AdminReportsSuccess(reports, hasReachedMax: newReports.length < 20));
+    });
+  }
+
+  // 11. Update Report Status (Optimistic UI)
   Future<void> updateReportStatus(
     String id,
     String status, {
     String? adminNote,
     String? reporterId,
   }) async {
-    emit(AdminLoading());
+    final currentState = state;
+    List<ReportEntity>? originalReports;
+
+    if (currentState is AdminReportsSuccess) {
+      originalReports = List.from(currentState.reports);
+      final updatedReports = currentState.reports.map((r) {
+        if (r.id == id) {
+          return r.copyWith(
+            status: ReportStatus.values.firstWhere((e) => e.name == status),
+            adminNote: adminNote,
+          );
+        }
+        return r;
+      }).toList();
+      emit(
+        AdminReportsSuccess(
+          updatedReports,
+          hasReachedMax: currentState.hasReachedMax,
+        ),
+      );
+    }
+
     final result = await adminRepo.updateReportStatus(
       reportId: id,
       status: status,
       adminNote: adminNote,
     );
+
     if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
-      if (reporterId != null) {
-        _processAction(
-          type: 'UPDATE_REPORT',
-          targetId: id,
-          targetUserId: reporterId,
-          description:
-              "Your report status (#$id) has been updated to: $status. Notes: ${adminNote ?? 'None'}",
-          notificationTitle: "Report Status Update",
-        );
-      }
-      emit(const AdminActionSuccess("Report status updated successfully"));
-      fetchReports();
-    });
+
+    result.fold(
+      (failure) {
+        if (originalReports != null && currentState is AdminReportsSuccess) {
+          emit(
+            AdminReportsSuccess(
+              originalReports,
+              hasReachedMax: currentState.hasReachedMax,
+            ),
+          );
+        }
+        emit(AdminFailure(failure.message));
+      },
+      (_) {
+        if (reporterId != null) {
+          _processAction(
+            type: 'UPDATE_REPORT',
+            targetId: id,
+            targetUserId: reporterId,
+            description:
+                "Your report status (#$id) has been updated to: $status. Notes: ${adminNote ?? 'None'}",
+            notificationTitle: "Report Status Update",
+          );
+        }
+        if (state is AdminReportsSuccess) {
+          emit(
+            AdminReportsSuccess(
+              (state as AdminReportsSuccess).reports,
+              hasReachedMax: (state as AdminReportsSuccess).hasReachedMax,
+              message: "Report status updated successfully",
+            ),
+          );
+        }
+      },
+    );
   }
 
   // 12. Send Global Notification
@@ -487,39 +817,36 @@ class AdminCubit extends Cubit<AdminState> {
   Future<void> _checkExpiringPremiums() async {
     try {
       final propertiesResult = await adminRepo.getAllProperties();
-      propertiesResult.fold(
-        (_) => null,
-        (properties) async {
-          final now = DateTime.now();
-          final reminderThreshold = now.add(const Duration(hours: 24));
+      propertiesResult.fold((_) => null, (properties) async {
+        final now = DateTime.now();
+        final reminderThreshold = now.add(const Duration(hours: 24));
 
-          for (var property in properties) {
-            if (property.premiumStatus == PremiumStatus.active &&
-                property.premiumExpiryDate != null &&
-                !property.premiumReminderSent) {
-              // If expiry date is before the 24-hour threshold
-              if (property.premiumExpiryDate!.isBefore(reminderThreshold)) {
-                // 1. Send notification to owner
-                _processAction(
-                  type: 'PREMIUM_EXPIRING_SOON',
-                  targetId: property.id,
-                  targetUserId: property.sellerId,
-                  description:
-                      "Alert: Premium status for your property #${property.id} will expire in less than 24 hours. You can renew now to stay on top.",
-                  notificationTitle: "Premium Expiring Soon ⚠️",
-                );
+        for (var property in properties) {
+          if (property.premiumStatus == PremiumStatus.active &&
+              property.premiumExpiryDate != null &&
+              !property.premiumReminderSent) {
+            // If expiry date is before the 24-hour threshold
+            if (property.premiumExpiryDate!.isBefore(reminderThreshold)) {
+              // 1. Send notification to owner
+              _processAction(
+                type: 'PREMIUM_EXPIRING_SOON',
+                targetId: property.id,
+                targetUserId: property.sellerId,
+                description:
+                    "Alert: Premium status for your property #${property.id} will expire in less than 24 hours. You can renew now to stay on top.",
+                notificationTitle: "Premium Expiring Soon ⚠️",
+              );
 
-                // 2. Update flag in Firestore to prevent repetition
-                await getIt<DatabaseService>().updateData(
-                  path: BackendEndpoint.getProperty,
-                  documentId: property.id,
-                  data: {'premiumReminderSent': true},
-                );
-              }
+              // 2. Update flag in Firestore to prevent repetition
+              await getIt<DatabaseService>().updateData(
+                path: BackendEndpoint.getProperty,
+                documentId: property.id,
+                data: {'premiumReminderSent': true},
+              );
             }
           }
-        },
-      );
+        }
+      });
     } catch (e) {
       // Silent failure for periodic check to avoid annoying admin
     }

@@ -28,43 +28,64 @@ class _NotificationCenterViewState extends State<NotificationCenterView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: const Text(
           'مركز الإشعارات',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? AppColors.darkBackground
-            : Colors.white,
+        backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFF00142B),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: BlocBuilder<UserNotificationCubit, UserNotificationState>(
         builder: (context, state) {
-          if (state is UserNotificationLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is UserNotificationSuccess) {
-            if (state.notifications.isEmpty) {
-              return _buildEmptyState();
-            }
-            return ListView.builder(
-              padding: EdgeInsets.all(16.w),
-              itemCount: state.notifications.length,
-              itemBuilder: (context, index) {
-                return _buildNotificationItem(state.notifications[index]);
-              },
-            );
-          }
-          if (state is UserNotificationFailure) {
-            return Center(child: Text(state.message));
-          }
-          return const Center(child: Text('جاري تحميل الإشعارات...'));
+          final isLoading = state is UserNotificationLoading;
+
+          return Column(
+            children: [
+              if (isLoading)
+                const LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  color: AppColors.primary,
+                  minHeight: 3,
+                ),
+              Expanded(
+                child: _buildBodyContent(state),
+              ),
+            ],
+          );
         },
       ),
     );
+  }
+
+  Widget _buildBodyContent(UserNotificationState state) {
+    if (state is UserNotificationSuccess) {
+      if (state.notifications.isEmpty) {
+        return _buildEmptyState();
+      }
+      return ListView.builder(
+        padding: EdgeInsets.all(16.w),
+        itemCount: state.notifications.length,
+        itemBuilder: (context, index) {
+          return _buildNotificationItem(state.notifications[index]);
+        },
+      );
+    }
+    if (state is UserNotificationFailure) {
+      return Center(child: Text(state.message));
+    }
+    if (state is UserNotificationLoading) {
+      return const SizedBox.shrink(); // Handled by top LinearProgressIndicator
+    }
+    return const Center(child: Text('جاري تحميل الإشعارات...'));
   }
 
   Widget _buildNotificationItem(AppNotification notification) {

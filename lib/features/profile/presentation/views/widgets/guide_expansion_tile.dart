@@ -20,9 +20,9 @@ class GuideExpansionTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
@@ -37,14 +37,14 @@ class GuideExpansionTile extends StatelessWidget {
           ),
           title: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
-              color: AppColors.textPrimary,
+              color: Theme.of(context).textTheme.titleMedium?.color,
             ),
           ),
           iconColor: AppColors.primary,
-          collapsedIconColor: AppColors.textSecondary,
+          collapsedIconColor: Theme.of(context).textTheme.bodySmall?.color,
           shape: const RoundedRectangleBorder(side: BorderSide.none),
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           children: [
@@ -53,10 +53,10 @@ class GuideExpansionTile extends StatelessWidget {
             Text(
               content,
               textAlign: TextAlign.justify,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 height: 1.6,
-                color: AppColors.textSecondary,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ],

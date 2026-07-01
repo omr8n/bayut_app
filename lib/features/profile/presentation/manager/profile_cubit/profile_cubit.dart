@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:test_graduation/core/services/data_service.dart';
 import 'package:test_graduation/core/services/firebase_auth_service.dart';
 import 'package:test_graduation/core/services/secure_storage_singleton.dart';
 
+import 'package:test_graduation/core/services/fcm_service.dart';
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
 import 'package:test_graduation/features/auth/data/models/user_model.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
@@ -39,6 +41,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   void updateUser(UserEntity newUser) {
     user = newUser;
     saveFcmToken(); // 🔥 حفظ التوكن عند تحديث بيانات المستخدم
+    FCMService()
+        .subscribeToAllTopic(); // 🔥 الاشتراك في الإشعارات العامة عند تسجيل الدخول
     emit(ProfileUserLoaded(newUser));
   }
 
@@ -59,33 +63,76 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> getUserInfo() async {
-    if (!SecureStorage.isLoggedIn) return;
+    // 🔥 فحص صارم للجلسة قبل البدء
+    if (!SecureStorage.isLoggedIn) {
+      log("ℹ️ ProfileCubit: User is NOT logged in. Skipping Firestore stream.");
+      user = null;
+      _userSubscription?.cancel();
+      FCMService().unsubscribeFromAllTopic(); 
+      emit(ProfileInitial());
+      return;
+    }
 
     if (user != null) {
+      FCMService().subscribeToAllTopic(); 
       emit(ProfileUserLoaded(user!));
     }
 
     try {
       final uId = await SecureStorage.getString('uId');
-      if (uId.isEmpty) return;
+      if (uId.isEmpty) {
+        log("⚠️ ProfileCubit: isLoggedIn is true but uId is empty. Resetting session.");
+        await logout();
+        return;
+      }
 
       _userSubscription?.cancel();
       _userSubscription = _databaseService
-          .streamData(path: BackendEndpoint.getUsersData)
-          .listen((usersList) {
+          .streamDocument(path: BackendEndpoint.getUsersData, documentId: uId)
+          .listen((userData) {
             try {
-              final userData = usersList.firstWhere(
-                (data) => data['uId'] == uId,
-              );
-              user = UserModel.fromJson(userData);
-              if (user?.status == 'banned') {
-                emit(ProfileUserBanned());
+              if (userData == null) return;
+              
+              // فحص الحالة قبل تحديث الكائن المحلي
+              final String status = userData['status'] ?? 'active';
+              
+              if (status == 'banned') {
+                log("🚫 ProfileCubit: User $uId is BANNED.");
+                _userSubscription?.cancel();
+                if (SecureStorage.isLoggedIn) {
+                  // تحديث التوكن في الخلفية لمنع الرسائل
+                  _databaseService.updateData(
+                    path: BackendEndpoint.updateUserData,
+                    documentId: uId,
+                    data: {'fcmToken': ''},
+                  ).catchError((e) => log("⚠️ Error clearing token on ban: $e"));
+
+                  SecureStorage.setBool('isLoggedIn', false); 
+                  FCMService().unsubscribeFromAllTopic();
+                  emit(ProfileUserBanned());
+                }
+              } else if (status == 'deleted') {
+                log("🗑️ ProfileCubit: User $uId is DELETED.");
+                _userSubscription?.cancel();
+                if (SecureStorage.isLoggedIn) {
+                  _databaseService.updateData(
+                    path: BackendEndpoint.updateUserData,
+                    documentId: uId,
+                    data: {'fcmToken': ''},
+                  ).catchError((e) => log("⚠️ Error clearing token on delete: $e"));
+
+                  SecureStorage.setBool('isLoggedIn', false);
+                  FCMService().unsubscribeFromAllTopic();
+                  emit(ProfileUserDeleted());
+                }
               } else {
-                saveFcmToken(); // 🔥 حفظ التوكن عند نجاح جلب البيانات من الـ Stream
+                user = UserModel.fromJson(userData);
+                saveFcmToken(); 
+                FCMService().subscribeToAllTopic(); 
                 emit(ProfileUserLoaded(user!));
               }
             } catch (e) {
-              // User not found in stream
+              log("❌ ProfileCubit: Stream parsing error: $e");
             }
           });
 
@@ -95,6 +142,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         emit(ProfileUserLoaded(user!));
       }
     } catch (e) {
+      log("❌ ProfileCubit: Fatal error in getUserInfo: $e");
       if (user == null) emit(ProfileInitial());
     }
   }
@@ -103,6 +151,22 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileLogoutLoading());
     try {
       _userSubscription?.cancel();
+      _userSubscription = null;
+
+      // 🔥 تنظيف التوكن من السيرفر لضمان العزل
+      if (user != null) {
+        try {
+          await _databaseService.updateData(
+            path: BackendEndpoint.updateUserData,
+            documentId: user!.uId,
+            data: {'fcmToken': ''},
+          );
+        } catch (e) {
+          log("⚠️ ProfileCubit: Failed to clear FCM token during logout: $e");
+        }
+      }
+
+      await FCMService().unsubscribeFromAllTopic(); 
       await _authService.signOut();
       await SecureStorage.clearAll();
 
@@ -118,8 +182,11 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileInitial());
       emit(ProfileLogoutSuccess());
     } catch (e) {
-      // حتى لو فشل تصفير الـ Cubits، يجب أن ينجح تسجيل الخروج من الواجهة
+      log("❌ ProfileCubit: Logout error: $e");
+      // نضمن تصفير الحالة حتى لو فشل الاتصال بالشبكة
       user = null;
+      _userSubscription?.cancel();
+      await SecureStorage.clearAll();
       emit(ProfileInitial());
       emit(ProfileLogoutSuccess());
     }
@@ -128,6 +195,6 @@ class ProfileCubit extends Cubit<ProfileState> {
   @override
   Future<void> close() {
     _userSubscription?.cancel();
-    return Future.value();
+    return super.close();
   }
 }

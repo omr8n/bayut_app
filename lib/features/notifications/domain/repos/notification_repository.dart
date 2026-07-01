@@ -7,7 +7,10 @@ abstract class NotificationRepository {
   Future<Either<Failure, Unit>> sendNotification(AppNotification notification);
 
   /// Streams user notifications from Firestore
-  Stream<Either<Failure, List<AppNotification>>> getNotificationsStream(String userId);
+  Stream<Either<Failure, List<AppNotification>>> getNotificationsStream(
+    String userId, {
+    DateTime? accountCreatedAt,
+  });
 
   /// Streams all notifications for admin view
   Stream<Either<Failure, List<AppNotification>>> getAllNotificationsStream();

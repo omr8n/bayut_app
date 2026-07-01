@@ -20,7 +20,7 @@ class GuideSearchField extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(

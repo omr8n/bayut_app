@@ -7,11 +7,9 @@ class AppColors {
   static const Color accent = Color(0xFF00B4D8);
 
   // --- ألوان الوضع الداكن (مستوحاة من الصور) ---
-  static const Color darkBackground = Color(
-    0xFF0A1220,
-  ); // الكحلي العميق للخلفية
-  static const Color darkCard = Color(0xFF162031); // كحلي أفتح قليلاً للبطاقات
-  static const Color darkSurface = Color(0xFF1E293B); // للأسطح الثانوية
+  static const Color darkBackground = Color(0xFF0A0F1D); // كحلي أغمق قليلاً للخلفية
+  static const Color darkCard = Color(0xFF161D2F); // كحلي متناسق للبطاقات
+  static const Color darkSurface = Color(0xFF1E2738); // للأسطح الثانوية
   static const Color darkInput = Color(0xFF162031); // حقول الإدخال
 
   // --- ألوان النصوص ---

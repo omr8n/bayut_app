@@ -9,10 +9,15 @@ class GetCombinedNotificationsUseCase {
 
   GetCombinedNotificationsUseCase(this.repository);
 
-  Stream<Either<Failure, List<AppNotification>>> call(String userId) {
+  Stream<Either<Failure, List<AppNotification>>> call(
+    String userId, {
+    DateTime? accountCreatedAt,
+  }) {
     // 🔥 تبسيط المنطق: مستودع الإشعارات يقوم بالفعل بجلب الإشعارات العامة والخاصة بالمستخدم معاً
     // مما يمنع التكرار الناتج عن دمج التدفقين بشكل يدوي.
-    return repository.getNotificationsStream(userId).map((result) {
+    return repository
+        .getNotificationsStream(userId, accountCreatedAt: accountCreatedAt)
+        .map((result) {
       return result.map((notifications) {
         // ترتيب تنازلي حسب التاريخ لضمان ظهور الأحدث أولاً
         final sorted = List<AppNotification>.from(notifications);

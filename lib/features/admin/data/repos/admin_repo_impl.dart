@@ -332,6 +332,87 @@ class AdminRepoImpl implements AdminRepo {
   }
 
   @override
+  Future<Either<Failure, List<UserEntity>>> getPaginatedUsers({
+    required int limit,
+    dynamic lastDoc,
+  }) async {
+    try {
+      final docs = await _databaseService.getPaginatedCollection(
+        path: BackendEndpoint.getUsersData,
+        limit: limit,
+        lastDocument: lastDoc,
+        orderByField: 'createdAt',
+        descending: true,
+      );
+      return Right(docs.map((data) {
+        final user = UserModel.fromJson(data);
+        // 🔥 نحتاج لحفظ الـ snapshot داخل الـ entity (أو إرجاع Tuple) للـ Cursor القادم
+        return user.copyWith(lastDocSnapshot: data['last_doc_snapshot']);
+      }).toList());
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<UserEntity>>> searchUsers(String query) async {
+    try {
+      // Search by name
+      final nameResults = await _databaseService.searchDocuments(
+        path: BackendEndpoint.getUsersData,
+        field: 'name',
+        query: query,
+      );
+
+      // Search by email
+      final emailResults = await _databaseService.searchDocuments(
+        path: BackendEndpoint.getUsersData,
+        field: 'email',
+        query: query,
+      );
+
+      // Combine and remove duplicates
+      final Map<String, UserEntity> uniqueUsers = {};
+      
+      for (var data in nameResults) {
+        final user = UserModel.fromJson(data);
+        uniqueUsers[user.uId] = user;
+      }
+      
+      for (var data in emailResults) {
+        final user = UserModel.fromJson(data);
+        uniqueUsers[user.uId] = user;
+      }
+
+      return Right(uniqueUsers.values.toList());
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PropertyEntity>>> getPaginatedProperties({
+    required int limit,
+    dynamic lastDoc,
+  }) async {
+    try {
+      final docs = await _databaseService.getPaginatedCollection(
+        path: BackendEndpoint.propertyCollection,
+        limit: limit,
+        lastDocument: lastDoc,
+        orderByField: 'createdAt',
+        descending: true,
+      );
+      return Right(docs.map((data) {
+        final property = PropertyModel.fromJson(data);
+        return property.copyWith(lastDocSnapshot: data['last_doc_snapshot']);
+      }).toList());
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserEntity>> getUserById(String uId) async {
     try {
       final data = await _databaseService.getData(
@@ -368,9 +449,13 @@ class AdminRepoImpl implements AdminRepo {
   @override
   Future<Either<Failure, void>> deleteUser({required String uId}) async {
     try {
-      await _databaseService.deleteData(
-        path: BackendEndpoint.getUsersData,
+      await _databaseService.updateData(
+        path: BackendEndpoint.updateUserData,
         documentId: uId,
+        data: {
+          'status': 'deleted',
+          'updatedAt': DateTime.now().toIso8601String(),
+        },
       );
       return const Right(null);
     } catch (e) {
@@ -484,6 +569,29 @@ class AdminRepoImpl implements AdminRepo {
             .map((data) => ReportModel.fromJson(data as Map<String, dynamic>))
             .toList(),
       );
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ReportEntity>>> getPaginatedReports({
+    required int limit,
+    dynamic lastDoc,
+  }) async {
+    try {
+      final docs = await _databaseService.getPaginatedCollection(
+        path: BackendEndpoint.addReport,
+        limit: limit,
+        lastDocument: lastDoc,
+        orderByField: 'createdAt',
+        descending: true,
+      );
+      return Right(docs.map((data) {
+        final report = ReportModel.fromJson(data);
+        // 🔥 نحتاج لإضافة حقل Cursor للـ Entity كما فعلنا سابقاً
+        return report.copyWith(lastDocSnapshot: data['last_doc_snapshot']);
+      }).toList());
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

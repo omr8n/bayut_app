@@ -97,7 +97,10 @@ class DashboardActivityTimeline extends StatelessWidget {
                           if (item['reason'] != null &&
                               item['reason'].toString().isNotEmpty)
                             Text(
-                              item['reason'].toString(),
+                              _getTranslatedReason(
+                                item['reason'].toString(),
+                                locale,
+                              ),
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 color: isDark
@@ -136,5 +139,17 @@ class DashboardActivityTimeline extends StatelessWidget {
       case PropertyStatus.underInstallment:
         return Colors.orange.shade800;
     }
+  }
+
+  String _getTranslatedReason(String reason, AppLocalizations locale) {
+    // Handling legacy hardcoded Arabic/English strings
+    if (reason == 'تحديث الحالة' || reason == 'Status updated') {
+      return locale.translate(LangKeys.statusUpdated);
+    }
+    if (reason == 'تمت عملية البيع' || reason == 'Sale completed') {
+      return locale.translate(LangKeys.saleCompleted);
+    }
+    // If it's a LangKey or any other string, try to translate it
+    return locale.translate(reason);
   }
 }

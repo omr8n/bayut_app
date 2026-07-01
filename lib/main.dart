@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/app_localizations_setup.dart';
 import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'package:test_graduation/core/constants/theme_data.dart';
@@ -22,7 +23,7 @@ import 'package:test_graduation/features/my_properties/presentation/manager/my_p
 import 'package:test_graduation/features/profile/presentation/manager/favorites_cubit/favorites_cubit.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import 'package:test_graduation/features/notifications/presentation/manager/user_notification_cubit.dart';
-import 'package:test_graduation/core/widgets/banned_dialog.dart';
+import 'package:test_graduation/core/widgets/account_status_dialog.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_settings_cubit/admin_settings_cubit.dart';
 import 'package:test_graduation/features/root/presentation/manager/navigation_cubit.dart';
 import 'package:test_graduation/features/root/presentation/views/widgets/maintenance_guard.dart';
@@ -79,8 +80,15 @@ void main() async {
   runApp(const BayutApp());
 }
 
-class BayutApp extends StatelessWidget {
+class BayutApp extends StatefulWidget {
   const BayutApp({super.key});
+
+  @override
+  State<BayutApp> createState() => _BayutAppState();
+}
+
+class _BayutAppState extends State<BayutApp> {
+  bool _isStatusDialogShowing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -130,9 +138,13 @@ class BayutApp extends StatelessWidget {
                 BlocProvider<UserNotificationCubit>(
                   create: (context) {
                     final cubit = getIt.get<UserNotificationCubit>();
-                    final user = context.read<ProfileCubit>().user;
+                    final profileCubit = context.read<ProfileCubit>();
+                    final user = profileCubit.user;
                     if (user != null) {
-                      cubit.getNotifications(user.uId);
+                      cubit.getNotifications(
+                        user.uId,
+                        accountCreatedAt: user.createdAt?.toDate(),
+                      );
                     }
                     return cubit;
                   },
@@ -162,12 +174,38 @@ class BayutApp extends StatelessWidget {
                             if (state is ProfileUserLoaded) {
                               context
                                   .read<UserNotificationCubit>()
-                                  .getNotifications(state.user.uId);
+                                  .getNotifications(
+                                    state.user.uId,
+                                    accountCreatedAt: state.user.createdAt
+                                        ?.toDate(),
+                                  );
                             }
 
                             if (state is ProfileUserBanned) {
                               if (SecureStorage.isLoggedIn) {
-                                _showBannedDialog(context);
+                                final navigatorContext = RouterGenerationConfig
+                                    .navigatorKey
+                                    .currentContext;
+                                if (navigatorContext != null) {
+                                  _showStatusDialog(
+                                    navigatorContext,
+                                    isBanned: true,
+                                  );
+                                }
+                              }
+                            }
+
+                            if (state is ProfileUserDeleted) {
+                              if (SecureStorage.isLoggedIn) {
+                                final navigatorContext = RouterGenerationConfig
+                                    .navigatorKey
+                                    .currentContext;
+                                if (navigatorContext != null) {
+                                  _showStatusDialog(
+                                    navigatorContext,
+                                    isBanned: false,
+                                  );
+                                }
                               }
                             }
                           },
@@ -185,10 +223,14 @@ class BayutApp extends StatelessWidget {
     );
   }
 
-  void _showBannedDialog(BuildContext context) {
+  void _showStatusDialog(BuildContext context, {required bool isBanned}) {
+    if (_isStatusDialogShowing) return;
+    _isStatusDialogShowing = true;
+
     showDialog(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: true,
       builder: (dialogContext) {
         return BlocBuilder<AdminSettingsCubit, AdminSettingsState>(
           builder: (context, configState) {
@@ -197,16 +239,29 @@ class BayutApp extends StatelessWidget {
               adminPhone = configState.config.contactPhone;
             }
 
-            return BannedDialog(
-              adminPhone: adminPhone,
-              onContinueAsGuest: () {
-                context.read<ProfileCubit>().logout();
-                Navigator.of(dialogContext).pop();
+            final locale = AppLocalizations.of(context)!;
+
+            return AccountStatusDialog(
+              title: isBanned ? locale.banned_dialog_title : "تم حذف الحساب",
+              message: isBanned
+                  ? locale.banned_dialog_content
+                  : "عذراً، لقد تم حذف حسابك من قبل الإدارة لمخالفة معايير الاستخدام. لا يمكنك استخدام هذا الحساب مجدداً.",
+              icon: isBanned
+                  ? Icons.warning_amber_rounded
+                  : Icons.delete_forever_rounded,
+              iconColor: Colors.redAccent,
+              adminPhone: isBanned ? adminPhone : null,
+              onSecondaryAction: () async {
+                _isStatusDialogShowing = false;
+                await context.read<ProfileCubit>().logout();
+                if (dialogContext.mounted) {
+                  Navigator.of(dialogContext).pop();
+                }
               },
             );
           },
         );
       },
-    );
+    ).then((_) => _isStatusDialogShowing = false);
   }
 }

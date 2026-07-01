@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:test_graduation/core/routing/app_routes.dart';
-import 'package:test_graduation/core/services/secure_storage_singleton.dart';
-import 'package:test_graduation/core/services/firebase_auth_service.dart';
+
 import 'package:test_graduation/core/data/mock_data.dart';
 
 import 'package:test_graduation/features/my_properties/presentation/cubit/add_property_cubit.dart';
@@ -16,30 +15,34 @@ import 'package:test_graduation/core/widgets/no_network_widget.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/my_properties_view_body.dart';
+import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 
 class MyPropertiesViewBlocBuilder extends StatelessWidget {
   const MyPropertiesViewBlocBuilder({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoggedIn = SecureStorage.isLoggedIn;
-    final user = FirebaseAuthService().currentUser;
+    // 🔥 الاعتماد على الـ ProfileCubit بدلاً من الفحص المباشر في الـ build لضمان التزامن
+    final user = context.watch<ProfileCubit>().user;
 
-    log(
-      "BlocBuilder Check: isLoggedIn = $isLoggedIn, FirebaseUser = ${user?.uid}",
-    );
-
-    if (!isLoggedIn || user == null) {
+    if (user == null) {
+      log(
+        "ℹ️ MyPropertiesViewBlocBuilder: User is null, showing EmptyBagProperties.",
+      );
       return EmptyBagProperties(
         onPressed: () => GoRouter.of(context).push(AppRoutes.loginScreen),
       );
     }
 
+    log(
+      "✅ MyPropertiesViewBlocBuilder: User is ${user.uId}, fetching properties.",
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.mounted) {
         final cubit = context.read<MyPropertiesCubit>();
-        if (!cubit.isClosed && cubit.state is MyPropertiesInitial) {
-          cubit.fetchMyProperties(user.uid);
+        if (!cubit.isClosed && (cubit.state is MyPropertiesInitial)) {
+          cubit.fetchMyProperties(user.uId);
         }
       }
     });
@@ -47,7 +50,7 @@ class MyPropertiesViewBlocBuilder extends StatelessWidget {
     return BlocListener<AddPropertyCubit, AddPropertyState>(
       listener: (context, state) {
         if (state is UpdatePropertySuccess || state is AddPropertySuccess) {
-          context.read<MyPropertiesCubit>().fetchMyProperties(user.uid);
+          context.read<MyPropertiesCubit>().fetchMyProperties(user.uId);
         }
       },
       child: BlocBuilder<MyPropertiesCubit, MyPropertiesState>(
@@ -76,11 +79,10 @@ class MyPropertiesViewBlocBuilder extends StatelessWidget {
           } else if (state is MyPropertiesFailure) {
             return NoNetworkWidget(
               onRetry: () {
-                context.read<MyPropertiesCubit>().fetchMyProperties(user.uid);
+                context.read<MyPropertiesCubit>().fetchMyProperties(user.uId);
               },
             );
           } else {
-            // 🔥 الإصلاح: استخدام Skeletonizer العادي لأننا لسنا بداخل Viewport يتوقع Slivers
             return Skeletonizer(
               enabled: true,
               child: MyPropertiesViewBody(

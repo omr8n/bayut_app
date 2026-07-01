@@ -211,7 +211,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                localizations.isEnLocale ? 'Viewed' : 'شوهد',
+                                localizations.translate(LangKeys.viewed),
                                 style: TextStyle(
                                   color: isDark
                                       ? Colors.white70
@@ -271,7 +271,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  localizations.isEnLocale ? 'Trend' : 'تريند',
+                                  localizations.translate(LangKeys.trend),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 10.sp,
@@ -344,7 +344,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              localizations.isEnLocale ? 'Featured' : 'مميز',
+                              localizations.translate(LangKeys.featuredLabel),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10.sp,
@@ -421,9 +421,11 @@ class _PropertyCardState extends State<PropertyCard> {
                           Expanded(
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerRight,
+                              alignment: localizations.isEnLocale
+                                  ? Alignment.centerLeft
+                                  : Alignment.centerRight,
                               child: Text(
-                                '${numberFormat.format(widget.property.price)} ${localizations.translate(widget.property.currency.trim().toLowerCase())}',
+                                '${numberFormat.format(widget.property.price)} ${CurrencyHelper.localize(context, widget.property.currency)}',
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w900,
@@ -452,7 +454,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             ),
                           _buildInfoItem(
                             Icons.square_foot_outlined,
-                            '${widget.property.area.toInt()} ${localizations.isEnLocale ? 'm²' : 'م²'}',
+                            '${widget.property.area.toInt()} ${localizations.translate(LangKeys.areaUnit)}',
                           ),
                         ],
                       ),

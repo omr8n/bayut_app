@@ -190,25 +190,27 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   ],
                 ),
                 Positioned(
-                  top: 40.h,
+                  top: 16.h,
                   left: 16.w,
                   right: 16.w,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomCircleButton(
-                        icon: locale.isEnLocale
-                            ? Icons.arrow_back_ios_new
-                            : Icons.arrow_forward_ios,
-                        onTap: () => context.pop(),
-                      ),
-                      CustomCircleButton(
-                        icon: Icons.share_outlined,
-                        onTap: () {
-                          ShareService.shareProperty(context, currentProperty);
-                        },
-                      ),
-                    ],
+                  child: SafeArea(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomCircleButton(
+                          icon: locale.isEnLocale
+                              ? Icons.arrow_back_ios_new
+                              : Icons.arrow_forward_ios,
+                          onTap: () => context.pop(),
+                        ),
+                        CustomCircleButton(
+                          icon: Icons.share_outlined,
+                          onTap: () {
+                            ShareService.shareProperty(context, currentProperty);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -254,17 +256,19 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                 size: 24,
               ),
               const SizedBox(width: 8),
-              Text(
-                locale.translate(LangKeys.congratulationsTrend),
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? Colors.orange.shade300
-                      : Colors.orange.shade800,
+              Expanded(
+                child: Text(
+                  locale.translate(LangKeys.congratulationsTrend),
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark
+                        ? Colors.orange.shade300
+                        : Colors.orange.shade800,
+                  ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               const Icon(
                 Icons.trending_up_rounded,
                 color: Colors.orange,
@@ -312,7 +316,7 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      locale.translate(LangKeys.trendExpiryUntil),
+                      locale.translate(LangKeys.trendExpiryUntil).replaceAll(': {date}', ''),
                       style: TextStyle(
                         fontSize: 10.sp,
                         color: isDark

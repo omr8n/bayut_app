@@ -12,37 +12,58 @@ import 'package:test_graduation/core/language/app_localizations.dart';
 class AdminPropertiesList extends StatelessWidget {
   final List<PropertyEntity> properties;
   final String extraFilter; // 🔥 Filter input
+  final ScrollController? scrollController;
+  final bool isLoadingMore;
 
   const AdminPropertiesList({
     super.key,
     required this.properties,
     this.extraFilter = 'All',
+    this.scrollController,
+    this.isLoadingMore = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final local = AppLocalizations.of(context)!;
     if (properties.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.home_work_outlined, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Text(
-              local.no_matching_properties,
-              style: const TextStyle(color: Colors.grey),
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.home_work_outlined, size: 64, color: Colors.grey),
+                const SizedBox(height: 16),
+                Text(
+                  local.no_matching_properties,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
 
     return ListView.builder(
+      controller: scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(vertical: 8.h),
-      itemCount:
-          properties.length + (extraFilter == local.trend_leaders ? 1 : 0),
+      itemCount: properties.length +
+          (extraFilter == local.trend_leaders ? 1 : 0) +
+          (isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
+        if (isLoadingMore && index >= (properties.length + (extraFilter == local.trend_leaders ? 1 : 0))) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
         if (extraFilter == local.trend_leaders && index == 0) {
           return Column(
             children: [

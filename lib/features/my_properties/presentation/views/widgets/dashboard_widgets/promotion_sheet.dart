@@ -26,10 +26,12 @@ class _PromotionSheetState extends State<PromotionSheet> {
     final double monthlyPrice = config?.monthlyFeaturedPrice ?? 15000.0;
     final locale = AppLocalizations.of(context)!;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
       ),
       child: Column(
@@ -39,14 +41,18 @@ class _PromotionSheetState extends State<PromotionSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: isDark ? Colors.white24 : Colors.grey.shade300,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
           SizedBox(height: 24.h),
           Text(
             locale.translate(LangKeys.featureProperty),
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 22.sp,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
           ),
           SizedBox(height: 32.h),
           _buildPackageItem(
@@ -83,7 +89,7 @@ class _PromotionSheetState extends State<PromotionSheet> {
               ),
             ),
             child: Text(
-              locale.translate(LangKeys.startReview),
+              locale.translate(LangKeys.payNow),
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -104,15 +110,20 @@ class _PromotionSheetState extends State<PromotionSheet> {
     Color color,
   ) {
     bool isSelected = _selectedPackage == index;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => setState(() => _selectedPackage = index),
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.05) : Colors.white,
+          color: isSelected
+              ? color.withValues(alpha: isDark ? 0.15 : 0.05)
+              : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected ? color : Colors.grey.shade200,
+            color: isSelected
+                ? color
+                : (isDark ? Colors.white10 : Colors.grey.shade200),
             width: 2,
           ),
         ),
@@ -125,24 +136,34 @@ class _PromotionSheetState extends State<PromotionSheet> {
                   Text(
                     price,
                     style: TextStyle(
-                      color: color,
+                      color: isDark && !isSelected ? Colors.white70 : color,
                       fontWeight: FontWeight.w900,
                       fontSize: 18.sp,
                     ),
                   ),
                   Text(
                     currency,
-                    style: TextStyle(color: color, fontSize: 12.sp),
+                    style: TextStyle(
+                      color: isDark && !isSelected ? Colors.white54 : color,
+                      fontSize: 12.sp,
+                    ),
                   ),
                   SizedBox(height: 8.h),
                   Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(icon, color: color, size: 28.sp),
+            Icon(
+              icon,
+              color: isDark && !isSelected ? Colors.white38 : color,
+              size: 28.sp,
+            ),
           ],
         ),
       ),
@@ -171,24 +192,36 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
   int _selectedMethod = 0;
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AlertDialog(
+      backgroundColor: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'تأكيد الدفع 💳',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            locale.translate(LangKeys.confirmPayment),
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
           ),
           SizedBox(height: 24.h),
-          _buildMethodTile(0, 'البطاقة المصرفية السورية'),
-          _buildMethodTile(1, 'سيريتل كاش / إم تي إن كاش'),
+          _buildMethodTile(0, locale.translate(LangKeys.syrianBankCard)),
+          _buildMethodTile(1, locale.translate(LangKeys.cashMethod)),
           SizedBox(height: 24.h),
           Row(
             children: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('إلغاء'),
+                child: Text(
+                  locale.translate(LangKeys.cancel),
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.grey.shade600,
+                  ),
+                ),
               ),
               Expanded(
                 child: ElevatedButton(
@@ -196,16 +229,20 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
                     context.read<MyPropertiesCubit>().requestPromotion(
                       widget.property,
                     );
+                    Navigator.pop(context); // إغلاق دايالوج التأكيد
                     _showSuccessDialog(
                       context,
                     ); // 🔥 إظهار رسالة النجاح الجمالية
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
                   ),
-                  child: const Text(
-                    'دفع الآن',
-                    style: TextStyle(color: Colors.white),
+                  child: Text(
+                    locale.translate(LangKeys.payNow),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -217,21 +254,30 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
   }
 
   Widget _buildMethodTile(int index, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return RadioListTile(
       value: index,
       groupValue: _selectedMethod,
-
+      activeColor: AppColors.primary,
       onChanged: (val) => setState(() => _selectedMethod = val as int),
-      title: Text(title, style: TextStyle(fontSize: 13.sp)),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13.sp,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
+      ),
     );
   }
 
   void _showSuccessDialog(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
+        backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.r),
         ),
@@ -271,7 +317,7 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
               SizedBox(height: 12.h),
@@ -280,7 +326,7 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13.sp,
-                  color: Colors.grey.shade600,
+                  color: isDark ? Colors.white70 : Colors.grey.shade600,
                   height: 1.5,
                 ),
               ),
@@ -301,7 +347,7 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
                   elevation: 0,
                 ),
                 child: Text(
-                  locale.translate('done_action'),
+                  locale.translate(LangKeys.doneAction),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
