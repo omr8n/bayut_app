@@ -11,6 +11,8 @@ class PaymentService {
     required UserEntity user,
     required double amount,
     required String propertyTitle,
+    required String paymentMethod,
+    required String currency, // 🔥 إضافة العملة
   }) async {
     try {
       // محاكاة تأخير الشبكة
@@ -20,11 +22,11 @@ class PaymentService {
       final record = FinancialRecordModel(
         id: transactionId,
         propertyId: "extra_listing_${DateTime.now().millisecondsSinceEpoch}",
-        propertyTitle: propertyTitle, // 🔥 حفظ اسم العقار لزيادة التفاصيل
+        propertyTitle: propertyTitle,
         sellerId: user.uId,
         sellerName: user.name,
         amount: amount,
-        currency: "ل.س",
+        currency: currency, // 🔥 استخدام العملة الديناميكية
         type: TransactionType.extraPropertyListing,
         createdAt: DateTime.now(),
       );

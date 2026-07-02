@@ -49,6 +49,9 @@ class AppNotification extends Equatable {
   final int recipientsCount; // عدد المستلمين
   final bool isRead; // حالة القراءة
   final String? fcmToken; // 🔥 حقل إضافي لعمل Trigger لفايربيز
+  final String? titleKey; // 🔥 مفتاح ترجمة العنوان
+  final String? bodyKey; // 🔥 مفتاح ترجمة المحتوى
+  final Map<String, dynamic>? bodyArgs; // 🔥 متغيرات الترجمة (مثل id أو title)
 
   const AppNotification({
     required this.id,
@@ -63,6 +66,9 @@ class AppNotification extends Equatable {
     required this.recipientsCount,
     this.isRead = false,
     this.fcmToken,
+    this.titleKey,
+    this.bodyKey,
+    this.bodyArgs,
   });
 
   AppNotification copyWith({
@@ -78,6 +84,9 @@ class AppNotification extends Equatable {
     int? recipientsCount,
     bool? isRead,
     String? fcmToken,
+    String? titleKey,
+    String? bodyKey,
+    Map<String, dynamic>? bodyArgs,
   }) {
     return AppNotification(
       id: id ?? this.id,
@@ -92,6 +101,9 @@ class AppNotification extends Equatable {
       recipientsCount: recipientsCount ?? this.recipientsCount,
       isRead: isRead ?? this.isRead,
       fcmToken: fcmToken ?? this.fcmToken,
+      titleKey: titleKey ?? this.titleKey,
+      bodyKey: bodyKey ?? this.bodyKey,
+      bodyArgs: bodyArgs ?? this.bodyArgs,
     );
   }
 
@@ -109,5 +121,8 @@ class AppNotification extends Equatable {
         recipientsCount,
         isRead,
         fcmToken,
+        titleKey,
+        bodyKey,
+        bodyArgs,
       ];
 }

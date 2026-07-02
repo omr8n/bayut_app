@@ -321,4 +321,16 @@ class AppLocalizations {
   String get link_coming_soon => translate(LangKeys.linkComingSoon);
   String get legal_policies => translate(LangKeys.legalPolicies);
   String get legal_policies_desc => translate(LangKeys.legalPoliciesDesc);
+
+  // Notifications Admin
+  String get property_activated_notification_title => translate(LangKeys.propertyActivatedNotificationTitle);
+  String get property_activated_notification_body => translate(LangKeys.propertyActivatedNotificationBody);
+  String get property_disabled_notification_title => translate(LangKeys.propertyDisabledNotificationTitle);
+  String get property_disabled_notification_body => translate(LangKeys.propertyDisabledNotificationBody);
+  String get property_deleted_notification_title => translate(LangKeys.propertyDeletedNotificationTitle);
+  String get property_deleted_notification_body => translate(LangKeys.propertyDeletedNotificationBody);
+  String get premium_activated_notification_title => translate(LangKeys.premiumActivatedNotificationTitle);
+  String get premium_activated_notification_body => translate(LangKeys.premiumActivatedNotificationBody);
+  String get premium_rejected_notification_title => translate(LangKeys.premiumRejectedNotificationTitle);
+  String get premium_rejected_notification_body => translate(LangKeys.premiumRejectedNotificationBody);
 }

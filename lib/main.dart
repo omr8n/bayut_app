@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // 🔥 مضافة
 
 import 'package:test_graduation/core/cubits/app_cubit/app_cubit.dart';
 import 'package:test_graduation/core/cubits/property_cubit/property_cubit.dart';
@@ -33,6 +34,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "assets/.env"); // 🔥 تحميل ملف الإعدادات
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // 🔥 تفعيل دعم العمل دون إنترنت مع تحديد سقف للكاش

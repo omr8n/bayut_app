@@ -64,7 +64,7 @@ class PropertyPromotionButton extends StatelessWidget {
         gradientColors = [const Color(0xFFEF5350), const Color(0xFFD32F2F)];
         label = locale.translate(LangKeys.promotionRejected);
         icon = Icons.new_releases_rounded;
-        isEnabled = true;
+        isEnabled = true; // نتركها true للسماح بإعادة المحاولة
         shadows = [
           BoxShadow(
             color: baseColor.withValues(alpha: 0.3),
@@ -74,10 +74,10 @@ class PropertyPromotionButton extends StatelessWidget {
         ];
         break;
       default:
-        baseColor = const Color(0xFF512DA8); // Indigo/Purple
-        gradientColors = [const Color(0xFF673AB7), const Color(0xFF512DA8)];
+        baseColor = const Color(0xFFD4AF37); // Golden for Request
+        gradientColors = [const Color(0xFFFFD700), const Color(0xFFD4AF37)];
         label = locale.translate(LangKeys.promotionRequest);
-        icon = Icons.auto_awesome_rounded;
+        icon = Icons.rocket_launch_rounded;
         isEnabled = true;
         shadows = [
           BoxShadow(

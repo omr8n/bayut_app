@@ -186,31 +186,22 @@ class AdminPropertyActions extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              local.selected_plan_pro,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              local.mock_payment_confirmed,
-              style: const TextStyle(color: Colors.black87, fontSize: 13),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              local.premium_duration_days,
-              style: const TextStyle(fontSize: 13, color: Colors.grey),
-            ),
-            SizedBox(height: 8.h),
-            TextField(
-              controller: TextEditingController(text: '30'),
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 8.h),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
+            Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    "مراجعة طلب التميز الذكي",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
                 ),
-              ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "سيقوم النظام تلقائياً بتفعيل المدة والمبلغ المطلوبين من قبل المستخدم وتنزيلها في المحفظة المالية.",
+              style: TextStyle(color: Colors.black87, fontSize: 13),
             ),
           ],
         ),
@@ -239,15 +230,13 @@ class AdminPropertyActions extends StatelessWidget {
                     propertyId: property.id,
                     sellerId: property.sellerId,
                     isApproved: true,
-                    days: 30,
-                    amount: 750000,
                     sellerName: property.sellerName,
                   );
                   Navigator.pop(dialogContext);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  side: BorderSide(color: Colors.grey.shade200),
+                  side: const BorderSide(color: Colors.blue),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.r),
                   ),

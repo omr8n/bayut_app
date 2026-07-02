@@ -29,7 +29,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
 
   final Map<int, bool> _activeUploads = {};
 
-  Future<void> submitProperty(AddPropertyParams params) async {
+  Future<void> submitProperty(AddPropertyParams params, {bool? isPaid}) async {
     final int notificationId = Random().nextInt(100000);
     _activeUploads[notificationId] = true;
 
@@ -49,7 +49,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     final user = await getUser();
     await limitService.incrementListingCount(user.uId);
 
-    _processPropertyUpload(notificationId, params, isUpdate: false);
+    _processPropertyUpload(notificationId, params, isUpdate: false, isPaid: isPaid);
   }
 
   Future<void> editProperty({
@@ -83,6 +83,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     AddPropertyParams params, {
     PropertyEntity? existingProperty,
     required bool isUpdate,
+    bool? isPaid, // 🔥 جديد
   }) async {
     List<String> finalUrls =
         existingProperty?.media ?? []; // نبدأ بالصور الموجودة مسبقاً
@@ -122,6 +123,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
           finalUrls, // القائمة النهائية المدمجة
           id: existingProperty?.id,
           user: user,
+          isPaid: isPaid, // 🔥 تمرير حالة الدفع
         );
 
         final result = await addPropertiesRepo.addProperty(finalProperty);
@@ -283,6 +285,7 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
     List<String> urls, {
     String? id,
     dynamic user,
+    bool? isPaid, // 🔥 جديد
   }) {
     return PropertyEntity(
       id: id ?? const Uuid().v4(),
@@ -294,6 +297,9 @@ class AddPropertyCubit extends Cubit<AddPropertyState> {
       currency: params.currency,
       area: params.area,
       createdAt: DateTime.now(),
+      views: 0,
+      isFeatured: params.isFeatured,
+      isApproved: isPaid == true ? true : true, // 🔥 حالياً الكل true، لكن نضمن الـ true للمدفوع
       media: urls,
       images: urls,
       facilities: params.facilities,

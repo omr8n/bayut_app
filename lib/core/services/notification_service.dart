@@ -17,6 +17,9 @@ class NotificationService {
       'targetId': notification.targetId, // 🔥 حفظ معرف الهدف
       'isRead': notification.isRead,
       'fcmToken': notification.fcmToken, // 🔥 هذا الحقل سيقوم بعمل Trigger للإضافة
+      'titleKey': notification.titleKey,
+      'bodyKey': notification.bodyKey,
+      'bodyArgs': notification.bodyArgs,
     });
   }
 
@@ -43,6 +46,9 @@ class NotificationService {
           targetUserId: data['targetUserId'],
           targetId: data['targetId'], // 🔥 جلب معرف الهدف
           isRead: data['isRead'] ?? false,
+          titleKey: data['titleKey'],
+          bodyKey: data['bodyKey'],
+          bodyArgs: data['bodyArgs'] != null ? Map<String, dynamic>.from(data['bodyArgs']) : null,
         );
       }).where((notif) {
         if (isAdmin) return true; // المسؤول يرى كل شيء

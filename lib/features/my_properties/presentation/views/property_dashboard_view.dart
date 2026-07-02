@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:intl/intl.dart';
-import 'package:test_graduation/core/enums/property_enums.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/services/connectivity_service.dart';
@@ -22,6 +21,7 @@ import 'package:test_graduation/features/my_properties/presentation/manager/my_p
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/dashboard_activity_timeline.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/dashboard_bottom_actions.dart';
 import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/dashboard_stats_grid.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/dashboard_status_banner.dart';
 import 'package:test_graduation/features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 
 class PropertyDashboardView extends StatefulWidget {
@@ -155,18 +155,11 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
                             ),
                           ),
                           SizedBox(height: 20.h),
-                          // 🔥 عرض بانر التريند إذا كان العقار ضمن التريند
-                          if (currentProperty.views > 5) _buildTrendBanner(),
-                          if (currentProperty.views > 5 &&
-                              currentProperty.premiumStatus ==
-                                  PremiumStatus.active)
-                            SizedBox(height: 12.h),
-                          // 🔥 عرض بانر التميز إذا كان العقار مميزاً
-                          if (currentProperty.premiumStatus ==
-                              PremiumStatus.active)
-                            _buildPremiumStatusBanner(currentProperty),
-
-                          SizedBox(height: 16.h),
+                          // 🔥 عرض بانرات الحالة (تريند / تميز) بناءً على التصميم الجديد
+                          DashboardStatusBanner(
+                            property: currentProperty,
+                            trendRank: currentProperty.views > 0 ? 1 : null, // Mocking rank 1 if has views for demo
+                          ),
                           DashboardStatsGrid(property: currentProperty),
                           SizedBox(height: 30.h),
                           Text(
@@ -224,271 +217,6 @@ class _PropertyDashboardViewState extends State<PropertyDashboardView> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildTrendBanner() {
-    final locale = AppLocalizations.of(context)!;
-    final trendExpiry = DateTime.now().add(const Duration(days: 7));
-    final expiryString = DateFormat('yyyy/MM/dd').format(trendExpiry);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.orange.withValues(alpha: 0.05)
-            : const Color(0xFFFFF9F0),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: isDark
-              ? Colors.orange.withValues(alpha: 0.2)
-              : Colors.orange.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.local_fire_department_rounded,
-                color: Colors.orange,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  locale.translate(LangKeys.congratulationsTrend),
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                    color: isDark
-                        ? Colors.orange.shade300
-                        : Colors.orange.shade800,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.trending_up_rounded,
-                color: Colors.orange,
-                size: 20,
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurface : Colors.white,
-              borderRadius: BorderRadius.circular(15.r),
-            ),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      locale.translate(LangKeys.mostViewed),
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : Colors.grey,
-                      ),
-                    ),
-                    Text(
-                      locale
-                          .translate(LangKeys.currentRank)
-                          .replaceFirst('{rank}', '1'),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? Colors.orange.shade300
-                            : Colors.orange.shade800,
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      locale.translate(LangKeys.trendExpiryUntil).replaceAll(': {date}', ''),
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : Colors.grey,
-                      ),
-                    ),
-                    Text(
-                      expiryString,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white70 : Colors.grey.shade700,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPremiumStatusBanner(PropertyEntity property) {
-    if (_remainingTime.isNegative) return const SizedBox.shrink();
-    final locale = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final days = _remainingTime.inDays;
-    final hours = _remainingTime.inHours % 24;
-
-    // Calculate total duration (assuming 30 days for month or based on creation)
-    // For demo purposes, we use 30 days as total.
-    const totalDurationSeconds = 30 * 24 * 60 * 60;
-    final progress = (1 - (_remainingTime.inSeconds / totalDurationSeconds))
-        .clamp(0.0, 1.0);
-
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.primary.withValues(alpha: .1)
-            : const Color(0xFFF3F7FA),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: isDark
-              ? AppColors.primary.withValues(alpha: 0.2)
-              : Colors.blue.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkSurface : Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF1E4C9A).withValues(alpha: .1),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.stars_rounded,
-                  color: Color(0xFF1E4C9A),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                locale.translate(LangKeys.premiumStatusActiveLabel),
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : const Color(0xFF1E4C9A),
-                ),
-              ),
-              const Spacer(),
-              const Icon(
-                Icons.emoji_events_rounded,
-                color: Color(0xFF1E4C9A),
-                size: 20,
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.primary.withValues(alpha: 0.2)
-                      : const Color(0xFFD3E3F0),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Text(
-                  locale
-                      .translate(LangKeys.remainingTime)
-                      .replaceFirst('{days}', days.toString())
-                      .replaceFirst('{hours}', hours.toString()),
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : const Color(0xFF1E4C9A),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    locale.translate(LangKeys.expiryDateLabel),
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: isDark ? AppColors.textSecondaryDark : Colors.grey,
-                    ),
-                  ),
-                  Text(
-                    DateFormat(
-                      'd MMMM yyyy - hh:mm a',
-                      locale.isEnLocale ? 'en' : 'ar',
-                    ).format(property.premiumExpiryDate!),
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white70 : Colors.grey.shade800,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: progress,
-              backgroundColor: isDark ? Colors.white10 : Colors.white,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF1E4C9A),
-              ),
-              minHeight: 8.h,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                locale.translate(LangKeys.planProMonth),
-                style: TextStyle(
-                  fontSize: 10,
-                  color: isDark ? AppColors.textSecondaryDark : Colors.grey,
-                ),
-              ),
-              Icon(
-                Icons.info_outline_rounded,
-                size: 14.sp,
-                color: isDark ? AppColors.textSecondaryDark : Colors.grey,
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

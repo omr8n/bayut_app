@@ -18,6 +18,7 @@ class PropertyModel extends PropertyEntity {
     super.premiumStatus = PremiumStatus.none,
     super.premiumExpiryDate,
     super.premiumReminderSent = false,
+    super.isApproved = true, // 🔥 مضافة هنا لتصحيح الخطأ
     super.status,
     super.statusHistory,
     required super.images,
@@ -105,6 +106,7 @@ class PropertyModel extends PropertyEntity {
           ? parseDate(json['premiumExpiryDate'])
           : null,
       premiumReminderSent: json['premiumReminderSent'] as bool? ?? false,
+      isApproved: json['isApproved'] as bool? ?? true, // 🔥 مضاف حديثاً
       status: PropertyStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => PropertyStatus.active,
@@ -180,6 +182,7 @@ class PropertyModel extends PropertyEntity {
       'premiumStatus': premiumStatus.name,
       'premiumExpiryDate': premiumExpiryDate?.toIso8601String(),
       'premiumReminderSent': premiumReminderSent,
+      'isApproved': isApproved, // 🔥 مضاف حديثاً
       'status': status.name,
       'statusHistory': statusHistory,
       'images': images,
@@ -249,6 +252,7 @@ class PropertyModel extends PropertyEntity {
       premiumStatus: entity.premiumStatus,
       premiumExpiryDate: entity.premiumExpiryDate,
       premiumReminderSent: entity.premiumReminderSent,
+      isApproved: entity.isApproved, // 🔥 مضاف حديثاً
       status: entity.status,
       statusHistory: entity.statusHistory,
       images: entity.images,
@@ -315,6 +319,9 @@ class PropertyModel extends PropertyEntity {
       createdAt: createdAt,
       views: views,
       isFeatured: isFeatured,
+      premiumStatus: premiumStatus, // 🔥 مضافة حديثاً
+      premiumExpiryDate: premiumExpiryDate, // 🔥 مضافة حديثاً
+      premiumReminderSent: premiumReminderSent, // 🔥 مضافة حديثاً
       status: status,
       statusHistory: statusHistory,
       images: images,

@@ -59,23 +59,27 @@ class DashboardStatsGrid extends StatelessWidget {
         return _StatCard(
           title: locale.translate(LangKeys.featuredStatus),
           value: locale.translate(LangKeys.promotionPending),
-          icon: Icons.access_time_filled_rounded,
-          color: const Color(0xFF1E4C9A),
+          icon: Icons.hourglass_top_rounded,
+          color: const Color(0xFF0288D1),
+          showEffect: true, // 🔥 تفعيل التأثير البصري
+          onTap: null,
         );
       case PremiumStatus.active:
         return _StatCard(
           title: locale.translate(LangKeys.featuredStatus),
           value: locale.translate(LangKeys.featuredPropertyLabel),
           icon: Icons.stars_rounded,
-          color: Colors.orange.shade700,
+          color: const Color(0xFFFFA000),
+          showEffect: true, // 🔥 تفعيل التأثير البصري
+          onTap: null,
         );
       case PremiumStatus.rejected:
         return _StatCard(
           title: locale.translate(LangKeys.featuredStatus),
           value: locale.translate(LangKeys.promotionRejected),
-          icon: Icons.error_outline_rounded,
-          color: Colors.redAccent,
-          isError: true,
+          icon: Icons.new_releases_rounded,
+          color: const Color(0xFFD32F2F),
+          showEffect: true, // 🔥 تفعيل التأثير البصري
           onTap: () => _showPromotionSheet(context),
         );
       default:
@@ -83,8 +87,8 @@ class DashboardStatsGrid extends StatelessWidget {
           title: locale.translate(LangKeys.featuredStatus),
           value: locale.translate(LangKeys.promotionRequest),
           icon: Icons.rocket_launch_rounded,
-          color: const Color(0xFFD4AF37), // Golden color for request
-          isPremiumAction: true,
+          color: const Color(0xFFD4AF37),
+          showEffect: true, // 🔥 تفعيل التأثير البصري
           onTap: () => _showPromotionSheet(context),
         );
     }
@@ -118,6 +122,7 @@ class _StatCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final bool showEffect; // 🔥 حقل جديد للتحكم بالتأثير
   final bool isPremiumAction;
   final bool isError;
   final VoidCallback? onTap;
@@ -127,6 +132,7 @@ class _StatCard extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.color,
+    this.showEffect = false,
     this.isPremiumAction = false,
     this.isError = false,
     this.onTap,
@@ -142,14 +148,15 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: isError
-              ? color.withValues(alpha: 0.05)
+          color: showEffect
+              ? color.withValues(alpha: isDark ? 0.15 : 0.08) // 🔥 خلفية ملونة خفيفة
               : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isError
-                ? color.withValues(alpha: 0.2)
+            color: showEffect
+                ? color.withValues(alpha: 0.4) // 🔥 حدود ملونة
                 : (isDark ? Colors.white10 : Colors.grey.shade100),
+            width: showEffect ? 1.2 : 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -167,7 +174,7 @@ class _StatCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(icon, color: color, size: 24.sp),
-                if (isError || isPremiumAction)
+                if (onTap != null) // 🔥 إظهار السهم فقط إذا كان قابل للضغط
                   Icon(
                     locale.isEnLocale
                         ? Icons.arrow_forward_ios_rounded
@@ -184,7 +191,7 @@ class _StatCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
-                color: isError || isPremiumAction
+                color: showEffect || isPremiumAction || isError
                     ? color
                     : (isDark ? Colors.white : Colors.black87),
               ),

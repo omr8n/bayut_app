@@ -15,7 +15,7 @@ class AdminPropertiesStats extends StatelessWidget {
     final local = AppLocalizations.of(context)!;
     final forSale = properties.where((p) => p.listingType == ListingType.sale).length;
     final forRent = properties.where((p) => p.listingType == ListingType.rent).length;
-    final featured = properties.where((p) => p.isFeatured).length;
+    final featured = properties.where((p) => p.isFeatured || p.premiumStatus == PremiumStatus.active).length;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10.w),
@@ -31,7 +31,7 @@ class AdminPropertiesStats extends StatelessWidget {
           _buildStatItem(context, local.total_label, '${properties.length}', Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF1E4C9A)),
           _buildStatItem(context, local.for_sale, '$forSale', const Color(0xFF2E7D32)),
           _buildStatItem(context, local.for_rent, '$forRent', const Color(0xFF0288D1)),
-          _buildStatItem(context, local.featured_label, '$featured', const Color(0xFFFBC02D)),
+          _buildStatItem(context, local.featured_label, '$featured', AppColors.primary),
         ],
       ),
     );

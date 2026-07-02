@@ -155,7 +155,7 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
     bool isSelected =
         (selectedExtraFilter ?? AppLocalizations.of(context)!.all) == value;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final selectedTextColor = isDark ? Colors.black87 : const Color(0xFF00142B);
+    final selectedTextColor = isDark ? Colors.white : Colors.white;
 
     return GestureDetector(
       onTap: () {
@@ -167,7 +167,7 @@ class _AdminPropertiesHeaderState extends State<AdminPropertiesHeader> {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.amber
+              ? AppColors.primary
               : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: isSelected

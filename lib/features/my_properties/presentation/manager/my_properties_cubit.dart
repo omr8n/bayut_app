@@ -109,18 +109,31 @@ class MyPropertiesCubit extends Cubit<MyPropertiesState> {
   }
 
   // 🔥 طلب التمييز من الإدارة
-  Future<void> requestPromotion(PropertyEntity property) async {
+  Future<void> requestPromotion(PropertyEntity property, {double? amount, int? days}) async {
     final updates = {
       'premiumStatus': PremiumStatus.pending.name,
+      'requestedPremiumAmount': amount, // 🔥 حفظ المبلغ المطلوب
+      'requestedPremiumDays': days, // 🔥 حفظ عدد الأيام المطلوبة
     };
 
-    final result = await productsRepo.updatePropertyStatus(
-      property.id,
-      updates,
-    );
+    // 1. تحديث الحالة في الواجهة فوراً (Optimistic UI Update)
+    if (state is MyPropertiesSuccess) {
+      final currentSuccess = state as MyPropertiesSuccess;
+      final updatedProperties = currentSuccess.properties.map((p) {
+        if (p.id == property.id) {
+          return p.copyWith(premiumStatus: PremiumStatus.pending);
+        }
+        return p;
+      }).toList();
+      emit(MyPropertiesSuccess(updatedProperties, isOffline: currentSuccess.isOffline));
+    }
+
+    // 2. إرسال التحديث لقاعدة البيانات
+    final result = await productsRepo.updatePropertyStatus(property.id, updates);
 
     if (result.isLeft()) {
       result.fold((f) => emit(MyPropertiesFailure(f.message)), (_) {});
+      // في حال الفشل، يمكنك إعادة جلب البيانات أو التعامل مع الخطأ
     }
   }
 

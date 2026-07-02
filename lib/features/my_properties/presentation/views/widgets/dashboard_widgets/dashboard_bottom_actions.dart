@@ -11,7 +11,6 @@ import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/features/my_properties/domain/entities/property_entity.dart';
 import 'package:test_graduation/features/my_properties/presentation/manager/my_properties_cubit.dart';
-import 'package:test_graduation/features/my_properties/presentation/views/widgets/property_promotion_button.dart';
 
 class DashboardBottomActions extends StatelessWidget {
   final PropertyEntity property;
@@ -59,8 +58,6 @@ class DashboardBottomActions extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          PropertyPromotionButton(property: property),
           const SizedBox(width: 12),
           _CircleActionButton(
             icon: Icons.edit_note_rounded,

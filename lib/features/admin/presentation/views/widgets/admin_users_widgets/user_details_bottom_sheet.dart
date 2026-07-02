@@ -9,6 +9,7 @@ import 'package:test_graduation/core/services/communication_service.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/core/widgets/communication_dialogs.dart';
+import 'package:test_graduation/features/my_properties/presentation/views/widgets/dashboard_widgets/dashboard_status_banner.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_cubit.dart';
 import 'package:test_graduation/features/admin/presentation/manager/admin_state.dart';
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
@@ -84,6 +85,17 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
                     children: [
                       _buildHeader(local, isDark, currentUser),
                       const SizedBox(height: 24),
+                      // 🔥 عرض بانرات الحالة للمسؤول أيضاً لمتابعة تميز وتريند المستخدم
+                      if (state is AdminPropertiesSuccess)
+                        ...state.properties
+                            .where((p) => p.sellerId == currentUser.uId && (p.isFeatured || p.views > 5))
+                            .map((p) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: DashboardStatusBanner(
+                                    property: p,
+                                    trendRank: p.views > 10 ? 1 : null,
+                                  ),
+                                )),
                       _buildInfoSection(local, isDark, currentUser),
                       const SizedBox(height: 24),
                       _buildNotesSection(local, isDark, currentUser),

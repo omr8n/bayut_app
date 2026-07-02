@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_graduation/core/enums/property_enums.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
 import 'package:test_graduation/core/models/admin_action_model.dart';
 import 'package:test_graduation/core/models/notification_model.dart';
+import 'package:test_graduation/core/services/data_service.dart';
+import 'package:test_graduation/core/utils/service_locator.dart';
 import 'package:test_graduation/features/admin/domain/repos/admin_action_repo.dart';
 import 'package:test_graduation/features/admin/domain/repos/admin_repo.dart';
 import 'package:test_graduation/features/auth/domain/entites/user_entity.dart';
@@ -12,8 +16,8 @@ import 'package:test_graduation/features/reports/domain/entities/report_entity.d
 import 'package:uuid/uuid.dart';
 import 'package:test_graduation/core/models/financial_record_model.dart';
 import 'package:test_graduation/core/utils/backend_endpoint.dart';
-import 'package:test_graduation/core/services/data_service.dart';
-import 'package:test_graduation/core/utils/service_locator.dart';
+import 'package:test_graduation/core/language/app_localizations.dart';
+import 'package:test_graduation/core/routing/router_generation_config.dart';
 import 'admin_state.dart';
 
 class AdminCubit extends Cubit<AdminState> {
@@ -39,6 +43,9 @@ class AdminCubit extends Cubit<AdminState> {
     required String description,
     String? targetUserId,
     String? notificationTitle,
+    String? titleKey, // 🔥 جديد
+    String? bodyKey, // 🔥 جديد
+    Map<String, dynamic>? bodyArgs, // 🔥 جديد
   }) async {
     // 1. Log Action (Internal Admin Log)
     final admin = profileCubit.user;
@@ -77,6 +84,9 @@ class AdminCubit extends Cubit<AdminState> {
         recipientsCount: 1,
         isRead: false,
         fcmToken: fcmToken, // 🔥 Pass token directly to model
+        titleKey: titleKey,
+        bodyKey: bodyKey,
+        bodyArgs: bodyArgs,
       );
 
       await sendNotificationUseCase(notification);
@@ -209,15 +219,25 @@ class AdminCubit extends Cubit<AdminState> {
         // 🔥 تحديث الحالة محلياً للمشرف ليرى التغيير فوراً في الواجهة
         if (state is AdminUsersSuccess) {
           final users = (state as AdminUsersSuccess).users.map((u) {
-            if (u.uId == uId) return u.copyWith(status: isBlocked ? 'banned' : 'active');
+            if (u.uId == uId)
+              return u.copyWith(status: isBlocked ? 'banned' : 'active');
             return u;
           }).toList();
-          emit(AdminUsersSuccess(users, 
-            hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
-            message: isBlocked ? "تم حظر المستخدم بنجاح" : "تم إلغاء الحظر بنجاح"
-          ));
+          emit(
+            AdminUsersSuccess(
+              users,
+              hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
+              message: isBlocked
+                  ? "تم حظر المستخدم بنجاح"
+                  : "تم إلغاء الحظر بنجاح",
+            ),
+          );
         } else {
-          emit(AdminActionSuccess(isBlocked ? "تم الحظر بنجاح" : "تم إلغاء الحظر بنجاح"));
+          emit(
+            AdminActionSuccess(
+              isBlocked ? "تم الحظر بنجاح" : "تم إلغاء الحظر بنجاح",
+            ),
+          );
         }
       },
     );
@@ -259,22 +279,27 @@ class AdminCubit extends Cubit<AdminState> {
         emit(AdminFailure(failure.message));
       },
       (_) {
+        final desc = "User account marked as deleted: $uId";
         _processAction(
           type: 'DELETE_USER',
           targetId: uId,
-          description: "User account marked as deleted: $uId",
+          targetUserId: uId,
+          description: desc,
+          notificationTitle: "تنبيه: حذف الحساب",
         );
-        
+
         // 🔥 تحديث الحالة محلياً للمشرف ليختفي المستخدم فوراً
         if (state is AdminUsersSuccess) {
           final users = (state as AdminUsersSuccess).users
               .where((u) => u.uId != uId)
               .toList();
-          emit(AdminUsersSuccess(
-            users,
-            hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
-            message: "تم حذف المستخدم بنجاح",
-          ));
+          emit(
+            AdminUsersSuccess(
+              users,
+              hasReachedMax: (state as AdminUsersSuccess).hasReachedMax,
+              message: "تم حذف المستخدم بنجاح",
+            ),
+          );
         } else {
           emit(const AdminActionSuccess("تم حذف المستخدم بنجاح"));
         }
@@ -369,17 +394,45 @@ class AdminCubit extends Cubit<AdminState> {
         emit(AdminFailure(failure.message));
       },
       (_) {
-        final desc = isApproved
-            ? "Your property #$id has been approved for publishing"
-            : "Your property #$id has been rejected, please review details";
+        final context = RouterGenerationConfig.navigatorKey.currentContext;
+        final local = context != null ? AppLocalizations.of(context) : null;
+
+        final String title;
+        final String body;
+        final String? titleKey;
+        final String? bodyKey;
+
+        if (isApproved) {
+          title =
+              local?.property_activated_notification_title ??
+              "تم تفعيل العقار ✅";
+          body =
+              (local?.property_activated_notification_body ??
+                      "تم تفعيل عرض عقارك #{id} من قبل الإدارة...")
+                  .replaceFirst("#{id}", id);
+          titleKey = LangKeys.propertyActivatedNotificationTitle;
+          bodyKey = LangKeys.propertyActivatedNotificationBody;
+        } else {
+          title =
+              local?.property_disabled_notification_title ??
+              "تم تعطيل العقار ⚠️";
+          body =
+              (local?.property_disabled_notification_body ??
+                      "تم تعطيل عرض عقارك #{id} من قبل الإدارة...")
+                  .replaceFirst("#{id}", id);
+          titleKey = LangKeys.propertyDisabledNotificationTitle;
+          bodyKey = LangKeys.propertyDisabledNotificationBody;
+        }
+
         _processAction(
           type: 'CHANGE_STATUS',
           targetId: id,
           targetUserId: sellerId,
-          description: desc,
-          notificationTitle: isApproved
-              ? "Property Approved"
-              : "Property Rejected",
+          description: body,
+          notificationTitle: title,
+          titleKey: titleKey,
+          bodyKey: bodyKey,
+          bodyArgs: {'id': id},
         );
         if (state is AdminPropertiesSuccess) {
           emit(
@@ -475,17 +528,30 @@ class AdminCubit extends Cubit<AdminState> {
     emit(AdminLoading());
 
     if (isApproved) {
-      final expiryDate = DateTime.now().add(Duration(days: days ?? 7));
+      // Logic for detection: Use default if not found in property
+      int finalDays = days ?? 7;
+      double finalAmount = amount ?? 0;
 
-      // 0. Fetch property title for financial record detail
-      String? propTitle;
+      // 0. Fetch property details
+      String propTitle = 'Property';
       final propData = await getIt<DatabaseService>().getData(
         path: BackendEndpoint.getProperty,
         documentId: propertyId,
       );
+
       if (propData != null) {
-        propTitle = propData['title'] as String?;
+        propTitle = propData['title'] as String? ?? 'Property';
+
+        // 🔥 Smart detection:
+        if (propData['requestedPremiumDays'] != null) {
+          finalDays = propData['requestedPremiumDays'] as int;
+        }
+        if (propData['requestedPremiumAmount'] != null) {
+          finalAmount = (propData['requestedPremiumAmount'] as num).toDouble();
+        }
       }
+
+      final expiryDate = DateTime.now().add(Duration(days: finalDays));
 
       // 1. Update property status in Firestore
       await adminRepo.togglePropertyFeatured(
@@ -499,22 +565,24 @@ class AdminCubit extends Cubit<AdminState> {
         data: {
           'premiumStatus': PremiumStatus.active.name,
           'premiumExpiryDate': expiryDate.toIso8601String(),
-          'premiumReminderSent': false, // 🔥 Reset reminder status on renewal
+          'premiumReminderSent': false,
           'isFeatured': true,
+          'requestedPremiumAmount': FieldValue.delete(),
+          'requestedPremiumDays': FieldValue.delete(),
         },
       );
       if (isClosed) return;
 
-      // 2. Financial transaction log (Mock Payment)
+      // 2. Financial transaction log
       final financialRecord = FinancialRecordModel(
         id: const Uuid().v4(),
         propertyId: propertyId,
-        propertyTitle: propTitle, // 🔥 حفظ اسم العقار
+        propertyTitle: propTitle,
         sellerId: sellerId,
         sellerName: sellerName ?? 'User',
-        amount: amount ?? 0,
-        currency: 'SYP',
-        type: (days == 30)
+        amount: finalAmount,
+        currency: propData?['currency'] ?? 'SYP', // 🔥 جلب العملة من العقار أو الافتراضي
+        type: (finalDays >= 30)
             ? TransactionType.promotionMonthly
             : TransactionType.promotionWeekly,
         createdAt: DateTime.now(),
@@ -527,30 +595,59 @@ class AdminCubit extends Cubit<AdminState> {
       if (isClosed) return;
 
       // 3. Send notification to user
+      final context = RouterGenerationConfig.navigatorKey.currentContext;
+      final local = context != null ? AppLocalizations.of(context) : null;
+
+      final title =
+          local?.premium_activated_notification_title ?? "تم تفعيل التميز 🚀";
+      final body =
+          (local?.premium_activated_notification_body ??
+                  "تهانينا! تمت الموافقة على طلب التميز لعقارك ({title})...")
+              .replaceFirst("{title}", propTitle)
+              .replaceFirst("{days}", finalDays.toString());
+
       _processAction(
         type: 'PREMIUM_APPROVED',
         targetId: propertyId,
         targetUserId: sellerId,
-        description:
-            "Congratulations! Your premium request has been approved, it will now appear at the top of results for $days days.",
-        notificationTitle: "Premium Activated 🚀",
+        description: body,
+        notificationTitle: title,
+        titleKey: LangKeys.premiumActivatedNotificationTitle,
+        bodyKey: LangKeys.premiumActivatedNotificationBody,
+        bodyArgs: {'title': propTitle, 'days': finalDays.toString()},
       );
     } else {
       // Rejection case
       await getIt<DatabaseService>().updateData(
         path: BackendEndpoint.getProperty,
         documentId: propertyId,
-        data: {'premiumStatus': PremiumStatus.rejected.name},
+        data: {
+          'premiumStatus': PremiumStatus.rejected.name,
+          'requestedPremiumAmount': FieldValue.delete(),
+          'requestedPremiumDays': FieldValue.delete(),
+        },
       );
       if (isClosed) return;
+
+      final context = RouterGenerationConfig.navigatorKey.currentContext;
+      final local = context != null ? AppLocalizations.of(context) : null;
+
+      final title =
+          local?.premium_rejected_notification_title ?? "رفض طلب التميز ❌";
+      final body =
+          (local?.premium_rejected_notification_body ??
+                  "نعتذر، تم رفض طلب التميز لعقارك (#{id})...")
+              .replaceFirst("#{id}", propertyId);
 
       _processAction(
         type: 'PREMIUM_REJECTED',
         targetId: propertyId,
         targetUserId: sellerId,
-        description:
-            "Premium request for property #$propertyId has been rejected. Please contact administration.",
-        notificationTitle: "Premium Request Rejected ❌",
+        description: body,
+        notificationTitle: title,
+        titleKey: LangKeys.premiumRejectedNotificationTitle,
+        bodyKey: LangKeys.premiumRejectedNotificationBody,
+        bodyArgs: {'id': propertyId},
       );
     }
 
@@ -591,12 +688,25 @@ class AdminCubit extends Cubit<AdminState> {
         emit(AdminFailure(failure.message));
       },
       (_) {
+        final context = RouterGenerationConfig.navigatorKey.currentContext;
+        final local = context != null ? AppLocalizations.of(context) : null;
+
+        final title =
+            local?.property_deleted_notification_title ?? "تنبيه: حذف عقار ❌";
+        final body =
+            (local?.property_deleted_notification_body ??
+                    "تم حذف عقارك #{id} نهائياً...")
+                .replaceFirst("#{id}", id);
+
         _processAction(
           type: 'DELETE_PROPERTY',
           targetId: id,
           targetUserId: sellerId,
-          description: "Property #$id deleted for violating standards",
-          notificationTitle: "Property Deleted",
+          description: body,
+          notificationTitle: title,
+          titleKey: LangKeys.propertyDeletedNotificationTitle,
+          bodyKey: LangKeys.propertyDeletedNotificationBody,
+          bodyArgs: {'id': id},
         );
         if (state is AdminPropertiesSuccess) {
           emit(
@@ -723,7 +833,7 @@ class AdminCubit extends Cubit<AdminState> {
       body: body,
     );
     if (isClosed) return;
-    result.fold((failure) => emit(AdminFailure(failure.message)), (_) {
+    result.fold((failure) => emit(AdminFailure(failure.message)), (_) async {
       // Log action in admin logs
       final admin = profileCubit.user;
       adminActionRepo.logAction(
@@ -739,7 +849,7 @@ class AdminCubit extends Cubit<AdminState> {
       );
 
       // Save notification in Firestore to show in history
-      sendNotificationUseCase(
+      await sendNotificationUseCase(
         AppNotification(
           id: const Uuid().v4(),
           title: title,

@@ -79,6 +79,7 @@ class _PromotionSheetState extends State<PromotionSheet> {
               _showConfirmPaymentDialog(
                 context,
                 _selectedPackage == 0 ? weeklyPrice : monthlyPrice,
+                _selectedPackage == 0 ? 7 : 30, // 🔥 تمرير عدد الأيام
               );
             },
             style: ElevatedButton.styleFrom(
@@ -170,11 +171,18 @@ class _PromotionSheetState extends State<PromotionSheet> {
     );
   }
 
-  void _showConfirmPaymentDialog(BuildContext context, double amount) {
+  void _showConfirmPaymentDialog(
+    BuildContext context,
+    double amount,
+    int days,
+  ) {
     showDialog(
       context: context,
-      builder: (context) =>
-          _ConfirmPaymentDialog(property: widget.property, amount: amount),
+      builder: (context) => _ConfirmPaymentDialog(
+        property: widget.property,
+        amount: amount,
+        days: days,
+      ),
     );
   }
 }
@@ -182,7 +190,12 @@ class _PromotionSheetState extends State<PromotionSheet> {
 class _ConfirmPaymentDialog extends StatefulWidget {
   final PropertyEntity property;
   final double amount;
-  const _ConfirmPaymentDialog({required this.property, required this.amount});
+  final int days; // 🔥 جديد
+  const _ConfirmPaymentDialog({
+    required this.property,
+    required this.amount,
+    required this.days,
+  });
 
   @override
   State<_ConfirmPaymentDialog> createState() => _ConfirmPaymentDialogState();
@@ -228,6 +241,8 @@ class _ConfirmPaymentDialogState extends State<_ConfirmPaymentDialog> {
                   onPressed: () {
                     context.read<MyPropertiesCubit>().requestPromotion(
                       widget.property,
+                      amount: widget.amount, // 🔥 تمرير المبلغ الفعلي من الإعدادات
+                      days: widget.days, // 🔥 تمرير عدد الأيام
                     );
                     Navigator.pop(context); // إغلاق دايالوج التأكيد
                     _showSuccessDialog(

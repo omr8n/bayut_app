@@ -483,6 +483,7 @@ class _ReportDetailsBottomSheetState extends State<ReportDetailsBottomSheet> {
                   adminNote: noteController.text.isEmpty
                       ? local.property_deleted_msg
                       : noteController.text,
+                  reporterId: widget.report.reporterId,
                 );
               },
               style: ElevatedButton.styleFrom(

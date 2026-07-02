@@ -891,4 +891,16 @@ class LangKeys {
   static const String editAction = 'edit_action';
   static const String views = 'views';
   static const String enterValue = 'enter_value';
+
+  // Notifications Admin
+  static const String propertyActivatedNotificationTitle = 'property_activated_notification_title';
+  static const String propertyActivatedNotificationBody = 'property_activated_notification_body';
+  static const String propertyDisabledNotificationTitle = 'property_disabled_notification_title';
+  static const String propertyDisabledNotificationBody = 'property_disabled_notification_body';
+  static const String propertyDeletedNotificationTitle = 'property_deleted_notification_title';
+  static const String propertyDeletedNotificationBody = 'property_deleted_notification_body';
+  static const String premiumActivatedNotificationTitle = 'premium_activated_notification_title';
+  static const String premiumActivatedNotificationBody = 'premium_activated_notification_body';
+  static const String premiumRejectedNotificationTitle = 'premium_rejected_notification_title';
+  static const String premiumRejectedNotificationBody = 'premium_rejected_notification_body';
 }

@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_graduation/core/language/lang_keys.dart';
+import 'package:test_graduation/core/routing/app_routes.dart';
 import 'package:test_graduation/core/language/app_localizations.dart';
 import 'package:test_graduation/core/utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -74,7 +77,7 @@ class AdminPropertyCard extends StatelessWidget {
                   flex: 3,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    reverse: true, // لإظهار الشارات من اليمين لليسار في حال الضيق
+                    reverse: false, // Changed to false to handle RTL correctly
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -112,14 +115,65 @@ class AdminPropertyCard extends StatelessWidget {
             padding: EdgeInsets.all(16.w),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              // يتبع اتجاه اللغة؛ في العربي تكون الصورة على اليمين كما طلب المستخدم
               children: [
-                // Left Side: Texts
+                // Image with Star Badge
+                Stack(
+                  alignment: AlignmentDirectional
+                      .topStart, // Consistent with Directionality
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: CachedNetworkImage(
+                        imageUrl: property.images.isNotEmpty
+                            ? property.images[0]
+                            : '',
+                        width:
+                            90.w, // Slightly smaller to give more room to text
+                        height: 90.w,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Container(color: Colors.grey.shade100),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey.shade100,
+                          child: const Icon(
+                            Icons.image_not_supported_rounded,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (property.isFeatured ||
+                        property.premiumStatus == PremiumStatus.active)
+                      PositionedDirectional(
+                        // Uses start/end instead of left/right
+                        top: 6.h,
+                        start: 6.w,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.amber,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.white,
+                            size: 12.sp,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(width: 12.w), // Smaller spacing
+                // Left Side in RTL: Texts (Flexible area)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         property.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
@@ -140,28 +194,38 @@ class AdminPropertyCard extends StatelessWidget {
                                 : Colors.grey,
                           ),
                           SizedBox(width: 4.w),
-                          Text(
-                            "${property.city} ، ${property.governorate}",
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? AppColors.textSecondaryDark
-                                  : Colors.grey,
-                              fontSize: 12.sp,
+                          Expanded(
+                            child: Text(
+                              "${property.city} ، ${property.governorate}",
+                              maxLines: 1,
+                              overflow: TextOverflow
+                                  .visible, // Changed to allow soft wrap if needed or just visible
+                              style: TextStyle(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? AppColors.textSecondaryDark
+                                    : Colors.grey,
+                                fontSize:
+                                    11.sp, // Slightly smaller for better fit
+                              ),
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: 12.h),
-                      Text(
-                        "${property.currency} ${property.price}",
-                        style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : const Color(0xFF1E4C9A), // Royal Blue
-                          fontWeight: FontWeight.w900,
-                          fontSize: 16.sp,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "${property.currency} ${property.price}",
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : const Color(0xFF1E4C9A), // Royal Blue
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16.sp,
+                          ),
                         ),
                       ),
                       SizedBox(height: 12.h),
@@ -192,50 +256,6 @@ class AdminPropertyCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-                SizedBox(width: 16.w),
-                // Right Side: Image with Star Badge
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.r),
-                      child: CachedNetworkImage(
-                        imageUrl: property.images.isNotEmpty
-                            ? property.images[0]
-                            : '',
-                        width: 100.w,
-                        height: 100.w,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Container(color: Colors.grey.shade100),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey.shade100,
-                          child: const Icon(
-                            Icons.image_not_supported_rounded,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (property.isFeatured ||
-                        property.premiumStatus == PremiumStatus.active)
-                      Positioned(
-                        top: 8.h,
-                        left: 8.w,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.amber,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.star,
-                            color: Colors.white,
-                            size: 14.sp,
-                          ),
-                        ),
-                      ),
-                  ],
                 ),
               ],
             ),
@@ -327,13 +347,18 @@ class AdminPropertyCard extends StatelessWidget {
                 _buildCircularAction(
                   Icons.chat_bubble_rounded,
                   Colors.green.shade600,
-                  () => _contactOwner(property.whatsapp),
+                  () => _contactOwner(context, property.whatsapp),
                   tooltip: local.whatsapp,
                 ),
                 _buildCircularAction(
                   Icons.open_in_full_rounded,
                   Colors.blue,
-                  () {},
+                  () {
+                    context.push(
+                      AppRoutes.propertyDetailsScreen,
+                      extra: property,
+                    );
+                  },
                   tooltip: local.view_all,
                 ),
               ],
@@ -369,23 +394,54 @@ class AdminPropertyCard extends StatelessWidget {
 
   void _showDeleteDialog(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(local.permanent_delete),
-        content: Text(local.delete_property_confirm),
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        title: Text(
+          local.translate('permanent_delete'),
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          local.delete_property_confirm,
+          style: TextStyle(
+            color: isDark ? Colors.grey.shade400 : Colors.black54,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: Text(local.cancel),
+            child: Text(
+              local.cancel,
+              style: const TextStyle(color: Colors.blue),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
             onPressed: () {
               adminCubit.deleteProperty(property.id, property.sellerId);
               Navigator.pop(dialogContext);
             },
-            child: Text(local.confirm_delete),
+            child: Text(
+              local.confirm_delete,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -394,27 +450,46 @@ class AdminPropertyCard extends StatelessWidget {
 
   void _showStatusDialog(BuildContext context) {
     final local = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         title: Text(
           property.isApproved ? local.disable_property : local.approve_property,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Text(
           property.isApproved
               ? local.hide_property_confirm
               : local.show_property_confirm,
+          style: TextStyle(
+            color: isDark ? Colors.grey.shade400 : Colors.black54,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: Text(local.cancel),
+            child: Text(
+              local.cancel,
+              style: const TextStyle(color: Colors.blue),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: property.isApproved
-                  ? Colors.orange
-                  : Colors.green,
+                  ? Colors.orangeAccent
+                  : Colors.green.shade600,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
             ),
             onPressed: () {
               adminCubit.togglePropertyApproval(
@@ -428,6 +503,10 @@ class AdminPropertyCard extends StatelessWidget {
               property.isApproved
                   ? local.disable_now
                   : local.approve_and_publish,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -437,46 +516,76 @@ class AdminPropertyCard extends StatelessWidget {
 
   void _showPremiumReviewDialog(BuildContext context) {
     final local = AppLocalizations.of(context)!;
-    // We use the Method in Actions to ensure consistency
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
         ),
         title: Text(
           local.review_premium_request,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Text(
+                    "مراجعة طلب التميز الذكي",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
             Text(
-              local.selected_plan_pro,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              "سيقوم النظام تلقائياً بتفعيل المدة والمبلغ المطلوبين من قبل المستخدم وتنزيلها في المحفظة المالية.",
+              style: TextStyle(
+                color: isDark ? Colors.grey.shade300 : Colors.black87,
+                fontSize: 13.sp,
+              ),
             ),
             SizedBox(height: 12.h),
-            Text(
-              local.mock_payment_confirmed,
-              style: const TextStyle(color: Colors.black87, fontSize: 13),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              local.premium_duration_days,
-              style: const TextStyle(fontSize: 13, color: Colors.grey),
-            ),
-            SizedBox(height: 8.h),
-            TextField(
-              controller: TextEditingController(text: '30'),
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 8.h),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.person_pin_circle_outlined,
+                    color: Colors.blue.shade400,
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    property.sellerName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.sp,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -506,15 +615,13 @@ class AdminPropertyCard extends StatelessWidget {
                     propertyId: property.id,
                     sellerId: property.sellerId,
                     isApproved: true,
-                    days: 30,
-                    amount: 750000,
                     sellerName: property.sellerName,
                   );
                   Navigator.pop(dialogContext);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  side: BorderSide(color: Colors.grey.shade200),
+                  side: BorderSide(color: Colors.blue.shade100),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.r),
                   ),
@@ -535,11 +642,47 @@ class AdminPropertyCard extends StatelessWidget {
     );
   }
 
-  void _contactOwner(String phone) async {
+  void _contactOwner(BuildContext context, String phone) async {
     final url = "https://wa.me/$phone";
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      } else {
+        _showContactErrorAlert(context, phone);
+      }
+    } catch (e) {
+      _showContactErrorAlert(context, phone);
     }
+  }
+
+  void _showContactErrorAlert(BuildContext context, String phone) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("تعذر فتح واتساب"),
+        content: Text(
+          "لم نتمكن من فتح تطبيق واتساب تلقائياً. يمكنك الاتصال بالرقم مباشرة:\n\n$phone",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text("إغلاق"),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              final telUrl = "tel:$phone";
+              if (await canLaunchUrl(Uri.parse(telUrl))) {
+                await launchUrl(Uri.parse(telUrl));
+              }
+              if (dialogContext.mounted) Navigator.pop(dialogContext);
+            },
+            icon: const Icon(Icons.phone),
+            label: const Text("اتصال"),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _statusBadge(String label, Color bgColor, Color textColor) {
@@ -648,7 +791,7 @@ class AdminPropertyCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(
-              local.high_activity,
+              local.translate(LangKeys.highActivity),
               style: TextStyle(
                 color: Colors.orange.shade700,
                 fontSize: 10.sp,
@@ -658,7 +801,9 @@ class AdminPropertyCard extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            local.trend_rank_label.replaceFirst('{rank}', '$trendRank'),
+            local
+                .translate(LangKeys.trendRank)
+                .replaceFirst('{rank}', '$trendRank'),
             style: TextStyle(
               color: Colors.orange.shade700,
               fontWeight: FontWeight.bold,

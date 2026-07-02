@@ -122,7 +122,10 @@ class AdminRepoImpl implements AdminRepo {
           propertiesForRent: properties
               .where((p) => p.listingType == ListingType.rent)
               .length,
-          featuredProperties: properties.where((p) => p.isFeatured).length,
+          featuredProperties: properties
+              .where((p) =>
+                  p.isFeatured || p.premiumStatus == PremiumStatus.active)
+              .length,
           pendingPremiumRequests: properties
               .where((p) => p.premiumStatus == PremiumStatus.pending)
               .length,

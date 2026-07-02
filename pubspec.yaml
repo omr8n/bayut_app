@@ -8,58 +8,58 @@ environment:
   sdk: ^3.10.1
 
 dependencies:
-  awesome_notifications: 
+  awesome_notifications: null
   badges: null
-  cached_network_image: 
+  cached_network_image: null
   carousel_slider: null
   chewie: null
-  cloud_firestore: 
-  cloudinary_flutter: 
-  cloudinary_public: 
-  cloudinary_url_gen:
-  connectivity_plus: 
-  cupertino_icons: 
+  cloud_firestore: null
+  cloudinary_flutter: null
+  cloudinary_public: null
+  cloudinary_url_gen: null
+  connectivity_plus: null
+  cupertino_icons: null
   dartz: null
-  dio: 
-  equatable: 
+  dio: null
+  equatable: null
   fancy_shimmer_image: null
-  firebase_auth: 
-  firebase_core: 
-  firebase_dynamic_links: 
-  firebase_messaging: 
-  fl_chart: 
+  firebase_auth: null
+  firebase_core: null
+  firebase_dynamic_links: null
+  firebase_messaging: null
+  fl_chart: null
   flutter:
     sdk: flutter
-  flutter_bloc: 
-  flutter_localization: 
+  flutter_bloc: null
+  flutter_dotenv: ^6.0.1
+  flutter_localization: null
   flutter_localizations:
     sdk: flutter
-  flutter_screenutil: 
-  flutter_secure_storage: 
-  flutter_spinkit: 
-  flutter_svg: 
-  get_it: 
-  go_router:
+  flutter_screenutil: null
+  flutter_secure_storage: null
+  flutter_spinkit: null
+  flutter_svg: null
+  get_it: null
+  go_router: null
+  google_fonts: null
+  google_sign_in: null
   googleapis_auth: ^2.3.2
-  google_fonts: 
- 
-  google_sign_in: 
-  iconly: 
-  image_picker: 
-  intl: 
+  iconly: null
+  image_picker: null
+  intl: null
   lottie: ^3.1.0
-  modal_progress_hud_nsn: 
-  path:
-  pin_code_fields: 
-  share_plus: 
-  shared_preferences: 
-  shimmer: 
-  skeletonizer: 
-  sliver_tools: 
-  url_launcher:
-  uuid: 
-  very_good_analysis: 
-  video_player: 
+  modal_progress_hud_nsn: null
+  path: null
+  pin_code_fields: null
+  share_plus: null
+  shared_preferences: null
+  shimmer: null
+  skeletonizer: null
+  sliver_tools: null
+  url_launcher: null
+  uuid: null
+  very_good_analysis: null
+  video_player: null
 dev_dependencies:
   flutter_lints: ^6.0.0
   # 🔥 إضافة مكتبة الشاشة الافتتاحية
@@ -88,3 +88,4 @@ flutter:
     - assets/lottie/
     - lang/ar.json
     - lang/en.json
+    - assets/.env
